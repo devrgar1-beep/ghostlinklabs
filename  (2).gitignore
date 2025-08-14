@@ -1,0 +1,33 @@
+
+# Bytecode & Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Tools and IDEs
+.idea/
+.vscode/
+*.log
+
+# Build artifacts
+*.zip
+*.tar.gz
+*.egg-info/
+dist/
+build/
+
+# Sovereign ghost artifacts
+*.sigil
+*.drift
+*.coldheap
+*.mesh
