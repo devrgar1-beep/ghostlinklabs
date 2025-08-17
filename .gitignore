@@ -1,2 +1,7 @@
 # Created by pytest automatically.
 *
+!ghostlink/
+!ghostlink/**
+!tests/
+!tests/**
+tests/__pycache__/
