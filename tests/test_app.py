@@ -7,8 +7,16 @@ from ghostlink.main import app, ipfs, items
 
 @pytest.fixture(autouse=True)
 def clear_state():
+    from ghostlink.database import Database
+    from ghostlink.main import set_db
+    
+    # Reset the app state
     items.clear()
     ipfs.storage.clear()
+    
+    # Use a test database
+    test_db = Database("sqlite:///:memory:")
+    set_db(test_db)
 
 
 client = TestClient(app)
