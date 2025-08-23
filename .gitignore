@@ -1,7 +1,82 @@
-# Created by pytest automatically.
-*
-!ghostlink/
-!ghostlink/**
-!tests/
-!tests/**
-tests/__pycache__/
+# Go-specific ignore patterns
+
+# Compiled binaries (Go executables)
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Go workspace files
+go.work
+go.work.sum
+
+# Dependency directories
+vendor/
+
+# Go module cache
+.modcache/
+
+# Binaries for programs and plugins
+main
+*.bin
+
+# Architecture specific extensions/prefixes
+*.[568vq]
+[568vq].out
+
+# cgo objects
+*.cgo1.go
+*.cgo2.c
+_cgo_defun.c
+_cgo_gotypes.go
+_cgo_export.*
+
+# Build artifacts and temporary files
+.build/
+tmp/
+.tmp/
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# System-specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Log files
+*.log
+
+# Python artifacts (for existing Python code)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Test artifacts
+coverage.txt
+coverage.html
+coverage.out
