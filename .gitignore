@@ -80,3 +80,10 @@ venv.bak/
 coverage.txt
 coverage.html
 coverage.out
+
+# GhostLink specific database files
+*.db
+*.sqlite
+*.sqlite3
+test_*.db
+demo_*.db
