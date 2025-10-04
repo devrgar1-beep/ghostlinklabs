@@ -1,3 +1,2 @@
-prometheus_client
-psutil
-requests
+numpy
+matplotlib
