@@ -27,7 +27,8 @@ class ApiKey(Base):
         """Check if the API key has a specific permission."""
         if not self.permissions:
             return False
-        return permission in self.permissions.split(",")
+        normalized_permissions = [perm.strip() for perm in self.permissions.split(",") if perm.strip()]
+        return permission in normalized_permissions
     
     def is_expired(self) -> bool:
         """Check if the API key has expired."""
@@ -57,8 +58,18 @@ class Database:
         """Get a database session."""
         return self.SessionLocal()
     
-    def create_api_key(self, user_id: str, permissions: str = "read", expires_at: Optional[datetime.datetime] = None) -> ApiKey:
+    def create_api_key(
+        self,
+        user_id: str,
+        permissions: str = "read",
+        expires_at: Optional[datetime.datetime] = None,
+    ) -> ApiKey:
         """Create a new API key."""
+        if expires_at is None:
+            default_days = getattr(config, "API_KEY_EXPIRATION_DAYS", None)
+            if default_days is not None:
+                expires_at = utc_now() + datetime.timedelta(days=default_days)
+
         key = secrets.token_urlsafe(32)
         api_key = ApiKey(
             key=key,
