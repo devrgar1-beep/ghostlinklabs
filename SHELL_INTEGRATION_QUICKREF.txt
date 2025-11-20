@@ -1,0 +1,111 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                    GHOSTLINK SHELL INTEGRATION                             ║
+║                        Quick Reference Card                                ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+✅ ENABLED FEATURES
+═══════════════════
+• Command Decoration (✓/✗ indicators)
+• Persistent Terminal Sessions
+• 100-command Shell History
+• Intelligent Command Suggestions
+• Link Agent Environment Variables
+• PowerShell IntelliSense & Debugging
+• Shell Script Linting (ShellCheck)
+• Auto-formatting (shell-format)
+• Bash Language Server (Bash IDE)
+
+📦 INSTALLED EXTENSIONS (ALL OPEN SOURCE)
+═════════════════════════════════════════
+1. PowerShell           (ms-vscode.powershell)          - MIT License
+2. shell-format         (foxundermoon.shell-format)     - MIT License
+3. ShellCheck           (timonwong.shellcheck)          - GPL-3.0 License
+4. Bash IDE             (mads-hartmann.bash-ide-vscode) - MIT License
+
+⌨️ KEYBOARD SHORTCUTS
+═══════════════════════
+Ctrl+`                  - Open terminal
+Ctrl+Shift+`            - New terminal
+Ctrl+Shift+L            - Chat with Link
+Ctrl+Up/Down            - Navigate commands (shell integration)
+Ctrl+Shift+Up/Down      - Select command output
+
+🎯 TERMINAL PROFILES
+═══════════════════
+1. GhostLink - PowerShell   🔷  - Default with Link environment
+2. Link Agent               🤖  - Auto-starts Link agent
+3. Python                   🐍  - Python REPL with PYTHONPATH
+
+🔧 LINK COMMANDS
+══════════════════
+link start                      - Start Link agent
+link status                     - Check status
+link task add "description"     - Add task
+link task list                  - List tasks
+link context set key=value      - Set context
+link learn "preference"         - Teach Link
+link history                    - View task history
+
+💬 CHAT WITH LINK
+═════════════════
+@link hello                     - Greet Link
+@link status                    - Check Link status
+@link add task: Fix bug X       - Add task via chat
+@link show my tasks             - View tasks
+@link remember I prefer async   - Teach preference
+
+🧪 TEST SHELL INTEGRATION
+══════════════════════════
+# Test 1: Command Decoration
+echo "Success test"             # Should show ✓
+$null = 1/0                     # Should show ✗ (PowerShell)
+
+# Test 2: Link Agent
+link status                     # Should work in any terminal
+
+# Test 3: Format Shell Script
+1. Create test.sh
+2. Add unformatted code
+3. Save → Auto-formats
+
+# Test 4: ShellCheck Linting
+1. Create test.sh
+2. Add: echo $var
+3. See warning about unquoted variable
+
+🛠️ TROUBLESHOOTING
+════════════════════
+Shell Integration Not Working:
+  • PowerShell: Ensure version 7+ installed
+  • Check: $PSVersionTable.PSVersion
+  • Update: winget install Microsoft.PowerShell
+
+ShellCheck Not Found:
+  • choco install shellcheck    (Chocolatey)
+  • scoop install shellcheck     (Scoop)
+  • Or disable: "shellcheck.enable": false
+
+Shell Format Not Working:
+  • scoop install shfmt          (Scoop)
+  • choco install shfmt          (Chocolatey)
+  • Or disable formatOnSave for shellscript
+
+📚 DOCUMENTATION
+═══════════════
+SHELL_INTEGRATION.md    - Complete shell integration guide
+LINK.md                 - Link agent documentation
+LINK_CHAT_AGENT.md      - Chat integration details
+SETUP.md                - Installation and setup
+LINTING.md              - Code quality tools
+
+🔐 SECURITY & PRIVACY
+══════════════════════
+✅ All extensions are open source (MIT/GPL-3.0)
+✅ No telemetry by default
+✅ No cloud services required
+✅ Local-only processing
+✅ Privacy-respecting
+
+═══════════════════════════════════════════════════════════════════════════
+
+For more details, see: SHELL_INTEGRATION.md

@@ -1,0 +1,35 @@
+{
+    "$schema": "https://raw.githubusercontent.com/microsoft/vscode/main/src/vs/workbench/contrib/terminal/common/terminalProfiles.schema.json",
+    "terminals": [
+        {
+            "name": "GhostLink - PowerShell",
+            "icon": "terminal-powershell",
+            "color": "terminal.ansiMagenta",
+            "env": {
+                "GHOSTLINK_LINK_ENABLED": "true",
+                "TERM": "xterm-256color"
+            }
+        },
+        {
+            "name": "Link Agent",
+            "icon": "robot",
+            "color": "terminal.ansiCyan",
+            "command": "link",
+            "args": [
+                "start"
+            ],
+            "env": {
+                "GHOSTLINK_LINK_ENABLED": "true"
+            }
+        },
+        {
+            "name": "Python",
+            "icon": "symbol-keyword",
+            "color": "terminal.ansiYellow",
+            "command": "python",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        }
+    ]
+}
