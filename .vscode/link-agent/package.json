@@ -1,0 +1,106 @@
+{
+    "name": "link-agent",
+    "publisher": "ghostlink",
+    "displayName": "Link - AI Orchestration Agent",
+    "description": "Link is your autonomous AI orchestration brain for GitHub Copilot Chat",
+    "version": "0.1.0",
+    "engines": {
+        "vscode": "^1.80.0"
+    },
+    "categories": [
+        "AI",
+        "Other"
+    ],
+    "activationEvents": [
+        "onStartupFinished"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "chatParticipants": [
+            {
+                "id": "ghostlink.link",
+                "name": "link",
+                "description": "Your autonomous AI orchestration brain",
+                "isSticky": true,
+                "commands": [
+                    {
+                        "name": "status",
+                        "description": "Check Link's current status and activity"
+                    },
+                    {
+                        "name": "tasks",
+                        "description": "View, add, or manage tasks"
+                    },
+                    {
+                        "name": "context",
+                        "description": "View or set context variables"
+                    },
+                    {
+                        "name": "learn",
+                        "description": "View or teach preferences"
+                    },
+                    {
+                        "name": "help",
+                        "description": "Learn what Link can do"
+                    }
+                ]
+            }
+        ],
+        "commands": [
+            {
+                "command": "link.chat",
+                "title": "Chat with Link",
+                "category": "Link"
+            },
+            {
+                "command": "link.addTask",
+                "title": "Add Task via Link",
+                "category": "Link"
+            },
+            {
+                "command": "link.showStatus",
+                "title": "Show Link Status",
+                "category": "Link"
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "link.chat",
+                "key": "ctrl+shift+l",
+                "mac": "cmd+shift+l"
+            }
+        ],
+        "configuration": {
+            "title": "Link Agent",
+            "properties": {
+                "link.enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enable Link agent in chat"
+                },
+                "link.autoStart": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Automatically start Link on workspace open"
+                },
+                "link.pythonPath": {
+                    "type": "string",
+                    "default": "python",
+                    "description": "Path to Python interpreter for Link"
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile",
+        "test": "node ./out/test/runTest.js"
+    },
+    "devDependencies": {
+        "@types/vscode": "^1.80.0",
+        "@types/node": "^18.0.0",
+        "typescript": "^5.0.0"
+    }
+}

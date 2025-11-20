@@ -1,0 +1,32 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Link: Run",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "ghostlink.link",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Link: CLI",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "ghostlink.link_cli",
+            "args": [
+                "start"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Python: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}
