@@ -1,0 +1,176 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Link: Start",
+            "type": "shell",
+            "command": "python -m ghostlink.link_cli start",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "Link: Stop",
+            "type": "shell",
+            "command": "python -m ghostlink.link_cli stop",
+            "problemMatcher": []
+        },
+        {
+            "label": "Link: Status",
+            "type": "shell",
+            "command": "python -m ghostlink.link_cli status",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always"
+            }
+        },
+        {
+            "label": "Link: Health Check",
+            "type": "shell",
+            "command": "python -m ghostlink.link_cli diagnostics health",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            }
+        },
+        {
+            "label": "Link: View Errors",
+            "type": "shell",
+            "command": "python -m ghostlink.link_cli diagnostics errors",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always"
+            }
+        },
+        {
+            "label": "Link: Fix Common Issues",
+            "type": "shell",
+            "command": "python -m ghostlink.link_cli diagnostics fix-common",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "focus": true
+            }
+        },
+        {
+            "label": "Link: Start Monitoring",
+            "type": "shell",
+            "command": "python -m ghostlink.link_cli diagnostics monitor 60",
+            "problemMatcher": [],
+            "isBackground": true,
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            }
+        },
+        {
+            "label": "Link: System Info",
+            "type": "shell",
+            "command": "python -m ghostlink.link_cli diagnostics sysinfo",
+            "problemMatcher": []
+        },
+        {
+            "label": "Git: Auto Pull",
+            "type": "shell",
+            "command": "python -m ghostlink.link_cli git pull",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always"
+            }
+        },
+        {
+            "label": "Git: Auto Sync",
+            "type": "shell",
+            "command": "python -m ghostlink.link_cli git sync",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "focus": true
+            }
+        },
+        {
+            "label": "Git: Status",
+            "type": "shell",
+            "command": "python -m ghostlink.link_cli git status",
+            "problemMatcher": []
+        },
+        {
+            "label": "Git: Abort Merge",
+            "type": "shell",
+            "command": "python -m ghostlink.link_cli git abort",
+            "problemMatcher": []
+        },
+        {
+            "label": "Link: Add Task",
+            "type": "shell",
+            "command": "python -m ghostlink.link_cli task add \"${input:taskDescription}\" --priority ${input:taskPriority}",
+            "problemMatcher": []
+        },
+        {
+            "label": "Link: List Tasks",
+            "type": "shell",
+            "command": "python -m ghostlink.link_cli task list",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always"
+            }
+        },
+        {
+            "label": "Link: View History",
+            "type": "shell",
+            "command": "python -m ghostlink.link_cli history",
+            "problemMatcher": []
+        },
+        {
+            "label": "Link: Set Context",
+            "type": "shell",
+            "command": "python -m ghostlink.link_cli context set ${input:contextKey} \"${input:contextValue}\"",
+            "problemMatcher": []
+        },
+        {
+            "label": "Link: List Context",
+            "type": "shell",
+            "command": "python -m ghostlink.link_cli context list",
+            "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "id": "taskDescription",
+            "type": "promptString",
+            "description": "Task description",
+            "default": "New task"
+        },
+        {
+            "id": "taskPriority",
+            "type": "pickString",
+            "description": "Task priority",
+            "options": [
+                "low",
+                "normal",
+                "high",
+                "critical"
+            ],
+            "default": "normal"
+        },
+        {
+            "id": "contextKey",
+            "type": "promptString",
+            "description": "Context key",
+            "default": "project_name"
+        },
+        {
+            "id": "contextValue",
+            "type": "promptString",
+            "description": "Context value",
+            "default": "value"
+        }
+    ]
+}
