@@ -44,4 +44,34 @@ def tool_manifest() -> Dict[str, Dict[str, Any]]:
     return {tool: describe_tool(tool) for tool in list_tools()}
 
 
-__all__ = ["list_tools", "describe_tool", "tool_manifest"]
+# Import translator functionality
+try:
+    from ghostlink.translator import (
+        ComputationLanguageTranslator,
+        detect_language,
+        translate_code,
+        get_supported_languages,
+        register_translator_opcodes,
+    )
+    _TRANSLATOR_AVAILABLE = True
+except ImportError:
+    _TRANSLATOR_AVAILABLE = False
+
+
+def get_translator():
+    """Get instance of ComputationLanguageTranslator if available."""
+    if _TRANSLATOR_AVAILABLE:
+        return ComputationLanguageTranslator()
+    return None
+
+
+__all__ = [
+    "list_tools",
+    "describe_tool",
+    "tool_manifest",
+    "get_translator",
+    "detect_language",
+    "translate_code",
+    "get_supported_languages",
+    "register_translator_opcodes",
+]
