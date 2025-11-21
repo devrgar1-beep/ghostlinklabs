@@ -16,13 +16,21 @@ def git():
 
 @git.command()
 @click.option('--branch', '-b', help='Branch to pull (default: current)')
-def pull(branch):
+@click.option('--force', '-f', is_flag=True, help='Force operation despite uncommitted changes')
+def pull(branch, force):
     """Automatically pull from remote with conflict resolution."""
     async def _pull():
         auto_git = get_auto_git()
         
         if not auto_git.is_git_repo():
             click.secho("✗ Not a git repository", fg="red")
+            return
+        
+        # Check for uncommitted changes
+        if not force and auto_git.has_uncommitted_changes():
+            click.secho("⚠ Uncommitted changes detected", fg="yellow")
+            click.echo("Your working directory has uncommitted changes.")
+            click.echo("Use --force flag to proceed anyway.")
             return
         
         click.echo(f"Pulling from remote...")
@@ -52,13 +60,21 @@ def pull(branch):
               type=click.Choice(['ours', 'theirs', 'recursive', 'auto']),
               default='auto',
               help='Merge strategy')
-def merge(source_branch, target, strategy):
+@click.option('--force', '-f', is_flag=True, help='Force operation despite uncommitted changes')
+def merge(source_branch, target, strategy, force):
     """Automatically merge branches with conflict resolution."""
     async def _merge():
         auto_git = get_auto_git()
         
         if not auto_git.is_git_repo():
             click.secho("✗ Not a git repository", fg="red")
+            return
+        
+        # Check for uncommitted changes
+        if not force and auto_git.has_uncommitted_changes():
+            click.secho("⚠ Uncommitted changes detected", fg="yellow")
+            click.echo("Your working directory has uncommitted changes.")
+            click.echo("Use --force flag to proceed anyway.")
             return
         
         strategy_enum = MergeStrategy[strategy.upper()]
@@ -84,13 +100,21 @@ def merge(source_branch, target, strategy):
 
 @git.command()
 @click.option('--branch', '-b', help='Branch to sync (default: current)')
-def sync(branch):
+@click.option('--force', '-f', is_flag=True, help='Force operation despite uncommitted changes')
+def sync(branch, force):
     """Full sync: pull and merge with main/master."""
     async def _sync():
         auto_git = get_auto_git()
         
         if not auto_git.is_git_repo():
             click.secho("✗ Not a git repository", fg="red")
+            return
+        
+        # Check for uncommitted changes
+        if not force and auto_git.has_uncommitted_changes():
+            click.secho("⚠ Uncommitted changes detected", fg="yellow")
+            click.echo("Your working directory has uncommitted changes.")
+            click.echo("Use --force flag to proceed anyway.")
             return
         
         click.echo("Syncing repository...")
