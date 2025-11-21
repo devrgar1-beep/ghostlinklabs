@@ -140,7 +140,9 @@ def test():
         lang, confidence = detector.detect_with_confidence(code)
         assert lang == Language.PYTHON
         assert 0.0 <= confidence <= 1.0
-        assert confidence > 0.5
+        # With the improved calculation, confidence is based on pattern matches
+        # relative to expected max (2 matches per pattern)
+        assert confidence > 0.2  # Should have at least some confidence for Python
 
 
 class TestTypeMapper:

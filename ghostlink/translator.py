@@ -214,14 +214,12 @@ class LanguageDetector:
             return Language.UNKNOWN, 0.0
 
         scores: Dict[Language, int] = {}
-        total_patterns = 0
 
         for language, patterns in cls.PATTERNS.items():
             score = 0
             for pattern in patterns:
                 matches = len(re.findall(pattern, code, re.MULTILINE))
                 score += matches
-                total_patterns += len(patterns)
             if score > 0:
                 scores[language] = score
 
@@ -229,7 +227,13 @@ class LanguageDetector:
             return Language.UNKNOWN, 0.0
 
         detected_lang = max(scores.items(), key=lambda x: x[1])[0]
-        confidence = min(scores[detected_lang] / 5.0, 1.0)  # Normalize to 0-1
+
+        # Calculate confidence based on the score relative to pattern count
+        # A reasonable heuristic: confidence increases with more pattern matches
+        # Maximum expected matches per pattern is ~2-3 for typical code
+        max_patterns = len(cls.PATTERNS[detected_lang])
+        expected_max_score = max_patterns * 2  # Assume ~2 matches per pattern for strong confidence
+        confidence = min(scores[detected_lang] / expected_max_score, 1.0)
 
         return detected_lang, confidence
 
