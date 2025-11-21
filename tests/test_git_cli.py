@@ -2,6 +2,7 @@
 import os
 import subprocess
 import tempfile
+from datetime import datetime
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -9,7 +10,7 @@ import pytest
 from click.testing import CliRunner
 
 from ghostlink.git_cli import git
-from ghostlink.auto_git import AutoGit
+from ghostlink.auto_git import AutoGit, GitOperationResult, GitOperationStatus
 
 
 @pytest.fixture
@@ -29,6 +30,17 @@ def temp_git_repo():
         subprocess.run(["git", "commit", "-m", "Initial commit"], cwd=repo_path, check=True, capture_output=True)
         
         yield repo_path
+
+
+def create_success_result(message: str, changes: dict) -> GitOperationResult:
+    """Helper to create a successful GitOperationResult."""
+    return GitOperationResult(
+        status=GitOperationStatus.SUCCESS,
+        message=message,
+        conflicts=[],
+        changes=changes,
+        timestamp=datetime.now()
+    )
 
 
 class TestGitCliUncommittedChanges:
@@ -71,14 +83,9 @@ class TestGitCliUncommittedChanges:
             mock_auto_git.repo_path = temp_git_repo
             
             # Mock successful pull result
-            from ghostlink.auto_git import GitOperationResult, GitOperationStatus
-            from datetime import datetime
-            mock_result = GitOperationResult(
-                status=GitOperationStatus.SUCCESS,
-                message="Successfully pulled main",
-                conflicts=[],
-                changes={"branch": "main"},
-                timestamp=datetime.now()
+            mock_result = create_success_result(
+                "Successfully pulled main",
+                {"branch": "main"}
             )
             
             async def mock_auto_pull(branch):
@@ -132,14 +139,9 @@ class TestGitCliUncommittedChanges:
             mock_auto_git.repo_path = temp_git_repo
             
             # Mock successful merge result
-            from ghostlink.auto_git import GitOperationResult, GitOperationStatus
-            from datetime import datetime
-            mock_result = GitOperationResult(
-                status=GitOperationStatus.SUCCESS,
-                message="Successfully merged feature-branch into main",
-                conflicts=[],
-                changes={"source": "feature-branch", "target": "main"},
-                timestamp=datetime.now()
+            mock_result = create_success_result(
+                "Successfully merged feature-branch into main",
+                {"source": "feature-branch", "target": "main"}
             )
             
             async def mock_auto_merge(source, target, strategy):
@@ -193,14 +195,9 @@ class TestGitCliUncommittedChanges:
             mock_auto_git.repo_path = temp_git_repo
             
             # Mock successful sync result
-            from ghostlink.auto_git import GitOperationResult, GitOperationStatus
-            from datetime import datetime
-            mock_pull_result = GitOperationResult(
-                status=GitOperationStatus.SUCCESS,
-                message="Successfully pulled main",
-                conflicts=[],
-                changes={"branch": "main"},
-                timestamp=datetime.now()
+            mock_pull_result = create_success_result(
+                "Successfully pulled main",
+                {"branch": "main"}
             )
             
             async def mock_sync(branch):
@@ -226,14 +223,9 @@ class TestGitCliUncommittedChanges:
             mock_auto_git.repo_path = temp_git_repo
             
             # Mock successful pull result
-            from ghostlink.auto_git import GitOperationResult, GitOperationStatus
-            from datetime import datetime
-            mock_result = GitOperationResult(
-                status=GitOperationStatus.SUCCESS,
-                message="Successfully pulled main",
-                conflicts=[],
-                changes={"branch": "main"},
-                timestamp=datetime.now()
+            mock_result = create_success_result(
+                "Successfully pulled main",
+                {"branch": "main"}
             )
             
             async def mock_auto_pull(branch):
