@@ -1,0 +1,341 @@
+╔═══════════════════════════════════════════════════════════════════════╗
+║                                                                       ║
+║  GHOSTLINK NEIGHBOR INTEGRATION - DEPLOYMENT COMPLETE                ║
+║                                                                       ║
+╚═══════════════════════════════════════════════════════════════════════╝
+
+## SYSTEM STATUS
+
+✓ GhostLink Core Services: ACTIVE
+  - Controller (PID 24601, Port 7420)
+  - Metrics Endpoint (Port 9108, 30+ series)
+
+✓ Mesh Network Integration: ACTIVE
+  - Peer Mesh Aggregator (PID 24658)
+  - Scanning 7 neighbors every 30s
+  - Protocol: GLP/0
+  - Sampling Rate: 1 Hz
+
+✓ Network Discovery: COMPLETE
+  - Local IP: 192.168.4.41
+  - Subnet: 192.168.4.0/22
+  - Discovered Neighbors: 7 hosts
+
+
+## DISCOVERED NETWORK TOPOLOGY
+
+    Gateway: 192.168.4.1
+    
+    Your System: 192.168.4.41 ← GhostLink Controller + Mesh Aggregator
+    
+    Neighbors:
+      • 192.168.4.2
+      • 192.168.4.22
+      • 192.168.4.23
+      • 192.168.4.24
+      • 192.168.4.42
+      • 192.168.4.45
+      • 192.168.4.46
+
+
+## MESH METRICS
+
+Currently collecting local thermal data and ready to integrate neighbors:
+
+    ghostlink_sigma_fraction{roi="rack.mesh"} = 1.0    (100% good samples)
+    ghostlink_sigma_fraction{roi="rack.core"} = 1.0    (100% good samples)
+    ghostlink_window_samples{roi="rack.mesh"} = 18     (samples in window)
+    
+No remote peers active yet - deploy responders to neighbors to enable.
+
+
+## DEPLOYMENT TO NEIGHBORS
+
+### Quick Deploy (Single Host)
+
+1. Copy responder to neighbor:
+   ```
+   scp gl_peer_responder.py user@192.168.4.22:~/
+   ```
+
+2. Run on neighbor:
+   ```
+   ssh user@192.168.4.22
+   python3 gl_peer_responder.py
+   ```
+
+3. Verify integration (back on this host):
+   ```
+   python3 gl_network_status.py
+   ```
+
+### Batch Deploy (All Neighbors)
+
+Use the provided batch deployment script:
+
+```bash
+#!/bin/bash
+NEIGHBORS="192.168.4.2 192.168.4.22 192.168.4.23 192.168.4.24 \
+           192.168.4.42 192.168.4.45 192.168.4.46"
+
+for IP in $NEIGHBORS; do
+    echo "→ Deploying to $IP..."
+    scp -o ConnectTimeout=2 gl_peer_responder.py user@$IP:~/ 2>/dev/null && \
+    ssh -o ConnectTimeout=2 user@$IP \
+        'nohup python3 ~/gl_peer_responder.py > /tmp/gl.log 2>&1 &' \
+        2>/dev/null &
+done
+
+wait
+echo "✓ Deployment complete. Waiting for discovery..."
+sleep 35
+python3 gl_network_status.py
+```
+
+### Requirements for Neighbors
+
+Minimal:
+- Python 3.6+
+- Port 7422 accessible from 192.168.4.41
+- `/sys/class/thermal/` or psutil package (optional)
+
+Optional: Install psutil for better thermal reading
+```
+pip3 install psutil
+```
+
+
+## MONITORING & VERIFICATION
+
+### Live Status Dashboard
+```
+python3 gl_integration_summary.py
+```
+
+### Detailed Network Status
+```
+python3 gl_network_status.py
+```
+
+### View Metrics
+```
+curl -s http://localhost:9108/metrics | grep ghostlink_mesh
+```
+
+### Live Logs
+```
+# Attach to tmux session
+tmux attach -t ghostlink
+
+# Navigate between windows:
+#   Ctrl+b, n  - Next window
+#   Ctrl+b, p  - Previous window
+#   Ctrl+b, 0  - Controller window
+#   Ctrl+b, 1  - Mesh window
+
+# Or tail logs
+tail -f .logs/mesh.log
+tail -f .logs/controller.log
+```
+
+### Check Running Services
+```
+./run_venv.sh status
+```
+
+
+## ARCHITECTURE OVERVIEW
+
+┌────────────────────────────────────────────────────────────────┐
+│                    THIS HOST (192.168.4.41)                    │
+│                                                                │
+│  ┌──────────────────┐         ┌──────────────────┐           │
+│  │ gl_controller    │◄────────┤ gl_peer_mesh     │           │
+│  │   Port 7420      │         │  (Aggregator)    │           │
+│  └────────┬─────────┘         └────────┬─────────┘           │
+│           │                             │                      │
+│           │ publishes                   │ queries neighbors   │
+│           ▼                             ▼                      │
+│  ┌──────────────────┐         ┌──────────────────┐           │
+│  │ Prometheus       │         │  Network Scan    │           │
+│  │   Port 9108      │         │  7 neighbors     │           │
+│  └──────────────────┘         └──────────────────┘           │
+└────────────────────────────────────────────────────────────────┘
+                                         │
+                    ┌────────────────────┼────────────────────┐
+                    │                    │                    │
+        ┌───────────▼──────┐   ┌────────▼─────┐   ┌─────────▼──────┐
+        │ 192.168.4.2      │   │ 192.168.4.22 │   │ 192.168.4.23   │
+        │                  │   │              │   │                │
+        │ gl_peer_responder│   │  (deploy)    │   │   (deploy)     │
+        │   Port 7422      │   │              │   │                │
+        └──────────────────┘   └──────────────┘   └────────────────┘
+                                    ... etc ...
+
+
+## DATA FLOW
+
+1. Local thermal sensors → gl_peer_mesh → gl_controller
+2. gl_peer_mesh scans neighbors every 30s
+3. When neighbors have responder running:
+   - Query neighbor thermal data
+   - Aggregate with local data
+   - Calculate mesh-wide metrics (avg, max)
+   - Send to controller
+4. Controller publishes to Prometheus endpoint
+5. Metrics available for monitoring/alerting
+
+
+## MESH METRICS REFERENCE
+
+### Zone: rack.mesh (Multi-host aggregate)
+- `ghostlink_sigma_fraction{roi="rack.mesh"}` - Quality metric (0-1)
+- `ghostlink_window_samples{roi="rack.mesh"}` - Samples in current window
+- `ghostlink_mesh_temp_avg` - Average temperature across mesh
+- `ghostlink_mesh_temp_max` - Maximum temperature in mesh
+- `ghostlink_peer_count` - Active peer count
+
+### Zone: rack.core (Local only)
+- `ghostlink_sigma_fraction{roi="rack.core"}` - Local quality
+- `ghostlink_window_samples{roi="rack.core"}` - Local samples
+- `ghostlink_cpu_temp_c{zone="core"}` - Local CPU temperature
+
+
+## MANAGEMENT COMMANDS
+
+```bash
+# Start mesh network
+./run_venv.sh mesh
+
+# Start responder (for deploying on neighbors)
+./run_venv.sh responder
+
+# Check system status
+./run_venv.sh status
+
+# View all logs
+./run_venv.sh logs
+
+# Stop all services
+./run_venv.sh down
+
+# Restart everything
+./run_venv.sh down && ./run_venv.sh up && ./run_venv.sh mesh
+```
+
+
+## FILES CREATED
+
+Core Integration:
+- `gl_peer_mesh.py` - Mesh aggregator (runs on this host)
+- `gl_peer_responder.py` - Peer responder (deploy to neighbors)
+
+Monitoring Tools:
+- `gl_network_status.py` - Detailed network scan and status
+- `gl_integration_summary.py` - Quick status overview
+
+Documentation:
+- `NEIGHBOR_INTEGRATION.md` - Full integration guide
+- `INTEGRATION_SUMMARY.txt` - This file
+
+
+## NEXT STEPS
+
+1. **Test Single Neighbor**
+   - Pick one neighbor (e.g., 192.168.4.22)
+   - Deploy gl_peer_responder.py
+   - Verify it appears in network status
+
+2. **Verify Metrics**
+   - Check `ghostlink_peer_count` increases
+   - Monitor `ghostlink_mesh_temp_avg`
+   - Observe data quality (sigma)
+
+3. **Scale Deployment**
+   - Deploy to remaining neighbors
+   - Monitor mesh stability
+   - Tune discovery interval if needed
+
+4. **Set Up Alerting**
+   - Alert on `ghostlink_mesh_temp_max > threshold`
+   - Alert on `ghostlink_peer_count` drops
+   - Alert on `ghostlink_sigma_fraction < 0.95`
+
+
+## TROUBLESHOOTING
+
+### No peers discovered after deployment
+```bash
+# Verify responder is running on neighbor
+ssh user@192.168.4.22 'ps aux | grep gl_peer_responder'
+
+# Test manual connection
+echo '{"type":"ping","proto":"glp/0"}' | nc -w2 192.168.4.22 7422
+
+# Check mesh logs
+grep "Discovery" .logs/mesh.log
+```
+
+### Mesh not collecting data
+```bash
+# Verify controller is running
+ss -ltn | grep 7420
+
+# Check mesh process
+ps aux | grep gl_peer_mesh
+
+# Restart if needed
+./run_venv.sh down
+./run_venv.sh up
+./run_venv.sh mesh
+```
+
+### High network traffic
+Edit `gl_peer_mesh.py`:
+- Change sampling interval: `time.sleep(1)` → `time.sleep(5)`
+- Change discovery interval: `MESH_DISCOVERY_INTERVAL = 30` → `60`
+
+
+## PERFORMANCE CHARACTERISTICS
+
+Current Configuration:
+- Sampling: 1 Hz (1 sample/second)
+- Discovery: 30s interval
+- Timeout: 1s per neighbor probe
+- Network traffic: ~500 bytes/sec per active peer
+
+Expected Resource Usage:
+- CPU: <1% (idle), ~5% (during discovery)
+- Memory: ~15MB total
+- Network: ~5 KB/s with 10 active peers
+
+
+## SECURITY NOTES
+
+⚠ Current Implementation:
+- No authentication
+- No encryption
+- Read-only data access
+- Local network only
+
+This is suitable for:
+- Trusted internal networks
+- Lab/development environments
+- Behind firewall
+
+For production, consider adding:
+- API key authentication
+- TLS/SSL encryption
+- Rate limiting
+- IP whitelisting
+
+
+═══════════════════════════════════════════════════════════════════
+
+Integration complete! System is ready to accept neighbor connections.
+
+To see current status:  python3 gl_integration_summary.py
+For detailed scan:      python3 gl_network_status.py
+Full documentation:     cat NEIGHBOR_INTEGRATION.md
+
+═══════════════════════════════════════════════════════════════════
