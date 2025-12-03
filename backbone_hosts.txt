@@ -1,0 +1,6 @@
+# Backbone Dell R630 hosts to connect
+# One host per line: hostname or IP
+# Example:
+# r630-01.backbone.local
+# 10.10.0.21
+# 10.10.0.22

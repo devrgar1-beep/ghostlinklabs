@@ -1,0 +1,2 @@
+# Managed neighbors list for mesh discovery
+# One IP per line

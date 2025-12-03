@@ -1,1 +1,1 @@
-"""GhostLink AI Ecosystem"""
+# GhostLink package initialization
