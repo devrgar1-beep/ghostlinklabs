@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 import socket, json, time, glob
 
 HOST = os.getenv("HOST","127.0.0.1")

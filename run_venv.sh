@@ -60,7 +60,7 @@ bg_up() {
 }
 
 bg_down() {
-  for name in controller peer; do
+  for name in controller peer mesh responder; do
     if [[ -f "$RUN_DIR/${name}.pid" ]]; then
       pid=$(cat "$RUN_DIR/${name}.pid")
       if kill -0 $pid 2>/dev/null; then
@@ -90,6 +90,50 @@ logs() {
   tail -f "$LOG_DIR"/controller.log "$LOG_DIR"/peer.log
 }
 
+mesh() {
+  ensure_venv
+  if command -v tmux >/dev/null 2>&1; then
+    if ! tmux has-session -t ghostlink 2>/dev/null; then
+      echo "[!] start the main session first: $0 up"
+      exit 1
+    fi
+    if tmux list-windows -t ghostlink | grep -q "mesh"; then
+      echo "[i] mesh window already exists"
+    else
+      tmux new-window -t ghostlink -n mesh "source '$VENV_DIR/bin/activate'; python gl_peer_mesh.py | tee '$LOG_DIR/mesh.log'"
+      echo "[*] mesh started in tmux"
+    fi
+  else
+    if [[ -f "$RUN_DIR/mesh.pid" ]] && kill -0 $(cat "$RUN_DIR/mesh.pid") 2>/dev/null; then
+      echo "[i] mesh already running (pid $(cat "$RUN_DIR/mesh.pid"))"
+    else
+      nohup "$VENV_DIR/bin/python" "$APP_DIR/gl_peer_mesh.py" >"$LOG_DIR/mesh.log" 2>&1 &
+      echo $! > "$RUN_DIR/mesh.pid"
+      echo "[*] mesh started (pid $(cat "$RUN_DIR/mesh.pid"))"
+    fi
+  fi
+}
+
+responder() {
+  ensure_venv
+  if command -v tmux >/dev/null 2>&1; then
+    if tmux has-session -t ghostlink-responder 2>/dev/null; then
+      echo "[i] responder session already running"
+    else
+      tmux new-session -d -s ghostlink-responder -n responder "source '$VENV_DIR/bin/activate'; python gl_peer_responder.py | tee '$LOG_DIR/responder.log'"
+      echo "[*] responder started in tmux session 'ghostlink-responder'"
+    fi
+  else
+    if [[ -f "$RUN_DIR/responder.pid" ]] && kill -0 $(cat "$RUN_DIR/responder.pid") 2>/dev/null; then
+      echo "[i] responder already running (pid $(cat "$RUN_DIR/responder.pid"))"
+    else
+      nohup "$VENV_DIR/bin/python" "$APP_DIR/gl_peer_responder.py" >"$LOG_DIR/responder.log" 2>&1 &
+      echo $! > "$RUN_DIR/responder.pid"
+      echo "[*] responder started (pid $(cat "$RUN_DIR/responder.pid"))"
+    fi
+  fi
+}
+
 bridge() {
   ensure_venv
   if [[ -z "${OPENAI_API_KEY:-}" ]]; then
@@ -116,14 +160,18 @@ case "$cmd" in
   down)      tmux_down; bg_down ;;
   status)    status ;;
   logs)      logs ;;
+  mesh)      mesh ;;
+  responder) responder ;;
   bridge)    bridge ;;
   *)
-    echo "Usage: $0 {up|bg-up|down|status|logs|bridge}"
-    echo "  up      - start in tmux (recommended)"
-    echo "  bg-up   - start as background processes (no tmux)"
-    echo "  down    - stop everything"
-    echo "  status  - show sockets and last log lines"
-    echo "  logs    - tail logs"
-    echo "  bridge  - start OpenAI bridge (requires OPENAI_API_KEY)"
+    echo "Usage: $0 {up|bg-up|down|status|logs|mesh|responder|bridge}"
+    echo "  up        - start in tmux (recommended)"
+    echo "  bg-up     - start as background processes (no tmux)"
+    echo "  down      - stop everything"
+    echo "  status    - show sockets and last log lines"
+    echo "  logs      - tail logs"
+    echo "  mesh      - start peer mesh network integration"
+    echo "  responder - start peer responder (for remote hosts)"
+    echo "  bridge    - start OpenAI bridge (requires OPENAI_API_KEY)"
     exit 2 ;;
 esac
