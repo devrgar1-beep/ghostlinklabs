@@ -6,7 +6,7 @@ Demonstrates how to create custom bots
 import asyncio
 from typing import List
 
-from ai_bots.core import AIBot, AccessLevel, BotContext
+from ai_bots.core import AccessLevel, AIBot, BotContext
 
 
 class CalculatorBot(AIBot):

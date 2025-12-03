@@ -135,7 +135,7 @@ def print_lattice_connections():
     
     for i, comp1 in enumerate(components):
         print(f"{comp1[:10]:<10}", end="")
-        for j, comp2 in enumerate(components):
+        for j, _comp2 in enumerate(components):
             if i == j:
                 print("   ---  ", end=" ")
             else:
@@ -159,7 +159,7 @@ def print_statistics():
         print("\n" + "=" * 70)
         print("LATTICE STATISTICS")
         print("=" * 70)
-        print(f"\nConfiguration:")
+        print("\nConfiguration:")
         print(f"  • Auto-healing: {config.get('auto_healing', 'N/A')}")
         print(f"  • Max route hops: {config.get('max_route_hops', 'N/A')}")
         print(f"  • Health check interval: {config.get('health_check_interval', 'N/A')}s")

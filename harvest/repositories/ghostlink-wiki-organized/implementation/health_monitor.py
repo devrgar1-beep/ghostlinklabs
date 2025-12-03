@@ -14,7 +14,7 @@ from pathlib import Path
 import platform
 import shutil
 import sys
-from typing import Any, Optional
+from typing import Any
 
 import psutil
 
@@ -38,7 +38,7 @@ class HealthStatus:
 class HealthMonitor:
     """Monitor system health and detect issues."""
 
-    def __init__(self, workspace_root: Optional[Path] = None):
+    def __init__(self, workspace_root: Path | None = None):
         """Initialize health monitor.
 
         Args:
@@ -47,7 +47,7 @@ class HealthMonitor:
         self.workspace_root = workspace_root or Path.cwd()
         self.check_interval = 60  # seconds
         self.monitoring = False
-        self._monitor_task: Optional[asyncio.Task] = None
+        self._monitor_task: asyncio.Task | None = None
 
     async def check_health(self) -> HealthStatus:
         """Perform comprehensive health check.
@@ -312,7 +312,7 @@ class HealthMonitor:
 
 
 # Global health monitor instance
-_health_monitor: Optional[HealthMonitor] = None
+_health_monitor: HealthMonitor | None = None
 
 
 def get_health_monitor() -> HealthMonitor:

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import json
-import sys
-import re
 from pathlib import Path
+import re
+import sys
 
 # Script to toggle YOLO / master auto-approve flags for installed extensions in VS Code settings
 # Usage:
@@ -30,7 +30,7 @@ if not extensions_dir.exists():
 settings = {}
 if settings_path.exists():
     try:
-        with open(settings_path, 'r', encoding='utf-8') as f:
+        with open(settings_path, encoding='utf-8') as f:
             settings = json.load(f)
     except Exception:
         settings = {}
@@ -41,7 +41,7 @@ for ext in extensions_dir.iterdir():
     if not pkg.exists():
         continue
     try:
-        with open(pkg, 'r', encoding='utf-8') as f:
+        with open(pkg, encoding='utf-8') as f:
             pkg_json = json.load(f)
     except Exception:
         continue

@@ -2,8 +2,11 @@
 # Can also be used in a Jupyter Notebook (.ipynb) for interactive visualization.
 # This script simulates and analyzes self-model dynamics for GhostLink.
 
-import itertools, random, pandas as pd, matplotlib.pyplot as plt
-import numpy as np
+import itertools
+import random
+
+import matplotlib.pyplot as plt
+import pandas as pd
 
 # -----------------------------------------------------------------------------
 # Utility functions from the reflection harness.
@@ -68,7 +71,7 @@ def run_experiment(depth_levels=(1,3,5), boundary_flags=(True,False), noise_leve
         for t in range(cycles):
             # Introduce random noise into the state to simulate entropy effects.
             noisy = list(state)
-            for i in range(int(len(noisy)*N)):
+            for _i in range(int(len(noisy)*N)):
                 idx = rng.randrange(len(noisy))
                 noisy[idx] = random.choice("abcdefghijklmnopqrstuvwxyz")
             state = "".join(noisy)
@@ -78,7 +81,7 @@ def run_experiment(depth_levels=(1,3,5), boundary_flags=(True,False), noise_leve
             coh, nov, lift = metrics(prev_summary, cur_summary)
 
             # Store experimental results for this step.
-            results.append(dict(depth=D, boundary=B, noise=N, t=t, coherence=coh, novelty=nov, lift=lift))
+            results.append({"depth": D, "boundary": B, "noise": N, "t": t, "coherence": coh, "novelty": nov, "lift": lift})
             prev_summary = cur_summary
 
     # Compile results into a DataFrame and save for later analysis.

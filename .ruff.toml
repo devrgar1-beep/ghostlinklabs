@@ -5,28 +5,6 @@
 line-length = 100
 target-version = "py38"
 
-# Select ESSENTIAL rules only (reduced from 40+ categories to 6)
-select = [
-    "E",   # pycodestyle errors (PEP 8 violations)
-    "F",   # pyflakes (undefined names, unused imports)
-    "I",   # isort (import sorting)
-    "B",   # bugbear (important bug patterns)
-    "UP",  # pyupgrade (modernize Python code)
-    "C4",  # comprehensions (simplify list/dict comprehensions)
-]
-
-# Ignore common false positives and overly strict rules
-ignore = [
-    "E501",    # Line too long (Black handles this)
-    "E402",    # Module level import not at top (sometimes necessary)
-    "B008",    # Function call in argument defaults (FastAPI uses this)
-    "B904",    # Use raise from to specify exception cause (can be pedantic)
-]
-
-# Allow autofix for all enabled rules
-fixable = ["ALL"]
-unfixable = []
-
 # Exclude common directories
 exclude = [
     ".bzr",
@@ -57,7 +35,30 @@ exclude = [
     "audits",
 ]
 
-[per-file-ignores]
+[lint]
+# Select ESSENTIAL rules only (reduced from 40+ categories to 6)
+select = [
+    "E",   # pycodestyle errors (PEP 8 violations)
+    "F",   # pyflakes (undefined names, unused imports)
+    "I",   # isort (import sorting)
+    "B",   # bugbear (important bug patterns)
+    "UP",  # pyupgrade (modernize Python code)
+    "C4",  # comprehensions (simplify list/dict comprehensions)
+]
+
+# Ignore common false positives and overly strict rules
+ignore = [
+    "E501",    # Line too long (Black handles this)
+    "E402",    # Module level import not at top (sometimes necessary)
+    "B008",    # Function call in argument defaults (FastAPI uses this)
+    "B904",    # Use raise from to specify exception cause (can be pedantic)
+]
+
+# Allow autofix for all enabled rules
+fixable = ["ALL"]
+unfixable = []
+
+[lint.per-file-ignores]
 # Allow certain things in specific file types
 "__init__.py" = ["F401"]  # Allow unused imports in __init__.py
 "tests/**/*" = ["B011", "S101"]  # Allow assert in tests
@@ -67,11 +68,11 @@ exclude = [
 "setup.py" = ["T201"]  # Allow print in setup
 "conftest.py" = ["F401"]  # Allow unused imports in pytest config
 
-[isort]
+[lint.isort]
 known-first-party = ["ghostlink"]
 force-sort-within-sections = true
 split-on-trailing-comma = true
 
-[mccabe]
+[lint.mccabe]
 # Set maximum cyclomatic complexity to 15 (reasonable)
 max-complexity = 15

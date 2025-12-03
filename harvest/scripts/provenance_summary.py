@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Summarize the provenance index into per-file counts and top terms."""
-import json
 from collections import Counter, defaultdict
+import json
 
 PROV_PATH = '/Users/ghostlink/ghostlink-wiki-organized/ghostlink_provenance_index.json'
 OUT_SUMMARY = '/Users/ghostlink/ghostlink-wiki-organized/ghostlink_provenance_summary.json'
 
-with open(PROV_PATH, 'r', encoding='utf-8') as f:
+with open(PROV_PATH, encoding='utf-8') as f:
     prov = json.load(f)
 
 matches = prov.get('matches', [])

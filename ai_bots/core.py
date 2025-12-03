@@ -3,8 +3,8 @@
 GhostLink AI Bot Framework
 Integrated AI agents with hotkey and quick-command root access
 """
-import asyncio
 from abc import ABC, abstractmethod
+import asyncio
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional
@@ -258,8 +258,8 @@ class SystemBot(AIBot):
         lines = int(args[0]) if args else 50
         service = args[1] if len(args) > 1 else "ghostlink"
         
-        import subprocess
         from pathlib import Path
+        import subprocess
         
         try:
             # Try Docker Compose logs first
@@ -293,7 +293,7 @@ class SystemBot(AIBot):
             
             for log_path in log_paths:
                 if log_path.exists():
-                    with open(log_path, 'r') as f:
+                    with open(log_path) as f:
                         all_lines = f.readlines()
                         return ''.join(all_lines[-lines:])
             

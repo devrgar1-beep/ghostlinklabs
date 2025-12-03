@@ -161,7 +161,7 @@ def predictive_lift(sim, steps=200, seed=0):
         base = [nb_sig]
         full = [nb_sig, sim.rho[i, j], sim.kappa[i, j], sim.ancestry[i, j], coh, pain, H]
         # advance one step (copy sim)
-        prev = sim.state.copy()
+        sim.state.copy()
         sim.step(allow_spawn=True)
         label = 1 if sim.state[i, j] == SIGMA else 0
         X_base.append(base)

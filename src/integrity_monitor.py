@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
-import argparse, json, hashlib, os, sys, glob
+import argparse
+import glob
+import hashlib
+import json
+import os
+import sys
+
+
 def sha256_path(path):
     h = hashlib.sha256()
     with open(path, "rb") as f:
@@ -14,7 +21,7 @@ def hash_dir(path):
     return hashlib.sha256(("\n".join(entries)).encode()).hexdigest()
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--manifest", required=True); ap.add_argument("--report", required=True); args = ap.parse_args()
-    manifest = json.loads(open(args.manifest,"r",encoding="utf-8").read())
+    manifest = json.loads(open(args.manifest,encoding="utf-8").read())
     checks, mismatches = [], 0
     for entry in manifest.get("hashes", []):
         p, et = entry["path"], entry.get("type","file")

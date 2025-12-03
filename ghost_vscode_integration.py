@@ -4,13 +4,15 @@ GhostLink VS Code Integration
 Links the Ghost Agent (Brain of AI) with VS Code HTTP API
 """
 
-import requests
 import json
+import os
 import subprocess
 import sys
-import os
 import time
-from typing import Dict, Any, Optional, List
+from typing import Any, Dict, List
+
+import requests
+
 
 class GhostVSCodeIntegration:
     """Integration between Ghost Agent and VS Code HTTP API"""
@@ -26,7 +28,7 @@ class GhostVSCodeIntegration:
         try:
             response = requests.get(f"{self.vscode_api_url}/health", timeout=5)
             return response.status_code == 200
-        except:
+        except Exception:
             return False
 
     def start_vscode_api(self) -> bool:

@@ -5,15 +5,15 @@ Provides HTTP endpoints for VS Code integration with full experimental autonomy
 """
 
 import http.server
-import socketserver
 import json
-import threading
-import time
+import os
+import socketserver
 import subprocess
 import sys
-import os
-from urllib.parse import urlparse, parse_qs
-from datetime import datetime
+import threading
+import time
+from urllib.parse import urlparse
+
 
 class EnhancedGhostLinkAPIHandler(http.server.BaseHTTPRequestHandler):
     def __init__(self, *args, project_root=None, **kwargs):

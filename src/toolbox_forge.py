@@ -4,14 +4,13 @@ GhostLink Toolbox Forge
 A unified command center and toolkit for all GhostLink operations
 """
 
-import os
-import sys
-import json
-import subprocess
 import argparse
-from pathlib import Path
-from typing import Optional, List, Dict, Any
 from datetime import datetime
+import json
+from pathlib import Path
+import subprocess
+import sys
+from typing import List, Optional
 
 GHOSTLINK_ROOT = Path(__file__).parent.absolute()
 
@@ -27,7 +26,7 @@ class ToolboxForge:
     def load_config(self):
         """Load forge configuration"""
         if self.config_file.exists():
-            with open(self.config_file, 'r') as f:
+            with open(self.config_file) as f:
                 self.config = json.load(f)
         else:
             self.config = {
@@ -131,7 +130,7 @@ class ToolboxForge:
     def start_server(self, port: int = 8001, host: str = "127.0.0.1"):
         """Start FastAPI server"""
         print(f"🚀 Starting FastAPI server on {host}:{port}...\n")
-        result = self.run_command([
+        self.run_command([
             sys.executable, "-m", "uvicorn", "ghostlink.main:app",
             "--host", host, "--port", str(port), "--reload"
         ])
@@ -191,7 +190,7 @@ class ToolboxForge:
     def link_stop(self):
         """Stop Link orchestrator"""
         print("🛑 Stopping Link Orchestrator...\n")
-        result = self.run_command([sys.executable, "-m", "ghostlink.link_cli", "stop"])
+        self.run_command([sys.executable, "-m", "ghostlink.link_cli", "stop"])
         self.log_action("link_stop", "stopped")
 
     def link_status(self):
@@ -231,7 +230,7 @@ class ToolboxForge:
 
         # Install Python package in editable mode
         print("\n1. Installing GhostLink package...")
-        result = self.run_command([sys.executable, "-m", "pip", "install", "-e", "."])
+        self.run_command([sys.executable, "-m", "pip", "install", "-e", "."])
 
         # Install dependencies
         print("\n2. Installing dependencies...")
@@ -313,7 +312,7 @@ class ToolboxForge:
             client = GroqClient()
             print(f"✅ API Key: {client.api_key[:20]}...")
             print(f"✅ Model: {client.model}")
-            print(f"✅ Purpose: Internal component coordination")
+            print("✅ Purpose: Internal component coordination")
             models = client.list_models()
             print(f"✅ Available models: {len(models)}")
             self.log_action("groq_status", "success", f"{len(models)} models available")
@@ -362,7 +361,7 @@ class ToolboxForge:
         """Start lattice in interactive mode"""
         print("🌐 Starting GhostLink Lattice...\n")
         print("Note: Run 'python ghostlink_lattice.py --interactive' for full interactive mode")
-        result = self.run_command([sys.executable, "ghostlink_lattice.py", "--demo"])
+        self.run_command([sys.executable, "ghostlink_lattice.py", "--demo"])
         self.log_action("lattice_start", "completed")
 
     # ============================================================
@@ -381,25 +380,25 @@ class ToolboxForge:
     def vscode_extensions(self):
         """Install VS Code extensions"""
         print("📦 Installing VS Code extensions...\n")
-        result = self.run_command([sys.executable, "vscode_integration.py", "--extensions"])
+        self.run_command([sys.executable, "vscode_integration.py", "--extensions"])
         self.log_action("vscode_extensions", "completed")
 
     def vscode_list(self):
         """List installed VS Code extensions"""
         print("📋 Installed VS Code extensions:\n")
-        result = self.run_command([sys.executable, "vscode_integration.py", "--list"])
+        self.run_command([sys.executable, "vscode_integration.py", "--list"])
         self.log_action("vscode_list", "completed")
 
     def github_tools_download(self):
         """Download tools from GitHub"""
         print("📥 Downloading GitHub tools...\n")
-        result = self.run_command([sys.executable, "github_tools.py", "--download"])
+        self.run_command([sys.executable, "github_tools.py", "--download"])
         self.log_action("github_tools", "completed")
 
     def github_tools_list(self):
         """List downloaded GitHub tools"""
         print("📦 Downloaded GitHub tools:\n")
-        result = self.run_command([sys.executable, "github_tools.py", "--list"])
+        self.run_command([sys.executable, "github_tools.py", "--list"])
         self.log_action("github_tools_list", "completed")
 
     # ============================================================

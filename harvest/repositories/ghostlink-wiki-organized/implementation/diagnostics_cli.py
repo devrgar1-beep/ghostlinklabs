@@ -99,7 +99,7 @@ def errors(output):
             click.echo(f"  {severity}: {count}")
 
     if output:
-        report = troubleshooter.export_report(Path(output))
+        troubleshooter.export_report(Path(output))
         click.secho(f"\n✓ Full error report exported to {output}", fg="green")
     elif troubleshooter.error_history:
         click.echo("\nRecent Errors:")

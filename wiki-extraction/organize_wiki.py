@@ -5,13 +5,12 @@ Restructures extracted wiki content into semantic categories.
 Generates indexes, removes node_modules noise, integrates with macOS.
 """
 
-import hashlib
+from collections import defaultdict
 import json
 import logging
-import shutil
 from pathlib import Path
-from typing import Dict, List, Set
-from collections import defaultdict
+import shutil
+from typing import Dict
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)

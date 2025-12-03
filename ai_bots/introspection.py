@@ -4,11 +4,11 @@ AI Internal Thought Processing and System Awareness
 Metacognitive layer for AI agents to reflect on their reasoning
 """
 import asyncio
-import os
-import time
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
+import os
+import time
 from typing import Any, Dict, List, Optional
 
 import httpx

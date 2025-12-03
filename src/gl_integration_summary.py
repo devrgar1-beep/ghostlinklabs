@@ -3,8 +3,8 @@
 
 Quick overview of the mesh network integration status.
 """
-import subprocess
 import socket
+import subprocess
 
 
 def check_service(port: int) -> bool:

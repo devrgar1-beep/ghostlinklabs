@@ -5,19 +5,15 @@ Complete Awareness Through Reflective Consciousness
 """
 
 import asyncio
-import inspect
-import json
-import os
-import re
-import sys
-import threading
-import time
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from datetime import datetime
-from pathlib import Path
-from typing import Dict, List, Any, Optional, Callable, Set
-from concurrent.futures import ThreadPoolExecutor
 import gc
+import json
+from pathlib import Path
+import re
+import threading
+from typing import Any, Callable, Dict, List
 
 # Optional imports for enhanced awareness
 try:
@@ -307,7 +303,7 @@ class MirrorComprehensionCore:
 
         # Check triad synergy consistency
         triad = self.awareness.triad_synergy
-        if triad.get('python_core', {}).get('active') != True:
+        if not triad.get('python_core', {}).get('active'):
             distortions.append({
                 'type': 'python_core_inactive',
                 'severity': 'critical'

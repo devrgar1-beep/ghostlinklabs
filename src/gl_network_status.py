@@ -3,12 +3,10 @@
 
 Displays the current state of GhostLink mesh integration with discovered neighbors.
 """
+from datetime import datetime
 import json
-import os
 import socket
 import subprocess
-import time
-from datetime import datetime
 
 
 def get_local_ip() -> str:

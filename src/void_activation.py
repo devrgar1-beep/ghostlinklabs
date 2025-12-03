@@ -224,8 +224,9 @@ class VoidActivation:
 
     def reduce_background_processes(self, whitelist=None):
         """Attempt to reduce non-essential background processes to maximize performance."""
-        import psutil
         import os
+
+        import psutil
         if whitelist is None:
             whitelist = ["explorer.exe", "python.exe", "powershell.exe", "System", "Idle"]
         killed = []
@@ -276,11 +277,11 @@ class VoidActivation:
 
     def audit_all_files(self, root_path: str = "C:/"):
         """Recursively audit every file on the PC, logging metadata for each."""
-        import os
         import hashlib
+        import os
         audited = []
         logger.info(f"🔍 Starting full file audit at {root_path} ...")
-        for dirpath, dirnames, filenames in os.walk(root_path):
+        for dirpath, _dirnames, filenames in os.walk(root_path):
             for fname in filenames:
                 try:
                     fpath = os.path.join(dirpath, fname)

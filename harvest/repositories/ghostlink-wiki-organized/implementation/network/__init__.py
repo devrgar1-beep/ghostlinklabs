@@ -7,14 +7,14 @@ networks (low/medium/high) serving as backup to fiber optic main network.
 from __future__ import annotations
 
 import asyncio
+from dataclasses import dataclass, field
+from datetime import datetime
+from enum import Enum
 import logging
 import queue
 import struct
 import threading
 import time
-from dataclasses import dataclass, field
-from datetime import datetime
-from enum import Enum
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
@@ -167,7 +167,7 @@ class CANController:
             logger.error(f"Failed to queue CAN frame: {e}")
             return False
 
-    async def receive_frame(self, timeout: float = 1.0) -> Optional[CANFrame]:
+    async def receive_frame(self, timeout: float = 1.0) -> CANFrame | None:
         """Receive a CAN frame."""
         try:
             # Try to get frame from queue
@@ -297,10 +297,10 @@ class NetworkManager:
     """Manages all network interfaces with automatic failover."""
 
     def __init__(self):
-        self.networks: Dict[NetworkType, Any] = {}
+        self.networks: dict[NetworkType, Any] = {}
         self.active_network = NetworkType.FIBER_MAIN
         self.backup_networks = [NetworkType.CAN_HIGH, NetworkType.CAN_MEDIUM, NetworkType.CAN_LOW]
-        self.message_handlers: Dict[CANMessageType, List[Callable]] = {}
+        self.message_handlers: dict[CANMessageType, list[Callable]] = {}
         self.running = False
 
     async def initialize(self):
@@ -469,7 +469,7 @@ class NetworkManager:
 
 
 # Global network manager instance
-_network_manager: Optional[NetworkManager] = None
+_network_manager: NetworkManager | None = None
 
 
 def get_network_manager() -> NetworkManager:

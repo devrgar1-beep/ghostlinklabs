@@ -6,9 +6,8 @@ Usage:
 """
 from __future__ import annotations
 
-import sys
-from . import policy
 from ..config import config
+from . import policy
 
 
 def print_setting(name: str, value: bool | str, description: str) -> None:

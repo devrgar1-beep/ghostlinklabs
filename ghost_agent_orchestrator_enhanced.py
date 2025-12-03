@@ -4,15 +4,16 @@ Ghost Agent - Enhanced Master Orchestrator with YOLO Mode
 Real-time interface between VS Code and GhostLink AI ecosystem with full experimental autonomy
 """
 
-import subprocess
-import json
-import sys
-import os
-import time
-import random
-import threading
 from datetime import datetime
-from typing import Dict, Any, Optional
+import json
+import os
+import random
+import subprocess
+import sys
+import threading
+import time
+from typing import Any, Dict
+
 
 class EnhancedGhostAgentOrchestrator:
     """Enhanced master orchestrator with auto-approve, experimental, and YOLO capabilities"""
@@ -40,7 +41,7 @@ class EnhancedGhostAgentOrchestrator:
     def load_config(self) -> Dict[str, Any]:
         """Load enhanced configuration"""
         try:
-            with open("ghostlink_config.json", 'r') as f:
+            with open("ghostlink_config.json") as f:
                 return json.load(f)
         except Exception as e:
             print(f"Config load error: {e}")

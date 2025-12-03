@@ -5,14 +5,13 @@ Supports 1G → 400G network classes with automatic optimization.
 """
 from __future__ import annotations
 
-import json
-import os
-import socket
-import subprocess
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
+import os
 from pathlib import Path
+import socket
+import subprocess
 from typing import Any
 
 from ..config import config

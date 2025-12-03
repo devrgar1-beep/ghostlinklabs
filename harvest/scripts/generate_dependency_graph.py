@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate a simple dependency graph (DOT) from Python imports in selected roots."""
-import os
 import ast
+import os
 from pathlib import Path
 
 ROOTS = [
@@ -30,7 +30,7 @@ for root in ROOTS:
                     if node.module:
                         edges.add((module_name, node.module.split('.')[0]))
                         nodes.add(node.module.split('.')[0])
-        except Exception as e:
+        except Exception:
             continue
 
 # Write DOT

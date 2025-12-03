@@ -6,10 +6,9 @@ and coordinate GhostLink operations.
 """
 from __future__ import annotations
 
-import json
-from typing import Any, Optional
+from typing import Any
 
-from .link import Link, TaskPriority, get_link
+from .link import TaskPriority, get_link
 
 
 class LinkAgent:
@@ -27,7 +26,7 @@ class LinkAgent:
         self.link = get_link()
         self.conversation_context: dict[str, Any] = {}
         
-    async def invoke(self, message: str, context: Optional[dict[str, Any]] = None) -> str:
+    async def invoke(self, message: str, context: dict[str, Any] | None = None) -> str:
         """Invoke Link with a message.
         
         Args:
@@ -87,7 +86,7 @@ class LinkAgent:
         """Generate status response."""
         status = self.link.get_status()
         
-        response = f"🧠 **Link Status Report**\n\n"
+        response = "🧠 **Link Status Report**\n\n"
         response += f"• Active: {'Yes' if status['active'] else 'No'}\n"
         response += f"• Pending Tasks: {status['pending_tasks']}\n"
         response += f"• Completed: {status['completed_tasks']}\n"
@@ -226,7 +225,7 @@ Or just chat with me - I'm always learning! 🚀
 
 
 # Global agent instance
-_agent_instance: Optional[LinkAgent] = None
+_agent_instance: LinkAgent | None = None
 
 
 def get_link_agent() -> LinkAgent:
@@ -237,7 +236,7 @@ def get_link_agent() -> LinkAgent:
     return _agent_instance
 
 
-async def chat_with_link(message: str, context: Optional[dict[str, Any]] = None) -> str:
+async def chat_with_link(message: str, context: dict[str, Any] | None = None) -> str:
     """Chat with Link agent.
     
     Args:

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
+
 import requests
-import json
 
 URL = 'http://127.0.0.1:8765'
 API_KEY = ''  # Set if configured in settings

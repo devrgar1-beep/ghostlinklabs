@@ -7,7 +7,7 @@ and coordinate GhostLink operations.
 
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any
 
 from .link import TaskPriority, get_link
 
@@ -27,7 +27,7 @@ class LinkAgent:
         self.link = get_link()
         self.conversation_context: dict[str, Any] = {}
 
-    async def invoke(self, message: str, context: Optional[dict[str, Any]] = None) -> str:
+    async def invoke(self, message: str, context: dict[str, Any] | None = None) -> str:
         """Invoke Link with a message.
 
         Args:
@@ -225,7 +225,7 @@ Or just chat with me - I'm always learning! 🚀
 
 
 # Global agent instance
-_agent_instance: Optional[LinkAgent] = None
+_agent_instance: LinkAgent | None = None
 
 
 def get_link_agent() -> LinkAgent:
@@ -236,7 +236,7 @@ def get_link_agent() -> LinkAgent:
     return _agent_instance
 
 
-async def chat_with_link(message: str, context: Optional[dict[str, Any]] = None) -> str:
+async def chat_with_link(message: str, context: dict[str, Any] | None = None) -> str:
     """Chat with Link agent.
 
     Args:

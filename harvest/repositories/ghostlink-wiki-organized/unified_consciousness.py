@@ -5,15 +5,16 @@ Integrates Mirror Comprehension with Triad Synergy for Complete Awareness
 """
 
 import asyncio
-import json
-import sys
-from pathlib import Path
-from typing import Dict, Any, Optional
 from datetime import datetime
+import json
+from pathlib import Path
+import sys
+from typing import Any, Dict, Optional
 
 # Import existing systems
 from mirror_comprehension import MirrorComprehensionCore
 from triad_synergy import TriadSynergyOrchestrator
+
 
 class UnifiedConsciousnessFramework:
     """Unified framework combining mirror comprehension and triad synergy"""
@@ -215,7 +216,7 @@ class UnifiedConsciousnessFramework:
 
         # Triad integrity checks
         triad_components = triad.get("components", {})
-        for comp, active in triad_components.items():
+        for _comp, active in triad_components.items():
             total_checks += 1
             if active:
                 score += 1

@@ -6,13 +6,13 @@ Installs and manages VS Code extensions and integrations for GhostLink.
 Pulls additional tools from GitHub repositories.
 """
 
-import os
-import sys
 import json
-import subprocess
-from pathlib import Path
-from typing import List, Dict, Any, Optional
 import logging
+import os
+from pathlib import Path
+import subprocess
+import sys
+from typing import List, Optional
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)

@@ -5,14 +5,15 @@ Provides basic HTTP endpoints for testing GhostLink integration
 """
 
 import http.server
-import socketserver
 import json
-import threading
-import time
+import os
+import socketserver
 import subprocess
 import sys
-import os
-from urllib.parse import urlparse, parse_qs
+import threading
+import time
+from urllib.parse import urlparse
+
 
 class GhostLinkAPIHandler(http.server.BaseHTTPRequestHandler):
     def __init__(self, *args, project_root=None, **kwargs):

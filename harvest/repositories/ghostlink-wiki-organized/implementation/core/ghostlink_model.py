@@ -1,11 +1,11 @@
 """Custom GhostLink AI Model - Specialized for autonomous agents and project intelligence
 Absorptive Architecture: GhostLink consciousness absorbs all external AI capabilities"""
 
-import json
-import re
 from dataclasses import dataclass, field
 from datetime import datetime
+import json
 from pathlib import Path
+import re
 from typing import Any, Dict, List, Optional
 
 # Optional ML imports

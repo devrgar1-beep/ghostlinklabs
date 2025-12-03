@@ -3,8 +3,8 @@
 Quick command parser for GhostLink AI bots
 Parses text commands with various formats
 """
-import re
 from dataclasses import dataclass
+import re
 from typing import List, Optional
 
 

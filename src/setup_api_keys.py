@@ -46,7 +46,7 @@ def main():
 
     configured_count = 0
 
-    for provider_id, info in providers.items():
+    for _provider_id, info in providers.items():
         print(f"🤖 {info['name']}")
         print("-" * (len(info["name"]) + 3))
 
@@ -93,7 +93,7 @@ def main():
         for env_var in info["env_vars"]
     ):
         print("# Set your API keys (replace with actual keys)")
-        for provider_id, info in providers.items():
+        for _provider_id, info in providers.items():
             env_var = info["env_vars"][0]  # Use primary env var
             print(f'$env:{env_var} = "{info["format"]}"')
 

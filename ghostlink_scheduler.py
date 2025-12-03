@@ -4,17 +4,19 @@ GhostLink Advanced Task Scheduler
 Automated scheduling system with cron-like functionality and intelligent task management
 """
 
+from datetime import datetime
 import json
-import time
-import threading
-import schedule
 import logging
-from datetime import datetime, timedelta
-from typing import Dict, List, Any, Optional, Callable
 import os
-import sys
-import subprocess
 import random
+import subprocess
+import sys
+import threading
+import time
+from typing import Any, Callable, Dict
+
+import schedule
+
 
 class TaskScheduler:
     """Advanced task scheduler with cron-like functionality and AI-driven prioritization"""
@@ -37,7 +39,7 @@ class TaskScheduler:
     def load_config(self) -> Dict[str, Any]:
         """Load configuration from JSON file"""
         try:
-            with open(self.config_path, 'r') as f:
+            with open(self.config_path) as f:
                 return json.load(f)
         except Exception as e:
             print(f"Error loading config: {e}")
@@ -361,7 +363,7 @@ class TaskScheduler:
     
     def _audit_task_history(self) -> Dict[str, Any]:
         """Audit task execution history"""
-        recent_tasks = [task for task in self.task_history[-10:]]  # Last 10 tasks
+        recent_tasks = list(self.task_history[-10:])  # Last 10 tasks
         
         failed_tasks = [task for task in recent_tasks if task.get("status") == "failed"]
         

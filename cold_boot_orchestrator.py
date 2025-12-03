@@ -4,13 +4,14 @@ GhostLink Cold Boot Orchestrator
 Central controller that starts components on-demand and ensures clean shutdown
 """
 
+import argparse
+from datetime import datetime
+import json
+import os
 import subprocess
 import sys
 import time
-import json
-import argparse
-import os
-from datetime import datetime
+
 
 class ColdBootOrchestrator:
     """Manages cold boot lifecycle of all GhostLink components"""
@@ -123,7 +124,7 @@ class ColdBootOrchestrator:
                 try:
                     metrics = json.loads(stdout)
                     return {"success": True, "metrics": metrics}
-                except:
+                except Exception:
                     return {"success": False, "error": "Failed to parse metrics"}
             return {"success": False, "error": stderr}
 

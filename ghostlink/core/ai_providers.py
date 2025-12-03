@@ -1,7 +1,7 @@
 """AI Provider Management for GhostLink"""
 
-import asyncio
 from abc import ABC, abstractmethod
+import asyncio
 from typing import Any, Dict, Optional
 
 import requests
@@ -72,7 +72,7 @@ class OllamaProvider(AIProvider):
                 models = response.json().get("models", [])
                 return [model["name"] for model in models]
             return [self.model]
-        except:
+        except Exception:
             return [self.model]
 
 

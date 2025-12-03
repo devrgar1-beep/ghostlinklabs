@@ -5,8 +5,8 @@ Test GhostLink DeBloat functionality
 
 import json
 import os
-import time
 from pathlib import Path
+import time
 
 from debloat import DeBloater
 

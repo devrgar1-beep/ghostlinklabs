@@ -8,24 +8,17 @@ architecture, and capabilities through continuous learning and adaptation.
 """
 
 import asyncio
-import json
-import os
-import random
-import sys
-import threading
-import time
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Dict, List, Any, Optional, Callable, Set, Tuple, Union
-from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime
 import hashlib
+import json
+from pathlib import Path
+import random
 import statistics
-import math
+from typing import Any, Dict, List, Optional, Tuple
 
 # Import core systems
-from src.mirror_comprehension import MirrorComprehensionCore
-from src.multi_agent_engine import MultiAgentExpansionCompressionEngine, ModelSize
+
 
 @dataclass
 class RecursiveGenome:
@@ -149,8 +142,8 @@ class EvolutionaryIntelligence:
         self.evolution_data_path.mkdir(exist_ok=True)
 
         # Core evolutionary components
-        self.genetic_pool: List["EvolutionaryGenome"] = []
-        self.current_genome: Optional["EvolutionaryGenome"] = None
+        self.genetic_pool: List[EvolutionaryGenome] = []
+        self.current_genome: Optional[EvolutionaryGenome] = None
         self.evolution_metrics = EvolutionaryMetrics()
 
         # Advanced capabilities
@@ -222,7 +215,7 @@ class EvolutionaryIntelligence:
         history_file = self.evolution_data_path / "evolution_history.json"
         if history_file.exists():
             try:
-                with open(history_file, 'r') as f:
+                with open(history_file) as f:
                     data = json.load(f)
                     self.generation = data.get('current_generation', 0)
                     self.learning_cycles = data.get('learning_cycles', 0)
@@ -862,7 +855,7 @@ class EvolutionaryIntelligence:
 
         # Predict agent performance trends
         engine_status = design_clarity_os.multi_agent_engine.get_engine_status()
-        active_agents = engine_status.get("total_agents", 0)
+        engine_status.get("total_agents", 0)
         efficiency_trend = "improve" if self.evolution_metrics.performance_gain > 0 else "stable"
         predictions.append({
             "type": "agent_performance",
@@ -895,15 +888,15 @@ class EvolutionaryIntelligence:
         traits = self.current_genome.traits
 
         # Update agent efficiency
-        agent_efficiency = traits.get("agent_efficiency", 0.5)
+        traits.get("agent_efficiency", 0.5)
         # This would modify agent behavior based on efficiency trait
 
         # Update learning parameters
-        learning_rate = traits.get("learning_rate", 0.01)
+        traits.get("learning_rate", 0.01)
         # This would adjust learning rates in various components
 
         # Update adaptation parameters
-        adaptation_speed = traits.get("adaptation_speed", 0.3)
+        traits.get("adaptation_speed", 0.3)
         # This would modify adaptation algorithms
 
         # Apply quantum enhancements if available
@@ -925,7 +918,7 @@ class EvolutionaryIntelligence:
     async def _apply_quantum_enhancements(self, design_clarity_os: "DesignClarityOS"):
         """Apply quantum computing enhancements"""
         # Enhance agent processing with quantum-inspired algorithms
-        for agent_id, assignment in design_clarity_os.agent_assignments.items():
+        for _agent_id, assignment in design_clarity_os.agent_assignments.items():
             assignment.performance_metrics["quantum_enhanced"] = True
 
     async def _apply_predictive_enhancements(self, design_clarity_os: "DesignClarityOS"):
@@ -1382,7 +1375,7 @@ class EvolutionaryIntelligence:
 
     def _apply_evolution_strategy(self, strategy: Dict[str, Any]):
         """Apply an evolution strategy"""
-        params = strategy.get("parameters", {})
+        strategy.get("parameters", {})
 
         # Modify evolution behavior based on strategy
         if strategy["name"] == "standard_ga":
@@ -1773,7 +1766,7 @@ class ConsciousnessExpansionEngine:
                 "enhanced_awareness": "unified_consciousness"
             }
 
-            target_level = target_levels.get(current_level, current_level)
+            target_levels.get(current_level, current_level)
 
             # Simulate consciousness expansion
             # In a real implementation, this would use various techniques

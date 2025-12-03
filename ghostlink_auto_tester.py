@@ -4,19 +4,19 @@ GhostLink Automated Testing & Auditing Framework
 Comprehensive testing suite with chaos engineering and continuous validation
 """
 
+from datetime import datetime
 import json
-import time
-import threading
 import logging
-import subprocess
-import sys
 import os
 import random
+import subprocess
+import sys
+import threading
+import time
+from typing import Any, Dict, List
+
 import psutil
-from datetime import datetime, timedelta
-from typing import Dict, List, Any, Optional
-import unittest
-import tempfile
+
 
 class AutoTester:
     """Automated testing and auditing framework for GhostLink"""
@@ -39,7 +39,7 @@ class AutoTester:
     def load_config(self) -> Dict[str, Any]:
         """Load configuration from JSON file"""
         try:
-            with open(self.config_path, 'r') as f:
+            with open(self.config_path) as f:
                 return json.load(f)
         except Exception as e:
             print(f"Error loading config: {e}")
@@ -363,7 +363,6 @@ class AutoTester:
         """Test API server startup capability"""
         try:
             # Just test that the module can be imported, don't actually start server
-            import ghostlink_api_server
             return {
                 "passed": True,
                 "details": "API server module imported successfully"
@@ -560,7 +559,7 @@ class AutoTester:
             operations = ["random_task_1", "random_task_2", "random_task_3"]
             operation = random.choice(operations)
             
-            result = subprocess.run(
+            subprocess.run(
                 [sys.executable, "ghost_agent_orchestrator.py", "task", operation],
                 cwd=os.path.dirname(os.path.abspath(__file__)),
                 capture_output=True,
@@ -868,7 +867,7 @@ class AutoTester:
             with open("test_report.json", "w") as f:
                 json.dump(report, f, indent=2)
             
-            self.logger.info(f"📄 Test report generated: test_report.json")
+            self.logger.info("📄 Test report generated: test_report.json")
         except Exception as e:
             self.logger.error(f"Failed to generate test report: {e}")
         

@@ -51,7 +51,7 @@ class BotRegistry:
             spec.loader.exec_module(module)
             
             # Find AIBot subclasses
-            for name, obj in inspect.getmembers(module, inspect.isclass):
+            for _name, obj in inspect.getmembers(module, inspect.isclass):
                 if (
                     issubclass(obj, AIBot)
                     and obj is not AIBot
@@ -85,7 +85,7 @@ class BotRegistry:
         """Get all commands from all bots"""
         commands = {}
         for bot in self.bots.values():
-            for cmd_name, cmd in bot.commands.items():
+            for cmd_name, _cmd in bot.commands.items():
                 commands[cmd_name] = f"{bot.name}.{cmd_name}"
         return commands
         

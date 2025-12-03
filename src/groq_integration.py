@@ -11,11 +11,12 @@ Groq provides ultra-fast LLM inference for internal component communication:
 """
 
 import os
-from typing import Optional, Dict, Any, List
 from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 # Load environment variables
 from dotenv import load_dotenv
+
 load_dotenv(Path(__file__).parent / "ghostlink.env")
 
 

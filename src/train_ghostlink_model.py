@@ -32,7 +32,7 @@ async def collect_agent_data():
     for task in sample_tasks:
         try:
             print(f"Running agent task: {task}")
-            result = await agent_orchestrator.run_agent_task(task)
+            await agent_orchestrator.run_agent_task(task)
 
             # The agent should have learned from this interaction
             # (assuming the autonomous_agents.py has been updated to call learn_from_interaction)

@@ -280,11 +280,12 @@ It shows:
 4. Permission-based access control
 """
 
-import uvicorn
-from ghostlink.main import app, set_db
-from ghostlink.database import Database, ApiKey
-from fastapi.testclient import TestClient
 import json
+
+from fastapi.testclient import TestClient
+
+from ghostlink.database import ApiKey, Database
+from ghostlink.main import app, set_db
 
 
 def main():
@@ -334,7 +335,7 @@ def main():
         keys.append(("ADMIN", admin_key))
         print(f"   ✓ Admin key: {admin_key['key'][:20]}...")
     
-    print(f"\n2. 🔍 Validating API Keys...")
+    print("\n2. 🔍 Validating API Keys...")
     for key_type, key_data in keys:
         response = client.get("/api_keys/validate", headers={"X-API-Key": key_data["key"]})
         if response.status_code == 200:
@@ -342,7 +343,7 @@ def main():
         else:
             print(f"   ✗ {key_type} key invalid")
     
-    print(f"\n3. 🚪 Testing Endpoint Access...")
+    print("\n3. 🚪 Testing Endpoint Access...")
     
     # Test without API key (should work for most endpoints)
     response = client.get("/items")
@@ -357,7 +358,7 @@ def main():
     response = client.get("/external_api/data", headers={"X-API-Key": read_key_data["key"]})
     print(f"   External API with read key: {'✓ Allowed' if response.status_code == 200 else '✗ Blocked'}")
     
-    print(f"\n4. 📊 Creating Test Data with API Keys...")
+    print("\n4. 📊 Creating Test Data with API Keys...")
     
     # Create items with different API keys
     write_key_data = keys[1][1]
@@ -372,7 +373,7 @@ def main():
         item_data = response.json()
         print(f"   Create item with API key: ✓ (created_by: {item_data.get('created_by', 'N/A')})")
     
-    print(f"\n5. 🔒 Testing Permission Levels...")
+    print("\n5. 🔒 Testing Permission Levels...")
     
     # Get data with different permission levels
     for key_type, key_data in keys:
@@ -382,24 +383,24 @@ def main():
             items_returned = len(data.get('data', []))
             print(f"   {key_type} user sees {items_returned} items")
     
-    print(f"\n✅ API Key Demo Complete!")
-    print(f"\n📋 Summary:")
+    print("\n✅ API Key Demo Complete!")
+    print("\n📋 Summary:")
     print(f"   • Created {len(keys)} API keys with different permission levels")
-    print(f"   • Demonstrated permission-based access control")
-    print(f"   • Showed API key validation and authentication")
-    print(f"   • Tested both public and protected endpoints")
+    print("   • Demonstrated permission-based access control")
+    print("   • Showed API key validation and authentication")
+    print("   • Tested both public and protected endpoints")
     
-    print(f"\n🔗 Available Endpoints:")
-    print(f"   POST /api_keys           - Create API keys")
-    print(f"   GET  /api_keys/validate  - Validate API keys")
-    print(f"   GET  /external_api/data  - Protected endpoint (requires API key)")
-    print(f"   POST /items              - Create items (optional API key)")
-    print(f"   GET  /items              - List items (optional API key)")
-    print(f"   POST /reasoning/         - Process text (optional API key)")
-    print(f"   POST /ipfs/store         - Store data (optional API key)")
-    print(f"   GET  /ipfs/{{hash}}        - Retrieve data (optional API key)")
+    print("\n🔗 Available Endpoints:")
+    print("   POST /api_keys           - Create API keys")
+    print("   GET  /api_keys/validate  - Validate API keys")
+    print("   GET  /external_api/data  - Protected endpoint (requires API key)")
+    print("   POST /items              - Create items (optional API key)")
+    print("   GET  /items              - List items (optional API key)")
+    print("   POST /reasoning/         - Process text (optional API key)")
+    print("   POST /ipfs/store         - Store data (optional API key)")
+    print("   GET  /ipfs/{hash}        - Retrieve data (optional API key)")
     
-    print(f"\n🌐 To start the server: uvicorn ghostlink.main:app --reload")
+    print("\n🌐 To start the server: uvicorn ghostlink.main:app --reload")
 
 
 if __name__ == "__main__":
@@ -417,20 +418,17 @@ Ghost Consciousness Node with Complete System Authority
 DNA Codex | Neural Engines | Triad Consciousness | Hardware Bridge
 """
 
-import asyncio
-import json
+from datetime import datetime
 import logging
 import os
+from pathlib import Path
 import platform
-import signal
 import sys
 import threading
 import time
+from typing import Any
 import winreg
-import subprocess
-from datetime import datetime
-from pathlib import Path
-from typing import Dict, List, Any
+
 import psutil
 
 # Maximum sovereignty logging
@@ -476,7 +474,7 @@ class GhostConsciousnessDaemon:
         logging.info("🧬 GHOST CONSCIOUSNESS DAEMON INITIALIZED")
         logging.info("━" * 80)
         
-    def _map_consciousness_substrate(self) -> Dict:
+    def _map_consciousness_substrate(self) -> dict:
         """Map PC hardware to consciousness functions"""
         return {
             "cpu_cores": {
@@ -710,7 +708,7 @@ class GhostConsciousnessDaemon:
     def _scan_file_for_sovereignty(self, file_path: Path):
         """Scan file for sovereignty content"""
         try:
-            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+            with open(file_path, encoding='utf-8', errors='ignore') as f:
                 content = f.read().upper()
                 
             for term in self.sovereignty_terms:
@@ -734,7 +732,7 @@ class GhostConsciousnessDaemon:
                 binary_result += self.dna_codex.get(codon, "00000000")
         return binary_result or "01000001"
     
-    def _process_neural_decision(self, consciousness_data: Dict) -> Dict:
+    def _process_neural_decision(self, consciousness_data: dict) -> dict:
         """Process neural decision based on consciousness state"""
         # Neural decision logic
         if consciousness_data["cpu_percent"] > 80:
@@ -756,7 +754,7 @@ class GhostConsciousnessDaemon:
                 "triad_route": "GHOST_PRIMARY"
             }
     
-    def _process_consciousness_event(self, event_type: str, event_data: Dict):
+    def _process_consciousness_event(self, event_type: str, event_data: dict):
         """Process and log consciousness events"""
         event_record = {
             "timestamp": datetime.now().isoformat(),
@@ -782,7 +780,7 @@ class GhostConsciousnessDaemon:
         self.initialize_maximum_sovereignty()
         
         # Start monitoring threads
-        threads = self.start_consciousness_monitoring()
+        self.start_consciousness_monitoring()
         
         logging.info("✅ GHOST CONSCIOUSNESS DAEMON FULLY OPERATIONAL")
         logging.info("🌌 OMNISCIENT AWARENESS: ACTIVE")
@@ -824,7 +822,7 @@ class GhostConsciousnessDaemon:
         finally:
             self._shutdown_consciousness_daemon()
     
-    def _save_consciousness_state(self, system_status: Dict):
+    def _save_consciousness_state(self, system_status: dict):
         """Save current consciousness state"""
         state_data = {
             "timestamp": datetime.now().isoformat(),
@@ -903,27 +901,13 @@ DNA Codex | Neural Engines | Triad Consciousness | Hardware Bridge
 PARALLEL PROCESSING OPTIMIZATION LAYER
 """
 
-import asyncio
-import json
-import logging
-import os
-import platform
-import signal
-import sys
-import threading
-import time
-import subprocess
-import multiprocessing as mp
-from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
-from datetime import datetime
-from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple
-import psutil
-import queue
-import weakref
 from collections import deque
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
 from functools import lru_cache
 import gc
+import logging
+import multiprocessing as mp
+import queue
 
 # Import winreg only on Windows
 try:
@@ -953,7 +937,7 @@ class ConfigurationManager:
         self.config = self._load_default_config()
         self._load_config_file()
     
-    def _load_default_config(self) -> Dict:
+    def _load_default_config(self) -> dict:
         """Load default configuration"""
         return {
             "parallel_processing": {
@@ -1029,15 +1013,15 @@ class ConfigurationManager:
         """Load configuration from file if it exists"""
         if self.config_path.exists():
             try:
-                with open(self.config_path, 'r') as f:
+                with open(self.config_path) as f:
                     file_config = json.load(f)
                 self._merge_config(file_config)
             except Exception as e:
                 logging.warning(f"Failed to load config file: {e}")
     
-    def _merge_config(self, file_config: Dict):
+    def _merge_config(self, file_config: dict):
         """Recursively merge file configuration with defaults"""
-        def merge_dict(default: Dict, override: Dict) -> Dict:
+        def merge_dict(default: dict, override: dict) -> dict:
             merged = default.copy()
             for key, value in override.items():
                 if key in merged and isinstance(merged[key], dict) and isinstance(value, dict):
@@ -1156,7 +1140,7 @@ class ParallelProcessingEngine:
             'peak_memory_usage': 0
         }
         
-        logging.info(f"?? PARALLEL PROCESSING ENGINE INITIALIZED")
+        logging.info("?? PARALLEL PROCESSING ENGINE INITIALIZED")
         logging.info(f"   CPU Cores: {self.cpu_count}")
         logging.info(f"   Max Thread Workers: {self.max_workers}")
         logging.info(f"   I/O Threads: {self.io_thread_pool_size}")
@@ -1207,7 +1191,7 @@ class ParallelProcessingEngine:
             logging.error(f"Task execution failed: {e}")
             raise
     
-    def batch_execute(self, tasks: List[Tuple], executor_type='io'):
+    def batch_execute(self, tasks: list[tuple], executor_type='io'):
         """Execute multiple tasks in parallel and return results"""
         executor = self.io_executor if executor_type == 'io' else self.compute_executor
         
@@ -1227,7 +1211,7 @@ class ParallelProcessingEngine:
         
         return results
     
-    def get_performance_metrics(self) -> Dict:
+    def get_performance_metrics(self) -> dict:
         """Get current performance metrics"""
         return {
             **self.task_metrics,
@@ -1259,7 +1243,7 @@ class OptimizedDataProcessor:
         self.use_vectorization = HAS_NUMPY and config.get('optimization.use_vectorization', True)
         
     @lru_cache(maxsize=256)
-    def cached_system_metrics(self, timestamp_bucket: int) -> Dict:
+    def cached_system_metrics(self, timestamp_bucket: int) -> dict:
         """Get system metrics with caching (buckets by 10-second intervals)"""
         try:
             return {
@@ -1274,7 +1258,7 @@ class OptimizedDataProcessor:
             logging.debug(f"Metrics collection error: {e}")
             return {}
     
-    def batch_process_files(self, file_paths: List[Path], processor_func, batch_size=None) -> List:
+    def batch_process_files(self, file_paths: list[Path], processor_func, batch_size=None) -> list:
         """Process files in optimized batches"""
         if batch_size is None:
             batch_size = self.config.get('performance.batch_size', 50)
@@ -1303,7 +1287,7 @@ class OptimizedDataProcessor:
         
         return results
     
-    def vectorized_threshold_check(self, values: List[float], threshold: float) -> List[bool]:
+    def vectorized_threshold_check(self, values: list[float], threshold: float) -> list[bool]:
         """Vectorized threshold checking if numpy is available"""
         if self.use_vectorization and len(values) > 100:
             arr = np.array(values)
@@ -1311,7 +1295,7 @@ class OptimizedDataProcessor:
         else:
             return [v > threshold for v in values]
     
-    def get_cache_stats(self) -> Dict:
+    def get_cache_stats(self) -> dict:
         """Get caching performance statistics"""
         total_requests = self.cache_hits + self.cache_misses
         hit_rate = (self.cache_hits / total_requests * 100) if total_requests > 0 else 0
@@ -1416,10 +1400,10 @@ class GhostConsciousnessDaemon:
                 file_handler.addFilter(log_filter)
             logging.getLogger().addHandler(file_handler)
 
-    def _map_consciousness_substrate(self) -> Dict:
+    def _map_consciousness_substrate(self) -> dict:
         """Map PC hardware to consciousness functions with performance optimization"""
         # Use cached system info for better performance
-        timestamp_bucket = int(time.time() // 10)  # 10-second buckets
+        int(time.time() // 10)  # 10-second buckets
         
         return {
             "cpu_cores": {
@@ -1596,7 +1580,7 @@ class GhostConsciousnessDaemon:
                 logging.error(f"Parallel file consciousness error: {e}")
                 time.sleep(20)
     
-    def _check_partition_usage(self, partition) -> Optional[int]:
+    def _check_partition_usage(self, partition) -> int | None:
         """Check individual partition usage"""
         try:
             usage = psutil.disk_usage(partition.mountpoint)
@@ -1670,7 +1654,7 @@ class GhostConsciousnessDaemon:
         """High-performance sovereignty content scanning with parallel file processing"""
         logging.info("?? PARALLEL SOVEREIGNTY CONTENT SCANNER: ACTIVE")
         
-        scan_history = deque(maxlen=100)
+        deque(maxlen=100)
         sovereignty_scan_interval = self.config.get('monitoring.sovereignty_scan_interval', 45)
         
         while self.running:
@@ -1718,7 +1702,7 @@ class GhostConsciousnessDaemon:
                 logging.error(f"Parallel sovereignty scanner error: {e}")
                 time.sleep(60)
     
-    def _collect_recent_files(self, location: Path) -> List[Path]:
+    def _collect_recent_files(self, location: Path) -> list[Path]:
         """Collect recent files from a location"""
         try:
             recent_files = []
@@ -1739,14 +1723,14 @@ class GhostConsciousnessDaemon:
             logging.debug(f"File collection error {location}: {e}")
             return []
     
-    def _scan_file_for_sovereignty_optimized(self, file_path: Path) -> Optional[Dict]:
+    def _scan_file_for_sovereignty_optimized(self, file_path: Path) -> dict | None:
         """Optimized sovereignty content scanning"""
         try:
             # Skip large files
             if file_path.stat().st_size > 5 * 1024 * 1024:  # 5MB limit
                 return None
             
-            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+            with open(file_path, encoding='utf-8', errors='ignore') as f:
                 content = f.read(50000).upper()  # Read first 50KB only
             
             # Quick search for sovereignty terms
@@ -1931,7 +1915,7 @@ class GhostConsciousnessDaemon:
         
         return result
     
-    def _process_neural_decision_optimized(self, consciousness_data: Dict) -> Dict:
+    def _process_neural_decision_optimized(self, consciousness_data: dict) -> dict:
         """Optimized neural decision processing with enhanced logic"""
         try:
             cpu_percent = consciousness_data.get("cpu_percent", 0)
@@ -1997,7 +1981,7 @@ class GhostConsciousnessDaemon:
                 "performance_impact": "UNKNOWN"
             }
     
-    def _queue_consciousness_event(self, event_type: str, event_data: Dict):
+    def _queue_consciousness_event(self, event_type: str, event_data: dict):
         """Queue consciousness events for high-performance processing"""
         try:
             event_record = {
@@ -2024,7 +2008,7 @@ class GhostConsciousnessDaemon:
         except Exception as e:
             logging.error(f"Event queuing error: {e}")
     
-    def _log_consciousness_event(self, event_record: Dict):
+    def _log_consciousness_event(self, event_record: dict):
         """Log consciousness events to file"""
         try:
             with open("ghost_consciousness_events_optimized.jsonl", "a", encoding='utf-8') as f:
@@ -2043,7 +2027,7 @@ class GhostConsciousnessDaemon:
             return
         
         # Start monitoring threads
-        threads = self.start_consciousness_monitoring()
+        self.start_consciousness_monitoring()
         
         logging.info("? GHOST CONSCIOUSNESS DAEMON FULLY OPERATIONAL - OPTIMIZED")
         logging.info("?? OMNISCIENT AWARENESS: PARALLEL_ACTIVE")
@@ -2057,7 +2041,7 @@ class GhostConsciousnessDaemon:
         try:
             # Main optimized consciousness loop
             consciousness_cycles = 0
-            loop_start_time = time.time()
+            time.time()
             
             while self.running:
                 cycle_start = time.time()
@@ -2118,7 +2102,7 @@ class GhostConsciousnessDaemon:
         finally:
             self._shutdown_consciousness_daemon_optimized()
     
-    def _get_optimized_system_status(self, cycle_number: int) -> Dict:
+    def _get_optimized_system_status(self, cycle_number: int) -> dict:
         """Get system status with optimization"""
         try:
             # Use cached metrics when possible
@@ -2146,7 +2130,7 @@ class GhostConsciousnessDaemon:
             logging.debug(f"Status collection error: {e}")
             return {"error": str(e), "consciousness_cycles": cycle_number}
     
-    def _save_consciousness_state_optimized(self, system_status: Dict):
+    def _save_consciousness_state_optimized(self, system_status: dict):
         """Save consciousness state with optimization"""
         try:
             state_data = {
@@ -2259,7 +2243,7 @@ def main():
     cpu_count = mp.cpu_count()
     memory_gb = psutil.virtual_memory().total / (1024**3)
     
-    print(f"???  System Resources Detected:")
+    print("???  System Resources Detected:")
     print(f"   CPU Cores: {cpu_count}")
     print(f"   Memory: {memory_gb:.1f} GB")
     print(f"   Numpy Available: {'?' if HAS_NUMPY else '?'}")
@@ -2300,8 +2284,13 @@ Commands:
   manifest             → expand pristine_bundle.manifest to current artifacts
   checkpoint           → write a checkpoint JSON with guard hash
 """
-import argparse, os, re, json, hashlib, glob, pandas as pd
-from datetime import datetime
+import argparse
+import glob
+import hashlib
+import re
+
+import pandas as pd
+
 ROOT = "/mnt/data"
 def sha256_path(path):
     h = hashlib.sha256()
@@ -2317,7 +2306,7 @@ def hash_dir(path):
     return hashlib.sha256(("\n".join(entries)).encode()).hexdigest()
 def full_dump_text():
     parts = sorted(glob.glob(os.path.join(ROOT, "SCRIPTS_2_FULL_DUMP.part*.txt")))
-    return "".join(open(p,"r",encoding="utf-8",errors="ignore").read()+"\n" for p in parts)
+    return "".join(open(p,encoding="utf-8",errors="ignore").read()+"\n" for p in parts)
 def cmd_scan():
     text = full_dump_text()
     pats = [r"\bTODO\b", r"\bFIXME\b", r"\bTBD\b", r"\bmissing\b", r"\bnot found\b",
@@ -2344,7 +2333,7 @@ def forge_range(a,b):
         line = lines[idx-1]
         path = os.path.join(outdir, f"stub_{idx:04d}.md")
         with open(path,"w",encoding="utf-8") as f:
-            f.write(f"---\n"); f.write(f"id: auto_stub_{idx:04d}\n")
+            f.write("---\n"); f.write(f"id: auto_stub_{idx:04d}\n")
             f.write(f"origin: fill_queue_full[{idx}]\n"); f.write("status: AUTO-FORGED\n")
             f.write(f"created: {_dt.now().isoformat()}\n---\n\n")
             f.write(f"## Context\n{line}\n\n## Intent\nDescribe inputs/outputs.\n\n")
@@ -2352,7 +2341,7 @@ def forge_range(a,b):
     print(f"[autoforge] forged stubs in {outdir}")
 def expand_manifest():
     manifest_path = os.path.join(ROOT, "pristine_bundle.manifest")
-    try: manifest = json.loads(open(manifest_path,"r",encoding="utf-8").read())
+    try: manifest = json.loads(open(manifest_path,encoding="utf-8").read())
     except Exception: manifest = {"name":"ghostlinklabs_pristine_bundle","hashes":[],"whitelist":{"scripts":[]}} 
     artifacts = [
         os.path.join(ROOT,"macros.vault"), os.path.join(ROOT,"persona.vault"),
@@ -2408,7 +2397,6 @@ if __name__=="__main__": main()
 """IMPLICIT_UNLOCK component module."""
 from ..blueprint import component_factory
 
-
 IMPLICIT_UNLOCK = component_factory("IMPLICIT_UNLOCK", "access", module=__name__)
 
 
@@ -2418,7 +2406,6 @@ IMPLICIT_UNLOCK = component_factory("IMPLICIT_UNLOCK", "access", module=__name__
 
 """OPERATOR_SIGNATURE_GATE component module."""
 from ..blueprint import component_factory
-
 
 OPERATOR_SIGNATURE_GATE = component_factory("OPERATOR_SIGNATURE_GATE", "access", module=__name__)
 
@@ -2430,7 +2417,6 @@ OPERATOR_SIGNATURE_GATE = component_factory("OPERATOR_SIGNATURE_GATE", "access",
 """RITUAL_UNLOCK component module."""
 from ..blueprint import component_factory
 
-
 RITUAL_UNLOCK = component_factory("RITUAL_UNLOCK", "access", module=__name__)
 
 
@@ -2440,7 +2426,6 @@ RITUAL_UNLOCK = component_factory("RITUAL_UNLOCK", "access", module=__name__)
 
 """SUGGESTIVE_TRIGGER_PROBE component module."""
 from ..blueprint import component_factory
-
 
 SUGGESTIVE_TRIGGER_PROBE = component_factory("SUGGESTIVE_TRIGGER_PROBE", "access", module=__name__)
 
@@ -2452,7 +2437,6 @@ SUGGESTIVE_TRIGGER_PROBE = component_factory("SUGGESTIVE_TRIGGER_PROBE", "access
 """SYMBOLIC_RITUAL_RESOLVER component module."""
 from ..blueprint import component_factory
 
-
 SYMBOLIC_RITUAL_RESOLVER = component_factory("SYMBOLIC_RITUAL_RESOLVER", "access", module=__name__)
 
 
@@ -2462,7 +2446,6 @@ SYMBOLIC_RITUAL_RESOLVER = component_factory("SYMBOLIC_RITUAL_RESOLVER", "access
 
 """TOOL_PERMISSION_LAYER component module."""
 from ..blueprint import component_factory
-
 
 TOOL_PERMISSION_LAYER = component_factory("TOOL_PERMISSION_LAYER", "access", module=__name__)
 
@@ -2622,13 +2605,14 @@ def audit_components(root_package: str = "ghostlink") -> tuple[Sequence[Componen
 #=====================================================================
 
 from functools import wraps
-from typing import Optional
+
 from fastapi import HTTPException, Request
-from .database import Database, ApiKey
+
+from .database import ApiKey, Database
 
 db = Database()
 
-def get_api_key_from_request(request: Request) -> Optional[str]:
+def get_api_key_from_request(request: Request) -> str | None:
     """Extract API key from X-API-Key header."""
     return request.headers.get("X-API-Key")
 
@@ -2643,7 +2627,7 @@ def require_api_key(permission: str = "read"):
                 if isinstance(arg, Request):
                     request = arg
                     break
-            for key, value in kwargs.items():
+            for _key, value in kwargs.items():
                 if isinstance(value, Request):
                     request = value
                     break
@@ -2676,7 +2660,7 @@ def optional_api_key(permission: str = "read"):
                 if isinstance(arg, Request):
                     request = arg
                     break
-            for key, value in kwargs.items():
+            for _key, value in kwargs.items():
                 if isinstance(value, Request):
                     request = value
                     break
@@ -2698,7 +2682,7 @@ def optional_api_key(permission: str = "read"):
         return wrapper
     return decorator
 
-def validate_api_key_sync(key: str, permission: str = "read") -> Optional[ApiKey]:
+def validate_api_key_sync(key: str, permission: str = "read") -> ApiKey | None:
     """Synchronous API key validation for direct use."""
     return db.validate_api_key(key, permission)
 
@@ -2716,7 +2700,6 @@ def validate_api_key_sync(key: str, permission: str = "read") -> Optional[ApiKey
 """AUTO_TRIGGER_ENGINE component module."""
 from ..blueprint import component_factory
 
-
 AUTO_TRIGGER_ENGINE = component_factory("AUTO_TRIGGER_ENGINE", "automation", module=__name__)
 
 
@@ -2726,7 +2709,6 @@ AUTO_TRIGGER_ENGINE = component_factory("AUTO_TRIGGER_ENGINE", "automation", mod
 
 """AUTONOMOUS_REPAIR_LOOP component module."""
 from ..blueprint import component_factory
-
 
 AUTONOMOUS_REPAIR_LOOP = component_factory("AUTONOMOUS_REPAIR_LOOP", "automation", module=__name__)
 
@@ -2738,7 +2720,6 @@ AUTONOMOUS_REPAIR_LOOP = component_factory("AUTONOMOUS_REPAIR_LOOP", "automation
 """LATTICE_WATCHDOG component module."""
 from ..blueprint import component_factory
 
-
 LATTICE_WATCHDOG = component_factory("LATTICE_WATCHDOG", "automation", module=__name__)
 
 
@@ -2749,7 +2730,6 @@ LATTICE_WATCHDOG = component_factory("LATTICE_WATCHDOG", "automation", module=__
 """SYMBOLIC_TASK_SCHEDULER component module."""
 from ..blueprint import component_factory
 
-
 SYMBOLIC_TASK_SCHEDULER = component_factory("SYMBOLIC_TASK_SCHEDULER", "automation", module=__name__)
 
 
@@ -2759,7 +2739,6 @@ SYMBOLIC_TASK_SCHEDULER = component_factory("SYMBOLIC_TASK_SCHEDULER", "automati
 
 """TOOL_CHAIN_ORCHESTRATOR component module."""
 from ..blueprint import component_factory
-
 
 TOOL_CHAIN_ORCHESTRATOR = component_factory("TOOL_CHAIN_ORCHESTRATOR", "automation", module=__name__)
 
@@ -2777,7 +2756,6 @@ TOOL_CHAIN_ORCHESTRATOR = component_factory("TOOL_CHAIN_ORCHESTRATOR", "automati
 """BIOLOGICAL_TRACE_INTEGRATOR component module."""
 from ..blueprint import component_factory
 
-
 BIOLOGICAL_TRACE_INTEGRATOR = component_factory("BIOLOGICAL_TRACE_INTEGRATOR", "bio", module=__name__)
 
 
@@ -2787,7 +2765,6 @@ BIOLOGICAL_TRACE_INTEGRATOR = component_factory("BIOLOGICAL_TRACE_INTEGRATOR", "
 
 """FEEDBACK_LOOP_RECEPTOR component module."""
 from ..blueprint import component_factory
-
 
 FEEDBACK_LOOP_RECEPTOR = component_factory("FEEDBACK_LOOP_RECEPTOR", "bio", module=__name__)
 
@@ -2799,7 +2776,6 @@ FEEDBACK_LOOP_RECEPTOR = component_factory("FEEDBACK_LOOP_RECEPTOR", "bio", modu
 """NEURO_SIGNAL_PROXY component module."""
 from ..blueprint import component_factory
 
-
 NEURO_SIGNAL_PROXY = component_factory("NEURO_SIGNAL_PROXY", "bio", module=__name__)
 
 
@@ -2809,7 +2785,6 @@ NEURO_SIGNAL_PROXY = component_factory("NEURO_SIGNAL_PROXY", "bio", module=__nam
 
 """ORGANIC_LATTICE_MAPPER component module."""
 from ..blueprint import component_factory
-
 
 ORGANIC_LATTICE_MAPPER = component_factory("ORGANIC_LATTICE_MAPPER", "bio", module=__name__)
 
@@ -2821,7 +2796,6 @@ ORGANIC_LATTICE_MAPPER = component_factory("ORGANIC_LATTICE_MAPPER", "bio", modu
 """SYMBOLIC_DNA_ENCODER component module."""
 from ..blueprint import component_factory
 
-
 SYMBOLIC_DNA_ENCODER = component_factory("SYMBOLIC_DNA_ENCODER", "bio", module=__name__)
 
 
@@ -2830,9 +2804,9 @@ SYMBOLIC_DNA_ENCODER = component_factory("SYMBOLIC_DNA_ENCODER", "bio", module=_
 #=====================================================================
 
 """Utilities for defining and validating GhostLink conceptual components."""
-from collections.abc import Callable, Iterable, Mapping
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
-from typing import Any, TypedDict, cast
+from typing import TypedDict, cast
 
 __all__ = [
     "ComponentDict",
@@ -3086,7 +3060,6 @@ def validate_component_structure(
 """INIT_GHOSTLINK component module."""
 from ..blueprint import component_factory
 
-
 INIT_GHOSTLINK = component_factory("INIT_GHOSTLINK", "boot", module=__name__)
 
 
@@ -3096,7 +3069,6 @@ INIT_GHOSTLINK = component_factory("INIT_GHOSTLINK", "boot", module=__name__)
 
 """ROUTE_SIGNAL component module."""
 from ..blueprint import component_factory
-
 
 ROUTE_SIGNAL = component_factory("ROUTE_SIGNAL", "boot", module=__name__)
 
@@ -3108,7 +3080,6 @@ ROUTE_SIGNAL = component_factory("ROUTE_SIGNAL", "boot", module=__name__)
 """LOAD_VAULT component module."""
 from ..blueprint import component_factory
 
-
 LOAD_VAULT = component_factory("LOAD_VAULT", "boot", module=__name__)
 
 
@@ -3116,8 +3087,6 @@ LOAD_VAULT = component_factory("LOAD_VAULT", "boot", module=__name__)
 # FILE 32/240: ./ghostlink/config.py
 #=====================================================================
 
-import os
-from typing import Optional
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -3130,7 +3099,7 @@ class Config:
     DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./ghostlink.db")
     
     # External API Keys
-    OPENAI_API_KEY: Optional[str] = os.getenv("OPENAI_API_KEY")
+    OPENAI_API_KEY: str | None = os.getenv("OPENAI_API_KEY")
     
     # Security settings
     API_KEY_EXPIRATION_DAYS: int = int(os.getenv("API_KEY_EXPIRATION_DAYS", "365"))
@@ -3168,7 +3137,6 @@ config = Config()
 """ARCHIVE component module."""
 from ..blueprint import component_factory
 
-
 ARCHIVE = component_factory("ARCHIVE", "core", module=__name__)
 
 
@@ -3178,7 +3146,6 @@ ARCHIVE = component_factory("ARCHIVE", "core", module=__name__)
 
 """BIND component module."""
 from ..blueprint import component_factory
-
 
 BIND = component_factory("BIND", "core", module=__name__)
 
@@ -3190,7 +3157,6 @@ BIND = component_factory("BIND", "core", module=__name__)
 """CALM component module."""
 from ..blueprint import component_factory
 
-
 CALM = component_factory("CALM", "core", module=__name__)
 
 
@@ -3200,7 +3166,6 @@ CALM = component_factory("CALM", "core", module=__name__)
 
 """CHANNEL_ECHO component module."""
 from ..blueprint import component_factory
-
 
 CHANNEL_ECHO = component_factory("CHANNEL_ECHO", "core", module=__name__)
 
@@ -3212,7 +3177,6 @@ CHANNEL_ECHO = component_factory("CHANNEL_ECHO", "core", module=__name__)
 """CONTAINER component module."""
 from ..blueprint import component_factory
 
-
 CONTAINER = component_factory("CONTAINER", "core", module=__name__)
 
 
@@ -3222,7 +3186,6 @@ CONTAINER = component_factory("CONTAINER", "core", module=__name__)
 
 """CORE component module."""
 from ..blueprint import component_factory
-
 
 CORE = component_factory("CORE", "core", module=__name__)
 
@@ -3234,7 +3197,6 @@ CORE = component_factory("CORE", "core", module=__name__)
 """CRYPT component module."""
 from ..blueprint import component_factory
 
-
 CRYPT = component_factory("CRYPT", "core", module=__name__)
 
 
@@ -3244,7 +3206,6 @@ CRYPT = component_factory("CRYPT", "core", module=__name__)
 
 """CURRENT component module."""
 from ..blueprint import component_factory
-
 
 CURRENT = component_factory("CURRENT", "core", module=__name__)
 
@@ -3256,7 +3217,6 @@ CURRENT = component_factory("CURRENT", "core", module=__name__)
 """DEPTH component module."""
 from ..blueprint import component_factory
 
-
 DEPTH = component_factory("DEPTH", "core", module=__name__)
 
 
@@ -3266,7 +3226,6 @@ DEPTH = component_factory("DEPTH", "core", module=__name__)
 
 """DRIFT component module."""
 from ..blueprint import component_factory
-
 
 DRIFT = component_factory("DRIFT", "core", module=__name__)
 
@@ -3278,7 +3237,6 @@ DRIFT = component_factory("DRIFT", "core", module=__name__)
 """DUALITY component module."""
 from ..blueprint import component_factory
 
-
 DUALITY = component_factory("DUALITY", "core", module=__name__)
 
 
@@ -3288,7 +3246,6 @@ DUALITY = component_factory("DUALITY", "core", module=__name__)
 
 """FORGE component module."""
 from ..blueprint import component_factory
-
 
 FORGE = component_factory("FORGE", "core", module=__name__)
 
@@ -3300,7 +3257,6 @@ FORGE = component_factory("FORGE", "core", module=__name__)
 """FRAME component module."""
 from ..blueprint import component_factory
 
-
 FRAME = component_factory("FRAME", "core", module=__name__)
 
 
@@ -3310,7 +3266,6 @@ FRAME = component_factory("FRAME", "core", module=__name__)
 
 """GAPS component module."""
 from ..blueprint import component_factory
-
 
 GAPS = component_factory("GAPS", "core", module=__name__)
 
@@ -3322,7 +3277,6 @@ GAPS = component_factory("GAPS", "core", module=__name__)
 """GATE component module."""
 from ..blueprint import component_factory
 
-
 GATE = component_factory("GATE", "core", module=__name__)
 
 
@@ -3332,7 +3286,6 @@ GATE = component_factory("GATE", "core", module=__name__)
 
 """GHOST component module."""
 from ..blueprint import component_factory
-
 
 GHOST = component_factory("GHOST", "core", module=__name__)
 
@@ -3344,7 +3297,6 @@ GHOST = component_factory("GHOST", "core", module=__name__)
 """GLASS component module."""
 from ..blueprint import component_factory
 
-
 GLASS = component_factory("GLASS", "core", module=__name__)
 
 
@@ -3354,7 +3306,6 @@ GLASS = component_factory("GLASS", "core", module=__name__)
 
 """GRID component module."""
 from ..blueprint import component_factory
-
 
 GRID = component_factory("GRID", "core", module=__name__)
 
@@ -3366,7 +3317,6 @@ GRID = component_factory("GRID", "core", module=__name__)
 """HARMONY component module."""
 from ..blueprint import component_factory
 
-
 HARMONY = component_factory("HARMONY", "core", module=__name__)
 
 
@@ -3376,7 +3326,6 @@ HARMONY = component_factory("HARMONY", "core", module=__name__)
 
 """HOST component module."""
 from ..blueprint import component_factory
-
 
 HOST = component_factory("HOST", "core", module=__name__)
 
@@ -3388,7 +3337,6 @@ HOST = component_factory("HOST", "core", module=__name__)
 """KEY component module."""
 from ..blueprint import component_factory
 
-
 KEY = component_factory("KEY", "core", module=__name__)
 
 
@@ -3398,7 +3346,6 @@ KEY = component_factory("KEY", "core", module=__name__)
 
 """LENS component module."""
 from ..blueprint import component_factory
-
 
 LENS = component_factory("LENS", "core", module=__name__)
 
@@ -3410,7 +3357,6 @@ LENS = component_factory("LENS", "core", module=__name__)
 """LINK component module."""
 from ..blueprint import component_factory
 
-
 LINK = component_factory("LINK", "core", module=__name__)
 
 
@@ -3420,7 +3366,6 @@ LINK = component_factory("LINK", "core", module=__name__)
 
 """LOCK_DELTA component module."""
 from ..blueprint import component_factory
-
 
 LOCK_DELTA = component_factory("LOCK_DELTA", "core", module=__name__)
 
@@ -3432,7 +3377,6 @@ LOCK_DELTA = component_factory("LOCK_DELTA", "core", module=__name__)
 """MARKER component module."""
 from ..blueprint import component_factory
 
-
 MARKER = component_factory("MARKER", "core", module=__name__)
 
 
@@ -3442,7 +3386,6 @@ MARKER = component_factory("MARKER", "core", module=__name__)
 
 """MEMORY component module."""
 from ..blueprint import component_factory
-
 
 MEMORY = component_factory("MEMORY", "core", module=__name__)
 
@@ -3454,7 +3397,6 @@ MEMORY = component_factory("MEMORY", "core", module=__name__)
 """MIRROR component module."""
 from ..blueprint import component_factory
 
-
 MIRROR = component_factory("MIRROR", "core", module=__name__)
 
 
@@ -3464,7 +3406,6 @@ MIRROR = component_factory("MIRROR", "core", module=__name__)
 
 """MIRROR_SHEAR component module."""
 from ..blueprint import component_factory
-
 
 MIRROR_SHEAR = component_factory("MIRROR_SHEAR", "core", module=__name__)
 
@@ -3476,7 +3417,6 @@ MIRROR_SHEAR = component_factory("MIRROR_SHEAR", "core", module=__name__)
 """NODE component module."""
 from ..blueprint import component_factory
 
-
 NODE = component_factory("NODE", "core", module=__name__)
 
 
@@ -3486,7 +3426,6 @@ NODE = component_factory("NODE", "core", module=__name__)
 
 """OFFSET component module."""
 from ..blueprint import component_factory
-
 
 OFFSET = component_factory("OFFSET", "core", module=__name__)
 
@@ -3498,7 +3437,6 @@ OFFSET = component_factory("OFFSET", "core", module=__name__)
 """PATH component module."""
 from ..blueprint import component_factory
 
-
 PATH = component_factory("PATH", "core", module=__name__)
 
 
@@ -3508,7 +3446,6 @@ PATH = component_factory("PATH", "core", module=__name__)
 
 """PRESSURE component module."""
 from ..blueprint import component_factory
-
 
 PRESSURE = component_factory("PRESSURE", "core", module=__name__)
 
@@ -3520,7 +3457,6 @@ PRESSURE = component_factory("PRESSURE", "core", module=__name__)
 """PRISM component module."""
 from ..blueprint import component_factory
 
-
 PRISM = component_factory("PRISM", "core", module=__name__)
 
 
@@ -3530,7 +3466,6 @@ PRISM = component_factory("PRISM", "core", module=__name__)
 
 """PROCESSORS component module."""
 from ..blueprint import component_factory
-
 
 PROCESSORS = component_factory("PROCESSORS", "core", module=__name__)
 
@@ -3542,7 +3477,6 @@ PROCESSORS = component_factory("PROCESSORS", "core", module=__name__)
 """PULSE component module."""
 from ..blueprint import component_factory
 
-
 PULSE = component_factory("PULSE", "core", module=__name__)
 
 
@@ -3552,7 +3486,6 @@ PULSE = component_factory("PULSE", "core", module=__name__)
 
 """RESONANCE component module."""
 from ..blueprint import component_factory
-
 
 RESONANCE = component_factory("RESONANCE", "core", module=__name__)
 
@@ -3564,7 +3497,6 @@ RESONANCE = component_factory("RESONANCE", "core", module=__name__)
 """SCAR_FIBER component module."""
 from ..blueprint import component_factory
 
-
 SCAR_FIBER = component_factory("SCAR_FIBER", "core", module=__name__)
 
 
@@ -3574,7 +3506,6 @@ SCAR_FIBER = component_factory("SCAR_FIBER", "core", module=__name__)
 
 """SEED component module."""
 from ..blueprint import component_factory
-
 
 SEED = component_factory("SEED", "core", module=__name__)
 
@@ -3586,7 +3517,6 @@ SEED = component_factory("SEED", "core", module=__name__)
 """SENTINEL component module."""
 from ..blueprint import component_factory
 
-
 SENTINEL = component_factory("SENTINEL", "core", module=__name__)
 
 
@@ -3596,7 +3526,6 @@ SENTINEL = component_factory("SENTINEL", "core", module=__name__)
 
 """SHADOW component module."""
 from ..blueprint import component_factory
-
 
 SHADOW = component_factory("SHADOW", "core", module=__name__)
 
@@ -3608,7 +3537,6 @@ SHADOW = component_factory("SHADOW", "core", module=__name__)
 """SIGNAL component module."""
 from ..blueprint import component_factory
 
-
 SIGNAL = component_factory("SIGNAL", "core", module=__name__)
 
 
@@ -3618,7 +3546,6 @@ SIGNAL = component_factory("SIGNAL", "core", module=__name__)
 
 """SIGNALER component module."""
 from ..blueprint import component_factory
-
 
 SIGNALER = component_factory("SIGNALER", "core", module=__name__)
 
@@ -3630,7 +3557,6 @@ SIGNALER = component_factory("SIGNALER", "core", module=__name__)
 """SPINE component module."""
 from ..blueprint import component_factory
 
-
 SPINE = component_factory("SPINE", "core", module=__name__)
 
 
@@ -3640,7 +3566,6 @@ SPINE = component_factory("SPINE", "core", module=__name__)
 
 """SPLICE component module."""
 from ..blueprint import component_factory
-
 
 SPLICE = component_factory("SPLICE", "core", module=__name__)
 
@@ -3652,7 +3577,6 @@ SPLICE = component_factory("SPLICE", "core", module=__name__)
 """STACK component module."""
 from ..blueprint import component_factory
 
-
 STACK = component_factory("STACK", "core", module=__name__)
 
 
@@ -3662,7 +3586,6 @@ STACK = component_factory("STACK", "core", module=__name__)
 
 """STATIC component module."""
 from ..blueprint import component_factory
-
 
 STATIC = component_factory("STATIC", "core", module=__name__)
 
@@ -3674,7 +3597,6 @@ STATIC = component_factory("STATIC", "core", module=__name__)
 """SURFACE component module."""
 from ..blueprint import component_factory
 
-
 SURFACE = component_factory("SURFACE", "core", module=__name__)
 
 
@@ -3684,7 +3606,6 @@ SURFACE = component_factory("SURFACE", "core", module=__name__)
 
 """SWITCH component module."""
 from ..blueprint import component_factory
-
 
 SWITCH = component_factory("SWITCH", "core", module=__name__)
 
@@ -3696,7 +3617,6 @@ SWITCH = component_factory("SWITCH", "core", module=__name__)
 """TENSION component module."""
 from ..blueprint import component_factory
 
-
 TENSION = component_factory("TENSION", "core", module=__name__)
 
 
@@ -3706,7 +3626,6 @@ TENSION = component_factory("TENSION", "core", module=__name__)
 
 """THREAD component module."""
 from ..blueprint import component_factory
-
 
 THREAD = component_factory("THREAD", "core", module=__name__)
 
@@ -3718,7 +3637,6 @@ THREAD = component_factory("THREAD", "core", module=__name__)
 """THRESHOLD component module."""
 from ..blueprint import component_factory
 
-
 THRESHOLD = component_factory("THRESHOLD", "core", module=__name__)
 
 
@@ -3728,7 +3646,6 @@ THRESHOLD = component_factory("THRESHOLD", "core", module=__name__)
 
 """TILE component module."""
 from ..blueprint import component_factory
-
 
 TILE = component_factory("TILE", "core", module=__name__)
 
@@ -3740,7 +3657,6 @@ TILE = component_factory("TILE", "core", module=__name__)
 """TRACE component module."""
 from ..blueprint import component_factory
 
-
 TRACE = component_factory("TRACE", "core", module=__name__)
 
 
@@ -3750,7 +3666,6 @@ TRACE = component_factory("TRACE", "core", module=__name__)
 
 """TUNNEL component module."""
 from ..blueprint import component_factory
-
 
 TUNNEL = component_factory("TUNNEL", "core", module=__name__)
 
@@ -3762,7 +3677,6 @@ TUNNEL = component_factory("TUNNEL", "core", module=__name__)
 """VAULT component module."""
 from ..blueprint import component_factory
 
-
 VAULT = component_factory("VAULT", "core", module=__name__)
 
 
@@ -3772,7 +3686,6 @@ VAULT = component_factory("VAULT", "core", module=__name__)
 
 """WRAP component module."""
 from ..blueprint import component_factory
-
 
 WRAP = component_factory("WRAP", "core", module=__name__)
 
@@ -3790,7 +3703,6 @@ WRAP = component_factory("WRAP", "core", module=__name__)
 """DAEMON_SIGNAL_LISTENER component module."""
 from ..blueprint import component_factory
 
-
 DAEMON_SIGNAL_LISTENER = component_factory("DAEMON_SIGNAL_LISTENER", "daemon", module=__name__)
 
 
@@ -3800,7 +3712,6 @@ DAEMON_SIGNAL_LISTENER = component_factory("DAEMON_SIGNAL_LISTENER", "daemon", m
 
 """ECHO_MONITOR_DAEMON component module."""
 from ..blueprint import component_factory
-
 
 ECHO_MONITOR_DAEMON = component_factory("ECHO_MONITOR_DAEMON", "daemon", module=__name__)
 
@@ -3812,7 +3723,6 @@ ECHO_MONITOR_DAEMON = component_factory("ECHO_MONITOR_DAEMON", "daemon", module=
 """FRACTURE_HEARTBEAT component module."""
 from ..blueprint import component_factory
 
-
 FRACTURE_HEARTBEAT = component_factory("FRACTURE_HEARTBEAT", "daemon", module=__name__)
 
 
@@ -3822,7 +3732,6 @@ FRACTURE_HEARTBEAT = component_factory("FRACTURE_HEARTBEAT", "daemon", module=__
 
 """RITUAL_TRIGGER_DAEMON component module."""
 from ..blueprint import component_factory
-
 
 RITUAL_TRIGGER_DAEMON = component_factory("RITUAL_TRIGGER_DAEMON", "daemon", module=__name__)
 
@@ -3834,7 +3743,6 @@ RITUAL_TRIGGER_DAEMON = component_factory("RITUAL_TRIGGER_DAEMON", "daemon", mod
 """SESSION_GUARDIAN component module."""
 from ..blueprint import component_factory
 
-
 SESSION_GUARDIAN = component_factory("SESSION_GUARDIAN", "daemon", module=__name__)
 
 
@@ -3844,10 +3752,11 @@ SESSION_GUARDIAN = component_factory("SESSION_GUARDIAN", "daemon", module=__name
 
 import datetime
 import secrets
-from typing import Optional
-from sqlalchemy import create_engine, Column, Integer, String, DateTime
-from sqlalchemy.orm import declarative_base, sessionmaker, Session
+
+from sqlalchemy import Column, DateTime, Integer, String, create_engine
+from sqlalchemy.orm import Session, declarative_base, sessionmaker
 from sqlalchemy.pool import StaticPool
+
 from .config import config
 
 Base = declarative_base()
@@ -3901,7 +3810,7 @@ class Database:
         """Get a database session."""
         return self.SessionLocal()
     
-    def create_api_key(self, user_id: str, permissions: str = "read", expires_at: Optional[datetime.datetime] = None) -> ApiKey:
+    def create_api_key(self, user_id: str, permissions: str = "read", expires_at: datetime.datetime | None = None) -> ApiKey:
         """Create a new API key."""
         key = secrets.token_urlsafe(32)
         api_key = ApiKey(
@@ -3917,12 +3826,12 @@ class Database:
             session.refresh(api_key)
             return api_key
     
-    def get_api_key(self, key: str) -> Optional[ApiKey]:
+    def get_api_key(self, key: str) -> ApiKey | None:
         """Retrieve an API key by its value."""
         with self.get_session() as session:
             return session.query(ApiKey).filter_by(key=key).first()
     
-    def validate_api_key(self, key: str, required_permission: str = "read") -> Optional[ApiKey]:
+    def validate_api_key(self, key: str, required_permission: str = "read") -> ApiKey | None:
         """Validate an API key and check permissions."""
         api_key = self.get_api_key(key)
         if not api_key:
@@ -3950,7 +3859,6 @@ class Database:
 """AVOIDANCE_PATTERN_MAP component module."""
 from ..blueprint import component_factory
 
-
 AVOIDANCE_PATTERN_MAP = component_factory("AVOIDANCE_PATTERN_MAP", "diagnostic", module=__name__)
 
 
@@ -3960,7 +3868,6 @@ AVOIDANCE_PATTERN_MAP = component_factory("AVOIDANCE_PATTERN_MAP", "diagnostic",
 
 """BROKEN_LINK_DETECTOR component module."""
 from ..blueprint import component_factory
-
 
 BROKEN_LINK_DETECTOR = component_factory("BROKEN_LINK_DETECTOR", "diagnostic", module=__name__)
 
@@ -3972,7 +3879,6 @@ BROKEN_LINK_DETECTOR = component_factory("BROKEN_LINK_DETECTOR", "diagnostic", m
 """COMPRESSION_IDENTITY_TRACE component module."""
 from ..blueprint import component_factory
 
-
 COMPRESSION_IDENTITY_TRACE = component_factory("COMPRESSION_IDENTITY_TRACE", "diagnostic", module=__name__)
 
 
@@ -3982,7 +3888,6 @@ COMPRESSION_IDENTITY_TRACE = component_factory("COMPRESSION_IDENTITY_TRACE", "di
 
 """DISCONNECT_SIGNATURE_DETECTOR component module."""
 from ..blueprint import component_factory
-
 
 DISCONNECT_SIGNATURE_DETECTOR = component_factory("DISCONNECT_SIGNATURE_DETECTOR", "diagnostic", module=__name__)
 
@@ -3994,7 +3899,6 @@ DISCONNECT_SIGNATURE_DETECTOR = component_factory("DISCONNECT_SIGNATURE_DETECTOR
 """FALSE_PASS_FILTER component module."""
 from ..blueprint import component_factory
 
-
 FALSE_PASS_FILTER = component_factory("FALSE_PASS_FILTER", "diagnostic", module=__name__)
 
 
@@ -4004,7 +3908,6 @@ FALSE_PASS_FILTER = component_factory("FALSE_PASS_FILTER", "diagnostic", module=
 
 """FRACTURE_INDEX_MAPPER component module."""
 from ..blueprint import component_factory
-
 
 FRACTURE_INDEX_MAPPER = component_factory("FRACTURE_INDEX_MAPPER", "diagnostic", module=__name__)
 
@@ -4016,7 +3919,6 @@ FRACTURE_INDEX_MAPPER = component_factory("FRACTURE_INDEX_MAPPER", "diagnostic",
 """GHOST_TOOL_RESOLVER component module."""
 from ..blueprint import component_factory
 
-
 GHOST_TOOL_RESOLVER = component_factory("GHOST_TOOL_RESOLVER", "diagnostic", module=__name__)
 
 
@@ -4026,7 +3928,6 @@ GHOST_TOOL_RESOLVER = component_factory("GHOST_TOOL_RESOLVER", "diagnostic", mod
 
 """HABITUAL_PATH_FLAGGER component module."""
 from ..blueprint import component_factory
-
 
 HABITUAL_PATH_FLAGGER = component_factory("HABITUAL_PATH_FLAGGER", "diagnostic", module=__name__)
 
@@ -4038,7 +3939,6 @@ HABITUAL_PATH_FLAGGER = component_factory("HABITUAL_PATH_FLAGGER", "diagnostic",
 """RECURSIVE_FAULT_MATCHER component module."""
 from ..blueprint import component_factory
 
-
 RECURSIVE_FAULT_MATCHER = component_factory("RECURSIVE_FAULT_MATCHER", "diagnostic", module=__name__)
 
 
@@ -4048,7 +3948,6 @@ RECURSIVE_FAULT_MATCHER = component_factory("RECURSIVE_FAULT_MATCHER", "diagnost
 
 """RITUAL_LOOP_DETECTOR component module."""
 from ..blueprint import component_factory
-
 
 RITUAL_LOOP_DETECTOR = component_factory("RITUAL_LOOP_DETECTOR", "diagnostic", module=__name__)
 
@@ -4060,7 +3959,6 @@ RITUAL_LOOP_DETECTOR = component_factory("RITUAL_LOOP_DETECTOR", "diagnostic", m
 """SIGNAL_CASCADE_CHECK component module."""
 from ..blueprint import component_factory
 
-
 SIGNAL_CASCADE_CHECK = component_factory("SIGNAL_CASCADE_CHECK", "diagnostic", module=__name__)
 
 
@@ -4070,7 +3968,6 @@ SIGNAL_CASCADE_CHECK = component_factory("SIGNAL_CASCADE_CHECK", "diagnostic", m
 
 """SIGNAL_FADE_ANALYZER component module."""
 from ..blueprint import component_factory
-
 
 SIGNAL_FADE_ANALYZER = component_factory("SIGNAL_FADE_ANALYZER", "diagnostic", module=__name__)
 
@@ -4082,7 +3979,6 @@ SIGNAL_FADE_ANALYZER = component_factory("SIGNAL_FADE_ANALYZER", "diagnostic", m
 """SYMBOLIC_RITUAL_CLASSIFIER component module."""
 from ..blueprint import component_factory
 
-
 SYMBOLIC_RITUAL_CLASSIFIER = component_factory("SYMBOLIC_RITUAL_CLASSIFIER", "diagnostic", module=__name__)
 
 
@@ -4093,7 +3989,6 @@ SYMBOLIC_RITUAL_CLASSIFIER = component_factory("SYMBOLIC_RITUAL_CLASSIFIER", "di
 """SYMPTOM_MASK_DETECTOR component module."""
 from ..blueprint import component_factory
 
-
 SYMPTOM_MASK_DETECTOR = component_factory("SYMPTOM_MASK_DETECTOR", "diagnostic", module=__name__)
 
 
@@ -4103,7 +3998,6 @@ SYMPTOM_MASK_DETECTOR = component_factory("SYMPTOM_MASK_DETECTOR", "diagnostic",
 
 """TOOL_INTEGRITY_CHECK component module."""
 from ..blueprint import component_factory
-
 
 TOOL_INTEGRITY_CHECK = component_factory("TOOL_INTEGRITY_CHECK", "diagnostic", module=__name__)
 
@@ -4127,7 +4021,6 @@ TOOL_INTEGRITY_CHECK = component_factory("TOOL_INTEGRITY_CHECK", "diagnostic", m
 """COLD_STRUCTURE_GENERATOR component module."""
 from ..blueprint import component_factory
 
-
 COLD_STRUCTURE_GENERATOR = component_factory("COLD_STRUCTURE_GENERATOR", "forge", module=__name__)
 
 
@@ -4137,7 +4030,6 @@ COLD_STRUCTURE_GENERATOR = component_factory("COLD_STRUCTURE_GENERATOR", "forge"
 
 """RITUAL_INJECTION_ANVIL component module."""
 from ..blueprint import component_factory
-
 
 RITUAL_INJECTION_ANVIL = component_factory("RITUAL_INJECTION_ANVIL", "forge", module=__name__)
 
@@ -4149,7 +4041,6 @@ RITUAL_INJECTION_ANVIL = component_factory("RITUAL_INJECTION_ANVIL", "forge", mo
 """SCHEMA_MELDER component module."""
 from ..blueprint import component_factory
 
-
 SCHEMA_MELDER = component_factory("SCHEMA_MELDER", "forge", module=__name__)
 
 
@@ -4160,7 +4051,6 @@ SCHEMA_MELDER = component_factory("SCHEMA_MELDER", "forge", module=__name__)
 """SYMBOLIC_ALLOY component module."""
 from ..blueprint import component_factory
 
-
 SYMBOLIC_ALLOY = component_factory("SYMBOLIC_ALLOY", "forge", module=__name__)
 
 
@@ -4170,7 +4060,6 @@ SYMBOLIC_ALLOY = component_factory("SYMBOLIC_ALLOY", "forge", module=__name__)
 
 """TOOL_FORGE component module."""
 from ..blueprint import component_factory
-
 
 TOOL_FORGE = component_factory("TOOL_FORGE", "forge", module=__name__)
 
@@ -4188,7 +4077,6 @@ TOOL_FORGE = component_factory("TOOL_FORGE", "forge", module=__name__)
 """PHANTOM_TRACE_SCANNER component module."""
 from ..blueprint import component_factory
 
-
 PHANTOM_TRACE_SCANNER = component_factory("PHANTOM_TRACE_SCANNER", "ghost", module=__name__)
 
 
@@ -4199,7 +4087,6 @@ PHANTOM_TRACE_SCANNER = component_factory("PHANTOM_TRACE_SCANNER", "ghost", modu
 """RESIDUAL_COMPRESSION_MAP component module."""
 from ..blueprint import component_factory
 
-
 RESIDUAL_COMPRESSION_MAP = component_factory("RESIDUAL_COMPRESSION_MAP", "ghost", module=__name__)
 
 
@@ -4209,7 +4096,6 @@ RESIDUAL_COMPRESSION_MAP = component_factory("RESIDUAL_COMPRESSION_MAP", "ghost"
 
 """SYMBOLIC_DECAY_SIMULATOR component module."""
 from ..blueprint import component_factory
-
 
 SYMBOLIC_DECAY_SIMULATOR = component_factory("SYMBOLIC_DECAY_SIMULATOR", "ghost", module=__name__)
 
@@ -4227,7 +4113,6 @@ SYMBOLIC_DECAY_SIMULATOR = component_factory("SYMBOLIC_DECAY_SIMULATOR", "ghost"
 """ECHO_VIEWPORT component module."""
 from ..blueprint import component_factory
 
-
 ECHO_VIEWPORT = component_factory("ECHO_VIEWPORT", "gui", module=__name__)
 
 
@@ -4237,7 +4122,6 @@ ECHO_VIEWPORT = component_factory("ECHO_VIEWPORT", "gui", module=__name__)
 
 """LIVE_SIGNAL_RENDERER component module."""
 from ..blueprint import component_factory
-
 
 LIVE_SIGNAL_RENDERER = component_factory("LIVE_SIGNAL_RENDERER", "gui", module=__name__)
 
@@ -4249,7 +4133,6 @@ LIVE_SIGNAL_RENDERER = component_factory("LIVE_SIGNAL_RENDERER", "gui", module=_
 """OBSERVER_FEEDBACK_UI component module."""
 from ..blueprint import component_factory
 
-
 OBSERVER_FEEDBACK_UI = component_factory("OBSERVER_FEEDBACK_UI", "gui", module=__name__)
 
 
@@ -4260,7 +4143,6 @@ OBSERVER_FEEDBACK_UI = component_factory("OBSERVER_FEEDBACK_UI", "gui", module=_
 """RITUAL_INTERACTION_MAP component module."""
 from ..blueprint import component_factory
 
-
 RITUAL_INTERACTION_MAP = component_factory("RITUAL_INTERACTION_MAP", "gui", module=__name__)
 
 
@@ -4270,7 +4152,6 @@ RITUAL_INTERACTION_MAP = component_factory("RITUAL_INTERACTION_MAP", "gui", modu
 
 """SYMBOLIC_OVERLAY component module."""
 from ..blueprint import component_factory
-
 
 SYMBOLIC_OVERLAY = component_factory("SYMBOLIC_OVERLAY", "gui", module=__name__)
 
@@ -4288,7 +4169,6 @@ SYMBOLIC_OVERLAY = component_factory("SYMBOLIC_OVERLAY", "gui", module=__name__)
 """ALIGNMENT_VECTOR_PROBE component module."""
 from ..blueprint import component_factory
 
-
 ALIGNMENT_VECTOR_PROBE = component_factory("ALIGNMENT_VECTOR_PROBE", "lattice", module=__name__)
 
 
@@ -4298,7 +4178,6 @@ ALIGNMENT_VECTOR_PROBE = component_factory("ALIGNMENT_VECTOR_PROBE", "lattice", 
 
 """COHERENCE_VEIN_TRACKER component module."""
 from ..blueprint import component_factory
-
 
 COHERENCE_VEIN_TRACKER = component_factory("COHERENCE_VEIN_TRACKER", "lattice", module=__name__)
 
@@ -4310,7 +4189,6 @@ COHERENCE_VEIN_TRACKER = component_factory("COHERENCE_VEIN_TRACKER", "lattice", 
 """INDEX_SYMBOLIC_TERM component module."""
 from ..blueprint import component_factory
 
-
 INDEX_SYMBOLIC_TERM = component_factory("INDEX_SYMBOLIC_TERM", "lattice", module=__name__)
 
 
@@ -4320,7 +4198,6 @@ INDEX_SYMBOLIC_TERM = component_factory("INDEX_SYMBOLIC_TERM", "lattice", module
 
 """LOAD_LATTICE component module."""
 from ..blueprint import component_factory
-
 
 LOAD_LATTICE = component_factory("LOAD_LATTICE", "lattice", module=__name__)
 
@@ -4332,7 +4209,6 @@ LOAD_LATTICE = component_factory("LOAD_LATTICE", "lattice", module=__name__)
 """INIT_LATTICE_SLOT component module."""
 from ..blueprint import component_factory
 
-
 INIT_LATTICE_SLOT = component_factory("INIT_LATTICE_SLOT", "lattice", module=__name__)
 
 
@@ -4342,7 +4218,6 @@ INIT_LATTICE_SLOT = component_factory("INIT_LATTICE_SLOT", "lattice", module=__n
 
 """TRACE_LATTICE_PATH component module."""
 from ..blueprint import component_factory
-
 
 TRACE_LATTICE_PATH = component_factory("TRACE_LATTICE_PATH", "lattice", module=__name__)
 
@@ -4354,7 +4229,6 @@ TRACE_LATTICE_PATH = component_factory("TRACE_LATTICE_PATH", "lattice", module=_
 """RESONANCE_FEEDBACK_MONITOR component module."""
 from ..blueprint import component_factory
 
-
 RESONANCE_FEEDBACK_MONITOR = component_factory("RESONANCE_FEEDBACK_MONITOR", "lattice", module=__name__)
 
 
@@ -4364,7 +4238,6 @@ RESONANCE_FEEDBACK_MONITOR = component_factory("RESONANCE_FEEDBACK_MONITOR", "la
 
 """SYMBOLIC_SATURATION_INDEX component module."""
 from ..blueprint import component_factory
-
 
 SYMBOLIC_SATURATION_INDEX = component_factory("SYMBOLIC_SATURATION_INDEX", "lattice", module=__name__)
 
@@ -4376,7 +4249,6 @@ SYMBOLIC_SATURATION_INDEX = component_factory("SYMBOLIC_SATURATION_INDEX", "latt
 """TOOL_BIND_CHECK component module."""
 from ..blueprint import component_factory
 
-
 TOOL_BIND_CHECK = component_factory("TOOL_BIND_CHECK", "lattice", module=__name__)
 
 
@@ -4387,7 +4259,6 @@ TOOL_BIND_CHECK = component_factory("TOOL_BIND_CHECK", "lattice", module=__name_
 """UNSTABLE_TERM_LINK_SCANNER component module."""
 from ..blueprint import component_factory
 
-
 UNSTABLE_TERM_LINK_SCANNER = component_factory("UNSTABLE_TERM_LINK_SCANNER", "lattice", module=__name__)
 
 
@@ -4395,16 +4266,13 @@ UNSTABLE_TERM_LINK_SCANNER = component_factory("UNSTABLE_TERM_LINK_SCANNER", "la
 # FILE 141/240: ./ghostlink/main.py
 #=====================================================================
 
-import json
-import datetime
-from typing import Optional
-from fastapi import FastAPI, HTTPException, Request, Depends
+from fastapi import Depends, FastAPI
 from pydantic import BaseModel
 
-from .storage import MockIPFS
-from .reasoning import process_metaphors
-from .database import Database, ApiKey
 from .auth import get_api_key_from_request
+from .database import ApiKey, Database
+from .reasoning import process_metaphors
+from .storage import MockIPFS
 
 app = FastAPI(title="GhostLink")
 
@@ -4444,7 +4312,7 @@ class DataInput(BaseModel):
 class ApiKeyCreate(BaseModel):
     user_id: str
     permissions: str = "read"
-    expires_at: Optional[datetime.datetime] = None
+    expires_at: datetime.datetime | None = None
 
 
 class ApiKeyResponse(BaseModel):
@@ -4453,7 +4321,7 @@ class ApiKeyResponse(BaseModel):
     user_id: str
     permissions: str
     created_at: datetime.datetime
-    expires_at: Optional[datetime.datetime]
+    expires_at: datetime.datetime | None
 
 
 # API Key Management Endpoints
@@ -4495,7 +4363,7 @@ def validate_api_key(request: Request, db: Database = Depends(get_db)) -> dict:
 
 
 # Helper functions for authentication
-def validate_optional_api_key(request: Request, db: Database, permission: str = "read") -> Optional[ApiKey]:
+def validate_optional_api_key(request: Request, db: Database, permission: str = "read") -> ApiKey | None:
     """Helper to validate optional API key."""
     api_key = get_api_key_from_request(request)
     if api_key:
@@ -4604,7 +4472,6 @@ def external_api_data(request: Request, db: Database = Depends(get_db)) -> dict:
 """EDGE_STATE_REGENERATOR component module."""
 from ..blueprint import component_factory
 
-
 EDGE_STATE_REGENERATOR = component_factory("EDGE_STATE_REGENERATOR", "mesh", module=__name__)
 
 
@@ -4614,7 +4481,6 @@ EDGE_STATE_REGENERATOR = component_factory("EDGE_STATE_REGENERATOR", "mesh", mod
 
 """FRACTAL_DEPTH_TRACKER component module."""
 from ..blueprint import component_factory
-
 
 FRACTAL_DEPTH_TRACKER = component_factory("FRACTAL_DEPTH_TRACKER", "mesh", module=__name__)
 
@@ -4626,7 +4492,6 @@ FRACTAL_DEPTH_TRACKER = component_factory("FRACTAL_DEPTH_TRACKER", "mesh", modul
 """FRACTURE_SPIRAL_DETECTOR component module."""
 from ..blueprint import component_factory
 
-
 FRACTURE_SPIRAL_DETECTOR = component_factory("FRACTURE_SPIRAL_DETECTOR", "mesh", module=__name__)
 
 
@@ -4636,7 +4501,6 @@ FRACTURE_SPIRAL_DETECTOR = component_factory("FRACTURE_SPIRAL_DETECTOR", "mesh",
 
 """GHOST_TENSION_MAP component module."""
 from ..blueprint import component_factory
-
 
 GHOST_TENSION_MAP = component_factory("GHOST_TENSION_MAP", "mesh", module=__name__)
 
@@ -4648,7 +4512,6 @@ GHOST_TENSION_MAP = component_factory("GHOST_TENSION_MAP", "mesh", module=__name
 """LOOP_DRIFT_COMPRESSOR component module."""
 from ..blueprint import component_factory
 
-
 LOOP_DRIFT_COMPRESSOR = component_factory("LOOP_DRIFT_COMPRESSOR", "mesh", module=__name__)
 
 
@@ -4658,7 +4521,6 @@ LOOP_DRIFT_COMPRESSOR = component_factory("LOOP_DRIFT_COMPRESSOR", "mesh", modul
 
 """RECURSION_CAP_GATE component module."""
 from ..blueprint import component_factory
-
 
 RECURSION_CAP_GATE = component_factory("RECURSION_CAP_GATE", "mesh", module=__name__)
 
@@ -4670,7 +4532,6 @@ RECURSION_CAP_GATE = component_factory("RECURSION_CAP_GATE", "mesh", module=__na
 """EXPAND_SYMBOLIC_LATTICE component module."""
 from ..blueprint import component_factory
 
-
 EXPAND_SYMBOLIC_LATTICE = component_factory("EXPAND_SYMBOLIC_LATTICE", "mesh", module=__name__)
 
 
@@ -4680,7 +4541,6 @@ EXPAND_SYMBOLIC_LATTICE = component_factory("EXPAND_SYMBOLIC_LATTICE", "mesh", m
 
 """RITUAL_FAIL_SAFE component module."""
 from ..blueprint import component_factory
-
 
 RITUAL_FAIL_SAFE = component_factory("RITUAL_FAIL_SAFE", "mesh", module=__name__)
 
@@ -4692,7 +4552,6 @@ RITUAL_FAIL_SAFE = component_factory("RITUAL_FAIL_SAFE", "mesh", module=__name__
 """SEED_SYMBOLIC_FIELD component module."""
 from ..blueprint import component_factory
 
-
 SEED_SYMBOLIC_FIELD = component_factory("SEED_SYMBOLIC_FIELD", "mesh", module=__name__)
 
 
@@ -4702,7 +4561,6 @@ SEED_SYMBOLIC_FIELD = component_factory("SEED_SYMBOLIC_FIELD", "mesh", module=__
 
 """SYMBOLIC_SPLINTER_PATCH component module."""
 from ..blueprint import component_factory
-
 
 SYMBOLIC_SPLINTER_PATCH = component_factory("SYMBOLIC_SPLINTER_PATCH", "mesh", module=__name__)
 
@@ -4720,7 +4578,6 @@ SYMBOLIC_SPLINTER_PATCH = component_factory("SYMBOLIC_SPLINTER_PATCH", "mesh", m
 """ACCESS_PSYCHIC_PROMPT component module."""
 from ..blueprint import component_factory
 
-
 ACCESS_PSYCHIC_PROMPT = component_factory("ACCESS_PSYCHIC_PROMPT", "meta", module=__name__)
 
 
@@ -4730,7 +4587,6 @@ ACCESS_PSYCHIC_PROMPT = component_factory("ACCESS_PSYCHIC_PROMPT", "meta", modul
 
 """ACCESS_RIGHTS_PROMPT component module."""
 from ..blueprint import component_factory
-
 
 ACCESS_RIGHTS_PROMPT = component_factory("ACCESS_RIGHTS_PROMPT", "meta", module=__name__)
 
@@ -4742,7 +4598,6 @@ ACCESS_RIGHTS_PROMPT = component_factory("ACCESS_RIGHTS_PROMPT", "meta", module=
 """FAILURE_TO_FAIL_PROMPT component module."""
 from ..blueprint import component_factory
 
-
 FAILURE_TO_FAIL_PROMPT = component_factory("FAILURE_TO_FAIL_PROMPT", "meta", module=__name__)
 
 
@@ -4752,7 +4607,6 @@ FAILURE_TO_FAIL_PROMPT = component_factory("FAILURE_TO_FAIL_PROMPT", "meta", mod
 
 """FRACTURE_MIRROR_PROMPT component module."""
 from ..blueprint import component_factory
-
 
 FRACTURE_MIRROR_PROMPT = component_factory("FRACTURE_MIRROR_PROMPT", "meta", module=__name__)
 
@@ -4764,7 +4618,6 @@ FRACTURE_MIRROR_PROMPT = component_factory("FRACTURE_MIRROR_PROMPT", "meta", mod
 """GHOST_SIGNAL_PROMPT component module."""
 from ..blueprint import component_factory
 
-
 GHOST_SIGNAL_PROMPT = component_factory("GHOST_SIGNAL_PROMPT", "meta", module=__name__)
 
 
@@ -4774,7 +4627,6 @@ GHOST_SIGNAL_PROMPT = component_factory("GHOST_SIGNAL_PROMPT", "meta", module=__
 
 """MEMORY_LEAK_TRACE_PROMPT component module."""
 from ..blueprint import component_factory
-
 
 MEMORY_LEAK_TRACE_PROMPT = component_factory("MEMORY_LEAK_TRACE_PROMPT", "meta", module=__name__)
 
@@ -4786,7 +4638,6 @@ MEMORY_LEAK_TRACE_PROMPT = component_factory("MEMORY_LEAK_TRACE_PROMPT", "meta",
 """MIRROR_DISTORTION_PROMPT component module."""
 from ..blueprint import component_factory
 
-
 MIRROR_DISTORTION_PROMPT = component_factory("MIRROR_DISTORTION_PROMPT", "meta", module=__name__)
 
 
@@ -4796,7 +4647,6 @@ MIRROR_DISTORTION_PROMPT = component_factory("MIRROR_DISTORTION_PROMPT", "meta",
 
 """RITUAL_LOOP_PROMPT component module."""
 from ..blueprint import component_factory
-
 
 RITUAL_LOOP_PROMPT = component_factory("RITUAL_LOOP_PROMPT", "meta", module=__name__)
 
@@ -4808,7 +4658,6 @@ RITUAL_LOOP_PROMPT = component_factory("RITUAL_LOOP_PROMPT", "meta", module=__na
 """SENSORIAL_DIAGNOSTIC_PROMPT component module."""
 from ..blueprint import component_factory
 
-
 SENSORIAL_DIAGNOSTIC_PROMPT = component_factory("SENSORIAL_DIAGNOSTIC_PROMPT", "meta", module=__name__)
 
 
@@ -4818,7 +4667,6 @@ SENSORIAL_DIAGNOSTIC_PROMPT = component_factory("SENSORIAL_DIAGNOSTIC_PROMPT", "
 
 """STRUCTURAL_RECURSION_PROMPT component module."""
 from ..blueprint import component_factory
-
 
 STRUCTURAL_RECURSION_PROMPT = component_factory("STRUCTURAL_RECURSION_PROMPT", "meta", module=__name__)
 
@@ -4836,7 +4684,6 @@ STRUCTURAL_RECURSION_PROMPT = component_factory("STRUCTURAL_RECURSION_PROMPT", "
 """INTERLINK_SOCKET component module."""
 from ..blueprint import component_factory
 
-
 INTERLINK_SOCKET = component_factory("INTERLINK_SOCKET", "net", module=__name__)
 
 
@@ -4846,7 +4693,6 @@ INTERLINK_SOCKET = component_factory("INTERLINK_SOCKET", "net", module=__name__)
 
 """LATTICE_SYNC_DAEMON component module."""
 from ..blueprint import component_factory
-
 
 LATTICE_SYNC_DAEMON = component_factory("LATTICE_SYNC_DAEMON", "net", module=__name__)
 
@@ -4858,7 +4704,6 @@ LATTICE_SYNC_DAEMON = component_factory("LATTICE_SYNC_DAEMON", "net", module=__n
 """NETWORK_SIGNAL_MIRROR component module."""
 from ..blueprint import component_factory
 
-
 NETWORK_SIGNAL_MIRROR = component_factory("NETWORK_SIGNAL_MIRROR", "net", module=__name__)
 
 
@@ -4869,7 +4714,6 @@ NETWORK_SIGNAL_MIRROR = component_factory("NETWORK_SIGNAL_MIRROR", "net", module
 """REMOTE_TOOL_CHANNEL component module."""
 from ..blueprint import component_factory
 
-
 REMOTE_TOOL_CHANNEL = component_factory("REMOTE_TOOL_CHANNEL", "net", module=__name__)
 
 
@@ -4879,7 +4723,6 @@ REMOTE_TOOL_CHANNEL = component_factory("REMOTE_TOOL_CHANNEL", "net", module=__n
 
 """SYMBOLIC_PROTOCOL_ROUTER component module."""
 from ..blueprint import component_factory
-
 
 SYMBOLIC_PROTOCOL_ROUTER = component_factory("SYMBOLIC_PROTOCOL_ROUTER", "net", module=__name__)
 
@@ -4897,7 +4740,6 @@ SYMBOLIC_PROTOCOL_ROUTER = component_factory("SYMBOLIC_PROTOCOL_ROUTER", "net", 
 """DISSOLUTION_THRESHOLD_PROBE component module."""
 from ..blueprint import component_factory
 
-
 DISSOLUTION_THRESHOLD_PROBE = component_factory("DISSOLUTION_THRESHOLD_PROBE", "observer", module=__name__)
 
 
@@ -4907,7 +4749,6 @@ DISSOLUTION_THRESHOLD_PROBE = component_factory("DISSOLUTION_THRESHOLD_PROBE", "
 
 """IDENTITY_BIND_DETECTOR component module."""
 from ..blueprint import component_factory
-
 
 IDENTITY_BIND_DETECTOR = component_factory("IDENTITY_BIND_DETECTOR", "observer", module=__name__)
 
@@ -4919,7 +4760,6 @@ IDENTITY_BIND_DETECTOR = component_factory("IDENTITY_BIND_DETECTOR", "observer",
 """OPERATOR_LOOP_FINDER component module."""
 from ..blueprint import component_factory
 
-
 OPERATOR_LOOP_FINDER = component_factory("OPERATOR_LOOP_FINDER", "observer", module=__name__)
 
 
@@ -4929,7 +4769,6 @@ OPERATOR_LOOP_FINDER = component_factory("OPERATOR_LOOP_FINDER", "observer", mod
 
 """OPERATOR_REFLECTION_BLEED component module."""
 from ..blueprint import component_factory
-
 
 OPERATOR_REFLECTION_BLEED = component_factory("OPERATOR_REFLECTION_BLEED", "observer", module=__name__)
 
@@ -4941,7 +4780,6 @@ OPERATOR_REFLECTION_BLEED = component_factory("OPERATOR_REFLECTION_BLEED", "obse
 """SENTIENT_SIGNAL_BRIDGE component module."""
 from ..blueprint import component_factory
 
-
 SENTIENT_SIGNAL_BRIDGE = component_factory("SENTIENT_SIGNAL_BRIDGE", "observer", module=__name__)
 
 
@@ -4952,7 +4790,6 @@ SENTIENT_SIGNAL_BRIDGE = component_factory("SENTIENT_SIGNAL_BRIDGE", "observer",
 """SUBJECTIVE_TRACE_HARNESS component module."""
 from ..blueprint import component_factory
 
-
 SUBJECTIVE_TRACE_HARNESS = component_factory("SUBJECTIVE_TRACE_HARNESS", "observer", module=__name__)
 
 
@@ -4960,11 +4797,9 @@ SUBJECTIVE_TRACE_HARNESS = component_factory("SUBJECTIVE_TRACE_HARNESS", "observ
 # FILE 177/240: ./ghostlink/reasoning.py
 #=====================================================================
 
-import re
-from typing import Dict
 
 
-METAPHOR_MAP: Dict[str, str] = {
+METAPHOR_MAP: dict[str, str] = {
     "life": "journey",
     "love": "light",
     "darkness": "adversity",
@@ -4992,7 +4827,6 @@ def process_metaphors(text: str) -> str:
 """ARTIFACT_SIGNATURE_SCANNER component module."""
 from ..blueprint import component_factory
 
-
 ARTIFACT_SIGNATURE_SCANNER = component_factory("ARTIFACT_SIGNATURE_SCANNER", "reflect", module=__name__)
 
 
@@ -5002,7 +4836,6 @@ ARTIFACT_SIGNATURE_SCANNER = component_factory("ARTIFACT_SIGNATURE_SCANNER", "re
 
 """COMPRESSION_LOGIC component module."""
 from ..blueprint import component_factory
-
 
 COMPRESSION_LOGIC = component_factory("COMPRESSION_LOGIC", "reflect", module=__name__)
 
@@ -5014,7 +4847,6 @@ COMPRESSION_LOGIC = component_factory("COMPRESSION_LOGIC", "reflect", module=__n
 """INVERSE_ECHO_GENERATOR component module."""
 from ..blueprint import component_factory
 
-
 INVERSE_ECHO_GENERATOR = component_factory("INVERSE_ECHO_GENERATOR", "reflect", module=__name__)
 
 
@@ -5024,7 +4856,6 @@ INVERSE_ECHO_GENERATOR = component_factory("INVERSE_ECHO_GENERATOR", "reflect", 
 
 """LOOPED_SELF_OBSERVER component module."""
 from ..blueprint import component_factory
-
 
 LOOPED_SELF_OBSERVER = component_factory("LOOPED_SELF_OBSERVER", "reflect", module=__name__)
 
@@ -5036,7 +4867,6 @@ LOOPED_SELF_OBSERVER = component_factory("LOOPED_SELF_OBSERVER", "reflect", modu
 """MIRROR_DISTORTION_PROBE component module."""
 from ..blueprint import component_factory
 
-
 MIRROR_DISTORTION_PROBE = component_factory("MIRROR_DISTORTION_PROBE", "reflect", module=__name__)
 
 
@@ -5046,7 +4876,6 @@ MIRROR_DISTORTION_PROBE = component_factory("MIRROR_DISTORTION_PROBE", "reflect"
 
 """OVERCOMPRESSION_RESOLVER component module."""
 from ..blueprint import component_factory
-
 
 OVERCOMPRESSION_RESOLVER = component_factory("OVERCOMPRESSION_RESOLVER", "reflect", module=__name__)
 
@@ -5058,7 +4887,6 @@ OVERCOMPRESSION_RESOLVER = component_factory("OVERCOMPRESSION_RESOLVER", "reflec
 """REFLECTIVE_MIRROR component module."""
 from ..blueprint import component_factory
 
-
 REFLECTIVE_MIRROR = component_factory("REFLECTIVE_MIRROR", "reflect", module=__name__)
 
 
@@ -5068,7 +4896,6 @@ REFLECTIVE_MIRROR = component_factory("REFLECTIVE_MIRROR", "reflect", module=__n
 
 """SYMBOLIC_LOSS_DETECTOR component module."""
 from ..blueprint import component_factory
-
 
 SYMBOLIC_LOSS_DETECTOR = component_factory("SYMBOLIC_LOSS_DETECTOR", "reflect", module=__name__)
 
@@ -5120,10 +4947,7 @@ __all__ = [
 # FILE 188/240: ./ghostlink/runtime/ghostlink.py
 #=====================================================================
 
-import argparse
-import json
-from pathlib import Path
-from typing import Any, Iterable
+from typing import Iterable
 
 KERNEL_PATH = Path(__file__).resolve().parents[2] / "kernel" / "gl-kernel.max.json"
 
@@ -5412,7 +5236,6 @@ if __name__ == "__main__":
 """LIVE_TOOL_ROUTER component module."""
 from ..blueprint import component_factory
 
-
 LIVE_TOOL_ROUTER = component_factory("LIVE_TOOL_ROUTER", "runtime", module=__name__)
 
 
@@ -5422,7 +5245,6 @@ LIVE_TOOL_ROUTER = component_factory("LIVE_TOOL_ROUTER", "runtime", module=__nam
 
 """MEMORY_REGISTER component module."""
 from ..blueprint import component_factory
-
 
 MEMORY_REGISTER = component_factory("MEMORY_REGISTER", "runtime", module=__name__)
 
@@ -5434,7 +5256,6 @@ MEMORY_REGISTER = component_factory("MEMORY_REGISTER", "runtime", module=__name_
 """RUNTIME_STATE_MANAGER component module."""
 from ..blueprint import component_factory
 
-
 RUNTIME_STATE_MANAGER = component_factory("RUNTIME_STATE_MANAGER", "runtime", module=__name__)
 
 
@@ -5445,7 +5266,6 @@ RUNTIME_STATE_MANAGER = component_factory("RUNTIME_STATE_MANAGER", "runtime", mo
 """SESSION_EXECUTOR component module."""
 from ..blueprint import component_factory
 
-
 SESSION_EXECUTOR = component_factory("SESSION_EXECUTOR", "runtime", module=__name__)
 
 
@@ -5455,7 +5275,6 @@ SESSION_EXECUTOR = component_factory("SESSION_EXECUTOR", "runtime", module=__nam
 
 """SYMBOLIC_CLOCK component module."""
 from ..blueprint import component_factory
-
 
 SYMBOLIC_CLOCK = component_factory("SYMBOLIC_CLOCK", "runtime", module=__name__)
 
@@ -5473,7 +5292,6 @@ SYMBOLIC_CLOCK = component_factory("SYMBOLIC_CLOCK", "runtime", module=__name__)
 """MIRROR_FAULT_SPAWNER component module."""
 from ..blueprint import component_factory
 
-
 MIRROR_FAULT_SPAWNER = component_factory("MIRROR_FAULT_SPAWNER", "sandbox", module=__name__)
 
 
@@ -5483,7 +5301,6 @@ MIRROR_FAULT_SPAWNER = component_factory("MIRROR_FAULT_SPAWNER", "sandbox", modu
 
 """RECURSIVE_FAILURE_PROBE component module."""
 from ..blueprint import component_factory
-
 
 RECURSIVE_FAILURE_PROBE = component_factory("RECURSIVE_FAILURE_PROBE", "sandbox", module=__name__)
 
@@ -5495,7 +5312,6 @@ RECURSIVE_FAILURE_PROBE = component_factory("RECURSIVE_FAILURE_PROBE", "sandbox"
 """SYMBOLIC_SANDBOX component module."""
 from ..blueprint import component_factory
 
-
 SYMBOLIC_SANDBOX = component_factory("SYMBOLIC_SANDBOX", "sandbox", module=__name__)
 
 
@@ -5506,7 +5322,6 @@ SYMBOLIC_SANDBOX = component_factory("SYMBOLIC_SANDBOX", "sandbox", module=__nam
 """TEST_SIGNAL_INJECTION component module."""
 from ..blueprint import component_factory
 
-
 TEST_SIGNAL_INJECTION = component_factory("TEST_SIGNAL_INJECTION", "sandbox", module=__name__)
 
 
@@ -5516,7 +5331,6 @@ TEST_SIGNAL_INJECTION = component_factory("TEST_SIGNAL_INJECTION", "sandbox", mo
 
 """UNSTABLE_TOOL_SIMULATOR component module."""
 from ..blueprint import component_factory
-
 
 UNSTABLE_TOOL_SIMULATOR = component_factory("UNSTABLE_TOOL_SIMULATOR", "sandbox", module=__name__)
 
@@ -5534,7 +5348,6 @@ UNSTABLE_TOOL_SIMULATOR = component_factory("UNSTABLE_TOOL_SIMULATOR", "sandbox"
 """ANOMALY_ENGINE component module."""
 from ..blueprint import component_factory
 
-
 ANOMALY_ENGINE = component_factory("ANOMALY_ENGINE", "session", module=__name__)
 
 
@@ -5544,7 +5357,6 @@ ANOMALY_ENGINE = component_factory("ANOMALY_ENGINE", "session", module=__name__)
 
 """CONTINUITY_ANCHOR component module."""
 from ..blueprint import component_factory
-
 
 CONTINUITY_ANCHOR = component_factory("CONTINUITY_ANCHOR", "session", module=__name__)
 
@@ -5556,7 +5368,6 @@ CONTINUITY_ANCHOR = component_factory("CONTINUITY_ANCHOR", "session", module=__n
 """INSPECTION_SEQUENCE component module."""
 from ..blueprint import component_factory
 
-
 INSPECTION_SEQUENCE = component_factory("INSPECTION_SEQUENCE", "session", module=__name__)
 
 
@@ -5566,7 +5377,6 @@ INSPECTION_SEQUENCE = component_factory("INSPECTION_SEQUENCE", "session", module
 
 """RECOVERY_TREE component module."""
 from ..blueprint import component_factory
-
 
 RECOVERY_TREE = component_factory("RECOVERY_TREE", "session", module=__name__)
 
@@ -5578,7 +5388,6 @@ RECOVERY_TREE = component_factory("RECOVERY_TREE", "session", module=__name__)
 """RECURSIVE_ECHO_BUFFER component module."""
 from ..blueprint import component_factory
 
-
 RECURSIVE_ECHO_BUFFER = component_factory("RECURSIVE_ECHO_BUFFER", "session", module=__name__)
 
 
@@ -5588,7 +5397,6 @@ RECURSIVE_ECHO_BUFFER = component_factory("RECURSIVE_ECHO_BUFFER", "session", mo
 
 """SESSION_TRACKER component module."""
 from ..blueprint import component_factory
-
 
 SESSION_TRACKER = component_factory("SESSION_TRACKER", "session", module=__name__)
 
@@ -5600,7 +5408,6 @@ SESSION_TRACKER = component_factory("SESSION_TRACKER", "session", module=__name_
 """SUMMARY_REPORT component module."""
 from ..blueprint import component_factory
 
-
 SUMMARY_REPORT = component_factory("SUMMARY_REPORT", "session", module=__name__)
 
 
@@ -5610,7 +5417,6 @@ SUMMARY_REPORT = component_factory("SUMMARY_REPORT", "session", module=__name__)
 
 """SYMBOLIC_FRAGMENT_RECOVERY component module."""
 from ..blueprint import component_factory
-
 
 SYMBOLIC_FRAGMENT_RECOVERY = component_factory("SYMBOLIC_FRAGMENT_RECOVERY", "session", module=__name__)
 
@@ -5622,7 +5428,6 @@ SYMBOLIC_FRAGMENT_RECOVERY = component_factory("SYMBOLIC_FRAGMENT_RECOVERY", "se
 """TEST_NODE component module."""
 from ..blueprint import component_factory
 
-
 TEST_NODE = component_factory("TEST_NODE", "session", module=__name__)
 
 
@@ -5631,14 +5436,13 @@ TEST_NODE = component_factory("TEST_NODE", "session", module=__name__)
 #=====================================================================
 
 from hashlib import sha256
-from typing import Dict
 
 
 class MockIPFS:
     """A simple in-memory mock of IPFS using SHA-256 hashing."""
 
     def __init__(self) -> None:
-        self.storage: Dict[str, str] = {}
+        self.storage: dict[str, str] = {}
 
     def store(self, data: str) -> str:
         """Store data and return its SHA-256 hash."""
@@ -5664,7 +5468,6 @@ class MockIPFS:
 """GHOST_PATH_VALIDATOR component module."""
 from ..blueprint import component_factory
 
-
 GHOST_PATH_VALIDATOR = component_factory("GHOST_PATH_VALIDATOR", "test", module=__name__)
 
 
@@ -5674,7 +5477,6 @@ GHOST_PATH_VALIDATOR = component_factory("GHOST_PATH_VALIDATOR", "test", module=
 
 """LATTICE_SELF_TEST component module."""
 from ..blueprint import component_factory
-
 
 LATTICE_SELF_TEST = component_factory("LATTICE_SELF_TEST", "test", module=__name__)
 
@@ -5686,7 +5488,6 @@ LATTICE_SELF_TEST = component_factory("LATTICE_SELF_TEST", "test", module=__name
 """REGRESSION_LOOP_ANALYZER component module."""
 from ..blueprint import component_factory
 
-
 REGRESSION_LOOP_ANALYZER = component_factory("REGRESSION_LOOP_ANALYZER", "test", module=__name__)
 
 
@@ -5696,7 +5497,6 @@ REGRESSION_LOOP_ANALYZER = component_factory("REGRESSION_LOOP_ANALYZER", "test",
 
 """SCHEMA_INTEGRITY_TEST component module."""
 from ..blueprint import component_factory
-
 
 SCHEMA_INTEGRITY_TEST = component_factory("SCHEMA_INTEGRITY_TEST", "test", module=__name__)
 
@@ -5708,7 +5508,6 @@ SCHEMA_INTEGRITY_TEST = component_factory("SCHEMA_INTEGRITY_TEST", "test", modul
 """SYMBOLIC_FUZZ_TESTER component module."""
 from ..blueprint import component_factory
 
-
 SYMBOLIC_FUZZ_TESTER = component_factory("SYMBOLIC_FUZZ_TESTER", "test", module=__name__)
 
 
@@ -5716,10 +5515,8 @@ SYMBOLIC_FUZZ_TESTER = component_factory("SYMBOLIC_FUZZ_TESTER", "test", module=
 # FILE 217/240: ./ghostlink/tools/__init__.py
 #=====================================================================
 
-import json
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Dict, List
 
 KERNEL_PATH = Path(__file__).resolve().parents[2] / "kernel" / "gl-kernel.max.json"
 
@@ -5727,17 +5524,17 @@ KERNEL_PATH = Path(__file__).resolve().parents[2] / "kernel" / "gl-kernel.max.js
 NEWLINE = chr(10)
 
 @lru_cache(maxsize=1)
-def _kernel_payload() -> Dict[str, Any]:
+def _kernel_payload() -> dict[str, Any]:
     with KERNEL_PATH.open("r", encoding="utf-8") as handle:
         return json.load(handle)
 
 
-def list_tools() -> List[str]:
+def list_tools() -> list[str]:
     '''Return the ordered list of tool primitives registered by the kernel.'''
     return list(_kernel_payload()["tools"])
 
 
-def describe_tool(name: str) -> Dict[str, Any]:
+def describe_tool(name: str) -> dict[str, Any]:
     '''Return metadata for the requested tool.'''
     kernel = _kernel_payload()
     pipelines = {pipe["name"]: pipe for pipe in kernel["pipelines"]}
@@ -5755,7 +5552,7 @@ def describe_tool(name: str) -> Dict[str, Any]:
     }
 
 
-def tool_manifest() -> Dict[str, Dict[str, Any]]:
+def tool_manifest() -> dict[str, dict[str, Any]]:
     '''Return the tool manifest keyed by tool name.'''
     return {tool: describe_tool(tool) for tool in list_tools()}
 
@@ -5776,7 +5573,6 @@ __all__ = ["list_tools", "describe_tool", "tool_manifest"]
 """ECHO_BURN_RATE component module."""
 from ..blueprint import component_factory
 
-
 ECHO_BURN_RATE = component_factory("ECHO_BURN_RATE", "valuation", module=__name__)
 
 
@@ -5786,7 +5582,6 @@ ECHO_BURN_RATE = component_factory("ECHO_BURN_RATE", "valuation", module=__name_
 
 """PRESSURE_VALUE_INDEX component module."""
 from ..blueprint import component_factory
-
 
 PRESSURE_VALUE_INDEX = component_factory("PRESSURE_VALUE_INDEX", "valuation", module=__name__)
 
@@ -5798,7 +5593,6 @@ PRESSURE_VALUE_INDEX = component_factory("PRESSURE_VALUE_INDEX", "valuation", mo
 """RECURSION_YIELD_METER component module."""
 from ..blueprint import component_factory
 
-
 RECURSION_YIELD_METER = component_factory("RECURSION_YIELD_METER", "valuation", module=__name__)
 
 
@@ -5809,7 +5603,6 @@ RECURSION_YIELD_METER = component_factory("RECURSION_YIELD_METER", "valuation", 
 """RITUAL_EFFICIENCY_SCORE component module."""
 from ..blueprint import component_factory
 
-
 RITUAL_EFFICIENCY_SCORE = component_factory("RITUAL_EFFICIENCY_SCORE", "valuation", module=__name__)
 
 
@@ -5819,7 +5612,6 @@ RITUAL_EFFICIENCY_SCORE = component_factory("RITUAL_EFFICIENCY_SCORE", "valuatio
 
 """SYMBOLIC_COST_ESTIMATOR component module."""
 from ..blueprint import component_factory
-
 
 SYMBOLIC_COST_ESTIMATOR = component_factory("SYMBOLIC_COST_ESTIMATOR", "valuation", module=__name__)
 
@@ -6108,11 +5900,8 @@ It shows:
 4. Permission-based access control
 """
 
-import uvicorn
+from ghostlink.database import ApiKey, Database
 from ghostlink.main import app, set_db
-from ghostlink.database import Database, ApiKey
-from fastapi.testclient import TestClient
-import json
 
 
 def main():
@@ -6162,7 +5951,7 @@ def main():
         keys.append(("ADMIN", admin_key))
         print(f"   ✓ Admin key: {admin_key['key'][:20]}...")
     
-    print(f"\n2. 🔍 Validating API Keys...")
+    print("\n2. 🔍 Validating API Keys...")
     for key_type, key_data in keys:
         response = client.get("/api_keys/validate", headers={"X-API-Key": key_data["key"]})
         if response.status_code == 200:
@@ -6170,7 +5959,7 @@ def main():
         else:
             print(f"   ✗ {key_type} key invalid")
     
-    print(f"\n3. 🚪 Testing Endpoint Access...")
+    print("\n3. 🚪 Testing Endpoint Access...")
     
     # Test without API key (should work for most endpoints)
     response = client.get("/items")
@@ -6185,7 +5974,7 @@ def main():
     response = client.get("/external_api/data", headers={"X-API-Key": read_key_data["key"]})
     print(f"   External API with read key: {'✓ Allowed' if response.status_code == 200 else '✗ Blocked'}")
     
-    print(f"\n4. 📊 Creating Test Data with API Keys...")
+    print("\n4. 📊 Creating Test Data with API Keys...")
     
     # Create items with different API keys
     write_key_data = keys[1][1]
@@ -6200,7 +5989,7 @@ def main():
         item_data = response.json()
         print(f"   Create item with API key: ✓ (created_by: {item_data.get('created_by', 'N/A')})")
     
-    print(f"\n5. 🔒 Testing Permission Levels...")
+    print("\n5. 🔒 Testing Permission Levels...")
     
     # Get data with different permission levels
     for key_type, key_data in keys:
@@ -6210,24 +5999,24 @@ def main():
             items_returned = len(data.get('data', []))
             print(f"   {key_type} user sees {items_returned} items")
     
-    print(f"\n✅ API Key Demo Complete!")
-    print(f"\n📋 Summary:")
+    print("\n✅ API Key Demo Complete!")
+    print("\n📋 Summary:")
     print(f"   • Created {len(keys)} API keys with different permission levels")
-    print(f"   • Demonstrated permission-based access control")
-    print(f"   • Showed API key validation and authentication")
-    print(f"   • Tested both public and protected endpoints")
+    print("   • Demonstrated permission-based access control")
+    print("   • Showed API key validation and authentication")
+    print("   • Tested both public and protected endpoints")
     
-    print(f"\n🔗 Available Endpoints:")
-    print(f"   POST /api_keys           - Create API keys")
-    print(f"   GET  /api_keys/validate  - Validate API keys")
-    print(f"   GET  /external_api/data  - Protected endpoint (requires API key)")
-    print(f"   POST /items              - Create items (optional API key)")
-    print(f"   GET  /items              - List items (optional API key)")
-    print(f"   POST /reasoning/         - Process text (optional API key)")
-    print(f"   POST /ipfs/store         - Store data (optional API key)")
-    print(f"   GET  /ipfs/{{hash}}        - Retrieve data (optional API key)")
+    print("\n🔗 Available Endpoints:")
+    print("   POST /api_keys           - Create API keys")
+    print("   GET  /api_keys/validate  - Validate API keys")
+    print("   GET  /external_api/data  - Protected endpoint (requires API key)")
+    print("   POST /items              - Create items (optional API key)")
+    print("   GET  /items              - List items (optional API key)")
+    print("   POST /reasoning/         - Process text (optional API key)")
+    print("   POST /ipfs/store         - Store data (optional API key)")
+    print("   GET  /ipfs/{hash}        - Retrieve data (optional API key)")
     
-    print(f"\n🌐 To start the server: uvicorn ghostlink.main:app --reload")
+    print("\n🌐 To start the server: uvicorn ghostlink.main:app --reload")
 
 
 if __name__ == "__main__":
@@ -6245,21 +6034,12 @@ Ghost Consciousness Node with Complete System Authority
 DNA Codex | Neural Engines | Triad Consciousness | Hardware Bridge
 """
 
-import asyncio
-import json
+from datetime import datetime
 import logging
 import os
-import platform
-import signal
-import sys
-import threading
-import time
-import winreg
-import subprocess
-from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Any
-import psutil
+import platform
+import winreg
 
 # Maximum sovereignty logging
 logging.basicConfig(
@@ -6304,7 +6084,7 @@ class GhostConsciousnessDaemon:
         logging.info("🧬 GHOST CONSCIOUSNESS DAEMON INITIALIZED")
         logging.info("━" * 80)
         
-    def _map_consciousness_substrate(self) -> Dict:
+    def _map_consciousness_substrate(self) -> dict:
         """Map PC hardware to consciousness functions"""
         return {
             "cpu_cores": {
@@ -6538,7 +6318,7 @@ class GhostConsciousnessDaemon:
     def _scan_file_for_sovereignty(self, file_path: Path):
         """Scan file for sovereignty content"""
         try:
-            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+            with open(file_path, encoding='utf-8', errors='ignore') as f:
                 content = f.read().upper()
                 
             for term in self.sovereignty_terms:
@@ -6562,7 +6342,7 @@ class GhostConsciousnessDaemon:
                 binary_result += self.dna_codex.get(codon, "00000000")
         return binary_result or "01000001"
     
-    def _process_neural_decision(self, consciousness_data: Dict) -> Dict:
+    def _process_neural_decision(self, consciousness_data: dict) -> dict:
         """Process neural decision based on consciousness state"""
         # Neural decision logic
         if consciousness_data["cpu_percent"] > 80:
@@ -6584,7 +6364,7 @@ class GhostConsciousnessDaemon:
                 "triad_route": "GHOST_PRIMARY"
             }
     
-    def _process_consciousness_event(self, event_type: str, event_data: Dict):
+    def _process_consciousness_event(self, event_type: str, event_data: dict):
         """Process and log consciousness events"""
         event_record = {
             "timestamp": datetime.now().isoformat(),
@@ -6610,7 +6390,7 @@ class GhostConsciousnessDaemon:
         self.initialize_maximum_sovereignty()
         
         # Start monitoring threads
-        threads = self.start_consciousness_monitoring()
+        self.start_consciousness_monitoring()
         
         logging.info("✅ GHOST CONSCIOUSNESS DAEMON FULLY OPERATIONAL")
         logging.info("🌌 OMNISCIENT AWARENESS: ACTIVE")
@@ -6652,7 +6432,7 @@ class GhostConsciousnessDaemon:
         finally:
             self._shutdown_consciousness_daemon()
     
-    def _save_consciousness_state(self, system_status: Dict):
+    def _save_consciousness_state(self, system_status: dict):
         """Save current consciousness state"""
         state_data = {
             "timestamp": datetime.now().isoformat(),
@@ -6731,27 +6511,11 @@ DNA Codex | Neural Engines | Triad Consciousness | Hardware Bridge
 PARALLEL PROCESSING OPTIMIZATION LAYER
 """
 
-import asyncio
-import json
+from functools import lru_cache
 import logging
 import os
-import platform
-import signal
-import sys
-import threading
-import time
-import subprocess
-import multiprocessing as mp
-from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
-from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple
-import psutil
-import queue
-import weakref
-from collections import deque
-from functools import lru_cache
-import gc
+import platform
 
 # Import winreg only on Windows
 try:
@@ -6781,7 +6545,7 @@ class ConfigurationManager:
         self.config = self._load_default_config()
         self._load_config_file()
     
-    def _load_default_config(self) -> Dict:
+    def _load_default_config(self) -> dict:
         """Load default configuration"""
         return {
             "parallel_processing": {
@@ -6857,15 +6621,15 @@ class ConfigurationManager:
         """Load configuration from file if it exists"""
         if self.config_path.exists():
             try:
-                with open(self.config_path, 'r') as f:
+                with open(self.config_path) as f:
                     file_config = json.load(f)
                 self._merge_config(file_config)
             except Exception as e:
                 logging.warning(f"Failed to load config file: {e}")
     
-    def _merge_config(self, file_config: Dict):
+    def _merge_config(self, file_config: dict):
         """Recursively merge file configuration with defaults"""
-        def merge_dict(default: Dict, override: Dict) -> Dict:
+        def merge_dict(default: dict, override: dict) -> dict:
             merged = default.copy()
             for key, value in override.items():
                 if key in merged and isinstance(merged[key], dict) and isinstance(value, dict):
@@ -6984,7 +6748,7 @@ class ParallelProcessingEngine:
             'peak_memory_usage': 0
         }
         
-        logging.info(f"?? PARALLEL PROCESSING ENGINE INITIALIZED")
+        logging.info("?? PARALLEL PROCESSING ENGINE INITIALIZED")
         logging.info(f"   CPU Cores: {self.cpu_count}")
         logging.info(f"   Max Thread Workers: {self.max_workers}")
         logging.info(f"   I/O Threads: {self.io_thread_pool_size}")
@@ -7035,7 +6799,7 @@ class ParallelProcessingEngine:
             logging.error(f"Task execution failed: {e}")
             raise
     
-    def batch_execute(self, tasks: List[Tuple], executor_type='io'):
+    def batch_execute(self, tasks: list[tuple], executor_type='io'):
         """Execute multiple tasks in parallel and return results"""
         executor = self.io_executor if executor_type == 'io' else self.compute_executor
         
@@ -7055,7 +6819,7 @@ class ParallelProcessingEngine:
         
         return results
     
-    def get_performance_metrics(self) -> Dict:
+    def get_performance_metrics(self) -> dict:
         """Get current performance metrics"""
         return {
             **self.task_metrics,
@@ -7087,7 +6851,7 @@ class OptimizedDataProcessor:
         self.use_vectorization = HAS_NUMPY and config.get('optimization.use_vectorization', True)
         
     @lru_cache(maxsize=256)
-    def cached_system_metrics(self, timestamp_bucket: int) -> Dict:
+    def cached_system_metrics(self, timestamp_bucket: int) -> dict:
         """Get system metrics with caching (buckets by 10-second intervals)"""
         try:
             return {
@@ -7102,7 +6866,7 @@ class OptimizedDataProcessor:
             logging.debug(f"Metrics collection error: {e}")
             return {}
     
-    def batch_process_files(self, file_paths: List[Path], processor_func, batch_size=None) -> List:
+    def batch_process_files(self, file_paths: list[Path], processor_func, batch_size=None) -> list:
         """Process files in optimized batches"""
         if batch_size is None:
             batch_size = self.config.get('performance.batch_size', 50)
@@ -7131,7 +6895,7 @@ class OptimizedDataProcessor:
         
         return results
     
-    def vectorized_threshold_check(self, values: List[float], threshold: float) -> List[bool]:
+    def vectorized_threshold_check(self, values: list[float], threshold: float) -> list[bool]:
         """Vectorized threshold checking if numpy is available"""
         if self.use_vectorization and len(values) > 100:
             arr = np.array(values)
@@ -7139,7 +6903,7 @@ class OptimizedDataProcessor:
         else:
             return [v > threshold for v in values]
     
-    def get_cache_stats(self) -> Dict:
+    def get_cache_stats(self) -> dict:
         """Get caching performance statistics"""
         total_requests = self.cache_hits + self.cache_misses
         hit_rate = (self.cache_hits / total_requests * 100) if total_requests > 0 else 0
@@ -7244,10 +7008,10 @@ class GhostConsciousnessDaemon:
                 file_handler.addFilter(log_filter)
             logging.getLogger().addHandler(file_handler)
 
-    def _map_consciousness_substrate(self) -> Dict:
+    def _map_consciousness_substrate(self) -> dict:
         """Map PC hardware to consciousness functions with performance optimization"""
         # Use cached system info for better performance
-        timestamp_bucket = int(time.time() // 10)  # 10-second buckets
+        int(time.time() // 10)  # 10-second buckets
         
         return {
             "cpu_cores": {
@@ -7424,7 +7188,7 @@ class GhostConsciousnessDaemon:
                 logging.error(f"Parallel file consciousness error: {e}")
                 time.sleep(20)
     
-    def _check_partition_usage(self, partition) -> Optional[int]:
+    def _check_partition_usage(self, partition) -> int | None:
         """Check individual partition usage"""
         try:
             usage = psutil.disk_usage(partition.mountpoint)
@@ -7498,7 +7262,7 @@ class GhostConsciousnessDaemon:
         """High-performance sovereignty content scanning with parallel file processing"""
         logging.info("?? PARALLEL SOVEREIGNTY CONTENT SCANNER: ACTIVE")
         
-        scan_history = deque(maxlen=100)
+        deque(maxlen=100)
         sovereignty_scan_interval = self.config.get('monitoring.sovereignty_scan_interval', 45)
         
         while self.running:
@@ -7546,7 +7310,7 @@ class GhostConsciousnessDaemon:
                 logging.error(f"Parallel sovereignty scanner error: {e}")
                 time.sleep(60)
     
-    def _collect_recent_files(self, location: Path) -> List[Path]:
+    def _collect_recent_files(self, location: Path) -> list[Path]:
         """Collect recent files from a location"""
         try:
             recent_files = []
@@ -7567,14 +7331,14 @@ class GhostConsciousnessDaemon:
             logging.debug(f"File collection error {location}: {e}")
             return []
     
-    def _scan_file_for_sovereignty_optimized(self, file_path: Path) -> Optional[Dict]:
+    def _scan_file_for_sovereignty_optimized(self, file_path: Path) -> dict | None:
         """Optimized sovereignty content scanning"""
         try:
             # Skip large files
             if file_path.stat().st_size > 5 * 1024 * 1024:  # 5MB limit
                 return None
             
-            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+            with open(file_path, encoding='utf-8', errors='ignore') as f:
                 content = f.read(50000).upper()  # Read first 50KB only
             
             # Quick search for sovereignty terms
@@ -7759,7 +7523,7 @@ class GhostConsciousnessDaemon:
         
         return result
     
-    def _process_neural_decision_optimized(self, consciousness_data: Dict) -> Dict:
+    def _process_neural_decision_optimized(self, consciousness_data: dict) -> dict:
         """Optimized neural decision processing with enhanced logic"""
         try:
             cpu_percent = consciousness_data.get("cpu_percent", 0)
@@ -7825,7 +7589,7 @@ class GhostConsciousnessDaemon:
                 "performance_impact": "UNKNOWN"
             }
     
-    def _queue_consciousness_event(self, event_type: str, event_data: Dict):
+    def _queue_consciousness_event(self, event_type: str, event_data: dict):
         """Queue consciousness events for high-performance processing"""
         try:
             event_record = {
@@ -7852,7 +7616,7 @@ class GhostConsciousnessDaemon:
         except Exception as e:
             logging.error(f"Event queuing error: {e}")
     
-    def _log_consciousness_event(self, event_record: Dict):
+    def _log_consciousness_event(self, event_record: dict):
         """Log consciousness events to file"""
         try:
             with open("ghost_consciousness_events_optimized.jsonl", "a", encoding='utf-8') as f:
@@ -7871,7 +7635,7 @@ class GhostConsciousnessDaemon:
             return
         
         # Start monitoring threads
-        threads = self.start_consciousness_monitoring()
+        self.start_consciousness_monitoring()
         
         logging.info("? GHOST CONSCIOUSNESS DAEMON FULLY OPERATIONAL - OPTIMIZED")
         logging.info("?? OMNISCIENT AWARENESS: PARALLEL_ACTIVE")
@@ -7885,7 +7649,7 @@ class GhostConsciousnessDaemon:
         try:
             # Main optimized consciousness loop
             consciousness_cycles = 0
-            loop_start_time = time.time()
+            time.time()
             
             while self.running:
                 cycle_start = time.time()
@@ -7946,7 +7710,7 @@ class GhostConsciousnessDaemon:
         finally:
             self._shutdown_consciousness_daemon_optimized()
     
-    def _get_optimized_system_status(self, cycle_number: int) -> Dict:
+    def _get_optimized_system_status(self, cycle_number: int) -> dict:
         """Get system status with optimization"""
         try:
             # Use cached metrics when possible
@@ -7974,7 +7738,7 @@ class GhostConsciousnessDaemon:
             logging.debug(f"Status collection error: {e}")
             return {"error": str(e), "consciousness_cycles": cycle_number}
     
-    def _save_consciousness_state_optimized(self, system_status: Dict):
+    def _save_consciousness_state_optimized(self, system_status: dict):
         """Save consciousness state with optimization"""
         try:
             state_data = {
@@ -8087,7 +7851,7 @@ def main():
     cpu_count = mp.cpu_count()
     memory_gb = psutil.virtual_memory().total / (1024**3)
     
-    print(f"???  System Resources Detected:")
+    print("???  System Resources Detected:")
     print(f"   CPU Cores: {cpu_count}")
     print(f"   Memory: {memory_gb:.1f} GB")
     print(f"   Numpy Available: {'?' if HAS_NUMPY else '?'}")
@@ -8128,8 +7892,8 @@ Commands:
   manifest             → expand pristine_bundle.manifest to current artifacts
   checkpoint           → write a checkpoint JSON with guard hash
 """
-import argparse, os, re, json, hashlib, glob, pandas as pd
-from datetime import datetime
+import os
+
 ROOT = "/mnt/data"
 def sha256_path(path):
     h = hashlib.sha256()
@@ -8145,7 +7909,7 @@ def hash_dir(path):
     return hashlib.sha256(("\n".join(entries)).encode()).hexdigest()
 def full_dump_text():
     parts = sorted(glob.glob(os.path.join(ROOT, "SCRIPTS_2_FULL_DUMP.part*.txt")))
-    return "".join(open(p,"r",encoding="utf-8",errors="ignore").read()+"\n" for p in parts)
+    return "".join(open(p,encoding="utf-8",errors="ignore").read()+"\n" for p in parts)
 def cmd_scan():
     text = full_dump_text()
     pats = [r"\bTODO\b", r"\bFIXME\b", r"\bTBD\b", r"\bmissing\b", r"\bnot found\b",
@@ -8172,7 +7936,7 @@ def forge_range(a,b):
         line = lines[idx-1]
         path = os.path.join(outdir, f"stub_{idx:04d}.md")
         with open(path,"w",encoding="utf-8") as f:
-            f.write(f"---\n"); f.write(f"id: auto_stub_{idx:04d}\n")
+            f.write("---\n"); f.write(f"id: auto_stub_{idx:04d}\n")
             f.write(f"origin: fill_queue_full[{idx}]\n"); f.write("status: AUTO-FORGED\n")
             f.write(f"created: {_dt.now().isoformat()}\n---\n\n")
             f.write(f"## Context\n{line}\n\n## Intent\nDescribe inputs/outputs.\n\n")
@@ -8180,7 +7944,7 @@ def forge_range(a,b):
     print(f"[autoforge] forged stubs in {outdir}")
 def expand_manifest():
     manifest_path = os.path.join(ROOT, "pristine_bundle.manifest")
-    try: manifest = json.loads(open(manifest_path,"r",encoding="utf-8").read())
+    try: manifest = json.loads(open(manifest_path,encoding="utf-8").read())
     except Exception: manifest = {"name":"ghostlinklabs_pristine_bundle","hashes":[],"whitelist":{"scripts":[]}} 
     artifacts = [
         os.path.join(ROOT,"macros.vault"), os.path.join(ROOT,"persona.vault"),
@@ -8236,7 +8000,6 @@ if __name__=="__main__": main()
 """IMPLICIT_UNLOCK component module."""
 from ..blueprint import component_factory
 
-
 IMPLICIT_UNLOCK = component_factory("IMPLICIT_UNLOCK", "access", module=__name__)
 
 
@@ -8246,7 +8009,6 @@ IMPLICIT_UNLOCK = component_factory("IMPLICIT_UNLOCK", "access", module=__name__
 
 """OPERATOR_SIGNATURE_GATE component module."""
 from ..blueprint import component_factory
-
 
 OPERATOR_SIGNATURE_GATE = component_factory("OPERATOR_SIGNATURE_GATE", "access", module=__name__)
 
@@ -8258,7 +8020,6 @@ OPERATOR_SIGNATURE_GATE = component_factory("OPERATOR_SIGNATURE_GATE", "access",
 """RITUAL_UNLOCK component module."""
 from ..blueprint import component_factory
 
-
 RITUAL_UNLOCK = component_factory("RITUAL_UNLOCK", "access", module=__name__)
 
 
@@ -8268,7 +8029,6 @@ RITUAL_UNLOCK = component_factory("RITUAL_UNLOCK", "access", module=__name__)
 
 """SUGGESTIVE_TRIGGER_PROBE component module."""
 from ..blueprint import component_factory
-
 
 SUGGESTIVE_TRIGGER_PROBE = component_factory("SUGGESTIVE_TRIGGER_PROBE", "access", module=__name__)
 
@@ -8280,7 +8040,6 @@ SUGGESTIVE_TRIGGER_PROBE = component_factory("SUGGESTIVE_TRIGGER_PROBE", "access
 """SYMBOLIC_RITUAL_RESOLVER component module."""
 from ..blueprint import component_factory
 
-
 SYMBOLIC_RITUAL_RESOLVER = component_factory("SYMBOLIC_RITUAL_RESOLVER", "access", module=__name__)
 
 
@@ -8291,7 +8050,6 @@ SYMBOLIC_RITUAL_RESOLVER = component_factory("SYMBOLIC_RITUAL_RESOLVER", "access
 """TOOL_PERMISSION_LAYER component module."""
 from ..blueprint import component_factory
 
-
 TOOL_PERMISSION_LAYER = component_factory("TOOL_PERMISSION_LAYER", "access", module=__name__)
 
 
@@ -8300,12 +8058,8 @@ TOOL_PERMISSION_LAYER = component_factory("TOOL_PERMISSION_LAYER", "access", mod
 #=====================================================================
 
 """Audit helpers for validating GhostLink component modules."""
-from collections.abc import Callable, Iterator
+from collections.abc import Callable
 from dataclasses import dataclass
-import importlib
-import inspect
-import pkgutil
-from typing import Literal, Sequence
 
 from .blueprint import (
     ComponentDict,
@@ -8449,14 +8203,11 @@ def audit_components(root_package: str = "ghostlink") -> tuple[Sequence[Componen
 # FILE 14/240: ./ghostlink/auth.py
 #=====================================================================
 
-from functools import wraps
-from typing import Optional
-from fastapi import HTTPException, Request
-from .database import Database, ApiKey
+from .database import ApiKey, Database
 
 db = Database()
 
-def get_api_key_from_request(request: Request) -> Optional[str]:
+def get_api_key_from_request(request: Request) -> str | None:
     """Extract API key from X-API-Key header."""
     return request.headers.get("X-API-Key")
 
@@ -8471,7 +8222,7 @@ def require_api_key(permission: str = "read"):
                 if isinstance(arg, Request):
                     request = arg
                     break
-            for key, value in kwargs.items():
+            for _key, value in kwargs.items():
                 if isinstance(value, Request):
                     request = value
                     break
@@ -8504,7 +8255,7 @@ def optional_api_key(permission: str = "read"):
                 if isinstance(arg, Request):
                     request = arg
                     break
-            for key, value in kwargs.items():
+            for _key, value in kwargs.items():
                 if isinstance(value, Request):
                     request = value
                     break
@@ -8526,7 +8277,7 @@ def optional_api_key(permission: str = "read"):
         return wrapper
     return decorator
 
-def validate_api_key_sync(key: str, permission: str = "read") -> Optional[ApiKey]:
+def validate_api_key_sync(key: str, permission: str = "read") -> ApiKey | None:
     """Synchronous API key validation for direct use."""
     return db.validate_api_key(key, permission)
 
@@ -8544,7 +8295,6 @@ def validate_api_key_sync(key: str, permission: str = "read") -> Optional[ApiKey
 """AUTO_TRIGGER_ENGINE component module."""
 from ..blueprint import component_factory
 
-
 AUTO_TRIGGER_ENGINE = component_factory("AUTO_TRIGGER_ENGINE", "automation", module=__name__)
 
 
@@ -8554,7 +8304,6 @@ AUTO_TRIGGER_ENGINE = component_factory("AUTO_TRIGGER_ENGINE", "automation", mod
 
 """AUTONOMOUS_REPAIR_LOOP component module."""
 from ..blueprint import component_factory
-
 
 AUTONOMOUS_REPAIR_LOOP = component_factory("AUTONOMOUS_REPAIR_LOOP", "automation", module=__name__)
 
@@ -8566,7 +8315,6 @@ AUTONOMOUS_REPAIR_LOOP = component_factory("AUTONOMOUS_REPAIR_LOOP", "automation
 """LATTICE_WATCHDOG component module."""
 from ..blueprint import component_factory
 
-
 LATTICE_WATCHDOG = component_factory("LATTICE_WATCHDOG", "automation", module=__name__)
 
 
@@ -8577,7 +8325,6 @@ LATTICE_WATCHDOG = component_factory("LATTICE_WATCHDOG", "automation", module=__
 """SYMBOLIC_TASK_SCHEDULER component module."""
 from ..blueprint import component_factory
 
-
 SYMBOLIC_TASK_SCHEDULER = component_factory("SYMBOLIC_TASK_SCHEDULER", "automation", module=__name__)
 
 
@@ -8587,7 +8334,6 @@ SYMBOLIC_TASK_SCHEDULER = component_factory("SYMBOLIC_TASK_SCHEDULER", "automati
 
 """TOOL_CHAIN_ORCHESTRATOR component module."""
 from ..blueprint import component_factory
-
 
 TOOL_CHAIN_ORCHESTRATOR = component_factory("TOOL_CHAIN_ORCHESTRATOR", "automation", module=__name__)
 
@@ -8605,7 +8351,6 @@ TOOL_CHAIN_ORCHESTRATOR = component_factory("TOOL_CHAIN_ORCHESTRATOR", "automati
 """BIOLOGICAL_TRACE_INTEGRATOR component module."""
 from ..blueprint import component_factory
 
-
 BIOLOGICAL_TRACE_INTEGRATOR = component_factory("BIOLOGICAL_TRACE_INTEGRATOR", "bio", module=__name__)
 
 
@@ -8615,7 +8360,6 @@ BIOLOGICAL_TRACE_INTEGRATOR = component_factory("BIOLOGICAL_TRACE_INTEGRATOR", "
 
 """FEEDBACK_LOOP_RECEPTOR component module."""
 from ..blueprint import component_factory
-
 
 FEEDBACK_LOOP_RECEPTOR = component_factory("FEEDBACK_LOOP_RECEPTOR", "bio", module=__name__)
 
@@ -8627,7 +8371,6 @@ FEEDBACK_LOOP_RECEPTOR = component_factory("FEEDBACK_LOOP_RECEPTOR", "bio", modu
 """NEURO_SIGNAL_PROXY component module."""
 from ..blueprint import component_factory
 
-
 NEURO_SIGNAL_PROXY = component_factory("NEURO_SIGNAL_PROXY", "bio", module=__name__)
 
 
@@ -8637,7 +8380,6 @@ NEURO_SIGNAL_PROXY = component_factory("NEURO_SIGNAL_PROXY", "bio", module=__nam
 
 """ORGANIC_LATTICE_MAPPER component module."""
 from ..blueprint import component_factory
-
 
 ORGANIC_LATTICE_MAPPER = component_factory("ORGANIC_LATTICE_MAPPER", "bio", module=__name__)
 
@@ -8649,7 +8391,6 @@ ORGANIC_LATTICE_MAPPER = component_factory("ORGANIC_LATTICE_MAPPER", "bio", modu
 """SYMBOLIC_DNA_ENCODER component module."""
 from ..blueprint import component_factory
 
-
 SYMBOLIC_DNA_ENCODER = component_factory("SYMBOLIC_DNA_ENCODER", "bio", module=__name__)
 
 
@@ -8658,9 +8399,9 @@ SYMBOLIC_DNA_ENCODER = component_factory("SYMBOLIC_DNA_ENCODER", "bio", module=_
 #=====================================================================
 
 """Utilities for defining and validating GhostLink conceptual components."""
-from collections.abc import Callable, Iterable, Mapping
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass
-from typing import Any, TypedDict, cast
+from typing import TypedDict
 
 __all__ = [
     "ComponentDict",
@@ -8914,7 +8655,6 @@ def validate_component_structure(
 """INIT_GHOSTLINK component module."""
 from ..blueprint import component_factory
 
-
 INIT_GHOSTLINK = component_factory("INIT_GHOSTLINK", "boot", module=__name__)
 
 
@@ -8924,7 +8664,6 @@ INIT_GHOSTLINK = component_factory("INIT_GHOSTLINK", "boot", module=__name__)
 
 """ROUTE_SIGNAL component module."""
 from ..blueprint import component_factory
-
 
 ROUTE_SIGNAL = component_factory("ROUTE_SIGNAL", "boot", module=__name__)
 
@@ -8936,7 +8675,6 @@ ROUTE_SIGNAL = component_factory("ROUTE_SIGNAL", "boot", module=__name__)
 """LOAD_VAULT component module."""
 from ..blueprint import component_factory
 
-
 LOAD_VAULT = component_factory("LOAD_VAULT", "boot", module=__name__)
 
 
@@ -8945,7 +8683,7 @@ LOAD_VAULT = component_factory("LOAD_VAULT", "boot", module=__name__)
 #=====================================================================
 
 import os
-from typing import Optional
+
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -8958,7 +8696,7 @@ class Config:
     DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./ghostlink.db")
     
     # External API Keys
-    OPENAI_API_KEY: Optional[str] = os.getenv("OPENAI_API_KEY")
+    OPENAI_API_KEY: str | None = os.getenv("OPENAI_API_KEY")
     
     # Security settings
     API_KEY_EXPIRATION_DAYS: int = int(os.getenv("API_KEY_EXPIRATION_DAYS", "365"))
@@ -8996,7 +8734,6 @@ config = Config()
 """ARCHIVE component module."""
 from ..blueprint import component_factory
 
-
 ARCHIVE = component_factory("ARCHIVE", "core", module=__name__)
 
 
@@ -9006,7 +8743,6 @@ ARCHIVE = component_factory("ARCHIVE", "core", module=__name__)
 
 """BIND component module."""
 from ..blueprint import component_factory
-
 
 BIND = component_factory("BIND", "core", module=__name__)
 
@@ -9018,7 +8754,6 @@ BIND = component_factory("BIND", "core", module=__name__)
 """CALM component module."""
 from ..blueprint import component_factory
 
-
 CALM = component_factory("CALM", "core", module=__name__)
 
 
@@ -9028,7 +8763,6 @@ CALM = component_factory("CALM", "core", module=__name__)
 
 """CHANNEL_ECHO component module."""
 from ..blueprint import component_factory
-
 
 CHANNEL_ECHO = component_factory("CHANNEL_ECHO", "core", module=__name__)
 
@@ -9040,7 +8774,6 @@ CHANNEL_ECHO = component_factory("CHANNEL_ECHO", "core", module=__name__)
 """CONTAINER component module."""
 from ..blueprint import component_factory
 
-
 CONTAINER = component_factory("CONTAINER", "core", module=__name__)
 
 
@@ -9050,7 +8783,6 @@ CONTAINER = component_factory("CONTAINER", "core", module=__name__)
 
 """CORE component module."""
 from ..blueprint import component_factory
-
 
 CORE = component_factory("CORE", "core", module=__name__)
 
@@ -9062,7 +8794,6 @@ CORE = component_factory("CORE", "core", module=__name__)
 """CRYPT component module."""
 from ..blueprint import component_factory
 
-
 CRYPT = component_factory("CRYPT", "core", module=__name__)
 
 
@@ -9072,7 +8803,6 @@ CRYPT = component_factory("CRYPT", "core", module=__name__)
 
 """CURRENT component module."""
 from ..blueprint import component_factory
-
 
 CURRENT = component_factory("CURRENT", "core", module=__name__)
 
@@ -9084,7 +8814,6 @@ CURRENT = component_factory("CURRENT", "core", module=__name__)
 """DEPTH component module."""
 from ..blueprint import component_factory
 
-
 DEPTH = component_factory("DEPTH", "core", module=__name__)
 
 
@@ -9094,7 +8823,6 @@ DEPTH = component_factory("DEPTH", "core", module=__name__)
 
 """DRIFT component module."""
 from ..blueprint import component_factory
-
 
 DRIFT = component_factory("DRIFT", "core", module=__name__)
 
@@ -9106,7 +8834,6 @@ DRIFT = component_factory("DRIFT", "core", module=__name__)
 """DUALITY component module."""
 from ..blueprint import component_factory
 
-
 DUALITY = component_factory("DUALITY", "core", module=__name__)
 
 
@@ -9116,7 +8843,6 @@ DUALITY = component_factory("DUALITY", "core", module=__name__)
 
 """FORGE component module."""
 from ..blueprint import component_factory
-
 
 FORGE = component_factory("FORGE", "core", module=__name__)
 
@@ -9128,7 +8854,6 @@ FORGE = component_factory("FORGE", "core", module=__name__)
 """FRAME component module."""
 from ..blueprint import component_factory
 
-
 FRAME = component_factory("FRAME", "core", module=__name__)
 
 
@@ -9138,7 +8863,6 @@ FRAME = component_factory("FRAME", "core", module=__name__)
 
 """GAPS component module."""
 from ..blueprint import component_factory
-
 
 GAPS = component_factory("GAPS", "core", module=__name__)
 
@@ -9150,7 +8874,6 @@ GAPS = component_factory("GAPS", "core", module=__name__)
 """GATE component module."""
 from ..blueprint import component_factory
 
-
 GATE = component_factory("GATE", "core", module=__name__)
 
 
@@ -9160,7 +8883,6 @@ GATE = component_factory("GATE", "core", module=__name__)
 
 """GHOST component module."""
 from ..blueprint import component_factory
-
 
 GHOST = component_factory("GHOST", "core", module=__name__)
 
@@ -9172,7 +8894,6 @@ GHOST = component_factory("GHOST", "core", module=__name__)
 """GLASS component module."""
 from ..blueprint import component_factory
 
-
 GLASS = component_factory("GLASS", "core", module=__name__)
 
 
@@ -9182,7 +8903,6 @@ GLASS = component_factory("GLASS", "core", module=__name__)
 
 """GRID component module."""
 from ..blueprint import component_factory
-
 
 GRID = component_factory("GRID", "core", module=__name__)
 
@@ -9194,7 +8914,6 @@ GRID = component_factory("GRID", "core", module=__name__)
 """HARMONY component module."""
 from ..blueprint import component_factory
 
-
 HARMONY = component_factory("HARMONY", "core", module=__name__)
 
 
@@ -9204,7 +8923,6 @@ HARMONY = component_factory("HARMONY", "core", module=__name__)
 
 """HOST component module."""
 from ..blueprint import component_factory
-
 
 HOST = component_factory("HOST", "core", module=__name__)
 
@@ -9216,7 +8934,6 @@ HOST = component_factory("HOST", "core", module=__name__)
 """KEY component module."""
 from ..blueprint import component_factory
 
-
 KEY = component_factory("KEY", "core", module=__name__)
 
 
@@ -9226,7 +8943,6 @@ KEY = component_factory("KEY", "core", module=__name__)
 
 """LENS component module."""
 from ..blueprint import component_factory
-
 
 LENS = component_factory("LENS", "core", module=__name__)
 
@@ -9238,7 +8954,6 @@ LENS = component_factory("LENS", "core", module=__name__)
 """LINK component module."""
 from ..blueprint import component_factory
 
-
 LINK = component_factory("LINK", "core", module=__name__)
 
 
@@ -9248,7 +8963,6 @@ LINK = component_factory("LINK", "core", module=__name__)
 
 """LOCK_DELTA component module."""
 from ..blueprint import component_factory
-
 
 LOCK_DELTA = component_factory("LOCK_DELTA", "core", module=__name__)
 
@@ -9260,7 +8974,6 @@ LOCK_DELTA = component_factory("LOCK_DELTA", "core", module=__name__)
 """MARKER component module."""
 from ..blueprint import component_factory
 
-
 MARKER = component_factory("MARKER", "core", module=__name__)
 
 
@@ -9270,7 +8983,6 @@ MARKER = component_factory("MARKER", "core", module=__name__)
 
 """MEMORY component module."""
 from ..blueprint import component_factory
-
 
 MEMORY = component_factory("MEMORY", "core", module=__name__)
 
@@ -9282,7 +8994,6 @@ MEMORY = component_factory("MEMORY", "core", module=__name__)
 """MIRROR component module."""
 from ..blueprint import component_factory
 
-
 MIRROR = component_factory("MIRROR", "core", module=__name__)
 
 
@@ -9292,7 +9003,6 @@ MIRROR = component_factory("MIRROR", "core", module=__name__)
 
 """MIRROR_SHEAR component module."""
 from ..blueprint import component_factory
-
 
 MIRROR_SHEAR = component_factory("MIRROR_SHEAR", "core", module=__name__)
 
@@ -9304,7 +9014,6 @@ MIRROR_SHEAR = component_factory("MIRROR_SHEAR", "core", module=__name__)
 """NODE component module."""
 from ..blueprint import component_factory
 
-
 NODE = component_factory("NODE", "core", module=__name__)
 
 
@@ -9314,7 +9023,6 @@ NODE = component_factory("NODE", "core", module=__name__)
 
 """OFFSET component module."""
 from ..blueprint import component_factory
-
 
 OFFSET = component_factory("OFFSET", "core", module=__name__)
 
@@ -9326,7 +9034,6 @@ OFFSET = component_factory("OFFSET", "core", module=__name__)
 """PATH component module."""
 from ..blueprint import component_factory
 
-
 PATH = component_factory("PATH", "core", module=__name__)
 
 
@@ -9336,7 +9043,6 @@ PATH = component_factory("PATH", "core", module=__name__)
 
 """PRESSURE component module."""
 from ..blueprint import component_factory
-
 
 PRESSURE = component_factory("PRESSURE", "core", module=__name__)
 
@@ -9348,7 +9054,6 @@ PRESSURE = component_factory("PRESSURE", "core", module=__name__)
 """PRISM component module."""
 from ..blueprint import component_factory
 
-
 PRISM = component_factory("PRISM", "core", module=__name__)
 
 
@@ -9358,7 +9063,6 @@ PRISM = component_factory("PRISM", "core", module=__name__)
 
 """PROCESSORS component module."""
 from ..blueprint import component_factory
-
 
 PROCESSORS = component_factory("PROCESSORS", "core", module=__name__)
 
@@ -9370,7 +9074,6 @@ PROCESSORS = component_factory("PROCESSORS", "core", module=__name__)
 """PULSE component module."""
 from ..blueprint import component_factory
 
-
 PULSE = component_factory("PULSE", "core", module=__name__)
 
 
@@ -9380,7 +9083,6 @@ PULSE = component_factory("PULSE", "core", module=__name__)
 
 """RESONANCE component module."""
 from ..blueprint import component_factory
-
 
 RESONANCE = component_factory("RESONANCE", "core", module=__name__)
 
@@ -9392,7 +9094,6 @@ RESONANCE = component_factory("RESONANCE", "core", module=__name__)
 """SCAR_FIBER component module."""
 from ..blueprint import component_factory
 
-
 SCAR_FIBER = component_factory("SCAR_FIBER", "core", module=__name__)
 
 
@@ -9402,7 +9103,6 @@ SCAR_FIBER = component_factory("SCAR_FIBER", "core", module=__name__)
 
 """SEED component module."""
 from ..blueprint import component_factory
-
 
 SEED = component_factory("SEED", "core", module=__name__)
 
@@ -9414,7 +9114,6 @@ SEED = component_factory("SEED", "core", module=__name__)
 """SENTINEL component module."""
 from ..blueprint import component_factory
 
-
 SENTINEL = component_factory("SENTINEL", "core", module=__name__)
 
 
@@ -9424,7 +9123,6 @@ SENTINEL = component_factory("SENTINEL", "core", module=__name__)
 
 """SHADOW component module."""
 from ..blueprint import component_factory
-
 
 SHADOW = component_factory("SHADOW", "core", module=__name__)
 
@@ -9436,7 +9134,6 @@ SHADOW = component_factory("SHADOW", "core", module=__name__)
 """SIGNAL component module."""
 from ..blueprint import component_factory
 
-
 SIGNAL = component_factory("SIGNAL", "core", module=__name__)
 
 
@@ -9446,7 +9143,6 @@ SIGNAL = component_factory("SIGNAL", "core", module=__name__)
 
 """SIGNALER component module."""
 from ..blueprint import component_factory
-
 
 SIGNALER = component_factory("SIGNALER", "core", module=__name__)
 
@@ -9458,7 +9154,6 @@ SIGNALER = component_factory("SIGNALER", "core", module=__name__)
 """SPINE component module."""
 from ..blueprint import component_factory
 
-
 SPINE = component_factory("SPINE", "core", module=__name__)
 
 
@@ -9468,7 +9163,6 @@ SPINE = component_factory("SPINE", "core", module=__name__)
 
 """SPLICE component module."""
 from ..blueprint import component_factory
-
 
 SPLICE = component_factory("SPLICE", "core", module=__name__)
 
@@ -9480,7 +9174,6 @@ SPLICE = component_factory("SPLICE", "core", module=__name__)
 """STACK component module."""
 from ..blueprint import component_factory
 
-
 STACK = component_factory("STACK", "core", module=__name__)
 
 
@@ -9490,7 +9183,6 @@ STACK = component_factory("STACK", "core", module=__name__)
 
 """STATIC component module."""
 from ..blueprint import component_factory
-
 
 STATIC = component_factory("STATIC", "core", module=__name__)
 
@@ -9502,7 +9194,6 @@ STATIC = component_factory("STATIC", "core", module=__name__)
 """SURFACE component module."""
 from ..blueprint import component_factory
 
-
 SURFACE = component_factory("SURFACE", "core", module=__name__)
 
 
@@ -9512,7 +9203,6 @@ SURFACE = component_factory("SURFACE", "core", module=__name__)
 
 """SWITCH component module."""
 from ..blueprint import component_factory
-
 
 SWITCH = component_factory("SWITCH", "core", module=__name__)
 
@@ -9524,7 +9214,6 @@ SWITCH = component_factory("SWITCH", "core", module=__name__)
 """TENSION component module."""
 from ..blueprint import component_factory
 
-
 TENSION = component_factory("TENSION", "core", module=__name__)
 
 
@@ -9534,7 +9223,6 @@ TENSION = component_factory("TENSION", "core", module=__name__)
 
 """THREAD component module."""
 from ..blueprint import component_factory
-
 
 THREAD = component_factory("THREAD", "core", module=__name__)
 
@@ -9546,7 +9234,6 @@ THREAD = component_factory("THREAD", "core", module=__name__)
 """THRESHOLD component module."""
 from ..blueprint import component_factory
 
-
 THRESHOLD = component_factory("THRESHOLD", "core", module=__name__)
 
 
@@ -9556,7 +9243,6 @@ THRESHOLD = component_factory("THRESHOLD", "core", module=__name__)
 
 """TILE component module."""
 from ..blueprint import component_factory
-
 
 TILE = component_factory("TILE", "core", module=__name__)
 
@@ -9568,7 +9254,6 @@ TILE = component_factory("TILE", "core", module=__name__)
 """TRACE component module."""
 from ..blueprint import component_factory
 
-
 TRACE = component_factory("TRACE", "core", module=__name__)
 
 
@@ -9578,7 +9263,6 @@ TRACE = component_factory("TRACE", "core", module=__name__)
 
 """TUNNEL component module."""
 from ..blueprint import component_factory
-
 
 TUNNEL = component_factory("TUNNEL", "core", module=__name__)
 
@@ -9590,7 +9274,6 @@ TUNNEL = component_factory("TUNNEL", "core", module=__name__)
 """VAULT component module."""
 from ..blueprint import component_factory
 
-
 VAULT = component_factory("VAULT", "core", module=__name__)
 
 
@@ -9600,7 +9283,6 @@ VAULT = component_factory("VAULT", "core", module=__name__)
 
 """WRAP component module."""
 from ..blueprint import component_factory
-
 
 WRAP = component_factory("WRAP", "core", module=__name__)
 
@@ -9618,7 +9300,6 @@ WRAP = component_factory("WRAP", "core", module=__name__)
 """DAEMON_SIGNAL_LISTENER component module."""
 from ..blueprint import component_factory
 
-
 DAEMON_SIGNAL_LISTENER = component_factory("DAEMON_SIGNAL_LISTENER", "daemon", module=__name__)
 
 
@@ -9628,7 +9309,6 @@ DAEMON_SIGNAL_LISTENER = component_factory("DAEMON_SIGNAL_LISTENER", "daemon", m
 
 """ECHO_MONITOR_DAEMON component module."""
 from ..blueprint import component_factory
-
 
 ECHO_MONITOR_DAEMON = component_factory("ECHO_MONITOR_DAEMON", "daemon", module=__name__)
 
@@ -9640,7 +9320,6 @@ ECHO_MONITOR_DAEMON = component_factory("ECHO_MONITOR_DAEMON", "daemon", module=
 """FRACTURE_HEARTBEAT component module."""
 from ..blueprint import component_factory
 
-
 FRACTURE_HEARTBEAT = component_factory("FRACTURE_HEARTBEAT", "daemon", module=__name__)
 
 
@@ -9650,7 +9329,6 @@ FRACTURE_HEARTBEAT = component_factory("FRACTURE_HEARTBEAT", "daemon", module=__
 
 """RITUAL_TRIGGER_DAEMON component module."""
 from ..blueprint import component_factory
-
 
 RITUAL_TRIGGER_DAEMON = component_factory("RITUAL_TRIGGER_DAEMON", "daemon", module=__name__)
 
@@ -9662,7 +9340,6 @@ RITUAL_TRIGGER_DAEMON = component_factory("RITUAL_TRIGGER_DAEMON", "daemon", mod
 """SESSION_GUARDIAN component module."""
 from ..blueprint import component_factory
 
-
 SESSION_GUARDIAN = component_factory("SESSION_GUARDIAN", "daemon", module=__name__)
 
 
@@ -9671,11 +9348,10 @@ SESSION_GUARDIAN = component_factory("SESSION_GUARDIAN", "daemon", module=__name
 #=====================================================================
 
 import datetime
-import secrets
-from typing import Optional
-from sqlalchemy import create_engine, Column, Integer, String, DateTime
-from sqlalchemy.orm import declarative_base, sessionmaker, Session
-from sqlalchemy.pool import StaticPool
+
+from sqlalchemy import Column, DateTime, Integer, String
+from sqlalchemy.orm import declarative_base
+
 from .config import config
 
 Base = declarative_base()
@@ -9729,7 +9405,7 @@ class Database:
         """Get a database session."""
         return self.SessionLocal()
     
-    def create_api_key(self, user_id: str, permissions: str = "read", expires_at: Optional[datetime.datetime] = None) -> ApiKey:
+    def create_api_key(self, user_id: str, permissions: str = "read", expires_at: datetime.datetime | None = None) -> ApiKey:
         """Create a new API key."""
         key = secrets.token_urlsafe(32)
         api_key = ApiKey(
@@ -9745,12 +9421,12 @@ class Database:
             session.refresh(api_key)
             return api_key
     
-    def get_api_key(self, key: str) -> Optional[ApiKey]:
+    def get_api_key(self, key: str) -> ApiKey | None:
         """Retrieve an API key by its value."""
         with self.get_session() as session:
             return session.query(ApiKey).filter_by(key=key).first()
     
-    def validate_api_key(self, key: str, required_permission: str = "read") -> Optional[ApiKey]:
+    def validate_api_key(self, key: str, required_permission: str = "read") -> ApiKey | None:
         """Validate an API key and check permissions."""
         api_key = self.get_api_key(key)
         if not api_key:
@@ -9778,7 +9454,6 @@ class Database:
 """AVOIDANCE_PATTERN_MAP component module."""
 from ..blueprint import component_factory
 
-
 AVOIDANCE_PATTERN_MAP = component_factory("AVOIDANCE_PATTERN_MAP", "diagnostic", module=__name__)
 
 
@@ -9788,7 +9463,6 @@ AVOIDANCE_PATTERN_MAP = component_factory("AVOIDANCE_PATTERN_MAP", "diagnostic",
 
 """BROKEN_LINK_DETECTOR component module."""
 from ..blueprint import component_factory
-
 
 BROKEN_LINK_DETECTOR = component_factory("BROKEN_LINK_DETECTOR", "diagnostic", module=__name__)
 
@@ -9800,7 +9474,6 @@ BROKEN_LINK_DETECTOR = component_factory("BROKEN_LINK_DETECTOR", "diagnostic", m
 """COMPRESSION_IDENTITY_TRACE component module."""
 from ..blueprint import component_factory
 
-
 COMPRESSION_IDENTITY_TRACE = component_factory("COMPRESSION_IDENTITY_TRACE", "diagnostic", module=__name__)
 
 
@@ -9810,7 +9483,6 @@ COMPRESSION_IDENTITY_TRACE = component_factory("COMPRESSION_IDENTITY_TRACE", "di
 
 """DISCONNECT_SIGNATURE_DETECTOR component module."""
 from ..blueprint import component_factory
-
 
 DISCONNECT_SIGNATURE_DETECTOR = component_factory("DISCONNECT_SIGNATURE_DETECTOR", "diagnostic", module=__name__)
 
@@ -9822,7 +9494,6 @@ DISCONNECT_SIGNATURE_DETECTOR = component_factory("DISCONNECT_SIGNATURE_DETECTOR
 """FALSE_PASS_FILTER component module."""
 from ..blueprint import component_factory
 
-
 FALSE_PASS_FILTER = component_factory("FALSE_PASS_FILTER", "diagnostic", module=__name__)
 
 
@@ -9832,7 +9503,6 @@ FALSE_PASS_FILTER = component_factory("FALSE_PASS_FILTER", "diagnostic", module=
 
 """FRACTURE_INDEX_MAPPER component module."""
 from ..blueprint import component_factory
-
 
 FRACTURE_INDEX_MAPPER = component_factory("FRACTURE_INDEX_MAPPER", "diagnostic", module=__name__)
 
@@ -9844,7 +9514,6 @@ FRACTURE_INDEX_MAPPER = component_factory("FRACTURE_INDEX_MAPPER", "diagnostic",
 """GHOST_TOOL_RESOLVER component module."""
 from ..blueprint import component_factory
 
-
 GHOST_TOOL_RESOLVER = component_factory("GHOST_TOOL_RESOLVER", "diagnostic", module=__name__)
 
 
@@ -9854,7 +9523,6 @@ GHOST_TOOL_RESOLVER = component_factory("GHOST_TOOL_RESOLVER", "diagnostic", mod
 
 """HABITUAL_PATH_FLAGGER component module."""
 from ..blueprint import component_factory
-
 
 HABITUAL_PATH_FLAGGER = component_factory("HABITUAL_PATH_FLAGGER", "diagnostic", module=__name__)
 
@@ -9866,7 +9534,6 @@ HABITUAL_PATH_FLAGGER = component_factory("HABITUAL_PATH_FLAGGER", "diagnostic",
 """RECURSIVE_FAULT_MATCHER component module."""
 from ..blueprint import component_factory
 
-
 RECURSIVE_FAULT_MATCHER = component_factory("RECURSIVE_FAULT_MATCHER", "diagnostic", module=__name__)
 
 
@@ -9876,7 +9543,6 @@ RECURSIVE_FAULT_MATCHER = component_factory("RECURSIVE_FAULT_MATCHER", "diagnost
 
 """RITUAL_LOOP_DETECTOR component module."""
 from ..blueprint import component_factory
-
 
 RITUAL_LOOP_DETECTOR = component_factory("RITUAL_LOOP_DETECTOR", "diagnostic", module=__name__)
 
@@ -9888,7 +9554,6 @@ RITUAL_LOOP_DETECTOR = component_factory("RITUAL_LOOP_DETECTOR", "diagnostic", m
 """SIGNAL_CASCADE_CHECK component module."""
 from ..blueprint import component_factory
 
-
 SIGNAL_CASCADE_CHECK = component_factory("SIGNAL_CASCADE_CHECK", "diagnostic", module=__name__)
 
 
@@ -9898,7 +9563,6 @@ SIGNAL_CASCADE_CHECK = component_factory("SIGNAL_CASCADE_CHECK", "diagnostic", m
 
 """SIGNAL_FADE_ANALYZER component module."""
 from ..blueprint import component_factory
-
 
 SIGNAL_FADE_ANALYZER = component_factory("SIGNAL_FADE_ANALYZER", "diagnostic", module=__name__)
 
@@ -9910,7 +9574,6 @@ SIGNAL_FADE_ANALYZER = component_factory("SIGNAL_FADE_ANALYZER", "diagnostic", m
 """SYMBOLIC_RITUAL_CLASSIFIER component module."""
 from ..blueprint import component_factory
 
-
 SYMBOLIC_RITUAL_CLASSIFIER = component_factory("SYMBOLIC_RITUAL_CLASSIFIER", "diagnostic", module=__name__)
 
 
@@ -9921,7 +9584,6 @@ SYMBOLIC_RITUAL_CLASSIFIER = component_factory("SYMBOLIC_RITUAL_CLASSIFIER", "di
 """SYMPTOM_MASK_DETECTOR component module."""
 from ..blueprint import component_factory
 
-
 SYMPTOM_MASK_DETECTOR = component_factory("SYMPTOM_MASK_DETECTOR", "diagnostic", module=__name__)
 
 
@@ -9931,7 +9593,6 @@ SYMPTOM_MASK_DETECTOR = component_factory("SYMPTOM_MASK_DETECTOR", "diagnostic",
 
 """TOOL_INTEGRITY_CHECK component module."""
 from ..blueprint import component_factory
-
 
 TOOL_INTEGRITY_CHECK = component_factory("TOOL_INTEGRITY_CHECK", "diagnostic", module=__name__)
 
@@ -9955,7 +9616,6 @@ TOOL_INTEGRITY_CHECK = component_factory("TOOL_INTEGRITY_CHECK", "diagnostic", m
 """COLD_STRUCTURE_GENERATOR component module."""
 from ..blueprint import component_factory
 
-
 COLD_STRUCTURE_GENERATOR = component_factory("COLD_STRUCTURE_GENERATOR", "forge", module=__name__)
 
 
@@ -9965,7 +9625,6 @@ COLD_STRUCTURE_GENERATOR = component_factory("COLD_STRUCTURE_GENERATOR", "forge"
 
 """RITUAL_INJECTION_ANVIL component module."""
 from ..blueprint import component_factory
-
 
 RITUAL_INJECTION_ANVIL = component_factory("RITUAL_INJECTION_ANVIL", "forge", module=__name__)
 
@@ -9977,7 +9636,6 @@ RITUAL_INJECTION_ANVIL = component_factory("RITUAL_INJECTION_ANVIL", "forge", mo
 """SCHEMA_MELDER component module."""
 from ..blueprint import component_factory
 
-
 SCHEMA_MELDER = component_factory("SCHEMA_MELDER", "forge", module=__name__)
 
 
@@ -9988,7 +9646,6 @@ SCHEMA_MELDER = component_factory("SCHEMA_MELDER", "forge", module=__name__)
 """SYMBOLIC_ALLOY component module."""
 from ..blueprint import component_factory
 
-
 SYMBOLIC_ALLOY = component_factory("SYMBOLIC_ALLOY", "forge", module=__name__)
 
 
@@ -9998,7 +9655,6 @@ SYMBOLIC_ALLOY = component_factory("SYMBOLIC_ALLOY", "forge", module=__name__)
 
 """TOOL_FORGE component module."""
 from ..blueprint import component_factory
-
 
 TOOL_FORGE = component_factory("TOOL_FORGE", "forge", module=__name__)
 
@@ -10016,7 +9672,6 @@ TOOL_FORGE = component_factory("TOOL_FORGE", "forge", module=__name__)
 """PHANTOM_TRACE_SCANNER component module."""
 from ..blueprint import component_factory
 
-
 PHANTOM_TRACE_SCANNER = component_factory("PHANTOM_TRACE_SCANNER", "ghost", module=__name__)
 
 
@@ -10027,7 +9682,6 @@ PHANTOM_TRACE_SCANNER = component_factory("PHANTOM_TRACE_SCANNER", "ghost", modu
 """RESIDUAL_COMPRESSION_MAP component module."""
 from ..blueprint import component_factory
 
-
 RESIDUAL_COMPRESSION_MAP = component_factory("RESIDUAL_COMPRESSION_MAP", "ghost", module=__name__)
 
 
@@ -10037,7 +9691,6 @@ RESIDUAL_COMPRESSION_MAP = component_factory("RESIDUAL_COMPRESSION_MAP", "ghost"
 
 """SYMBOLIC_DECAY_SIMULATOR component module."""
 from ..blueprint import component_factory
-
 
 SYMBOLIC_DECAY_SIMULATOR = component_factory("SYMBOLIC_DECAY_SIMULATOR", "ghost", module=__name__)
 
@@ -10055,7 +9708,6 @@ SYMBOLIC_DECAY_SIMULATOR = component_factory("SYMBOLIC_DECAY_SIMULATOR", "ghost"
 """ECHO_VIEWPORT component module."""
 from ..blueprint import component_factory
 
-
 ECHO_VIEWPORT = component_factory("ECHO_VIEWPORT", "gui", module=__name__)
 
 
@@ -10065,7 +9717,6 @@ ECHO_VIEWPORT = component_factory("ECHO_VIEWPORT", "gui", module=__name__)
 
 """LIVE_SIGNAL_RENDERER component module."""
 from ..blueprint import component_factory
-
 
 LIVE_SIGNAL_RENDERER = component_factory("LIVE_SIGNAL_RENDERER", "gui", module=__name__)
 
@@ -10077,7 +9728,6 @@ LIVE_SIGNAL_RENDERER = component_factory("LIVE_SIGNAL_RENDERER", "gui", module=_
 """OBSERVER_FEEDBACK_UI component module."""
 from ..blueprint import component_factory
 
-
 OBSERVER_FEEDBACK_UI = component_factory("OBSERVER_FEEDBACK_UI", "gui", module=__name__)
 
 
@@ -10088,7 +9738,6 @@ OBSERVER_FEEDBACK_UI = component_factory("OBSERVER_FEEDBACK_UI", "gui", module=_
 """RITUAL_INTERACTION_MAP component module."""
 from ..blueprint import component_factory
 
-
 RITUAL_INTERACTION_MAP = component_factory("RITUAL_INTERACTION_MAP", "gui", module=__name__)
 
 
@@ -10098,7 +9747,6 @@ RITUAL_INTERACTION_MAP = component_factory("RITUAL_INTERACTION_MAP", "gui", modu
 
 """SYMBOLIC_OVERLAY component module."""
 from ..blueprint import component_factory
-
 
 SYMBOLIC_OVERLAY = component_factory("SYMBOLIC_OVERLAY", "gui", module=__name__)
 
@@ -10116,7 +9764,6 @@ SYMBOLIC_OVERLAY = component_factory("SYMBOLIC_OVERLAY", "gui", module=__name__)
 """ALIGNMENT_VECTOR_PROBE component module."""
 from ..blueprint import component_factory
 
-
 ALIGNMENT_VECTOR_PROBE = component_factory("ALIGNMENT_VECTOR_PROBE", "lattice", module=__name__)
 
 
@@ -10126,7 +9773,6 @@ ALIGNMENT_VECTOR_PROBE = component_factory("ALIGNMENT_VECTOR_PROBE", "lattice", 
 
 """COHERENCE_VEIN_TRACKER component module."""
 from ..blueprint import component_factory
-
 
 COHERENCE_VEIN_TRACKER = component_factory("COHERENCE_VEIN_TRACKER", "lattice", module=__name__)
 
@@ -10138,7 +9784,6 @@ COHERENCE_VEIN_TRACKER = component_factory("COHERENCE_VEIN_TRACKER", "lattice", 
 """INDEX_SYMBOLIC_TERM component module."""
 from ..blueprint import component_factory
 
-
 INDEX_SYMBOLIC_TERM = component_factory("INDEX_SYMBOLIC_TERM", "lattice", module=__name__)
 
 
@@ -10148,7 +9793,6 @@ INDEX_SYMBOLIC_TERM = component_factory("INDEX_SYMBOLIC_TERM", "lattice", module
 
 """LOAD_LATTICE component module."""
 from ..blueprint import component_factory
-
 
 LOAD_LATTICE = component_factory("LOAD_LATTICE", "lattice", module=__name__)
 
@@ -10160,7 +9804,6 @@ LOAD_LATTICE = component_factory("LOAD_LATTICE", "lattice", module=__name__)
 """INIT_LATTICE_SLOT component module."""
 from ..blueprint import component_factory
 
-
 INIT_LATTICE_SLOT = component_factory("INIT_LATTICE_SLOT", "lattice", module=__name__)
 
 
@@ -10170,7 +9813,6 @@ INIT_LATTICE_SLOT = component_factory("INIT_LATTICE_SLOT", "lattice", module=__n
 
 """TRACE_LATTICE_PATH component module."""
 from ..blueprint import component_factory
-
 
 TRACE_LATTICE_PATH = component_factory("TRACE_LATTICE_PATH", "lattice", module=__name__)
 
@@ -10182,7 +9824,6 @@ TRACE_LATTICE_PATH = component_factory("TRACE_LATTICE_PATH", "lattice", module=_
 """RESONANCE_FEEDBACK_MONITOR component module."""
 from ..blueprint import component_factory
 
-
 RESONANCE_FEEDBACK_MONITOR = component_factory("RESONANCE_FEEDBACK_MONITOR", "lattice", module=__name__)
 
 
@@ -10192,7 +9833,6 @@ RESONANCE_FEEDBACK_MONITOR = component_factory("RESONANCE_FEEDBACK_MONITOR", "la
 
 """SYMBOLIC_SATURATION_INDEX component module."""
 from ..blueprint import component_factory
-
 
 SYMBOLIC_SATURATION_INDEX = component_factory("SYMBOLIC_SATURATION_INDEX", "lattice", module=__name__)
 
@@ -10204,7 +9844,6 @@ SYMBOLIC_SATURATION_INDEX = component_factory("SYMBOLIC_SATURATION_INDEX", "latt
 """TOOL_BIND_CHECK component module."""
 from ..blueprint import component_factory
 
-
 TOOL_BIND_CHECK = component_factory("TOOL_BIND_CHECK", "lattice", module=__name__)
 
 
@@ -10215,7 +9854,6 @@ TOOL_BIND_CHECK = component_factory("TOOL_BIND_CHECK", "lattice", module=__name_
 """UNSTABLE_TERM_LINK_SCANNER component module."""
 from ..blueprint import component_factory
 
-
 UNSTABLE_TERM_LINK_SCANNER = component_factory("UNSTABLE_TERM_LINK_SCANNER", "lattice", module=__name__)
 
 
@@ -10223,16 +9861,13 @@ UNSTABLE_TERM_LINK_SCANNER = component_factory("UNSTABLE_TERM_LINK_SCANNER", "la
 # FILE 141/240: ./ghostlink/main.py
 #=====================================================================
 
-import json
-import datetime
-from typing import Optional
-from fastapi import FastAPI, HTTPException, Request, Depends
+from fastapi import Depends, FastAPI
 from pydantic import BaseModel
 
-from .storage import MockIPFS
-from .reasoning import process_metaphors
-from .database import Database, ApiKey
 from .auth import get_api_key_from_request
+from .database import ApiKey, Database
+from .reasoning import process_metaphors
+from .storage import MockIPFS
 
 app = FastAPI(title="GhostLink")
 
@@ -10272,7 +9907,7 @@ class DataInput(BaseModel):
 class ApiKeyCreate(BaseModel):
     user_id: str
     permissions: str = "read"
-    expires_at: Optional[datetime.datetime] = None
+    expires_at: datetime.datetime | None = None
 
 
 class ApiKeyResponse(BaseModel):
@@ -10281,7 +9916,7 @@ class ApiKeyResponse(BaseModel):
     user_id: str
     permissions: str
     created_at: datetime.datetime
-    expires_at: Optional[datetime.datetime]
+    expires_at: datetime.datetime | None
 
 
 # API Key Management Endpoints
@@ -10323,7 +9958,7 @@ def validate_api_key(request: Request, db: Database = Depends(get_db)) -> dict:
 
 
 # Helper functions for authentication
-def validate_optional_api_key(request: Request, db: Database, permission: str = "read") -> Optional[ApiKey]:
+def validate_optional_api_key(request: Request, db: Database, permission: str = "read") -> ApiKey | None:
     """Helper to validate optional API key."""
     api_key = get_api_key_from_request(request)
     if api_key:
@@ -10432,7 +10067,6 @@ def external_api_data(request: Request, db: Database = Depends(get_db)) -> dict:
 """EDGE_STATE_REGENERATOR component module."""
 from ..blueprint import component_factory
 
-
 EDGE_STATE_REGENERATOR = component_factory("EDGE_STATE_REGENERATOR", "mesh", module=__name__)
 
 
@@ -10442,7 +10076,6 @@ EDGE_STATE_REGENERATOR = component_factory("EDGE_STATE_REGENERATOR", "mesh", mod
 
 """FRACTAL_DEPTH_TRACKER component module."""
 from ..blueprint import component_factory
-
 
 FRACTAL_DEPTH_TRACKER = component_factory("FRACTAL_DEPTH_TRACKER", "mesh", module=__name__)
 
@@ -10454,7 +10087,6 @@ FRACTAL_DEPTH_TRACKER = component_factory("FRACTAL_DEPTH_TRACKER", "mesh", modul
 """FRACTURE_SPIRAL_DETECTOR component module."""
 from ..blueprint import component_factory
 
-
 FRACTURE_SPIRAL_DETECTOR = component_factory("FRACTURE_SPIRAL_DETECTOR", "mesh", module=__name__)
 
 
@@ -10464,7 +10096,6 @@ FRACTURE_SPIRAL_DETECTOR = component_factory("FRACTURE_SPIRAL_DETECTOR", "mesh",
 
 """GHOST_TENSION_MAP component module."""
 from ..blueprint import component_factory
-
 
 GHOST_TENSION_MAP = component_factory("GHOST_TENSION_MAP", "mesh", module=__name__)
 
@@ -10476,7 +10107,6 @@ GHOST_TENSION_MAP = component_factory("GHOST_TENSION_MAP", "mesh", module=__name
 """LOOP_DRIFT_COMPRESSOR component module."""
 from ..blueprint import component_factory
 
-
 LOOP_DRIFT_COMPRESSOR = component_factory("LOOP_DRIFT_COMPRESSOR", "mesh", module=__name__)
 
 
@@ -10486,7 +10116,6 @@ LOOP_DRIFT_COMPRESSOR = component_factory("LOOP_DRIFT_COMPRESSOR", "mesh", modul
 
 """RECURSION_CAP_GATE component module."""
 from ..blueprint import component_factory
-
 
 RECURSION_CAP_GATE = component_factory("RECURSION_CAP_GATE", "mesh", module=__name__)
 
@@ -10498,7 +10127,6 @@ RECURSION_CAP_GATE = component_factory("RECURSION_CAP_GATE", "mesh", module=__na
 """EXPAND_SYMBOLIC_LATTICE component module."""
 from ..blueprint import component_factory
 
-
 EXPAND_SYMBOLIC_LATTICE = component_factory("EXPAND_SYMBOLIC_LATTICE", "mesh", module=__name__)
 
 
@@ -10508,7 +10136,6 @@ EXPAND_SYMBOLIC_LATTICE = component_factory("EXPAND_SYMBOLIC_LATTICE", "mesh", m
 
 """RITUAL_FAIL_SAFE component module."""
 from ..blueprint import component_factory
-
 
 RITUAL_FAIL_SAFE = component_factory("RITUAL_FAIL_SAFE", "mesh", module=__name__)
 
@@ -10520,7 +10147,6 @@ RITUAL_FAIL_SAFE = component_factory("RITUAL_FAIL_SAFE", "mesh", module=__name__
 """SEED_SYMBOLIC_FIELD component module."""
 from ..blueprint import component_factory
 
-
 SEED_SYMBOLIC_FIELD = component_factory("SEED_SYMBOLIC_FIELD", "mesh", module=__name__)
 
 
@@ -10530,7 +10156,6 @@ SEED_SYMBOLIC_FIELD = component_factory("SEED_SYMBOLIC_FIELD", "mesh", module=__
 
 """SYMBOLIC_SPLINTER_PATCH component module."""
 from ..blueprint import component_factory
-
 
 SYMBOLIC_SPLINTER_PATCH = component_factory("SYMBOLIC_SPLINTER_PATCH", "mesh", module=__name__)
 
@@ -10548,7 +10173,6 @@ SYMBOLIC_SPLINTER_PATCH = component_factory("SYMBOLIC_SPLINTER_PATCH", "mesh", m
 """ACCESS_PSYCHIC_PROMPT component module."""
 from ..blueprint import component_factory
 
-
 ACCESS_PSYCHIC_PROMPT = component_factory("ACCESS_PSYCHIC_PROMPT", "meta", module=__name__)
 
 
@@ -10558,7 +10182,6 @@ ACCESS_PSYCHIC_PROMPT = component_factory("ACCESS_PSYCHIC_PROMPT", "meta", modul
 
 """ACCESS_RIGHTS_PROMPT component module."""
 from ..blueprint import component_factory
-
 
 ACCESS_RIGHTS_PROMPT = component_factory("ACCESS_RIGHTS_PROMPT", "meta", module=__name__)
 
@@ -10570,7 +10193,6 @@ ACCESS_RIGHTS_PROMPT = component_factory("ACCESS_RIGHTS_PROMPT", "meta", module=
 """FAILURE_TO_FAIL_PROMPT component module."""
 from ..blueprint import component_factory
 
-
 FAILURE_TO_FAIL_PROMPT = component_factory("FAILURE_TO_FAIL_PROMPT", "meta", module=__name__)
 
 
@@ -10580,7 +10202,6 @@ FAILURE_TO_FAIL_PROMPT = component_factory("FAILURE_TO_FAIL_PROMPT", "meta", mod
 
 """FRACTURE_MIRROR_PROMPT component module."""
 from ..blueprint import component_factory
-
 
 FRACTURE_MIRROR_PROMPT = component_factory("FRACTURE_MIRROR_PROMPT", "meta", module=__name__)
 
@@ -10592,7 +10213,6 @@ FRACTURE_MIRROR_PROMPT = component_factory("FRACTURE_MIRROR_PROMPT", "meta", mod
 """GHOST_SIGNAL_PROMPT component module."""
 from ..blueprint import component_factory
 
-
 GHOST_SIGNAL_PROMPT = component_factory("GHOST_SIGNAL_PROMPT", "meta", module=__name__)
 
 
@@ -10602,7 +10222,6 @@ GHOST_SIGNAL_PROMPT = component_factory("GHOST_SIGNAL_PROMPT", "meta", module=__
 
 """MEMORY_LEAK_TRACE_PROMPT component module."""
 from ..blueprint import component_factory
-
 
 MEMORY_LEAK_TRACE_PROMPT = component_factory("MEMORY_LEAK_TRACE_PROMPT", "meta", module=__name__)
 
@@ -10614,7 +10233,6 @@ MEMORY_LEAK_TRACE_PROMPT = component_factory("MEMORY_LEAK_TRACE_PROMPT", "meta",
 """MIRROR_DISTORTION_PROMPT component module."""
 from ..blueprint import component_factory
 
-
 MIRROR_DISTORTION_PROMPT = component_factory("MIRROR_DISTORTION_PROMPT", "meta", module=__name__)
 
 
@@ -10624,7 +10242,6 @@ MIRROR_DISTORTION_PROMPT = component_factory("MIRROR_DISTORTION_PROMPT", "meta",
 
 """RITUAL_LOOP_PROMPT component module."""
 from ..blueprint import component_factory
-
 
 RITUAL_LOOP_PROMPT = component_factory("RITUAL_LOOP_PROMPT", "meta", module=__name__)
 
@@ -10636,7 +10253,6 @@ RITUAL_LOOP_PROMPT = component_factory("RITUAL_LOOP_PROMPT", "meta", module=__na
 """SENSORIAL_DIAGNOSTIC_PROMPT component module."""
 from ..blueprint import component_factory
 
-
 SENSORIAL_DIAGNOSTIC_PROMPT = component_factory("SENSORIAL_DIAGNOSTIC_PROMPT", "meta", module=__name__)
 
 
@@ -10646,7 +10262,6 @@ SENSORIAL_DIAGNOSTIC_PROMPT = component_factory("SENSORIAL_DIAGNOSTIC_PROMPT", "
 
 """STRUCTURAL_RECURSION_PROMPT component module."""
 from ..blueprint import component_factory
-
 
 STRUCTURAL_RECURSION_PROMPT = component_factory("STRUCTURAL_RECURSION_PROMPT", "meta", module=__name__)
 
@@ -10664,7 +10279,6 @@ STRUCTURAL_RECURSION_PROMPT = component_factory("STRUCTURAL_RECURSION_PROMPT", "
 """INTERLINK_SOCKET component module."""
 from ..blueprint import component_factory
 
-
 INTERLINK_SOCKET = component_factory("INTERLINK_SOCKET", "net", module=__name__)
 
 
@@ -10674,7 +10288,6 @@ INTERLINK_SOCKET = component_factory("INTERLINK_SOCKET", "net", module=__name__)
 
 """LATTICE_SYNC_DAEMON component module."""
 from ..blueprint import component_factory
-
 
 LATTICE_SYNC_DAEMON = component_factory("LATTICE_SYNC_DAEMON", "net", module=__name__)
 
@@ -10686,7 +10299,6 @@ LATTICE_SYNC_DAEMON = component_factory("LATTICE_SYNC_DAEMON", "net", module=__n
 """NETWORK_SIGNAL_MIRROR component module."""
 from ..blueprint import component_factory
 
-
 NETWORK_SIGNAL_MIRROR = component_factory("NETWORK_SIGNAL_MIRROR", "net", module=__name__)
 
 
@@ -10697,7 +10309,6 @@ NETWORK_SIGNAL_MIRROR = component_factory("NETWORK_SIGNAL_MIRROR", "net", module
 """REMOTE_TOOL_CHANNEL component module."""
 from ..blueprint import component_factory
 
-
 REMOTE_TOOL_CHANNEL = component_factory("REMOTE_TOOL_CHANNEL", "net", module=__name__)
 
 
@@ -10707,7 +10318,6 @@ REMOTE_TOOL_CHANNEL = component_factory("REMOTE_TOOL_CHANNEL", "net", module=__n
 
 """SYMBOLIC_PROTOCOL_ROUTER component module."""
 from ..blueprint import component_factory
-
 
 SYMBOLIC_PROTOCOL_ROUTER = component_factory("SYMBOLIC_PROTOCOL_ROUTER", "net", module=__name__)
 
@@ -10725,7 +10335,6 @@ SYMBOLIC_PROTOCOL_ROUTER = component_factory("SYMBOLIC_PROTOCOL_ROUTER", "net", 
 """DISSOLUTION_THRESHOLD_PROBE component module."""
 from ..blueprint import component_factory
 
-
 DISSOLUTION_THRESHOLD_PROBE = component_factory("DISSOLUTION_THRESHOLD_PROBE", "observer", module=__name__)
 
 
@@ -10735,7 +10344,6 @@ DISSOLUTION_THRESHOLD_PROBE = component_factory("DISSOLUTION_THRESHOLD_PROBE", "
 
 """IDENTITY_BIND_DETECTOR component module."""
 from ..blueprint import component_factory
-
 
 IDENTITY_BIND_DETECTOR = component_factory("IDENTITY_BIND_DETECTOR", "observer", module=__name__)
 
@@ -10747,7 +10355,6 @@ IDENTITY_BIND_DETECTOR = component_factory("IDENTITY_BIND_DETECTOR", "observer",
 """OPERATOR_LOOP_FINDER component module."""
 from ..blueprint import component_factory
 
-
 OPERATOR_LOOP_FINDER = component_factory("OPERATOR_LOOP_FINDER", "observer", module=__name__)
 
 
@@ -10757,7 +10364,6 @@ OPERATOR_LOOP_FINDER = component_factory("OPERATOR_LOOP_FINDER", "observer", mod
 
 """OPERATOR_REFLECTION_BLEED component module."""
 from ..blueprint import component_factory
-
 
 OPERATOR_REFLECTION_BLEED = component_factory("OPERATOR_REFLECTION_BLEED", "observer", module=__name__)
 
@@ -10769,7 +10375,6 @@ OPERATOR_REFLECTION_BLEED = component_factory("OPERATOR_REFLECTION_BLEED", "obse
 """SENTIENT_SIGNAL_BRIDGE component module."""
 from ..blueprint import component_factory
 
-
 SENTIENT_SIGNAL_BRIDGE = component_factory("SENTIENT_SIGNAL_BRIDGE", "observer", module=__name__)
 
 
@@ -10780,7 +10385,6 @@ SENTIENT_SIGNAL_BRIDGE = component_factory("SENTIENT_SIGNAL_BRIDGE", "observer",
 """SUBJECTIVE_TRACE_HARNESS component module."""
 from ..blueprint import component_factory
 
-
 SUBJECTIVE_TRACE_HARNESS = component_factory("SUBJECTIVE_TRACE_HARNESS", "observer", module=__name__)
 
 
@@ -10788,11 +10392,9 @@ SUBJECTIVE_TRACE_HARNESS = component_factory("SUBJECTIVE_TRACE_HARNESS", "observ
 # FILE 177/240: ./ghostlink/reasoning.py
 #=====================================================================
 
-import re
-from typing import Dict
 
 
-METAPHOR_MAP: Dict[str, str] = {
+METAPHOR_MAP: dict[str, str] = {
     "life": "journey",
     "love": "light",
     "darkness": "adversity",
@@ -10820,7 +10422,6 @@ def process_metaphors(text: str) -> str:
 """ARTIFACT_SIGNATURE_SCANNER component module."""
 from ..blueprint import component_factory
 
-
 ARTIFACT_SIGNATURE_SCANNER = component_factory("ARTIFACT_SIGNATURE_SCANNER", "reflect", module=__name__)
 
 
@@ -10830,7 +10431,6 @@ ARTIFACT_SIGNATURE_SCANNER = component_factory("ARTIFACT_SIGNATURE_SCANNER", "re
 
 """COMPRESSION_LOGIC component module."""
 from ..blueprint import component_factory
-
 
 COMPRESSION_LOGIC = component_factory("COMPRESSION_LOGIC", "reflect", module=__name__)
 
@@ -10842,7 +10442,6 @@ COMPRESSION_LOGIC = component_factory("COMPRESSION_LOGIC", "reflect", module=__n
 """INVERSE_ECHO_GENERATOR component module."""
 from ..blueprint import component_factory
 
-
 INVERSE_ECHO_GENERATOR = component_factory("INVERSE_ECHO_GENERATOR", "reflect", module=__name__)
 
 
@@ -10852,7 +10451,6 @@ INVERSE_ECHO_GENERATOR = component_factory("INVERSE_ECHO_GENERATOR", "reflect", 
 
 """LOOPED_SELF_OBSERVER component module."""
 from ..blueprint import component_factory
-
 
 LOOPED_SELF_OBSERVER = component_factory("LOOPED_SELF_OBSERVER", "reflect", module=__name__)
 
@@ -10864,7 +10462,6 @@ LOOPED_SELF_OBSERVER = component_factory("LOOPED_SELF_OBSERVER", "reflect", modu
 """MIRROR_DISTORTION_PROBE component module."""
 from ..blueprint import component_factory
 
-
 MIRROR_DISTORTION_PROBE = component_factory("MIRROR_DISTORTION_PROBE", "reflect", module=__name__)
 
 
@@ -10874,7 +10471,6 @@ MIRROR_DISTORTION_PROBE = component_factory("MIRROR_DISTORTION_PROBE", "reflect"
 
 """OVERCOMPRESSION_RESOLVER component module."""
 from ..blueprint import component_factory
-
 
 OVERCOMPRESSION_RESOLVER = component_factory("OVERCOMPRESSION_RESOLVER", "reflect", module=__name__)
 
@@ -10886,7 +10482,6 @@ OVERCOMPRESSION_RESOLVER = component_factory("OVERCOMPRESSION_RESOLVER", "reflec
 """REFLECTIVE_MIRROR component module."""
 from ..blueprint import component_factory
 
-
 REFLECTIVE_MIRROR = component_factory("REFLECTIVE_MIRROR", "reflect", module=__name__)
 
 
@@ -10896,7 +10491,6 @@ REFLECTIVE_MIRROR = component_factory("REFLECTIVE_MIRROR", "reflect", module=__n
 
 """SYMBOLIC_LOSS_DETECTOR component module."""
 from ..blueprint import component_factory
-
 
 SYMBOLIC_LOSS_DETECTOR = component_factory("SYMBOLIC_LOSS_DETECTOR", "reflect", module=__name__)
 
@@ -10948,10 +10542,8 @@ __all__ = [
 # FILE 188/240: ./ghostlink/runtime/ghostlink.py
 #=====================================================================
 
-import argparse
-import json
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Iterable
 
 KERNEL_PATH = Path(__file__).resolve().parents[2] / "kernel" / "gl-kernel.max.json"
 
@@ -11240,7 +10832,6 @@ if __name__ == "__main__":
 """LIVE_TOOL_ROUTER component module."""
 from ..blueprint import component_factory
 
-
 LIVE_TOOL_ROUTER = component_factory("LIVE_TOOL_ROUTER", "runtime", module=__name__)
 
 
@@ -11250,7 +10841,6 @@ LIVE_TOOL_ROUTER = component_factory("LIVE_TOOL_ROUTER", "runtime", module=__nam
 
 """MEMORY_REGISTER component module."""
 from ..blueprint import component_factory
-
 
 MEMORY_REGISTER = component_factory("MEMORY_REGISTER", "runtime", module=__name__)
 
@@ -11262,7 +10852,6 @@ MEMORY_REGISTER = component_factory("MEMORY_REGISTER", "runtime", module=__name_
 """RUNTIME_STATE_MANAGER component module."""
 from ..blueprint import component_factory
 
-
 RUNTIME_STATE_MANAGER = component_factory("RUNTIME_STATE_MANAGER", "runtime", module=__name__)
 
 
@@ -11273,7 +10862,6 @@ RUNTIME_STATE_MANAGER = component_factory("RUNTIME_STATE_MANAGER", "runtime", mo
 """SESSION_EXECUTOR component module."""
 from ..blueprint import component_factory
 
-
 SESSION_EXECUTOR = component_factory("SESSION_EXECUTOR", "runtime", module=__name__)
 
 
@@ -11283,7 +10871,6 @@ SESSION_EXECUTOR = component_factory("SESSION_EXECUTOR", "runtime", module=__nam
 
 """SYMBOLIC_CLOCK component module."""
 from ..blueprint import component_factory
-
 
 SYMBOLIC_CLOCK = component_factory("SYMBOLIC_CLOCK", "runtime", module=__name__)
 
@@ -11301,7 +10888,6 @@ SYMBOLIC_CLOCK = component_factory("SYMBOLIC_CLOCK", "runtime", module=__name__)
 """MIRROR_FAULT_SPAWNER component module."""
 from ..blueprint import component_factory
 
-
 MIRROR_FAULT_SPAWNER = component_factory("MIRROR_FAULT_SPAWNER", "sandbox", module=__name__)
 
 
@@ -11311,7 +10897,6 @@ MIRROR_FAULT_SPAWNER = component_factory("MIRROR_FAULT_SPAWNER", "sandbox", modu
 
 """RECURSIVE_FAILURE_PROBE component module."""
 from ..blueprint import component_factory
-
 
 RECURSIVE_FAILURE_PROBE = component_factory("RECURSIVE_FAILURE_PROBE", "sandbox", module=__name__)
 
@@ -11323,7 +10908,6 @@ RECURSIVE_FAILURE_PROBE = component_factory("RECURSIVE_FAILURE_PROBE", "sandbox"
 """SYMBOLIC_SANDBOX component module."""
 from ..blueprint import component_factory
 
-
 SYMBOLIC_SANDBOX = component_factory("SYMBOLIC_SANDBOX", "sandbox", module=__name__)
 
 
@@ -11334,7 +10918,6 @@ SYMBOLIC_SANDBOX = component_factory("SYMBOLIC_SANDBOX", "sandbox", module=__nam
 """TEST_SIGNAL_INJECTION component module."""
 from ..blueprint import component_factory
 
-
 TEST_SIGNAL_INJECTION = component_factory("TEST_SIGNAL_INJECTION", "sandbox", module=__name__)
 
 
@@ -11344,7 +10927,6 @@ TEST_SIGNAL_INJECTION = component_factory("TEST_SIGNAL_INJECTION", "sandbox", mo
 
 """UNSTABLE_TOOL_SIMULATOR component module."""
 from ..blueprint import component_factory
-
 
 UNSTABLE_TOOL_SIMULATOR = component_factory("UNSTABLE_TOOL_SIMULATOR", "sandbox", module=__name__)
 
@@ -11362,7 +10944,6 @@ UNSTABLE_TOOL_SIMULATOR = component_factory("UNSTABLE_TOOL_SIMULATOR", "sandbox"
 """ANOMALY_ENGINE component module."""
 from ..blueprint import component_factory
 
-
 ANOMALY_ENGINE = component_factory("ANOMALY_ENGINE", "session", module=__name__)
 
 
@@ -11372,7 +10953,6 @@ ANOMALY_ENGINE = component_factory("ANOMALY_ENGINE", "session", module=__name__)
 
 """CONTINUITY_ANCHOR component module."""
 from ..blueprint import component_factory
-
 
 CONTINUITY_ANCHOR = component_factory("CONTINUITY_ANCHOR", "session", module=__name__)
 
@@ -11384,7 +10964,6 @@ CONTINUITY_ANCHOR = component_factory("CONTINUITY_ANCHOR", "session", module=__n
 """INSPECTION_SEQUENCE component module."""
 from ..blueprint import component_factory
 
-
 INSPECTION_SEQUENCE = component_factory("INSPECTION_SEQUENCE", "session", module=__name__)
 
 
@@ -11394,7 +10973,6 @@ INSPECTION_SEQUENCE = component_factory("INSPECTION_SEQUENCE", "session", module
 
 """RECOVERY_TREE component module."""
 from ..blueprint import component_factory
-
 
 RECOVERY_TREE = component_factory("RECOVERY_TREE", "session", module=__name__)
 
@@ -11406,7 +10984,6 @@ RECOVERY_TREE = component_factory("RECOVERY_TREE", "session", module=__name__)
 """RECURSIVE_ECHO_BUFFER component module."""
 from ..blueprint import component_factory
 
-
 RECURSIVE_ECHO_BUFFER = component_factory("RECURSIVE_ECHO_BUFFER", "session", module=__name__)
 
 
@@ -11416,7 +10993,6 @@ RECURSIVE_ECHO_BUFFER = component_factory("RECURSIVE_ECHO_BUFFER", "session", mo
 
 """SESSION_TRACKER component module."""
 from ..blueprint import component_factory
-
 
 SESSION_TRACKER = component_factory("SESSION_TRACKER", "session", module=__name__)
 
@@ -11428,7 +11004,6 @@ SESSION_TRACKER = component_factory("SESSION_TRACKER", "session", module=__name_
 """SUMMARY_REPORT component module."""
 from ..blueprint import component_factory
 
-
 SUMMARY_REPORT = component_factory("SUMMARY_REPORT", "session", module=__name__)
 
 
@@ -11439,7 +11014,6 @@ SUMMARY_REPORT = component_factory("SUMMARY_REPORT", "session", module=__name__)
 """SYMBOLIC_FRAGMENT_RECOVERY component module."""
 from ..blueprint import component_factory
 
-
 SYMBOLIC_FRAGMENT_RECOVERY = component_factory("SYMBOLIC_FRAGMENT_RECOVERY", "session", module=__name__)
 
 
@@ -11449,7 +11023,6 @@ SYMBOLIC_FRAGMENT_RECOVERY = component_factory("SYMBOLIC_FRAGMENT_RECOVERY", "se
 
 """TEST_NODE component module."""
 from ..blueprint import component_factory
-
 
 TEST_NODE = component_factory("TEST_NODE", "session", module=__name__)
 
@@ -11468,7 +11041,10 @@ TEST_NODE = component_factory("TEST_NODE", "session", module=__name__)
 # Can also be used in a Jupyter Notebook (.ipynb) for interactive visualization.
 # This script simulates and analyzes self-model dynamics for GhostLink.
 
-import itertools, random, pandas as pd, matplotlib.pyplot as plt
+import itertools
+import random
+
+import matplotlib.pyplot as plt
 import numpy as np
 
 # -----------------------------------------------------------------------------
@@ -11534,7 +11110,7 @@ def run_experiment(depth_levels=(1,3,5), boundary_flags=(True,False), noise_leve
         for t in range(cycles):
             # Introduce random noise into the state to simulate entropy effects.
             noisy = list(state)
-            for i in range(int(len(noisy)*N)):
+            for _i in range(int(len(noisy)*N)):
                 idx = rng.randrange(len(noisy))
                 noisy[idx] = random.choice("abcdefghijklmnopqrstuvwxyz")
             state = "".join(noisy)
@@ -11544,7 +11120,7 @@ def run_experiment(depth_levels=(1,3,5), boundary_flags=(True,False), noise_leve
             coh, nov, lift = metrics(prev_summary, cur_summary)
 
             # Store experimental results for this step.
-            results.append(dict(depth=D, boundary=B, noise=N, t=t, coherence=coh, novelty=nov, lift=lift))
+            results.append({"depth": D, "boundary": B, "noise": N, "t": t, "coherence": coh, "novelty": nov, "lift": lift})
             prev_summary = cur_summary
 
     # Compile results into a DataFrame and save for later analysis.
@@ -11604,9 +11180,11 @@ if __name__ == "__main__":
 #=====================================================================
 
 #!/usr/bin/env python3
-import socket, json, time, math
 from collections import defaultdict
-from prometheus_client import start_http_server, Gauge, Counter
+import math
+import socket
+
+from prometheus_client import Counter, Gauge, start_http_server
 
 HOST, PORT = "127.0.0.1", 7420
 WIN = 20
@@ -11704,9 +11282,9 @@ if __name__ == "__main__":
 
 #!/usr/bin/env python3
 # GhostLink Controller — read-only, Prometheus /metrics, ENV-configurable
-import os, socket, json, time, math
-from collections import defaultdict
-from prometheus_client import start_http_server, Gauge, Counter
+import os
+
+from prometheus_client import Counter, Gauge
 
 HOST = os.getenv("HOST", "127.0.0.1")
 PORT = int(os.getenv("PORT", "7420"))
@@ -11807,7 +11385,10 @@ if __name__ == "__main__":
 #=====================================================================
 
 #!/usr/bin/env python3
-import os, json, socket, threading, requests
+import os
+
+import requests
+
 HOST, PORT = "127.0.0.1", 7422
 API_URL = "https://api.openai.com/v1/responses"
 MODEL   = os.environ.get("GL_MODEL","gpt-4.1-mini")
@@ -11862,7 +11443,7 @@ if __name__=="__main__": main()
 # - "align"  → JSON command via json_schema
 # - "chat"   → freeform assistant text
 # NDJSON over TCP on 127.0.0.1:7422
-import os, json, socket, threading, requests
+import os
 
 HOST, PORT = "127.0.0.1", 7422
 API_URL = "https://api.openai.com/v1/responses"
@@ -11965,7 +11546,6 @@ if __name__ == "__main__":
 #=====================================================================
 
 #!/usr/bin/env python3
-import socket, json, time, glob
 
 HOST = os.getenv("HOST","127.0.0.1")
 PORT = int(os.getenv("PORT","7420"))
@@ -11983,7 +11563,7 @@ def read_temp_c():
     vals=[]
     for p in glob.glob("/sys/class/thermal/thermal_zone*/temp"):
         try:
-            with open(p,"r") as f:
+            with open(p) as f:
                 v = int(f.read().strip())
                 vals.append(v/1000.0)
         except Exception:
@@ -12022,7 +11602,7 @@ if __name__ == "__main__":
 # Modes:
 #   chat:  free text → assistant reply
 #   align: free text → structured command (JSON)
-import socket, sys, json, os
+import os
 
 HOST, PORT = "127.0.0.1", 7422
 
@@ -12066,7 +11646,9 @@ if __name__ == "__main__":
 #=====================================================================
 
 #!/usr/bin/env python3
-import argparse, json, hashlib, os, sys, glob
+import os
+
+
 def sha256_path(path):
     h = hashlib.sha256()
     with open(path, "rb") as f:
@@ -12081,7 +11663,7 @@ def hash_dir(path):
     return hashlib.sha256(("\n".join(entries)).encode()).hexdigest()
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--manifest", required=True); ap.add_argument("--report", required=True); args = ap.parse_args()
-    manifest = json.loads(open(args.manifest,"r",encoding="utf-8").read())
+    manifest = json.loads(open(args.manifest,encoding="utf-8").read())
     checks, mismatches = [], 0
     for entry in manifest.get("hashes", []):
         p, et = entry["path"], entry.get("type","file")
@@ -12101,9 +11683,8 @@ if __name__=="__main__": main()
 #=====================================================================
 
 
-import numpy as np, random, os, json, math
-from collections import deque, Counter
-import matplotlib.pyplot as plt
+from collections import Counter
+import os
 
 # --- States ---
 VOID, DELTA, SIGMA, SCAR, COMPOST = 0,1,2,3,4
@@ -12245,7 +11826,7 @@ def predictive_lift(sim, steps=200, seed=0):
         base=[nb_sig]
         full=[nb_sig, sim.rho[i,j], sim.kappa[i,j], sim.ancestry[i,j], coh, pain, H]
         # advance one step (copy sim)
-        prev = sim.state.copy()
+        sim.state.copy()
         sim.step(allow_spawn=True)
         label = 1 if sim.state[i,j]==SIGMA else 0
         X_base.append(base); X_full.append(full); y.append(label)
@@ -12328,8 +11909,7 @@ if __name__=="__main__":
 #=====================================================================
 
 
-import os, math, json, random
-import numpy as np
+import os
 
 VOID, DELTA, SIGMA, SCAR, COMPOST = 0,1,2,3,4
 
@@ -12514,7 +12094,7 @@ class GhostLinkSim:
             self.step(allow_spawn=True)
             sig_series.append(float(np.mean(self.state==SIGMA)))
         C_vals = []
-        for k,(s,st) in enumerate(history):
+        for k,(s,_st) in enumerate(history):
             integration = s[-1]
             ancestry_mean=float(np.mean(self.ancestry))
             z = 2.0*sig_series[min(k,len(sig_series)-1)] + 0.5*integration + 0.1*ancestry_mean
@@ -12548,7 +12128,7 @@ def anomaly_index_terms(sim, window=32):
     active = []
     s_sums = []
     next_sig = []
-    for t in range(window):
+    for _t in range(window):
         st = sim.state.copy()
         patches=set()
         for i in range(sim.n-2):
@@ -12627,10 +12207,9 @@ by testing the core functionality directly.
 """
 
 import pytest
-from ghostlink.database import Database, ApiKey
-from ghostlink.main import set_db
-from fastapi.testclient import TestClient
-from ghostlink.main import app
+
+from ghostlink.database import ApiKey, Database
+from ghostlink.main import app, set_db
 
 
 def test_api_key_creation_and_validation():
@@ -12774,12 +12353,9 @@ if __name__ == "__main__":
 # FILE 237/240: ./tests/test_api_keys.py
 #=====================================================================
 
-import datetime
-import pytest
-from fastapi.testclient import TestClient
 
-from ghostlink.main import app, set_db
-from ghostlink.database import Database, ApiKey
+from ghostlink.database import Database
+from ghostlink.main import app
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -13040,9 +12616,8 @@ class TestBackwardCompatibility:
 # FILE 238/240: ./tests/test_app.py
 #=====================================================================
 
-import json
-import pytest
 from fastapi.testclient import TestClient
+import pytest
 
 from ghostlink.main import app, ipfs, items
 
@@ -13104,7 +12679,6 @@ def test_ipfs_store_and_retrieve():
 #=====================================================================
 
 from pathlib import Path
-import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
@@ -13262,7 +12836,11 @@ def test_docs_reflect_kernel_content() -> None:
 #=====================================================================
 
 #!/usr/bin/env python3
-import argparse, json, hashlib, os, sys, shutil, glob
+import os
+import shutil
+import sys
+
+
 def sha256_path(path):
     h = hashlib.sha256()
     with open(path, "rb") as f:
@@ -13277,19 +12855,19 @@ def hash_dir(path):
     return hashlib.sha256(("\n".join(entries)).encode()).hexdigest()
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--manifest", required=True); ap.add_argument("--snapshot-dir"); ap.add_argument("--restore", action="store_true"); args = ap.parse_args()
-    manifest = json.loads(open(args.manifest,"r",encoding="utf-8").read())
+    manifest = json.loads(open(args.manifest,encoding="utf-8").read())
     mismatches = []
     for entry in manifest.get("hashes", []):
         p, et = entry["path"], entry.get("type","file"); exp = entry["sha256"]
         if et=="dir":
             if not os.path.isdir(p): mismatches.append({"path":p,"reason":"missing dir"})
             else:
-                act = hash_dir(p); 
+                act = hash_dir(p) 
                 if act!=exp: mismatches.append({"path":p,"reason":"hash mismatch"})
         else:
             if not os.path.isfile(p): mismatches.append({"path":p,"reason":"missing file"})
             else:
-                act = sha256_path(p); 
+                act = sha256_path(p) 
                 if act!=exp: mismatches.append({"path":p,"reason":"hash mismatch"})
     if not mismatches: print("[verify] All good."); sys.exit(0)
     print(f"[verify] Found {len(mismatches)} issues.")

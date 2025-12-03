@@ -1,4 +1,3 @@
-import pytest
 from ghostlink.hardware_utils import is_admin, is_virtual_machine, list_physical_nics
 
 

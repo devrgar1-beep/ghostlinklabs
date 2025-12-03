@@ -5,16 +5,17 @@ Monitors system health and detects potential issues before they cause errors.
 from __future__ import annotations
 
 import asyncio
-import logging
-import os
-import platform
-import psutil
-import shutil
-import sys
 from dataclasses import dataclass
 from datetime import datetime
+import logging
+import os
 from pathlib import Path
-from typing import Any, Optional
+import platform
+import shutil
+import sys
+from typing import Any
+
+import psutil
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +36,7 @@ class HealthStatus:
 class HealthMonitor:
     """Monitor system health and detect issues."""
 
-    def __init__(self, workspace_root: Optional[Path] = None):
+    def __init__(self, workspace_root: Path | None = None):
         """Initialize health monitor.
         
         Args:
@@ -44,7 +45,7 @@ class HealthMonitor:
         self.workspace_root = workspace_root or Path.cwd()
         self.check_interval = 60  # seconds
         self.monitoring = False
-        self._monitor_task: Optional[asyncio.Task] = None
+        self._monitor_task: asyncio.Task | None = None
 
     async def check_health(self) -> HealthStatus:
         """Perform comprehensive health check.
@@ -309,7 +310,7 @@ class HealthMonitor:
 
 
 # Global health monitor instance
-_health_monitor: Optional[HealthMonitor] = None
+_health_monitor: HealthMonitor | None = None
 
 
 def get_health_monitor() -> HealthMonitor:

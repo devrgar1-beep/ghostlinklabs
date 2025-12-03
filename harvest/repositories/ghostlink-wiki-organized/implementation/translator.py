@@ -9,10 +9,10 @@ from __future__ import annotations
 
 import ast
 import asyncio
-import logging
-import re
 from dataclasses import dataclass
 from enum import Enum
+import logging
+import re
 from typing import Any, Callable
 
 logger = logging.getLogger(__name__)
@@ -416,7 +416,7 @@ class ComputationTranslator:
         """AST-based translation for complex cases."""
         try:
             # Parse Python AST
-            tree = ast.parse(source)
+            ast.parse(source)
 
             # This would implement AST transformation logic
             # For now, return a placeholder
@@ -730,7 +730,7 @@ def translate_math(
 
 async def main():
     """Main translator orchestration."""
-    translator = get_translator()
+    get_translator()
     logger.info("Computation Language Translator initialized")
 
     # Keep the translator running for continuous operation

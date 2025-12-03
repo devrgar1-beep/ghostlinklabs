@@ -6,9 +6,10 @@ Automates the complete system setup for sovereign operation
 
 import argparse
 import os
+from pathlib import Path
 import subprocess
 import sys
-from pathlib import Path
+
 
 def run_command(cmd, cwd=None, check=True):
     """Run a shell command"""

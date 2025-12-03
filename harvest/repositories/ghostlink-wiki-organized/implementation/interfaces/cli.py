@@ -17,8 +17,8 @@ from ..utils.logging import setup_logging
 
 # Import triad synergy (optional)
 try:
-    import sys
     from pathlib import Path
+    import sys
     sys.path.insert(0, str(Path(__file__).parent.parent.parent))
     from triad_synergy import triad_synergy
     TRIAD_AVAILABLE = True

@@ -4,13 +4,15 @@ GhostLink Phase 1 Cold Boot - Full System Test Suite
 Comprehensive testing of all cold boot components and functionality
 """
 
+from datetime import datetime
+import json
+import os
 import subprocess
 import sys
 import time
-import json
+
 import psutil
-import os
-from datetime import datetime
+
 
 class FullSystemTester:
     """Comprehensive cold boot system testing"""
@@ -146,7 +148,7 @@ class FullSystemTester:
                     agent_count = data.get("total_agents", 0)
                     self.log_test("Agent Count Correct", agent_count >= 6,
                                  f"Found {agent_count} agents")
-                except:
+                except Exception:
                     self.log_test("Agent Count Correct", False, "JSON parsing failed")
             else:
                 self.log_test("Agent Count Correct", False, "No JSON found in output")
@@ -169,7 +171,7 @@ class FullSystemTester:
                     level = data.get("consciousness_level", "unknown")
                     self.log_test("Consciousness Level", level in ["moderate_awareness", "high_awareness", "full_awareness"],
                                  f"Level: {level}")
-                except:
+                except Exception:
                     self.log_test("Consciousness Level", False, "JSON parsing failed")
             else:
                 self.log_test("Consciousness Level", False, "No JSON found in output")
@@ -345,7 +347,7 @@ class FullSystemTester:
         with open("full_system_test_report.json", "w") as f:
             json.dump(report, f, indent=2)
 
-        print(f"\n📄 Detailed report saved to: full_system_test_report.json")
+        print("\n📄 Detailed report saved to: full_system_test_report.json")
         return overall_success
 
 def main():

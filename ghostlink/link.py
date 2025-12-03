@@ -6,17 +6,16 @@ manages tasks, routes workflows, and serves as your personal AI assistant brain.
 from __future__ import annotations
 
 import asyncio
-import json
-import logging
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
+import json
+import logging
 from pathlib import Path
-from typing import Any, Callable, Optional
+from typing import Any, Callable
 
-from .config import config
-from .troubleshooter import get_troubleshooter, handle_error
 from .health_monitor import get_health_monitor
+from .troubleshooter import get_troubleshooter, handle_error
 
 logger = logging.getLogger(__name__)
 
@@ -47,10 +46,10 @@ class Task:
     priority: TaskPriority = TaskPriority.NORMAL
     status: TaskStatus = TaskStatus.PENDING
     created_at: datetime = field(default_factory=datetime.utcnow)
-    started_at: Optional[datetime] = None
-    completed_at: Optional[datetime] = None
-    result: Optional[Any] = None
-    error: Optional[str] = None
+    started_at: datetime | None = None
+    completed_at: datetime | None = None
+    result: Any | None = None
+    error: str | None = None
     metadata: dict[str, Any] = field(default_factory=dict)
     
     def to_dict(self) -> dict[str, Any]:
@@ -90,7 +89,7 @@ class LinkMemory:
         path.write_text(json.dumps(data, indent=2))
     
     @classmethod
-    def load(cls, path: Path) -> "LinkMemory":
+    def load(cls, path: Path) -> LinkMemory:
         """Load memory from disk."""
         if not path.exists():
             return cls()
@@ -142,7 +141,7 @@ class Link:
     def __init__(
         self,
         name: str = "Link",
-        memory_path: Optional[Path] = None,
+        memory_path: Path | None = None,
     ):
         """Initialize Link.
         
@@ -391,7 +390,7 @@ class Link:
 
 
 # Global Link instance
-_link_instance: Optional[Link] = None
+_link_instance: Link | None = None
 
 
 def get_link() -> Link:

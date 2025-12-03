@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class PipelineStage:
     """Represents a stage in the orchestration pipeline."""
 
-    def __init__(self, name: str, processor: callable, dependencies: Optional[List[str]] = None):
+    def __init__(self, name: str, processor: callable, dependencies: list[str] | None = None):
         self.name = name
         self.processor = processor
         self.dependencies = dependencies or []
@@ -24,7 +24,7 @@ class PipelineStage:
         self.last_execution = None
         self.error_count = 0
 
-    async def execute(self, context: Dict[str, Any]) -> Dict[str, Any]:
+    async def execute(self, context: dict[str, Any]) -> dict[str, Any]:
         """Execute this pipeline stage."""
         try:
             self.status = "running"
@@ -49,9 +49,9 @@ class OrchestrationMatrix:
     """Pure pipeline orchestration matrix for GhostLink components."""
 
     def __init__(self):
-        self.stages: Dict[str, PipelineStage] = {}
-        self.pipeline_order: List[str] = []
-        self.context: Dict[str, Any] = {}
+        self.stages: dict[str, PipelineStage] = {}
+        self.pipeline_order: list[str] = []
+        self.context: dict[str, Any] = {}
         self.running = False
 
     def register_stage(self, stage: PipelineStage):
@@ -59,7 +59,7 @@ class OrchestrationMatrix:
         self.stages[stage.name] = stage
         logger.info(f"Registered pipeline stage: {stage.name}")
 
-    def set_pipeline_order(self, order: List[str]):
+    def set_pipeline_order(self, order: list[str]):
         """Set the execution order of pipeline stages."""
         # Validate that all stages exist and dependencies are satisfied
         for stage_name in order:
@@ -76,7 +76,7 @@ class OrchestrationMatrix:
         self.pipeline_order = order
         logger.info(f"Set pipeline order: {order}")
 
-    async def execute_pipeline(self) -> Dict[str, Any]:
+    async def execute_pipeline(self) -> dict[str, Any]:
         """Execute the complete pipeline."""
         if not self.pipeline_order:
             raise RuntimeError("Pipeline order not set")
@@ -125,7 +125,7 @@ class OrchestrationMatrix:
         self.running = False
         logger.info("Orchestration stopped")
 
-    def get_status(self) -> Dict[str, Any]:
+    def get_status(self) -> dict[str, Any]:
         """Get current orchestration status."""
         return {
             "running": self.running,
@@ -143,7 +143,7 @@ class OrchestrationMatrix:
 
 
 # Global orchestration matrix instance
-_orchestration_matrix: Optional[OrchestrationMatrix] = None
+_orchestration_matrix: OrchestrationMatrix | None = None
 
 
 def get_orchestration_matrix() -> OrchestrationMatrix:

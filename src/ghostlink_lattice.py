@@ -13,16 +13,14 @@ A lattice architecture connecting all autonomous components in a mesh network:
 Each node can communicate with any other node, creating resilient multi-path routing.
 """
 
-import os
-import sys
-import json
 import asyncio
-import logging
-from typing import Dict, Any, List, Optional, Set, Callable
-from pathlib import Path
-from datetime import datetime
 from dataclasses import dataclass, field
+from datetime import datetime
 from enum import Enum
+import json
+import logging
+from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional, Set
 
 # Setup logging
 logging.basicConfig(
@@ -205,9 +203,9 @@ class GhostLinkLattice:
         
         for node_type in all_types:
             # Each node connects to all other nodes (full mesh)
-            self.nodes[node_type].state.connections = set(
+            self.nodes[node_type].state.connections = {
                 t for t in all_types if t != node_type
-            )
+            }
         
         logger.info("Lattice mesh connections established")
     
@@ -471,7 +469,7 @@ class GhostLinkLattice:
     async def handle_store(self, message: LatticeMessage) -> Dict[str, Any]:
         """Handle data storage (Vault)"""
         key = message.payload.get("key")
-        value = message.payload.get("value")
+        message.payload.get("value")
         logger.info(f"Vault: Storing {key}")
         return {"status": "stored", "key": key}
     
@@ -586,7 +584,7 @@ async def demo_lattice():
 async def interactive_mode():
     """Interactive lattice control"""
     lattice = GhostLinkLattice()
-    lattice_task = asyncio.create_task(lattice.start())
+    asyncio.create_task(lattice.start())
     await asyncio.sleep(1)
     
     print("🌐 GhostLink Lattice - Interactive Mode")
