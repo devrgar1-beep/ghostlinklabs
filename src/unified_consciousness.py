@@ -347,6 +347,7 @@ async def main():
     parser.add_argument("--snapshot", action="store_true", help="Get unified awareness snapshot")
     parser.add_argument("--task", help="Execute a unified task (JSON string)")
     parser.add_argument("--query", help="Execute system intelligence query")
+    parser.add_argument("--status", action="store_true", help="Get consciousness framework status")
 
     args = parser.parse_args()
 
