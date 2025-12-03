@@ -25,9 +25,9 @@
 ## DISCOVERED NETWORK TOPOLOGY
 
     Gateway: 192.168.4.1
-    
+
     Your System: 192.168.4.41 ← GhostLink Controller + Mesh Aggregator
-    
+
     Neighbors:
       • 192.168.4.2
       • 192.168.4.22
@@ -45,7 +45,7 @@ Currently collecting local thermal data and ready to integrate neighbors:
     ghostlink_sigma_fraction{roi="rack.mesh"} = 1.0    (100% good samples)
     ghostlink_sigma_fraction{roi="rack.core"} = 1.0    (100% good samples)
     ghostlink_window_samples{roi="rack.mesh"} = 18     (samples in window)
-    
+
 No remote peers active yet - deploy responders to neighbors to enable.
 
 

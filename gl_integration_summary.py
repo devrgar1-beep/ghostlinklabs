@@ -43,35 +43,35 @@ def main():
     print("║     GHOSTLINK MESH NETWORK - INTEGRATION STATUS           ║")
     print("╚════════════════════════════════════════════════════════════╝")
     print()
-    
+
     # Service status
     controller_active = check_service(7420)
     metrics_active = check_service(9108)
-    
+
     controller_icon = "✓" if controller_active else "✗"
     metrics_icon = "✓" if metrics_active else "✗"
-    
+
     print(f"  [{controller_icon}] Controller (Port 7420)")
     print(f"  [{metrics_icon}] Metrics Endpoint (Port 9108)")
     print()
-    
+
     if controller_active and metrics_active:
         # Get mesh metrics
         mesh_sigma = get_metric_value('ghostlink_sigma_fraction{roi="rack.mesh"}')
         mesh_samples = get_metric_value('ghostlink_window_samples{roi="rack.mesh"}')
         core_sigma = get_metric_value('ghostlink_sigma_fraction{roi="rack.core"}')
         core_samples = get_metric_value('ghostlink_window_samples{roi="rack.core"}')
-        
+
         print("  MESH ZONE (Local + Neighbors):")
         print(f"    Quality (Σ): {mesh_sigma}")
         print(f"    Samples: {mesh_samples}")
         print()
-        
+
         print("  CORE ZONE (Local Only):")
         print(f"    Quality (Σ): {core_sigma}")
         print(f"    Samples: {core_samples}")
         print()
-        
+
         # Get discovered neighbors count
         try:
             result = subprocess.run(
@@ -80,7 +80,7 @@ def main():
                 text=True,
                 timeout=2
             )
-            
+
             # Look for peer count in logs
             for line in reversed(result.stdout.split("\n")):
                 if "Peers:" in line:
@@ -90,13 +90,13 @@ def main():
                     break
         except Exception:
             pass
-        
+
         print()
         print("  Network: 192.168.4.0/22 (7 neighbors discovered)")
         print("  Protocol: GLP/0 (GhostLink Protocol)")
         print("  Sampling Rate: 1 Hz")
         print()
-        
+
         print("  To deploy to neighbors:")
         print("    1. Copy gl_peer_responder.py to neighbor host")
         print("    2. Run: python3 gl_peer_responder.py")
@@ -106,7 +106,7 @@ def main():
     else:
         print("  ⚠ Services not fully active")
         print("  Run: ./run_venv.sh up")
-    
+
     print()
     print("══════════════════════════════════════════════════════════════")
 

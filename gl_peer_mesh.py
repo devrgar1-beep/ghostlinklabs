@@ -32,7 +32,7 @@ NEIGHBOR_IPS = [
 
 class PeerConnection:
     """Manages connection to a single peer."""
-    
+
     def __init__(self, ip: str, port: int):
         self.ip = ip
         self.port = port
@@ -41,7 +41,7 @@ class PeerConnection:
         self.last_sample: dict[str, Any] | None = None
         self.last_seen: float = 0
         self.sample_count = 0
-        
+
     def __repr__(self):
         status = "ACTIVE" if self.active else "INACTIVE"
         host = self.hostname or self.ip
@@ -50,7 +50,7 @@ class PeerConnection:
 
 class PeerMesh:
     """Manages mesh network of GhostLink peers."""
-    
+
     def __init__(self):
         self.peers: dict[str, PeerConnection] = {}
         self.controller_conn: socket.socket | None = None
@@ -58,20 +58,20 @@ class PeerMesh:
         self.discovery_thread: threading.Thread | None = None
         self.aggregator_thread: threading.Thread | None = None
         self.lock = threading.Lock()
-        
+
     def discover_peers(self) -> list[str]:
         """Discover active GhostLink peers on the network."""
         discovered = []
-        
+
         print(f"[mesh] Scanning {len(NEIGHBOR_IPS)} neighbors for GhostLink services...")
-        
+
         for ip in NEIGHBOR_IPS:
             try:
                 # Try to connect to potential GhostLink peer port
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 sock.settimeout(1.0)
                 result = sock.connect_ex((ip, DISCOVERY_PORT))
-                
+
                 if result == 0:
                     # Try to query for GhostLink identity
                     try:
@@ -84,32 +84,32 @@ class PeerMesh:
                     except Exception:
                         # Not a GhostLink service, but port is open
                         pass
-                        
+
                 sock.close()
-                
+
             except Exception as e:
                 pass
-                
+
         return discovered
-        
+
     def add_peer(self, ip: str, port: int = DISCOVERY_PORT):
         """Add a peer to the mesh."""
         peer_id = f"{ip}:{port}"
-        
+
         with self.lock:
             if peer_id not in self.peers:
                 peer = PeerConnection(ip, port)
                 self.peers[peer_id] = peer
                 print(f"[mesh] Added peer: {peer}")
-                
+
     def connect_to_controller(self):
         """Establish connection to local controller."""
         try:
             self.controller_conn = socket.create_connection(
-                (CONTROLLER_HOST, CONTROLLER_PORT), 
+                (CONTROLLER_HOST, CONTROLLER_PORT),
                 timeout=5
             )
-            
+
             # Send handshake
             self._send_controller({
                 "type": "hello",
@@ -117,7 +117,7 @@ class PeerMesh:
                 "role": "mesh-aggregator",
                 "mode": "ro"
             })
-            
+
             # Send legend with mesh-aware signals
             self._send_controller({
                 "type": "legend",
@@ -133,57 +133,57 @@ class PeerMesh:
                     {"id": "rack.core", "expr": "zone=='core'"}
                 ]
             })
-            
+
             print(f"[mesh] Connected to controller at {CONTROLLER_HOST}:{CONTROLLER_PORT}")
             return True
-            
+
         except Exception as e:
             print(f"[mesh] Failed to connect to controller: {e}")
             return False
-            
+
     def _send_controller(self, obj: dict):
         """Send JSON object to controller."""
         if self.controller_conn:
             msg = json.dumps(obj, separators=(",", ":")).encode("utf-8") + b"\n"
             self.controller_conn.sendall(msg)
-            
+
     def query_peer(self, peer: PeerConnection) -> dict[str, Any] | None:
         """Query a single peer for its latest data."""
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.settimeout(2.0)
             sock.connect((peer.ip, peer.port))
-            
+
             # Request status/data
             sock.sendall(b'{"type":"query","proto":"glp/0"}\n')
-            
+
             # Read response
             data = sock.recv(4096)
             sock.close()
-            
+
             if data:
                 response = json.loads(data.decode("utf-8").strip())
                 peer.active = True
                 peer.last_seen = time.time()
                 peer.sample_count += 1
                 peer.last_sample = response
-                
+
                 if "hostname" in response:
                     peer.hostname = response["hostname"]
-                    
+
                 return response
-                
+
         except Exception as e:
             peer.active = False
-            
+
         return None
-        
+
     def aggregate_mesh_data(self):
         """Collect and aggregate data from all peers."""
         local_temp = self._read_local_temp()
         temps = []
         active_peers = 0
-        
+
         # Query all peers
         with self.lock:
             for peer in self.peers.values():
@@ -192,11 +192,11 @@ class PeerMesh:
                     temps.append(data["temp"])
                     if peer.active:
                         active_peers += 1
-                        
+
         # Include local temp
         if local_temp is not None:
             temps.append(local_temp)
-            
+
         # Calculate aggregates
         if temps:
             avg_temp = sum(temps) / len(temps)
@@ -204,7 +204,7 @@ class PeerMesh:
         else:
             avg_temp = local_temp or 0.0
             max_temp = local_temp or 0.0
-            
+
         # Send aggregated sample to controller
         sample = {
             "type": "sample",
@@ -218,9 +218,9 @@ class PeerMesh:
                 "fault": None,
             }
         }
-        
+
         self._send_controller(sample)
-        
+
         # Also send local zone sample
         if local_temp is not None:
             local_sample = {
@@ -233,7 +233,7 @@ class PeerMesh:
                 }
             }
             self._send_controller(local_sample)
-            
+
         return {
             "active_peers": active_peers,
             "total_peers": len(self.peers),
@@ -241,7 +241,7 @@ class PeerMesh:
             "avg": avg_temp,
             "max": max_temp,
         }
-        
+
     def _read_local_temp(self) -> float | None:
         """Read local system temperature."""
         try:
@@ -259,77 +259,77 @@ class PeerMesh:
         except Exception:
             pass
         return None
-        
+
     def discovery_loop(self):
         """Continuously discover new peers."""
         while self.running:
             try:
                 discovered = self.discover_peers()
-                
+
                 for ip in discovered:
                     self.add_peer(ip)
-                    
+
                 print(f"[mesh] Discovery complete: {len(self.peers)} peers in mesh")
-                
+
             except Exception as e:
                 print(f"[mesh] Discovery error: {e}")
-                
+
             # Wait before next discovery
             time.sleep(MESH_DISCOVERY_INTERVAL)
-            
+
     def aggregator_loop(self):
         """Continuously aggregate and send mesh data."""
         while self.running:
             try:
                 stats = self.aggregate_mesh_data()
-                
+
                 print(f"[mesh] Peers: {stats['active_peers']}/{stats['total_peers']} | "
                       f"Temps: avg={stats['avg']:.1f}°C max={stats['max']:.1f}°C | "
                       f"Samples: {[f'{t:.1f}' for t in stats['temps']]}")
-                      
+
             except Exception as e:
                 print(f"[mesh] Aggregation error: {e}")
-                
+
             time.sleep(1)  # 1Hz sampling
-            
+
     def start(self):
         """Start the mesh network."""
         print("[mesh] Starting GhostLink Peer Mesh...")
-        
+
         # Connect to controller
         if not self.connect_to_controller():
             print("[mesh] ERROR: Cannot connect to controller")
             return False
-            
+
         self.running = True
-        
+
         # Start discovery thread
         self.discovery_thread = threading.Thread(target=self.discovery_loop, daemon=True)
         self.discovery_thread.start()
-        
+
         # Start aggregator thread
         self.aggregator_thread = threading.Thread(target=self.aggregator_loop, daemon=True)
         self.aggregator_thread.start()
-        
+
         print("[mesh] Mesh network active")
         return True
-        
+
     def stop(self):
         """Stop the mesh network."""
         print("[mesh] Stopping mesh network...")
         self.running = False
-        
+
         if self.discovery_thread:
             self.discovery_thread.join(timeout=2)
-            
+
         if self.aggregator_thread:
             self.aggregator_thread.join(timeout=2)
-            
+
         if self.controller_conn:
             self.controller_conn.close()
-            
+
         print("[mesh] Mesh network stopped")
-        
+
     def status(self) -> dict[str, Any]:
         """Get mesh status."""
         with self.lock:
@@ -354,18 +354,18 @@ class PeerMesh:
 def main():
     """Main entry point."""
     mesh = PeerMesh()
-    
+
     try:
         if mesh.start():
             print("[mesh] Press Ctrl+C to stop")
-            
+
             # Keep running
             while mesh.running:
                 time.sleep(1)
-                
+
     except KeyboardInterrupt:
         print("\n[mesh] Shutting down...")
-        
+
     finally:
         mesh.stop()
 

@@ -50,7 +50,7 @@ def check_metrics() -> dict:
         sock.settimeout(1)
         result = sock.connect_ex(("127.0.0.1", 9108))
         sock.close()
-        
+
         # Try to fetch a metric sample
         if result == 0:
             import urllib.request
@@ -62,7 +62,7 @@ def check_metrics() -> dict:
                 return {"active": True, "port": 9108, "metric_count": len(lines)}
             except Exception:
                 pass
-                
+
         return {"active": result == 0, "port": 9108}
     except Exception:
         return {"active": False, "port": 9108}
@@ -71,20 +71,20 @@ def check_metrics() -> dict:
 def probe_neighbor(ip: str, port: int = 7422, timeout: float = 0.5) -> dict:
     """Probe a neighbor for GhostLink service."""
     result = {"ip": ip, "port": port, "reachable": False, "ghostlink": False, "hostname": None}
-    
+
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(timeout)
-        
+
         if sock.connect_ex((ip, port)) == 0:
             result["reachable"] = True
-            
+
             # Try GhostLink protocol
             try:
                 sock.sendall(b'{"type":"ping","proto":"glp/0"}\n')
                 sock.settimeout(timeout)
                 response = sock.recv(1024)
-                
+
                 if response:
                     data = json.loads(response.decode("utf-8").strip())
                     if data.get("type") == "pong":
@@ -92,12 +92,12 @@ def probe_neighbor(ip: str, port: int = 7422, timeout: float = 0.5) -> dict:
                         result["hostname"] = data.get("hostname", "unknown")
             except Exception:
                 pass
-                
+
         sock.close()
-        
+
     except Exception:
         pass
-        
+
     return result
 
 
@@ -108,14 +108,14 @@ def main():
     print(f"   {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("═" * 70)
     print()
-    
+
     # Local system
     local_ip = get_local_ip()
     print("[LOCAL SYSTEM]")
     print(f"  IP Address: {local_ip}")
     print(f"  Hostname: {socket.gethostname()}")
     print()
-    
+
     # Controller status
     controller = check_controller()
     print("[CONTROLLER]")
@@ -123,7 +123,7 @@ def main():
     print(f"  Status: {status}")
     print(f"  Port: {controller['port']}")
     print()
-    
+
     # Metrics status
     metrics = check_metrics()
     print("[METRICS ENDPOINT]")
@@ -133,7 +133,7 @@ def main():
     if "metric_count" in metrics:
         print(f"  Metrics: {metrics['metric_count']} series")
     print()
-    
+
     # Network neighbors
     neighbors = [
         "192.168.4.1",   # Gateway
@@ -145,31 +145,31 @@ def main():
         "192.168.4.45",
         "192.168.4.46",
     ]
-    
+
     print("[NEIGHBOR SCAN]")
     print(f"  Scanning {len(neighbors)} discovered hosts...")
     print()
-    
+
     results = []
     for ip in neighbors:
         if ip == local_ip:
             continue
         result = probe_neighbor(ip)
         results.append(result)
-        
+
     # Display results
     print("[INTEGRATION STATUS]")
     print()
-    
+
     active_peers = 0
     reachable_hosts = 0
-    
+
     for result in results:
         reachable_hosts += 1 if result["reachable"] else 0
         active_peers += 1 if result["ghostlink"] else 0
-        
+
         ip = result["ip"]
-        
+
         if result["ghostlink"]:
             status = "✓ GHOSTLINK PEER"
             hostname = result.get("hostname", "unknown")
@@ -178,20 +178,20 @@ def main():
             print(f"  {ip:16s} | ⚠ Port open (no GL) | Potential host")
         else:
             print(f"  {ip:16s} | • Not responding     | Offline/filtered")
-    
+
     print()
     print("─" * 70)
     print(f"  Total Neighbors: {len(neighbors)}")
     print(f"  Reachable: {reachable_hosts}")
     print(f"  GhostLink Peers: {active_peers}")
     print()
-    
+
     if active_peers > 0:
         print("  ✓ Mesh network active with {active_peers} peer(s)")
     else:
         print("  ℹ No GhostLink peers detected")
         print("    Deploy gl_peer_responder.py to neighbors to enable mesh")
-    
+
     print("═" * 70)
     print()
 
