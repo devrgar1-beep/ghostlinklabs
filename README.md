@@ -166,6 +166,58 @@ mypy ghostlink/           # Type checking
 3. **New Interface**: Add to `ghostlink/interfaces/`
 4. **New Utility**: Add to `ghostlink/utils/`
 
+## Documentation
+
+Comprehensive documentation is available in the `docs/` directory:
+
+### 📚 Quick Links
+- **[Documentation Index](docs/INDEX.md)** - Complete documentation overview
+- **[Quick Reference](docs/reference/QUICK_REFERENCE.md)** - Common commands and operations
+- **[Deployment Guide](docs/deployment/GHOSTLINK_DEPLOYMENT.md)** - Production deployment
+- **[Mesh Network Integration](NEIGHBOR_INTEGRATION.md)** - Distributed monitoring setup
+
+### 📖 Architecture & Theory
+- [Theoretical Foundations](docs/architecture/01-THEORETICAL-FOUNDATIONS.md) - Core concepts and math
+- [64-Agent Array](docs/architecture/02-64-AGENT-ARRAY.md) - Distributed architecture
+- [Pipelines & Sharding](docs/architecture/03-PIPELINES-SHARDS-MIRRORS.md) - Data flow patterns
+- [DAK Infrastructure](docs/architecture/04-DAK-SOVEREIGNTY-INFRA.md) - Autonomous systems
+- [Advanced Implementation](docs/architecture/05-ADVANCED-IMPLEMENTATION.md) - Optimization strategies
+
+### 🔬 Research & Applications
+- [Research Applications](docs/research/06-RESEARCH-APPLICATIONS.md) - Research methodologies
+
+### 📋 Reference & Operations
+- [Code Reference](docs/reference/07-CODE-REFERENCE.md) - Complete API documentation
+- [Testing & Deployment](docs/deployment/08-TESTING-DEPLOYMENT-OPS.md) - Operations guide
+- [Deployment Summary](docs/deployment/DEPLOYMENT_SUMMARY.txt) - Deployment checklist
+
+## Mesh Network Monitoring
+
+GhostLink includes distributed thermal monitoring with mesh networking:
+
+### Quick Start Mesh Network
+```bash
+# Start core services
+./run_venv.sh up
+
+# Start mesh aggregator
+./run_venv.sh mesh
+
+# Check integration status
+python3 gl_integration_summary.py
+
+# View network status
+python3 gl_network_status.py
+```
+
+### Mesh Components
+- **gl_controller_metrics.py** - Central metrics controller (Port 7420)
+- **gl_peer_mesh.py** - Mesh aggregator for multi-host monitoring
+- **gl_peer_responder.py** - Lightweight peer service for neighbors
+- **gl_network_status.py** - Network discovery and status tool
+
+See [NEIGHBOR_INTEGRATION.md](NEIGHBOR_INTEGRATION.md) for complete mesh setup guide.
+
 ## Contributing
 
 1. Fork the repository

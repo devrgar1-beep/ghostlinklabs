@@ -26,7 +26,7 @@ def read_temp_c() -> float | None:
                 return float(sum(vals) / len(vals))
     except Exception:
         pass
-        
+
     # Fallback to sysfs
     vals = []
     for path in glob.glob("/sys/class/thermal/thermal_zone*/temp"):
@@ -38,7 +38,7 @@ def read_temp_c() -> float | None:
             pass
     if vals:
         return float(sum(vals) / len(vals))
-        
+
     return None
 
 
@@ -49,10 +49,10 @@ def handle_client(conn: socket.socket, addr: tuple):
         data = conn.recv(1024)
         if not data:
             return
-            
+
         request = json.loads(data.decode("utf-8").strip())
         msg_type = request.get("type")
-        
+
         # Handle different message types
         if msg_type == "ping":
             response = {
@@ -61,7 +61,7 @@ def handle_client(conn: socket.socket, addr: tuple):
                 "hostname": socket.gethostname(),
                 "version": "1.0.0",
             }
-            
+
         elif msg_type == "query":
             temp = read_temp_c()
             response = {
@@ -71,20 +71,20 @@ def handle_client(conn: socket.socket, addr: tuple):
                 "temp": temp,
                 "timestamp": time.time(),
             }
-            
+
         else:
             response = {
                 "type": "error",
                 "error": f"Unknown message type: {msg_type}",
             }
-            
+
         # Send response
         msg = json.dumps(response, separators=(",", ":")).encode("utf-8") + b"\n"
         conn.sendall(msg)
-        
+
     except Exception as e:
         print(f"[responder] Error handling client {addr}: {e}")
-        
+
     finally:
         conn.close()
 
@@ -92,23 +92,23 @@ def handle_client(conn: socket.socket, addr: tuple):
 def main():
     """Main server loop."""
     hostname = socket.gethostname()
-    
+
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server.bind((HOST, PORT))
         server.listen(5)
-        
+
         print(f"[responder] GhostLink Peer Responder")
         print(f"[responder] Hostname: {hostname}")
         print(f"[responder] Listening on {HOST}:{PORT}")
         print(f"[responder] Ready to respond to mesh queries")
-        
+
         try:
             while True:
                 conn, addr = server.accept()
                 print(f"[responder] Connection from {addr[0]}:{addr[1]}")
                 handle_client(conn, addr)
-                
+
         except KeyboardInterrupt:
             print("\n[responder] Shutting down...")
 
