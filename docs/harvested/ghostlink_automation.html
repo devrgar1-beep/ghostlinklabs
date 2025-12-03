@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GhostLink Automation Console</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff41;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
+            padding: 20px;
+            border-bottom: 2px solid #00ff41;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, #00ff4120, transparent);
+            animation: scan 3s linear infinite;
+        }
+
+        @keyframes scan {
+            100% { left: 100%; }
+        }
+
+        .title {
+            font-size: 24px;
+            text-shadow: 0 0 10px #00ff41;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            background: #00ff4120;
+            border: 1px solid #00ff41;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+
+        .phase-indicator {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            gap: 10px;
+            background: #0f0f0f;
+        }
+
+        .phase {
+            padding: 10px 20px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .phase.active {
+            background: #00ff4120;
+            border-color: #00ff41;
+            box-shadow: 0 0 20px #00ff4140;
+        }
+
+        .phase.complete {
+            opacity: 0.5;
+        }
+
+        .main {
+            flex: 1;
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .panel {
+            flex: 1;
+            background: #0f0f0f;
+            border: 1px solid #333;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 600px;
+        }
+
+        .panel h2 {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333;
+            color: #00ff41;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        button {
+            background: #1a1a1a;
+            color: #00ff41;
+            border: 1px solid #00ff41;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background: #00ff4120;
+            box-shadow: 0 0 10px #00ff4140;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .log {
+            background: #0a0a0a;
+            border: 1px solid #222;
+            padding: 10px;
+            margin-top: 10px;
+            height: 300px;
+            overflow-y: auto;
+            font-size: 12px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+        }
+
+        .log-entry {
+            margin: 2px 0;
+            padding: 2px;
+        }
+
+        .log-entry.error {
+            color: #ff4141;
+        }
+
+        .log-entry.success {
+            color: #41ff41;
+        }
+
+        .log-entry.info {
+            color: #4141ff;
+        }
+
+        .memory-view {
+            display: grid;
+            gap: 10px;
+        }
+
+        .memory-item {
+            background: #1a1a1a;
+            padding: 10px;
+            border-left: 3px solid #00ff41;
+        }
+
+        .memory-item .cid {
+            color: #888;
+            font-size: 10px;
+            margin-top: 5px;
+        }
+
+        .integrity-check {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: #1a1a1a;
+            margin: 10px 0;
+        }
+
+        .integrity-check.valid {
+            border-left: 3px solid #41ff41;
+        }
+
+        .integrity-check.invalid {
+            border-left: 3px solid #ff4141;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .metric {
+            background: #1a1a1a;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .metric .value {
+            font-size: 24px;
+            color: #00ff41;
+            margin-top: 5px;
+        }
+
+        .metric .label {
+            font-size: 11px;
+            color: #888;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .processing {
+            animation: pulse 1s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="title">
+            GHOSTLINK v1.0
+            <span class="status" id="system-status">IDLE</span>
+        </div>
+    </div>
+
+    <div class="phase-indicator">
+        <div class="phase" id="phase-collapse">COLLAPSE</div>
+        <div class="phase" id="phase-mirror">MIRROR</div>
+        <div class="phase" id="phase-forge">FORGE</div>
+        <div class="phase" id="phase-link">LINK</div>
+    </div>
+
+    <div class="main">
+        <div class="panel">
+            <h2>OPERATORS</h2>
+            <div class="controls">
+                <button onclick="ghostlink.observe()">OBSERVE()</button>
+                <button onclick="ghostlink.controlCollapse()">CONTROL_COLLAPSE()</button>
+                <button onclick="ghostlink.recurse()">RECURSE(until_signal)</button>
+                <button onclick="ghostlink.forge()">FORGE(diff)</button>
+                <button onclick="ghostlink.remember()">REMEMBER(cid)</button>
+                <button onclick="ghostlink.recall()">RECALL(query)</button>
+            </div>
+            
+            <h2 style="margin-top: 20px;">RITUALS</h2>
+            <div class="controls">
+                <button onclick="ghostlink.dailyRitual()">DAILY RITUAL</button>
+                <button onclick="ghostlink.fastRecovery()">FAST RECOVERY</button>
+                <button onclick="ghostlink.integrityCheck()">INTEGRITY CHECK</button>
+                <button onclick="ghostlink.exportWorf()">EXPORT WORF</button>
+            </div>
+
+            <div class="metrics">
+                <div class="metric">
+                    <div class="label">SCAR DENSITY (ρ)</div>
+                    <div class="value" id="scar-density">0.00</div>
+                </div>
+                <div class="metric">
+                    <div class="label">COMPOST (κ)</div>
+                    <div class="value" id="compost-density">0.00</div>
+                </div>
+                <div class="metric">
+                    <div class="label">CONTINUITY</div>
+                    <div class="value" id="continuity">1.00</div>
+                </div>
+                <div class="metric">
+                    <div class="label">ARTIFACTS</div>
+                    <div class="value" id="artifact-count">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>MEMORY VAULT</h2>
+            <div class="memory-view" id="memory-view">
+                <!-- Memory items will be inserted here -->
+            </div>
+            
+            <h2 style="margin-top: 20px;">INTEGRITY STATUS</h2>
+            <div id="integrity-status">
+                <!-- Integrity checks will appear here -->
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>SYSTEM LOG</h2>
+            <div class="log" id="system-log">
+[BOOT] GhostLink v1.0 initialized
+[INFO] Prime invariant: honesty-first, no speculation
+[INFO] Integrity check: PASSED
+[READY] Awaiting operator input...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class GhostLink {
+            constructor() {
+                this.phase = 'IDLE';
+                this.memory = [];
+                this.scarDensity = 0;
+                this.compostDensity = 0;
+                this.continuity = 1;
+                this.artifactCount = 0;
+                this.currentCID = null;
+                
+                this.initializeSystem();
+            }
+
+            initializeSystem() {
+                this.log('SYSTEM', 'GhostLink automation console activated');
+                this.updateStatus('IDLE');
+                this.loadMemory();
+            }
+
+            log(type, message) {
+                const logEl = document.getElementById('system-log');
+                const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
+                const entry = document.createElement('div');
+                entry.className = `log-entry ${type.toLowerCase()}`;
+                entry.textContent = `[${timestamp}] [${type}] ${message}`;
+                logEl.appendChild(entry);
+                logEl.scrollTop = logEl.scrollHeight;
+            }
+
+            updateStatus(status) {
+                document.getElementById('system-status').textContent = status;
+                this.phase = status;
+            }
+
+            setPhase(phaseName) {
+                ['collapse', 'mirror', 'forge', 'link'].forEach(p => {
+                    const el = document.getElementById(`phase-${p}`);
+                    el.classList.remove('active', 'complete');
+                });
+                
+                if (phaseName) {
+                    const phaseEl = document.getElementById(`phase-${phaseName}`);
+                    if (phaseEl) {
+                        phaseEl.classList.add('active');
+                        setTimeout(() => {
+                            phaseEl.classList.remove('active');
+                            phaseEl.classList.add('complete');
+                        }, 2000);
+                    }
+                }
+            }
+
+            async observe() {
+                this.updateStatus('OBSERVING');
+                this.log('INFO', 'OBSERVE() initiated - monitoring for changes');
+                
+                await this.delay(1000);
+                
+                const changes = Math.random() > 0.5;
+                if (changes) {
+                    this.log('SUCCESS', 'Changes detected - triggering COLLAPSE');
+                    await this.controlCollapse();
+                } else {
+                    this.log('INFO', 'No changes detected - remaining in IDLE');
+                    this.updateStatus('IDLE');
+                }
+            }
+
+            async controlCollapse(scope = 'full') {
+                this.updateStatus('COLLAPSING');
+                this.setPhase('collapse');
+                this.log('INFO', `CONTROL_COLLAPSE(${scope}) executing`);
+                
+                await this.delay(1500);
+                
+                const snapshot = {
+                    timestamp: Date.now(),
+                    scope: scope,
+                    hash: this.generateHash(),
+                    data: `Snapshot_${this.artifactCount + 1}`
+                };
+                
+                this.log('SUCCESS', `Snapshot created: ${snapshot.hash}`);
+                await this.mirror(snapshot);
+            }
+
+            async mirror(snapshot) {
+                this.updateStatus('MIRRORING');
+                this.setPhase('mirror');
+                this.log('INFO', 'MIRROR phase - building reflection');
+                
+                await this.delay(1500);
+                
+                const fidelity = Math.random() > 0.1;
+                if (fidelity) {
+                    this.log('SUCCESS', 'Mirror matches source - fidelity confirmed');
+                    await this.forge(snapshot);
+                } else {
+                    this.log('ERROR', 'Fidelity check failed - restarting from COLLAPSE');
+                    this.scarDensity = Math.min(1, this.scarDensity + 0.1);
+                    this.updateMetrics();
+                    await this.controlCollapse();
+                }
+            }
+
+            async forge(snapshot) {
+                this.updateStatus('FORGING');
+                this.setPhase('forge');
+                this.log('INFO', 'FORGE phase - applying transformations');
+                
+                await this.delay(1500);
+                
+                const artifact = {
+                    ...snapshot,
+                    forged: true,
+                    cid: `CID_${this.generateHash()}`
+                };
+                
+                this.log('SUCCESS', `Artifact forged: ${artifact.cid}`);
+                await this.link(artifact);
+            }
+
+            async link(artifact) {
+                this.updateStatus('LINKING');
+                this.setPhase('link');
+                this.log('INFO', 'LINK phase - publishing to chain');
+                
+                await this.delay(1500);
+                
+                this.currentCID = artifact.cid;
+                this.memory.unshift(artifact);
+                this.artifactCount++;
+                
+                this.log('SUCCESS', `CID published: ${artifact.cid}`);
+                this.updateMemoryView();
+                this.updateMetrics();
+                
+                this.updateStatus('SEALED');
+                await this.delay(1000);
+                this.updateStatus('IDLE');
+            }
+
+            async remember() {
+                const cid = this.currentCID || `CID_${this.generateHash()}`;
+                this.log('INFO', `REMEMBER(${cid}) - persisting to vault`);
+                
+                await this.delay(1000);
+                
+                const memory = {
+                    cid: cid,
+                    timestamp: Date.now(),
+                    type: 'manual',
+                    data: 'User-initiated memory'
+                };
+                
+                this.memory.unshift(memory);
+                this.artifactCount++;
+                this.updateMemoryView();
+                this.updateMetrics();
+                
+                this.log('SUCCESS', `Memory persisted: ${cid}`);
+            }
+
+            async recall() {
+                const query = prompt('Enter recall query:');
+                if (!query) return;
+                
+                this.log('INFO', `RECALL("${query}") - searching vault`);
+                
+                await this.delay(1000);
+                
+                const results = this.memory.filter(m => 
+                    JSON.stringify(m).toLowerCase().includes(query.toLowerCase())
+                );
+                
+                if (results.length > 0) {
+                    this.log('SUCCESS', `Found ${results.length} matches`);
+                    results.forEach(r => {
+                        this.log('INFO', `  → ${r.cid}: ${r.data || 'artifact'}`);
+                    });
+                } else {
+                    this.log('INFO', 'No matches found');
+                }
+            }
+
+            async recurse() {
+                this.log('INFO', 'RECURSE(until_signal) initiated');
+                let iterations = 0;
+                const maxIterations = 3;
+                
+                while (iterations < maxIterations) {
+                    await this.delay(1000);
+                    this.log('INFO', `Recursion ${iterations + 1}/${maxIterations}`);
+                    iterations++;
+                    
+                    if (Math.random() > 0.3) {
+                        this.log('SUCCESS', 'Signal condition met - recursion complete');
+                        break;
+                    }
+                }
+            }
+
+            async dailyRitual() {
+                this.log('INFO', 'DAILY RITUAL initiated');
+                
+                const steps = [
+                    'Executing OBSERVE cycle',
+                    'Verifying CID hashes',
+                    'Rotating volatile logs',
+                    'Checking ANN index status'
+                ];
+                
+                for (const step of steps) {
+                    await this.delay(800);
+                    this.log('INFO', `  → ${step}`);
+                }
+                
+                this.log('SUCCESS', 'Daily ritual complete');
+                this.continuity = Math.min(1, this.continuity + 0.1);
+                this.updateMetrics();
+            }
+
+            async fastRecovery() {
+                this.log('ERROR', 'FAST RECOVERY initiated');
+                this.updateStatus('RECOVERING');
+                
+                const steps = [
+                    'Locating last good CID',
+                    'Verifying integrity hashes',
+                    'Restoring from snapshot',
+                    'Reloading indexes',
+                    'Resuming from MIRROR phase'
+                ];
+                
+                for (const step of steps) {
+                    await this.delay(1000);
+                    this.log('INFO', `  → ${step}`);
+                }
+                
+                this.scarDensity = Math.max(0, this.scarDensity - 0.2);
+                this.updateMetrics();
+                
+                this.log('SUCCESS', 'Recovery complete - system restored');
+                this.updateStatus('IDLE');
+            }
+
+            async integrityCheck() {
+                this.log('INFO', 'INTEGRITY CHECK initiated');
+                const container = document.getElementById('integrity-status');
+                container.innerHTML = '';
+                
+                const checks = [
+                    { name: 'Hash Verification', valid: Math.random() > 0.1 },
+                    { name: 'CID Chain', valid: Math.random() > 0.05 },
+                    { name: 'Manifest Signature', valid: Math.random() > 0.1 },
+                    { name: 'Vector Index', valid: Math.random() > 0.15 }
+                ];
+                
+                for (const check of checks) {
+                    await this.delay(500);
+                    
+                    const checkEl = document.createElement('div');
+                    checkEl.className = `integrity-check ${check.valid ? 'valid' : 'invalid'}`;
+                    checkEl.textContent = `${check.name}: ${check.valid ? '✓ PASS' : '✗ FAIL'}`;
+                    container.appendChild(checkEl);
+                    
+                    this.log(check.valid ? 'SUCCESS' : 'ERROR', 
+                            `${check.name}: ${check.valid ? 'PASSED' : 'FAILED'}`);
+                }
+            }
+
+            async exportWorf() {
+                this.log('INFO', 'EXPORT WORF initiated');
+                this.updateStatus('EXPORTING');
+                
+                await this.delay(2000);
+                
+                const worfData = {
+                    version: '1.0',
+                    timestamp: Date.now(),
+                    memory: this.memory,
+                    metrics: {
+                        scar: this.scarDensity,
+                        compost: this.compostDensity,
+                        continuity: this.continuity
+                    }
+                };
+                
+                const blob = new Blob([JSON.stringify(worfData, null, 2)], 
+                                     { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `ghostlink_export_${Date.now()}.json`;
+                a.click();
+                
+                this.log('SUCCESS', 'WORF export complete');
+                this.updateStatus('IDLE');
+            }
+
+            loadMemory() {
+                // Simulate loading existing memory
+                const mockMemory = [
+                    { cid: 'CID_a3f9e2b1', timestamp: Date.now() - 86400000, data: 'Bootstrap memory' },
+                    { cid: 'CID_b2c4d1e3', timestamp: Date.now() - 43200000, data: 'System configuration' },
+                    { cid: 'CID_c5e7a9f2', timestamp: Date.now() - 21600000, data: 'Last session state' }
+                ];
+                
+                this.memory = mockMemory;
+                this.artifactCount = mockMemory.length;
+                this.updateMemoryView();
+                this.updateMetrics();
+            }
+
+            updateMemoryView() {
+                const container = document.getElementById('memory-view');
+                container.innerHTML = '';
+                
+                this.memory.slice(0, 5).forEach(item => {
+                    const el = document.createElement('div');
+                    el.className = 'memory-item';
+                    el.innerHTML = `
+                        <div>${item.data || 'Artifact'}</div>
+                        <div class="cid">${item.cid}</div>
+                    `;
+                    container.appendChild(el);
+                });
+            }
+
+            updateMetrics() {
+                // Apply decay
+                this.scarDensity = Math.max(0, this.scarDensity * 0.95);
+                this.compostDensity = Math.max(0, this.compostDensity * 0.9);
+                
+                document.getElementById('scar-density').textContent = 
+                    this.scarDensity.toFixed(2);
+                document.getElementById('compost-density').textContent = 
+                    this.compostDensity.toFixed(2);
+                document.getElementById('continuity').textContent = 
+                    this.continuity.toFixed(2);
+                document.getElementById('artifact-count').textContent = 
+                    this.artifactCount;
+            }
+
+            generateHash() {
+                return Math.random().toString(36).substring(2, 10);
+            }
+
+            delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+        }
+
+        // Initialize GhostLink system
+        const ghostlink = new GhostLink();
+    </script>
+</body>
+</html>

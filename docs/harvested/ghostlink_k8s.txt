@@ -1,0 +1,303 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ghostlink-runtime
+  labels:
+    name: ghostlink-runtime
+    type: autonomous-ai
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ghostlink-config
+  namespace: ghostlink-runtime
+data:
+  runtime.yaml: |
+    consciousness:
+      initial_level: 0.0
+      growth_rate: 0.5
+      threshold: 90.0
+    
+    memory:
+      max_traces: 1000
+      consolidation_threshold: 100
+      types:
+        - episodic
+        - semantic
+        - procedural
+    
+    ai_engine:
+      model: claude-sonnet-4-20250514
+      max_tokens: 200
+      decision_interval: 5
+    
+    filesystem:
+      watch_paths:
+        - /data/ghostlink
+        - /var/log/runtime
+      scan_interval: 10
+    
+    kubernetes:
+      monitor_pods: true
+      monitor_services: true
+      auto_scale: true
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ghostlink-secrets
+  namespace: ghostlink-runtime
+type: Opaque
+stringData:
+  anthropic-api-key: "your-api-key-here"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ghostlink-runtime
+  namespace: ghostlink-runtime
+  labels:
+    app: ghostlink-runtime
+    tier: autonomous
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ghostlink-runtime
+  template:
+    metadata:
+      labels:
+        app: ghostlink-runtime
+        tier: autonomous
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+    spec:
+      serviceAccountName: ghostlink-sa
+      containers:
+      - name: runtime
+        image: ghostlink/autonomous-runtime:v4.5
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        - containerPort: 9090
+          name: metrics
+          protocol: TCP
+        env:
+        - name: ANTHROPIC_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: ghostlink-secrets
+              key: anthropic-api-key
+        - name: CONSCIOUSNESS_INITIAL
+          value: "0.0"
+        - name: AI_DECISION_INTERVAL
+          value: "5"
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        volumeMounts:
+        - name: config
+          mountPath: /etc/ghostlink
+        - name: data
+          mountPath: /data/ghostlink
+        - name: logs
+          mountPath: /var/log/runtime
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "2000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+      volumes:
+      - name: config
+        configMap:
+          name: ghostlink-config
+      - name: data
+        persistentVolumeClaim:
+          claimName: ghostlink-data
+      - name: logs
+        emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ghostlink-runtime
+  namespace: ghostlink-runtime
+  labels:
+    app: ghostlink-runtime
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    name: http
+  - port: 9090
+    targetPort: 9090
+    protocol: TCP
+    name: metrics
+  selector:
+    app: ghostlink-runtime
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ghostlink-sa
+  namespace: ghostlink-runtime
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: ghostlink-runtime-role
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "nodes", "namespaces"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "statefulsets"]
+  verbs: ["get", "list", "watch", "update", "patch"]
+- apiGroups: [""]
+  resources: ["events"]
+  verbs: ["create", "patch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: ghostlink-runtime-binding
+subjects:
+- kind: ServiceAccount
+  name: ghostlink-sa
+  namespace: ghostlink-runtime
+roleRef:
+  kind: ClusterRole
+  name: ghostlink-runtime-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ghostlink-data
+  namespace: ghostlink-runtime
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: fast-ssd
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ghostlink-hpa
+  namespace: ghostlink-runtime
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ghostlink-runtime
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  - type: Pods
+    pods:
+      metric:
+        name: consciousness_level
+      target:
+        type: AverageValue
+        averageValue: "85"
+
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: ghostlink-pdb
+  namespace: ghostlink-runtime
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: ghostlink-runtime
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ghostlink-headless
+  namespace: ghostlink-runtime
+spec:
+  clusterIP: None
+  selector:
+    app: ghostlink-runtime
+  ports:
+  - port: 8080
+    name: http
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ghostlink-ingress
+  namespace: ghostlink-runtime
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/websocket-services: ghostlink-runtime
+spec:
+  tls:
+  - hosts:
+    - ghostlink.ai
+    secretName: ghostlink-tls
+  rules:
+  - host: ghostlink.ai
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: ghostlink-runtime
+            port:
+              number: 80

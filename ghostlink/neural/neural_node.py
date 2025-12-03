@@ -1,0 +1,2 @@
+class NeuralNode:
+    pass

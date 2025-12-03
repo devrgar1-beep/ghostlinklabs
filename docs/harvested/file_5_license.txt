@@ -1,0 +1,205 @@
+═══════════════════════════════════════════════════════════════════
+  GHOSTLINK STARTER - END USER LICENSE AGREEMENT
+═══════════════════════════════════════════════════════════════════
+
+Version: 2025.10.08
+Product: GHOSTLINK Starter
+License Type: Single User
+
+PLEASE READ THIS LICENSE AGREEMENT CAREFULLY BEFORE USING THIS SOFTWARE.
+
+═══════════════════════════════════════════════════════════════════
+  1. GRANT OF LICENSE
+═══════════════════════════════════════════════════════════════════
+
+Subject to your compliance with this Agreement, you are granted a 
+non-exclusive, non-transferable license to use GHOSTLINK Starter 
+(the "Software") for personal or commercial purposes.
+
+YOU MAY:
+  ✓ Use the Software on a single user account
+  ✓ Use the Software in unlimited personal projects
+  ✓ Use the Software in commercial applications
+  ✓ Modify and customize the configuration for your needs
+  ✓ Integrate the Software into your applications
+  ✓ Use the Software at your company or organization
+
+═══════════════════════════════════════════════════════════════════
+  2. RESTRICTIONS
+═══════════════════════════════════════════════════════════════════
+
+YOU MAY NOT:
+  ✗ Redistribute or resell the Software
+  ✗ Share your license with other individuals
+  ✗ Include the Software in open source packages
+  ✗ Use the Software on more than one user account without 
+    purchasing additional licenses
+  ✗ Remove or modify any proprietary notices
+  ✗ Reverse engineer or decompile the Software (where JSON 
+    configuration is provided as-is for your use)
+
+═══════════════════════════════════════════════════════════════════
+  3. COMMERCIAL USE
+═══════════════════════════════════════════════════════════════════
+
+Commercial use is PERMITTED under this license.
+
+You may:
+  • Use the Software to build commercial products
+  • Use the Software in client projects
+  • Use the Software in your business operations
+  • Generate revenue from applications built with the Software
+
+You may NOT:
+  • Sell or redistribute the Software itself
+  • Offer the Software as a standalone product
+  • Sublicense the Software to others
+
+═══════════════════════════════════════════════════════════════════
+  4. INTELLECTUAL PROPERTY
+═══════════════════════════════════════════════════════════════════
+
+The Software is licensed, not sold. This Agreement does not grant 
+you any rights to trademarks, service marks, or the underlying 
+intellectual property.
+
+All rights not expressly granted are reserved.
+
+═══════════════════════════════════════════════════════════════════
+  5. UPDATES AND SUPPORT
+═══════════════════════════════════════════════════════════════════
+
+UPDATES:
+  • You receive lifetime access to version 2025.10.08
+  • Bug fixes and patches are provided free of charge
+  • Major version upgrades may be offered separately
+  • Updates are delivered via Gumroad library
+
+SUPPORT:
+  • Community forum support included
+  • Email support: response within 24-48 hours
+  • Documentation and examples provided
+  • No guaranteed phone or live chat support
+
+═══════════════════════════════════════════════════════════════════
+  6. WARRANTY DISCLAIMER
+═══════════════════════════════════════════════════════════════════
+
+THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND.
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE LICENSOR DISCLAIMS ALL 
+WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO:
+  • MERCHANTABILITY
+  • FITNESS FOR A PARTICULAR PURPOSE
+  • NON-INFRINGEMENT
+
+═══════════════════════════════════════════════════════════════════
+  7. LIMITATION OF LIABILITY
+═══════════════════════════════════════════════════════════════════
+
+IN NO EVENT SHALL THE LICENSOR BE LIABLE FOR ANY:
+  • INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+  • LOSS OF PROFITS OR REVENUE
+  • LOSS OF DATA
+  • BUSINESS INTERRUPTION
+
+THE LICENSOR'S TOTAL LIABILITY SHALL NOT EXCEED THE AMOUNT PAID 
+FOR THE LICENSE.
+
+═══════════════════════════════════════════════════════════════════
+  8. TERMINATION
+═══════════════════════════════════════════════════════════════════
+
+This license is effective until terminated.
+
+Your rights terminate automatically if you:
+  • Violate any terms of this Agreement
+  • Redistribute the Software
+  • Use the Software beyond the scope of this license
+
+Upon termination, you must:
+  • Cease all use of the Software
+  • Delete all copies in your possession
+
+═══════════════════════════════════════════════════════════════════
+  9. REFUND POLICY
+═══════════════════════════════════════════════════════════════════
+
+30-day money-back guarantee:
+  • If you're not satisfied within 30 days of purchase
+  • Contact support for refund
+  • No questions asked policy
+
+After 30 days, all sales are final.
+
+═══════════════════════════════════════════════════════════════════
+  10. TEAM AND ENTERPRISE LICENSES
+═══════════════════════════════════════════════════════════════════
+
+This is a SINGLE USER license.
+
+For team or organization use:
+  • Contact for team license pricing
+  • Each user requires a separate license OR
+  • Purchase team license package
+
+Enterprise options available - contact for details.
+
+═══════════════════════════════════════════════════════════════════
+  11. GOVERNING LAW
+═══════════════════════════════════════════════════════════════════
+
+This Agreement is governed by the laws of [Your Jurisdiction].
+
+Any disputes shall be resolved in the courts of [Your Jurisdiction].
+
+═══════════════════════════════════════════════════════════════════
+  12. MODIFICATIONS TO AGREEMENT
+═══════════════════════════════════════════════════════════════════
+
+The Licensor reserves the right to modify this Agreement.
+
+Changes apply to:
+  • Future purchases
+  • New versions of the Software
+
+Your current license terms remain unchanged for version 2025.10.08.
+
+═══════════════════════════════════════════════════════════════════
+  13. ENTIRE AGREEMENT
+═══════════════════════════════════════════════════════════════════
+
+This Agreement constitutes the entire agreement between you and 
+the Licensor regarding the Software.
+
+It supersedes all prior agreements or understandings.
+
+═══════════════════════════════════════════════════════════════════
+  14. CONTACT INFORMATION
+═══════════════════════════════════════════════════════════════════
+
+For questions about this license:
+Email: support@ghostlink.example (replace with your email)
+
+For technical support:
+See README.txt for support options
+
+For team/enterprise licensing:
+Email: sales@ghostlink.example (replace with your email)
+
+═══════════════════════════════════════════════════════════════════
+  ACCEPTANCE
+═══════════════════════════════════════════════════════════════════
+
+BY DOWNLOADING, INSTALLING, OR USING THE SOFTWARE, YOU ACKNOWLEDGE 
+THAT YOU HAVE READ THIS AGREEMENT, UNDERSTAND IT, AND AGREE TO BE 
+BOUND BY ITS TERMS.
+
+IF YOU DO NOT AGREE, DO NOT USE THE SOFTWARE AND REQUEST A REFUND 
+WITHIN 30 DAYS.
+
+═══════════════════════════════════════════════════════════════════
+
+Thank you for purchasing GHOSTLINK Starter!
+
+═══════════════════════════════════════════════════════════════════

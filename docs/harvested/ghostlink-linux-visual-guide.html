@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GhostLink Linux Setup - Visual Guide</title>
+    <style>
+        body {
+            font-family: -apple-system, system-ui, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #00ff88;
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 40px;
+        }
+        .step {
+            background: #1a1a1a;
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        .step-number {
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: #00ff88;
+            color: #000;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .visual-box {
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .button {
+            display: inline-block;
+            background: #00ff88;
+            color: #000;
+            padding: 10px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 10px;
+        }
+        .command {
+            background: #000;
+            border: 1px solid #00ff88;
+            color: #00ff88;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            margin: 15px 0;
+        }
+        .hardware-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .hardware-card {
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .hardware-card h3 {
+            color: #00ff88;
+            margin-top: 0;
+        }
+        .warning {
+            background: #ff4444;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .success {
+            background: #00ff88;
+            color: #000;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .flow-diagram {
+            background: #1a1a1a;
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        .flow-item {
+            display: inline-block;
+            background: #2a2a2a;
+            border: 1px solid #00ff88;
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 5px;
+        }
+        .arrow {
+            color: #00ff88;
+            font-size: 2em;
+            vertical-align: middle;
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 GhostLink Linux Setup</h1>
+        <p class="subtitle">Complete Visual Guide for Beginners</p>
+
+        <!-- Hardware Selection -->
+        <div class="step">
+            <div class="step-number">STEP 1</div>
+            <h2>Choose Your Test Machine</h2>
+            <div class="hardware-grid">
+                <div class="hardware-card">
+                    <h3>✅ WORKSTATION</h3>
+                    <p><strong>i9-13900K / RTX 4060Ti</strong></p>
+                    <p>Perfect for dual-boot testing</p>
+                    <p>Keep Windows, add Linux alongside</p>
+                </div>
+                <div class="hardware-card">
+                    <h3>⚠️ MacBook M3</h3>
+                    <p><strong>ARM Architecture</strong></p>
+                    <p>Harder - needs Asahi Linux</p>
+                    <p>Keep using macOS for now</p>
+                </div>
+                <div class="hardware-card">
+                    <h3>⚠️ ASUS Snapdragon</h3>
+                    <p><strong>Windows on ARM</strong></p>
+                    <p>Use WSL2 instead</p>
+                    <p>No native Linux needed</p>
+                </div>
+            </div>
+            <div class="success">
+                👉 We'll use your WORKSTATION for this guide
+            </div>
+        </div>
+
+        <!-- Download -->
+        <div class="step">
+            <div class="step-number">STEP 2</div>
+            <h2>Download Pop!_OS</h2>
+            <div class="visual-box">
+                <h3>Why Pop!_OS?</h3>
+                <ul style="text-align: left; display: inline-block;">
+                    <li>Built for developers & gamers</li>
+                    <li>NVIDIA drivers included (for your 4060Ti)</li>
+                    <li>Beautiful interface out-of-box</li>
+                    <li>Based on Ubuntu (tons of help online)</li>
+                    <li>Auto-tiling windows (like a pro)</li>
+                </ul>
+            </div>
+            <a href="https://pop.system76.com/" class="button" target="_blank">Download Pop!_OS 22.04 LTS</a>
+            <p>Choose: <strong>NVIDIA version</strong> (for your RTX 4060Ti)</p>
+        </div>
+
+        <!-- Create USB -->
+        <div class="step">
+            <div class="step-number">STEP 3</div>
+            <h2>Create Bootable USB</h2>
+            <div class="flow-diagram">
+                <div class="flow-item">Download balenaEtcher</div>
+                <span class="arrow">→</span>
+                <div class="flow-item">Insert 8GB+ USB</div>
+                <span class="arrow">→</span>
+                <div class="flow-item">Flash Pop!_OS</div>
+            </div>
+            <a href="https://etcher.balena.io/" class="button" target="_blank">Get balenaEtcher</a>
+            <div class="visual-box">
+                <h3>🔥 Flash Process (Visual)</h3>
+                <p>1. Open balenaEtcher</p>
+                <p>2. Select Pop!_OS .iso file</p>
+                <p>3. Select your USB drive</p>
+                <p>4. Click "Flash!" - wait ~5 minutes</p>
+            </div>
+        </div>
+
+        <!-- Boot Setup -->
+        <div class="step">
+            <div class="step-number">STEP 4</div>
+            <h2>Boot from USB (ASUS Z790)</h2>
+            <div class="visual-box">
+                <h3>🔧 BIOS Settings</h3>
+                <p><strong>1. Enter BIOS:</strong> Press DEL key during boot</p>
+                <p><strong>2. Find Boot Menu:</strong> Usually F8 key</p>
+                <p><strong>3. Select:</strong> Your USB drive</p>
+                <p><strong>4. Boot:</strong> Press Enter</p>
+            </div>
+            <div class="warning">
+                ⚠️ IMPORTANT: Disable Secure Boot in BIOS first!
+                <br>Advanced → Security → Secure Boot → Disabled
+            </div>
+        </div>
+
+        <!-- Installation -->
+        <div class="step">
+            <div class="step-number">STEP 5</div>
+            <h2>Install Pop!_OS</h2>
+            <div class="flow-diagram">
+                <h3>Installation Screens You'll See:</h3>
+                <div style="margin: 20px 0;">
+                    <div class="flow-item">Language: English</div>
+                    <span class="arrow">→</span>
+                    <div class="flow-item">Keyboard: US</div>
+                    <span class="arrow">→</span>
+                    <div class="flow-item">Install Type</div>
+                </div>
+            </div>
+            <div class="visual-box" style="background: #ff4444; color: white;">
+                <h3>⚠️ CRITICAL CHOICE</h3>
+                <p><strong>Option 1: Dual Boot (SAFE)</strong></p>
+                <p>"Install alongside Windows" - Keeps Windows intact</p>
+                <hr style="border-color: white;">
+                <p><strong>Option 2: Replace (DANGEROUS)</strong></p>
+                <p>"Erase disk" - Deletes Windows completely</p>
+            </div>
+            <div class="success">
+                Choose "Install alongside Windows" for safety!
+            </div>
+        </div>
+
+        <!-- First Boot -->
+        <div class="step">
+            <div class="step-number">STEP 6</div>
+            <h2>First Boot Setup</h2>
+            <div class="visual-box">
+                <h3>🎉 Welcome Screen</h3>
+                <p>Create your user account:</p>
+                <div class="command">
+                    Username: ghost<br>
+                    Computer Name: ghostlink-forge
+                </div>
+            </div>
+            <div class="hardware-grid">
+                <div class="hardware-card">
+                    <h3>✓ Automatic Setup</h3>
+                    <p>WiFi connects</p>
+                    <p>NVIDIA drivers work</p>
+                    <p>Updates install</p>
+                </div>
+                <div class="hardware-card">
+                    <h3>✓ What You'll See</h3>
+                    <p>Clean desktop</p>
+                    <p>Dock at bottom</p>
+                    <p>Activities in corner</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Install GhostLink -->
+        <div class="step">
+            <div class="step-number">STEP 7</div>
+            <h2>Install GhostLink</h2>
+            <p>Open Terminal (Super key + T) and paste:</p>
+            <div class="command">
+                # Update system<br>
+                sudo apt update && sudo apt upgrade -y<br><br>
+                # Install Python and Git<br>
+                sudo apt install python3 python3-pip git -y<br><br>
+                # Clone GhostLink<br>
+                git clone https://github.com/yourusername/ghostlinklabs.git<br>
+                cd ghostlinklabs<br><br>
+                # Install dependencies<br>
+                pip3 install -r requirements.txt<br><br>
+                # Run GhostLink<br>
+                python3 ghostlink_boot.py
+            </div>
+            <div class="success">
+                🎯 GhostLink is now running on Linux!
+            </div>
+        </div>
+
+        <!-- Visual Tools -->
+        <div class="step">
+            <div class="step-number">BONUS</div>
+            <h2>Helpful Visual Tools</h2>
+            <div class="hardware-grid">
+                <div class="hardware-card">
+                    <h3>VS Code</h3>
+                    <div class="command">sudo apt install code</div>
+                    <p>Visual code editor</p>
+                </div>
+                <div class="hardware-card">
+                    <h3>System Monitor</h3>
+                    <div class="command">gnome-system-monitor</div>
+                    <p>See CPU/RAM usage</p>
+                </div>
+                <div class="hardware-card">
+                    <h3>Disk Usage</h3>
+                    <div class="command">baobab</div>
+                    <p>Visual disk space</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Network Diagram -->
+        <div class="flow-diagram">
+            <h2>Your GhostLink Network (Visual)</h2>
+            <div style="margin: 30px 0;">
+                <div class="flow-item">🖥️ Linux Workstation<br>(GhostLink Core)</div>
+                <span class="arrow">↔</span>
+                <div class="flow-item">📱 MacBook<br>(Development)</div>
+                <span class="arrow">↔</span>
+                <div class="flow-item">💾 NAS<br>(Vault Storage)</div>
+            </div>
+        </div>
+
+        <!-- Help Section -->
+        <div class="step" style="background: #002244;">
+            <h2>🆘 If Something Goes Wrong</h2>
+            <div class="visual-box">
+                <h3>Common Fixes:</h3>
+                <p><strong>Black screen:</strong> Press Ctrl+Alt+F2 for terminal</p>
+                <p><strong>No WiFi:</strong> Use ethernet cable first</p>
+                <p><strong>Can't boot:</strong> Press F8, choose Windows</p>
+                <p><strong>Graphics issues:</strong> Boot with "Safe Graphics" option</p>
+            </div>
+            <div class="success">
+                Remember: You can always boot back to Windows!
+            </div>
+        </div>
+    </div>
+</body>
+</html>

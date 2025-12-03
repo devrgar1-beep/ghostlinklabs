@@ -1,8 +1,9 @@
-import unittest
 import asyncio
-import time
-from unittest.mock import Mock, patch
-from ghostlink.orchestrator import PipelineOrchestrator, TaskStatus, PipelineStatus
+import unittest
+from unittest.mock import Mock
+
+from ghostlink.orchestrator import PipelineOrchestrator, PipelineStatus, TaskStatus
+
 
 class TestOrchestratorRetries(unittest.TestCase):
     def setUp(self):
@@ -10,18 +11,14 @@ class TestOrchestratorRetries(unittest.TestCase):
 
     def test_task_retry_success(self):
         """Test that a task retries and eventually succeeds"""
-        
+
         # Create a mock handler that fails twice then succeeds
         mock_handler = Mock(side_effect=[Exception("Fail 1"), Exception("Fail 2"), "Success"])
-        
+
         async def async_handler():
             return mock_handler()
 
-        self.orchestrator.add_task(
-            name="retry_task",
-            handler=async_handler,
-            max_retries=3
-        )
+        self.orchestrator.add_task(name="retry_task", handler=async_handler, max_retries=3)
 
         asyncio.run(self.orchestrator.execute())
 
@@ -33,17 +30,13 @@ class TestOrchestratorRetries(unittest.TestCase):
 
     def test_task_retry_failure(self):
         """Test that a task fails after max retries"""
-        
+
         mock_handler = Mock(side_effect=Exception("Always Fail"))
-        
+
         async def async_handler():
             return mock_handler()
 
-        self.orchestrator.add_task(
-            name="fail_task",
-            handler=async_handler,
-            max_retries=2
-        )
+        self.orchestrator.add_task(name="fail_task", handler=async_handler, max_retries=2)
 
         with self.assertRaises(RuntimeError):
             asyncio.run(self.orchestrator.execute())
@@ -55,22 +48,19 @@ class TestOrchestratorRetries(unittest.TestCase):
 
     def test_task_timeout_retry(self):
         """Test that a task retries on timeout"""
-        
+
         # First call sleeps longer than timeout, second call succeeds
         call_count = 0
-        
+
         async def async_handler():
             nonlocal call_count
             call_count += 1
             if call_count == 1:
-                await asyncio.sleep(0.2) # Longer than timeout
+                await asyncio.sleep(0.2)  # Longer than timeout
             return "Success"
 
         self.orchestrator.add_task(
-            name="timeout_task",
-            handler=async_handler,
-            max_retries=3,
-            timeout_seconds=0.1
+            name="timeout_task", handler=async_handler, max_retries=3, timeout_seconds=0.1
         )
 
         asyncio.run(self.orchestrator.execute())
@@ -82,7 +72,7 @@ class TestOrchestratorRetries(unittest.TestCase):
 
     def test_pipeline_report_structure(self):
         """Test that get_report returns correct structure after execution"""
-        
+
         async def simple_task():
             return "Done"
 
@@ -90,7 +80,7 @@ class TestOrchestratorRetries(unittest.TestCase):
         asyncio.run(self.orchestrator.execute())
 
         report = self.orchestrator.get_report()
-        
+
         self.assertEqual(report["status"], PipelineStatus.SUCCESS.value)
         self.assertIn("duration_seconds", report)
         self.assertIsNotNone(report["duration_seconds"])
@@ -99,5 +89,6 @@ class TestOrchestratorRetries(unittest.TestCase):
         self.assertEqual(report["tasks"]["task1"]["status"], TaskStatus.SUCCESS.value)
         self.assertEqual(report["tasks"]["task1"]["metrics"]["attempts"], 1)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

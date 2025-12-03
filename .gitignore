@@ -264,3 +264,7 @@ full_system_test_report.json
 # Binaries
 bin/
 
+
+# Harvested downloads
+harvest/downloads/
+
