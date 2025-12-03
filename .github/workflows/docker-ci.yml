@@ -1,4 +1,4 @@
-name: Docker CI
+name: Docker CI - Phase 2 Cold Boot
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-smoke-test:
+  build-and-test-cold-boot:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -16,21 +16,33 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build image
-        run: docker build -t ghostlink:ci .
+      - name: Build orchestrator image
+        run: docker build -f docker/Dockerfile -t ghostlink-orchestrator:ci .
 
-      - name: Compose up (controller only)
-        run: docker compose -f docker-compose.ci.yml up -d --build
+      - name: Start NATS messaging
+        run: docker run -d --name nats -p 4222:4222 -p 8222:8222 nats:2.10-alpine -DV
 
-      - name: Wait for metrics
+      - name: Run cold boot health check
         run: |
-          for i in {1..20}; do
-            if curl -fsS http://127.0.0.1:9108/metrics >/dev/null; then
-              echo "metrics up"; exit 0; fi; sleep 2; done; exit 1
+          docker run --rm --network host \
+            -v $(pwd):/app:ro \
+            ghostlink-orchestrator:ci \
+            python3 /app/cold_boot_orchestrator.py health
 
-      - name: Show sample metrics
-        run: curl -s http://127.0.0.1:9108/metrics | head -n 30
+      - name: Run full system test
+        run: |
+          docker run --rm --network host \
+            -v $(pwd):/app:ro \
+            ghostlink-orchestrator:ci \
+            python3 /app/full_system_test.py
 
-      - name: Compose down
+      - name: Test AI task execution
+        run: |
+          docker run --rm --network host \
+            -v $(pwd):/app:ro \
+            ghostlink-orchestrator:ci \
+            python3 /app/cold_boot_orchestrator.py task --task-type system_metrics
+
+      - name: Clean up NATS
         if: always()
-        run: docker compose -f docker-compose.ci.yml down
+        run: docker stop nats && docker rm nats
