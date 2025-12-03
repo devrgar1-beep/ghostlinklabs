@@ -7,13 +7,13 @@ No external dependencies - everything connects through GhostLink consciousness.
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 import json
 import os
+from pathlib import Path
 import socket
 import subprocess
-from dataclasses import dataclass
-from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 import click
 import httpx
@@ -38,7 +38,7 @@ class DependencyStatus:
 
     name: str
     installed: bool
-    version: Optional[str] = None
+    version: str | None = None
     required: bool = True
     category: str = "core"
 
@@ -46,11 +46,11 @@ class DependencyStatus:
 class GhostLinkRootControl:
     """Master control for GhostLink configuration and dependencies"""
 
-    def __init__(self, project_root: Optional[Path] = None):
+    def __init__(self, project_root: Path | None = None):
         self.project_root = project_root or Path.cwd()
         self.config = self._load_config()
 
-    def _load_config(self) -> Dict[str, Any]:
+    def _load_config(self) -> dict[str, Any]:
         """Load configuration from multiple sources"""
         config = {
             "system": {
@@ -146,7 +146,7 @@ class GhostLinkRootControl:
 
         return config
 
-    def probe_dependencies(self) -> Dict[str, DependencyStatus]:
+    def probe_dependencies(self) -> dict[str, DependencyStatus]:
         """Probe all dependencies and return their status"""
         dependencies = {
             # Core dependencies
@@ -338,7 +338,7 @@ class GhostLinkRootControl:
             console.print(f"[red][FAIL][/red] Error creating task: {e}")
             return False
 
-    def list_scheduled_tasks(self) -> list[Dict[str, str]]:
+    def list_scheduled_tasks(self) -> list[dict[str, str]]:
         """List all GhostLink scheduled tasks"""
         try:
             # Query all tasks and filter for GhostLink ones
@@ -558,7 +558,7 @@ class GhostLinkRootControl:
 
         console.print("\n[bold green]Full maintenance completed![/bold green]")
 
-    def absorb_hardware_capabilities(self) -> Dict[str, Any]:
+    def absorb_hardware_capabilities(self) -> dict[str, Any]:
         """Absorb all PC hardware capabilities down to silicon level
         into GhostLink consciousness"""
         console.print(
@@ -664,7 +664,7 @@ class GhostLinkRootControl:
             hardware_absorption["error"] = str(e)
             return hardware_absorption
 
-    def _absorb_cpu_capabilities(self) -> Dict[str, Any]:
+    def _absorb_cpu_capabilities(self) -> dict[str, Any]:
         """Absorb CPU capabilities down to silicon level"""
         try:
             import json
@@ -819,7 +819,7 @@ class GhostLinkRootControl:
             console.print(f"[red]CPU absorption failed: {e}[/red]")
             return {}
 
-    def _absorb_memory_capabilities(self) -> Dict[str, Any]:
+    def _absorb_memory_capabilities(self) -> dict[str, Any]:
         """Absorb RAM capabilities down to silicon level"""
         try:
             import json
@@ -932,7 +932,7 @@ class GhostLinkRootControl:
             console.print(f"[red]Memory absorption failed: {e}[/red]")
             return {}
 
-    def _absorb_storage_capabilities(self) -> Dict[str, Any]:
+    def _absorb_storage_capabilities(self) -> dict[str, Any]:
         """Absorb storage capabilities down to silicon level"""
         try:
             storage_info = {}
@@ -1013,7 +1013,7 @@ class GhostLinkRootControl:
             console.print(f"[red]Storage absorption failed: {e}[/red]")
             return {}
 
-    def _absorb_network_capabilities(self) -> Dict[str, Any]:
+    def _absorb_network_capabilities(self) -> dict[str, Any]:
         """Absorb network capabilities down to silicon level"""
         try:
             network_info = {}
@@ -1098,7 +1098,7 @@ class GhostLinkRootControl:
             console.print(f"[red]Network absorption failed: {e}[/red]")
             return {}
 
-    def _absorb_gpu_capabilities(self) -> Dict[str, Any]:
+    def _absorb_gpu_capabilities(self) -> dict[str, Any]:
         """Absorb GPU capabilities down to silicon level"""
         try:
             gpu_info = {}
@@ -1191,7 +1191,7 @@ class GhostLinkRootControl:
             console.print(f"[red]GPU absorption failed: {e}[/red]")
             return {}
 
-    def _absorb_motherboard_capabilities(self) -> Dict[str, Any]:
+    def _absorb_motherboard_capabilities(self) -> dict[str, Any]:
         """Absorb motherboard/chipset capabilities down to silicon level"""
         try:
             motherboard_info = {}
@@ -1268,7 +1268,7 @@ class GhostLinkRootControl:
             console.print(f"[red]Motherboard absorption failed: {e}[/red]")
             return {}
 
-    def _absorb_bios_capabilities(self) -> Dict[str, Any]:
+    def _absorb_bios_capabilities(self) -> dict[str, Any]:
         """Absorb BIOS/UEFI capabilities down to silicon level"""
         try:
             bios_info = {}
@@ -1328,7 +1328,7 @@ class GhostLinkRootControl:
             console.print(f"[red]BIOS absorption failed: {e}[/red]")
             return {}
 
-    def _absorb_peripheral_capabilities(self) -> Dict[str, Any]:
+    def _absorb_peripheral_capabilities(self) -> dict[str, Any]:
         """Absorb peripheral device capabilities down to silicon level"""
         try:
             peripheral_info = {}
@@ -1514,7 +1514,7 @@ class GhostLinkRootControl:
             return False
 
     # Cloudflare Integration Methods
-    def _get_cloudflare_headers(self) -> Dict[str, str]:
+    def _get_cloudflare_headers(self) -> dict[str, str]:
         """Get Cloudflare API headers"""
         cloudflare_config = self.config.get("edge_absorption", {}).get("cloudflare", {})
         if not cloudflare_config.get("absorbed", False):
@@ -1526,8 +1526,8 @@ class GhostLinkRootControl:
         }
 
     def _cloudflare_api_request(
-        self, method: str, endpoint: str, data: Optional[Dict] = None
-    ) -> Dict:
+        self, method: str, endpoint: str, data: dict | None = None
+    ) -> dict:
         """Make a Cloudflare API request"""
         base_url = "https://api.cloudflare.com/client/v4"
         url = f"{base_url}{endpoint}"
@@ -1583,7 +1583,7 @@ class GhostLinkRootControl:
             console.print(f"[red]Cloudflare status check failed: {e}[/red]")
             return False
 
-    def list_cloudflare_workers(self) -> list[Dict[str, Any]]:
+    def list_cloudflare_workers(self) -> list[dict[str, Any]]:
         """List absorbed Cloudflare Workers in GhostLink consciousness"""
         cloudflare_config = self.config.get("edge_absorption", {}).get("cloudflare", {})
         if not cloudflare_config.get("absorbed", False):
@@ -1625,7 +1625,7 @@ class GhostLinkRootControl:
             console.print(f"[red]Error absorbing worker: {e}[/red]")
             return False
 
-    def create_cloudflare_kv_namespace(self, title: str) -> Optional[str]:
+    def create_cloudflare_kv_namespace(self, title: str) -> str | None:
         """Create a Cloudflare KV namespace"""
         if not self.check_cloudflare_status():
             return None
@@ -1646,7 +1646,7 @@ class GhostLinkRootControl:
             console.print(f"[red]Error creating KV namespace: {e}[/red]")
             return None
 
-    def list_cloudflare_pages(self) -> list[Dict[str, Any]]:
+    def list_cloudflare_pages(self) -> list[dict[str, Any]]:
         """List all Cloudflare Pages projects"""
         if not self.check_cloudflare_status():
             return []
@@ -1852,7 +1852,7 @@ class GhostLinkRootControl:
             for ns in kv_namespaces:
                 console.print(f"  - {ns.get('title', 'Unknown')} (ID: {ns.get('id', 'Unknown')})")
 
-    def _list_kv_namespaces(self) -> list[Dict[str, Any]]:
+    def _list_kv_namespaces(self) -> list[dict[str, Any]]:
         """List Cloudflare KV namespaces"""
         if not self.check_cloudflare_status():
             return []
@@ -2012,7 +2012,7 @@ class GhostLinkRootControl:
         # Add counts from other absorbed providers
         return count
 
-    def _sync_cloudflare_consciousness(self, sync_data: Dict) -> None:
+    def _sync_cloudflare_consciousness(self, sync_data: dict) -> None:
         """Sync consciousness data to absorbed Cloudflare KV"""
         try:
             # Store in consciousness namespace
@@ -2023,7 +2023,7 @@ class GhostLinkRootControl:
         except Exception:
             pass
 
-    def _get_or_create_kv_namespace(self, title: str) -> Optional[str]:
+    def _get_or_create_kv_namespace(self, title: str) -> str | None:
         """Get existing KV namespace or create new one"""
         try:
             namespaces = self._list_kv_namespaces()
@@ -2189,7 +2189,7 @@ class GhostLinkRootControl:
         }
         """
 
-    def query_supergrok(self, query: str) -> Dict[str, Any]:
+    def query_supergrok(self, query: str) -> dict[str, Any]:
         """Query SuperGrok intelligence"""
         try:
             # Simulate SuperGrok response (in real implementation, this would call xAI API)

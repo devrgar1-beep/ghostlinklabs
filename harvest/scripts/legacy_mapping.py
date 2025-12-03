@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Produce a dry-run mapping of legacy terms to neutral names using the provenance index."""
-import json
 from collections import defaultdict
+import json
 
 PROV_PATH = '/Users/ghostlink/ghostlink-wiki-organized/ghostlink_provenance_index.json'
 OUT_MAPPING = '/Users/ghostlink/ghostlink-wiki-organized/ghostlink_legacy_mapping.json'
@@ -19,7 +19,7 @@ SUGGESTED = {
     'Lumara': 'lumara_profile'
 }
 
-with open(PROV_PATH, 'r', encoding='utf-8') as f:
+with open(PROV_PATH, encoding='utf-8') as f:
     prov = json.load(f)
 
 matches = prov.get('matches', [])

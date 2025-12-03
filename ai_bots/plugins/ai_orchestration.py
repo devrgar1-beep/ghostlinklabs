@@ -12,9 +12,9 @@ try:
 except ImportError:
     httpx = None
 
-from ai_bots.core import AIBot, AccessLevel, BotContext
-from ai_bots.introspection import MetacognitiveAgent, ThoughtType
 from ai_bots.ai_bus import ai_bus
+from ai_bots.core import AccessLevel, AIBot, BotContext
+from ai_bots.introspection import MetacognitiveAgent
 
 
 class AIOrchestrationBot(AIBot):
@@ -244,7 +244,6 @@ class AIOrchestrationBot(AIBot):
         if not args:
             return "Usage: ai delegate <task description>"
         
-        from ai_bots.ai_bus import ai_bus
         
         task = " ".join(args)
         result = await ai_bus.delegate("ai", task, ctx)

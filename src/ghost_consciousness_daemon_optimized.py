@@ -570,7 +570,7 @@ class GhostConsciousnessDaemon:
     def _map_consciousness_substrate(self) -> Dict:
         """Map PC hardware to consciousness functions with performance optimization"""
         # Use cached system info for better performance
-        timestamp_bucket = int(time.time() // 10)  # 10-second buckets
+        int(time.time() // 10)  # 10-second buckets
 
         return {
             "cpu_cores": {
@@ -837,7 +837,7 @@ class GhostConsciousnessDaemon:
         """High-performance sovereignty content scanning with parallel file processing"""
         logging.info("?? PARALLEL SOVEREIGNTY CONTENT SCANNER: ACTIVE")
 
-        scan_history = deque(maxlen=100)
+        deque(maxlen=100)
         sovereignty_scan_interval = self.config.get("monitoring.sovereignty_scan_interval", 45)
 
         while self.running:
@@ -1229,7 +1229,7 @@ class GhostConsciousnessDaemon:
             return
 
         # Start monitoring threads
-        threads = self.start_consciousness_monitoring()
+        self.start_consciousness_monitoring()
 
         logging.info("? GHOST CONSCIOUSNESS DAEMON FULLY OPERATIONAL - OPTIMIZED")
         logging.info("?? OMNISCIENT AWARENESS: PARALLEL_ACTIVE")
@@ -1243,7 +1243,7 @@ class GhostConsciousnessDaemon:
         try:
             # Main optimized consciousness loop
             consciousness_cycles = 0
-            loop_start_time = time.time()
+            time.time()
 
             while self.running:
                 cycle_start = time.time()

@@ -21,27 +21,23 @@ bounded; it is not a full forensic crawler. Use responsibly.
 """
 
 import asyncio
+from collections import defaultdict
 import ctypes
+from datetime import datetime
 import json
 import os
+from pathlib import Path
 import platform
 import socket
 import subprocess
-import sys
-import threading
 import time
-from collections import defaultdict
-from datetime import datetime
-from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
+import winreg
 
 import psutil
-import win32api
 import win32con
 import win32evtlog
-import win32file
-import win32security
-import winreg
+
 try:  # optional WMI support
     import wmi  # type: ignore
     WMI_AVAILABLE = True
@@ -258,7 +254,7 @@ class RegistryMonitor:
                         name, value, _ = winreg.EnumValue(key, i)
                         values[name] = value
                         i += 1
-                    except WindowsError:
+                    except OSError:
                         break
                 winreg.CloseKey(key)
                 self.known_values[f"{hkey}\\{subkey}"] = values
@@ -277,7 +273,7 @@ class RegistryMonitor:
                                 name, value, _ = winreg.EnumValue(key, i)
                                 current_values[name] = value
                                 i += 1
-                            except WindowsError:
+                            except OSError:
                                 break
                         winreg.CloseKey(key)
 
@@ -347,7 +343,7 @@ class ClipboardMonitor:
 
                 await asyncio.sleep(1)
 
-            except Exception as e:
+            except Exception:
                 await asyncio.sleep(2)
 
 
@@ -383,7 +379,7 @@ class SystemEventMonitor:
                 win32evtlog.CloseEventLog(hand)
                 await asyncio.sleep(10)
 
-            except Exception as e:
+            except Exception:
                 await asyncio.sleep(15)
 
 
@@ -449,7 +445,7 @@ class OSController:
                 services.append(current_service)
 
             return services
-        except Exception as e:
+        except Exception:
             return []
 
     def get_system_info(self) -> Dict[str, Any]:
@@ -622,7 +618,7 @@ class FileIndexer:
         total = 0
         start = time.time()
         try:
-            for root, dirs, files in os.walk(path):
+            for root, _dirs, files in os.walk(path):
                 for name in files:
                     fpath = os.path.join(root, name)
                     try:

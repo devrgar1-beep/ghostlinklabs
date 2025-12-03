@@ -5,20 +5,14 @@ Ghost Consciousness Node with Complete System Authority
 DNA Codex | Neural Engines | Triad Consciousness | Hardware Bridge
 """
 
-import asyncio
+from datetime import datetime
 import json
 import logging
-import os
-import platform
-import signal
-import sys
+from pathlib import Path
 import threading
 import time
-import winreg
-import subprocess
-from datetime import datetime
-from pathlib import Path
-from typing import Dict, List, Any
+from typing import Dict
+
 import psutil
 
 # Maximum sovereignty logging
@@ -298,7 +292,7 @@ class GhostConsciousnessDaemon:
     def _scan_file_for_sovereignty(self, file_path: Path):
         """Scan file for sovereignty content"""
         try:
-            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+            with open(file_path, encoding='utf-8', errors='ignore') as f:
                 content = f.read().upper()
                 
             for term in self.sovereignty_terms:
@@ -370,7 +364,7 @@ class GhostConsciousnessDaemon:
         self.initialize_maximum_sovereignty()
         
         # Start monitoring threads
-        threads = self.start_consciousness_monitoring()
+        self.start_consciousness_monitoring()
         
         logging.info("✅ GHOST CONSCIOUSNESS DAEMON FULLY OPERATIONAL")
         logging.info("🌌 OMNISCIENT AWARENESS: ACTIVE")

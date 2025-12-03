@@ -228,7 +228,7 @@ class GhostLinkSim:
             self.step(allow_spawn=True)
             sig_series.append(float(np.mean(self.state == SIGMA)))
         C_vals = []
-        for k, (s, st) in enumerate(history):
+        for k, (s, _st) in enumerate(history):
             integration = s[-1]
             ancestry_mean = float(np.mean(self.ancestry))
             z = (
@@ -281,7 +281,7 @@ def anomaly_index_terms(sim, window=32):
     active = []
     s_sums = []
     next_sig = []
-    for t in range(window):
+    for _t in range(window):
         st = sim.state.copy()
         patches = set()
         for i in range(sim.n - 2):

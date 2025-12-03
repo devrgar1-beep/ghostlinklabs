@@ -13,11 +13,11 @@ from enum import Enum
 import json
 import logging
 from pathlib import Path
-from typing import Any, Callable, Optional
+from typing import Any, Callable
 
+from .hardware_utils import is_admin, is_virtual_machine
 from .health_monitor import get_health_monitor
 from .troubleshooter import get_troubleshooter, handle_error
-from .hardware_utils import is_admin, is_virtual_machine
 
 logger = logging.getLogger(__name__)
 
@@ -51,10 +51,10 @@ class Task:
     priority: TaskPriority = TaskPriority.NORMAL
     status: TaskStatus = TaskStatus.PENDING
     created_at: datetime = field(default_factory=datetime.utcnow)
-    started_at: Optional[datetime] = None
-    completed_at: Optional[datetime] = None
-    result: Optional[Any] = None
-    error: Optional[str] = None
+    started_at: datetime | None = None
+    completed_at: datetime | None = None
+    result: Any | None = None
+    error: str | None = None
     metadata: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -147,9 +147,9 @@ class Link:
     def __init__(
         self,
         name: str = "Link",
-        memory_path: Optional[Path] = None,
+        memory_path: Path | None = None,
         hardware_mode: bool = False,
-        bound_devices: Optional[dict] = None,
+        bound_devices: dict | None = None,
     ):
         """Initialize Link.
 
@@ -175,7 +175,7 @@ class Link:
         self.auto_fix_enabled = True
         self.proactive_monitoring = False
 
-    async def start(self, hardware_mode: bool = False, bound_devices: Optional[dict] = None) -> None:
+    async def start(self, hardware_mode: bool = False, bound_devices: dict | None = None) -> None:
         """Start Link's autonomous operation."""
         if self.active:
             return
@@ -419,7 +419,7 @@ class Link:
 
 
 # Global Link instance
-_link_instance: Optional[Link] = None
+_link_instance: Link | None = None
 
 
 def get_link() -> Link:

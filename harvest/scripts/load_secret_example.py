@@ -15,7 +15,7 @@ def load_secret(name: str) -> str | None:
     # 2. Docker secret (mounted file)
     secret_path = f"/run/secrets/{name.lower()}"
     if os.path.exists(secret_path):
-        with open(secret_path, "r") as f:
+        with open(secret_path) as f:
             return f.read().strip()
 
     # 3. (Optional) AWS Secrets Manager: left as placeholder for production

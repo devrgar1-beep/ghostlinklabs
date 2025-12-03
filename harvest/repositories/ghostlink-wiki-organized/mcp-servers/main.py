@@ -3,10 +3,10 @@
 GhostLink MCP (Model Context Protocol) Server
 Provides structured context and tools for AI agents
 """
+from dataclasses import asdict, dataclass
 import json
 import sys
 from typing import Any, Dict, List
-from dataclasses import dataclass, asdict
 
 
 @dataclass

@@ -8,11 +8,11 @@ Structure-only resonance engine with zero payload storage.
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Awaitable, Callable
+from dataclasses import dataclass, field
 import hashlib
 import json
 import secrets
-from collections.abc import Awaitable, Callable
-from dataclasses import dataclass, field
 from typing import Any, Protocol
 
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import json
-import sys
-import re
 from pathlib import Path
+import re
+import sys
 
 # Simple script to scan installed VSCode extensions and enable experimental flags in user settings
 # Usage:
@@ -23,7 +23,7 @@ if not settings_path.exists():
     settings = {}
 else:
     try:
-        with open(settings_path, 'r', encoding='utf-8') as f:
+        with open(settings_path, encoding='utf-8') as f:
             settings = json.load(f)
     except Exception:
         settings = {}
@@ -36,7 +36,7 @@ for ext in extensions_dir.iterdir():
     if not package_json.exists():
         continue
     try:
-        with open(package_json, 'r', encoding='utf-8') as f:
+        with open(package_json, encoding='utf-8') as f:
             pkg = json.load(f)
     except Exception:
         continue

@@ -6,19 +6,18 @@ Designed to run on Mac Mini backend server.
 """
 
 import asyncio
+from datetime import datetime
 import json
 import logging
 import os
+from pathlib import Path
 import signal
 import sys
-from datetime import datetime
-from pathlib import Path
 from typing import Optional
 
-from fastapi import FastAPI, BackgroundTasks, HTTPException
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel
+from fastapi import BackgroundTasks, FastAPI, HTTPException
 import psutil
+from pydantic import BaseModel
 
 # Configure logging
 logging.basicConfig(

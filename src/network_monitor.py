@@ -5,10 +5,10 @@ Monitors the sovereign Eero 7 network and AI infrastructure health
 """
 
 import asyncio
-import json
-import time
 from datetime import datetime
+import json
 from pathlib import Path
+import time
 from typing import Dict
 
 import aiohttp

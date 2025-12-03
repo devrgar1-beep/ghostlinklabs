@@ -2,14 +2,14 @@ import datetime
 import os
 import sys
 
-import pytest
 from fastapi.testclient import TestClient
+import pytest
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from ghostlink.main import app, set_db
-from ghostlink.database import Database, ApiKey, utc_now
 from ghostlink.config import config
+from ghostlink.database import ApiKey, Database, utc_now
+from ghostlink.main import app, set_db
 
 
 @pytest.fixture(scope="session", autouse=True)

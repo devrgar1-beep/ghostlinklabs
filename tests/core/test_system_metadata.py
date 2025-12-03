@@ -5,8 +5,8 @@ Validates system metadata structure and content
 """
 
 import json
-import sys
 from pathlib import Path
+import sys
 
 
 def test_system_metadata():

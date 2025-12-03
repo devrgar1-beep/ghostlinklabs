@@ -6,11 +6,11 @@ thermal data to the mesh network.
 
 Optional iDRAC integration: set IDRAC_HOST to query out-of-band thermal sensors.
 """
+import glob
 import json
 import os
 import socket
 import time
-import glob
 
 HOST = os.getenv("HOST", "0.0.0.0")
 PORT = int(os.getenv("PORT", "7422"))
@@ -36,7 +36,7 @@ def read_temp_c() -> float | None:
     vals = []
     for path in glob.glob("/sys/class/thermal/thermal_zone*/temp"):
         try:
-            with open(path, "r") as f:
+            with open(path) as f:
                 val = int(f.read().strip())
                 vals.append(val / 1000.0)
         except Exception:
@@ -53,7 +53,6 @@ def read_idrac_temp_c() -> float | None:
         return None
     
     try:
-        import sys
         import importlib.util
         # Import gl_idrac from parent directory
         spec = importlib.util.spec_from_file_location("gl_idrac", os.path.join(os.path.dirname(__file__), "gl_idrac.py"))
@@ -135,12 +134,12 @@ def main():
         server.bind((HOST, PORT))
         server.listen(5)
 
-        print(f"[responder] GhostLink Peer Responder")
+        print("[responder] GhostLink Peer Responder")
         print(f"[responder] Hostname: {hostname}")
         print(f"[responder] Listening on {HOST}:{PORT}")
         if IDRAC_HOST:
             print(f"[responder] iDRAC integration: {IDRAC_HOST} (user: {IDRAC_USER})")
-        print(f"[responder] Ready to respond to mesh queries")
+        print("[responder] Ready to respond to mesh queries")
 
         try:
             while True:

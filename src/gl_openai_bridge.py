@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-import os, json, socket, threading, requests
+import json
+import os
+import socket
+import threading
+
+import requests
+
 HOST, PORT = "127.0.0.1", 7422
 API_URL = "https://api.openai.com/v1/responses"
 MODEL   = os.environ.get("GL_MODEL","gpt-4.1-mini")

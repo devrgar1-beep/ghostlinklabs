@@ -3,12 +3,13 @@
 GhostLink Backend API Server
 FastAPI-based REST API for GhostLink services
 """
+import os
+from typing import Optional
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import Optional
 import uvicorn
-import os
 
 app = FastAPI(
     title="GhostLink Backend API",

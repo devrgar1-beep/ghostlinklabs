@@ -3,7 +3,9 @@
 # Modes:
 #   chat:  free text → assistant reply
 #   align: free text → structured command (JSON)
-import socket, sys, json, os
+import json
+import socket
+import sys
 
 HOST, PORT = "127.0.0.1", 7422
 

@@ -5,13 +5,11 @@ GitHub Tools Downloader for GhostLink
 Pulls useful tools and utilities from GitHub repositories.
 """
 
-import os
-import sys
-import subprocess
 import json
-from pathlib import Path
-from typing import List, Dict, Optional
 import logging
+from pathlib import Path
+import subprocess
+from typing import Optional
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)

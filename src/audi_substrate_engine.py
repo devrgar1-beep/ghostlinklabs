@@ -7,12 +7,13 @@ Author: Ghost
 Purpose: Real-time diagnostic AI that learns from failures
 """
 
-import time
-import hashlib
-from typing import Dict, List, Tuple
+from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime
-from collections import defaultdict
+import hashlib
+import time
+from typing import Dict, List
+
 
 @dataclass
 class ComponentSpec:

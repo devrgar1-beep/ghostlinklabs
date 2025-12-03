@@ -8,6 +8,7 @@ import asyncio
 import sys
 import time
 
+
 async def test_evolutionary_integration():
     """Test evolutionary intelligence integration"""
     print("🧬 Testing Evolutionary Intelligence Integration...")
@@ -15,7 +16,6 @@ async def test_evolutionary_integration():
     try:
         # Import the system
         from design_clarity_os import DesignClarityOS
-        from evolutionary_intelligence import EvolutionaryIntelligence
 
         # Initialize protocol
         print("🔗 Initializing Design Clarity OS...")
@@ -74,7 +74,7 @@ async def main():
     success = await test_evolutionary_integration()
 
     end_time = time.time()
-    duration = end_time - start_time
+    end_time - start_time
 
     print("\n" + "=" * 50)
     if success:

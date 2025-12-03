@@ -3,8 +3,8 @@
 
 If Graphviz 'dot' is not found, output instructions for the user.
 """
-import shutil
 from pathlib import Path
+import shutil
 import subprocess
 
 SRC = Path('/Users/ghostlink/ghostlink-wiki-organized/ghostlink_dependency_graph_filtered.dot')

@@ -12,7 +12,7 @@ from enum import Enum
 import logging
 from pathlib import Path
 import subprocess
-from typing import Any, Optional
+from typing import Any
 
 from .troubleshooter import handle_error
 
@@ -54,7 +54,7 @@ class GitOperationResult:
 class AutoGit:
     """Automatic git operations manager."""
 
-    def __init__(self, repo_path: Optional[Path] = None):
+    def __init__(self, repo_path: Path | None = None):
         """Initialize AutoGit.
 
         Args:
@@ -137,7 +137,7 @@ class AutoGit:
             "remote_branches": self.get_remote_branches(),
         }
 
-    async def auto_pull(self, branch: Optional[str] = None) -> GitOperationResult:
+    async def auto_pull(self, branch: str | None = None) -> GitOperationResult:
         """Automatically pull from remote.
 
         Args:
@@ -246,8 +246,8 @@ class AutoGit:
     async def auto_merge(
         self,
         source_branch: str,
-        target_branch: Optional[str] = None,
-        strategy: Optional[MergeStrategy] = None,
+        target_branch: str | None = None,
+        strategy: MergeStrategy | None = None,
     ) -> GitOperationResult:
         """Automatically merge branches.
 
@@ -416,7 +416,7 @@ class AutoGit:
 
         return False
 
-    async def sync(self, branch: Optional[str] = None) -> dict[str, GitOperationResult]:
+    async def sync(self, branch: str | None = None) -> dict[str, GitOperationResult]:
         """Perform full sync: pull and merge.
 
         Args:
@@ -453,7 +453,7 @@ class AutoGit:
 
 
 # Global AutoGit instance
-_auto_git: Optional[AutoGit] = None
+_auto_git: AutoGit | None = None
 
 
 def get_auto_git() -> AutoGit:

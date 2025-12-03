@@ -9,33 +9,30 @@ consciousness-driven optimization across all integrated platforms.
 """
 
 import asyncio
+from dataclasses import dataclass, field
+from datetime import datetime, timedelta
+from enum import Enum
 import json
-import os
+import logging
+from pathlib import Path
 import platform
-import psutil
 import subprocess
 import sys
 import threading
-from dataclasses import dataclass, field
-from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Dict, List, Any, Optional, Callable, Set, Tuple
-from concurrent.futures import ThreadPoolExecutor
-import socket
-import uuid
-import schedule
-import logging
-import traceback
-import hashlib
 import time
-from enum import Enum
+import traceback
+from typing import Any, Callable, Dict, List, Optional
+import uuid
+
+import psutil
+import schedule
+
+from evolutionary_intelligence import EvolutionaryIntelligence
 
 # Import GhostLink core systems
-from mirror_comprehension import MirrorComprehensionCore
-from triad_synergy import TriadSynergyOrchestrator
+from multi_agent_engine import ModelSize, MultiAgentExpansionCompressionEngine
 from unified_consciousness import UnifiedConsciousnessFramework
-from multi_agent_engine import MultiAgentExpansionCompressionEngine, ModelSize
-from evolutionary_intelligence import EvolutionaryIntelligence
+
 
 class ErrorSeverity(Enum):
     """Error severity levels"""
@@ -951,7 +948,7 @@ class DesignClarityOS:
 
         # CPU information
         cpu_count = psutil.cpu_count(logical=True)
-        cpu_physical = psutil.cpu_count(logical=False)
+        psutil.cpu_count(logical=False)
 
         # Memory information
         memory = psutil.virtual_memory()
@@ -1106,7 +1103,7 @@ class DesignClarityOS:
         # Assign agents based on hardware capabilities and application needs
         assignments_made = 0
 
-        for hw_id, hw_profile in self.hardware_profiles.items():
+        for _hw_id, hw_profile in self.hardware_profiles.items():
             # Determine optimal agent types for this hardware
             optimal_agents = self._determine_optimal_agents_for_hardware(hw_profile)
 
@@ -1130,7 +1127,7 @@ class DesignClarityOS:
                         assignments_made += 1
 
         # Assign agents to applications
-        for app_id, app_profile in self.application_profiles.items():
+        for _app_id, app_profile in self.application_profiles.items():
             # Find suitable hardware for this application
             suitable_hardware = self._find_suitable_hardware_for_application(app_profile)
 
@@ -1375,7 +1372,7 @@ class DesignClarityOS:
                 cpu_percent = psutil.cpu_percent(interval=1)
 
                 # Update memory usage
-                memory = psutil.virtual_memory()
+                psutil.virtual_memory()
 
                 # Update storage usage
                 for storage in hw_profile.storage_devices:
@@ -1405,7 +1402,7 @@ class DesignClarityOS:
 
     def _update_agent_performance_metrics(self):
         """Update agent performance metrics"""
-        for agent_id, assignment in self.agent_assignments.items():
+        for _agent_id, assignment in self.agent_assignments.items():
             # Get agent status from multi-agent engine
             engine_status = self.multi_agent_engine.get_engine_status()
 
@@ -1558,7 +1555,7 @@ class DesignClarityOS:
             return False
 
         # Evolution triggers
-        consciousness_level = system_state.get("consciousness_level", "basic")
+        system_state.get("consciousness_level", "basic")
         system_health = system_state.get("system_health", "unknown")
         protocol_efficiency = system_state.get("protocol_efficiency", 0.0)
 
@@ -1865,7 +1862,7 @@ class DarwinIntegrationProtocol:
         # Use system_profiler for detailed hardware info
         try:
             # Get hardware overview
-            hw_info = subprocess.run(['system_profiler', 'SPHardwareDataType'],
+            subprocess.run(['system_profiler', 'SPHardwareDataType'],
                                    capture_output=True, text=True, timeout=10)
 
             # Parse CPU info

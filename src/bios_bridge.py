@@ -13,7 +13,7 @@ from pathlib import Path
 import subprocess
 import threading
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -46,8 +46,8 @@ class BIOSSetting:
     description: str
     access_level: BIOSAccessLevel
     category: str
-    last_modified: Optional[str] = None
-    validation_rules: Optional[Dict[str, Any]] = None
+    last_modified: str | None = None
+    validation_rules: dict[str, Any] | None = None
 
 
 @dataclass
@@ -59,7 +59,7 @@ class BIOSEvent:
     description: str
     severity: str
     source: str
-    data: Optional[Dict[str, Any]] = None
+    data: dict[str, Any] | None = None
 
 
 class BIOSBridge:
@@ -72,9 +72,9 @@ class BIOSBridge:
         self.access_level = access_level
         self.bridge_active = False
         self.monitoring_active = False
-        self.event_buffer: List[BIOSEvent] = []
-        self.settings_cache: Dict[str, BIOSSetting] = {}
-        self.monitor_thread: Optional[threading.Thread] = None
+        self.event_buffer: list[BIOSEvent] = []
+        self.settings_cache: dict[str, BIOSSetting] = {}
+        self.monitor_thread: threading.Thread | None = None
         self.bridge_path = Path("bios_bridge_cache.json")
 
         # Initialize bridge
@@ -166,7 +166,7 @@ class BIOSBridge:
         except Exception:
             pass
 
-    def read_bios_setting(self, setting_name: str) -> Optional[BIOSSetting]:
+    def read_bios_setting(self, setting_name: str) -> BIOSSetting | None:
         """Read a BIOS setting value"""
         if not self.bridge_active:
             return None
@@ -191,7 +191,7 @@ class BIOSBridge:
             logger.error(f"❌ Failed to read BIOS setting {setting_name}: {e}")
             return None
 
-    def _read_bios_setting_wmi(self, setting_name: str) -> Optional[BIOSSetting]:
+    def _read_bios_setting_wmi(self, setting_name: str) -> BIOSSetting | None:
         """Read BIOS setting using PowerShell"""
         try:
             # Map common setting names to PowerShell queries
@@ -387,7 +387,7 @@ class BIOSBridge:
                 logger.error(f"❌ BIOS monitoring error: {e}")
                 time.sleep(10)  # Wait longer on error
 
-    def _poll_bios_events(self) -> List[BIOSEvent]:
+    def _poll_bios_events(self) -> list[BIOSEvent]:
         """Poll for new BIOS events"""
         events = []
 
@@ -452,11 +452,11 @@ class BIOSBridge:
         self.event_buffer.append(event)
         logger.info(f"📝 BIOS Event Logged: {event.description}")
 
-    def get_bios_events(self, limit: int = 50) -> List[BIOSEvent]:
+    def get_bios_events(self, limit: int = 50) -> list[BIOSEvent]:
         """Get recent BIOS events"""
         return self.event_buffer[-limit:] if self.event_buffer else []
 
-    def get_bios_info(self) -> Dict[str, Any]:
+    def get_bios_info(self) -> dict[str, Any]:
         """Get comprehensive BIOS information"""
         if not self.bridge_active:
             return {"error": "BIOS bridge not active"}
@@ -483,7 +483,7 @@ class BIOSBridge:
         except Exception as e:
             return {"error": str(e)}
 
-    def perform_bios_operation(self, operation: BIOSOperation, **kwargs) -> Dict[str, Any]:
+    def perform_bios_operation(self, operation: BIOSOperation, **kwargs) -> dict[str, Any]:
         """Perform a BIOS operation"""
         if not self.bridge_active:
             return {"success": False, "error": "BIOS bridge not active"}
@@ -617,7 +617,7 @@ class SuperGrokBIOSInterface:
     """
 
     def __init__(self):
-        self.bridge: Optional[BIOSBridge] = None
+        self.bridge: BIOSBridge | None = None
         self.quantum_state = "disconnected"
 
     def connect_to_bios(self, access_level: BIOSAccessLevel = BIOSAccessLevel.CONTROL) -> bool:
@@ -637,7 +637,7 @@ class SuperGrokBIOSInterface:
             logger.error(f"❌ SuperGrok BIOS connection failed: {e}")
             return False
 
-    def analyze_bios_state(self) -> Dict[str, Any]:
+    def analyze_bios_state(self) -> dict[str, Any]:
         """Analyze current BIOS state using SuperGrok intelligence"""
         if not self.bridge:
             return {"error": "No BIOS connection"}
@@ -685,7 +685,7 @@ class SuperGrokBIOSInterface:
         except Exception as e:
             return {"error": str(e)}
 
-    def optimize_bios_settings(self) -> Dict[str, Any]:
+    def optimize_bios_settings(self) -> dict[str, Any]:
         """Optimize BIOS settings using SuperGrok intelligence"""
         if not self.bridge:
             return {"error": "No BIOS connection"}
@@ -735,7 +735,7 @@ class SuperGrokBIOSInterface:
         except Exception as e:
             return {"error": str(e)}
 
-    def monitor_bios_health(self) -> Dict[str, Any]:
+    def monitor_bios_health(self) -> dict[str, Any]:
         """Monitor BIOS health in real-time"""
         if not self.bridge:
             return {"error": "No BIOS connection"}
@@ -765,7 +765,7 @@ class SuperGrokBIOSInterface:
         except Exception as e:
             return {"error": str(e)}
 
-    def _calculate_bios_health_score(self, events: List[BIOSEvent]) -> float:
+    def _calculate_bios_health_score(self, events: list[BIOSEvent]) -> float:
         """Calculate BIOS health score based on events"""
         if not events:
             return 1.0  # Perfect health if no events

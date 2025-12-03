@@ -12,11 +12,12 @@ Env:
   WORKERS    Parallel workers (default: 256)
 """
 from __future__ import annotations
+
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import ipaddress
 import os
 import socket
 import sys
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
 PORT = int(os.getenv("PORT", "7422"))
 TIMEOUT = float(os.getenv("TIMEOUT", "0.5"))

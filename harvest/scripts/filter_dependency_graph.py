@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 """Filter a large DOT file to produce a focused graph around core modules."""
-import re
 from pathlib import Path
+import re
 
 SRC = '/Users/ghostlink/ghostlink-wiki-organized/ghostlink_dependency_graph.dot'
 OUT = '/Users/ghostlink/ghostlink-wiki-organized/ghostlink_dependency_graph_filtered.dot'
 
-CORE = set(['design_clarity_os','mirror_comprehension','multi_agent_engine','evolutionary_intelligence','ghostlink_backend'])
+CORE = {'design_clarity_os','mirror_comprehension','multi_agent_engine','evolutionary_intelligence','ghostlink_backend'}
 
 if not Path(SRC).exists():
     print('Source DOT not found')
     raise SystemExit(1)
 
-with open(SRC, 'r', encoding='utf-8') as f:
+with open(SRC, encoding='utf-8') as f:
     lines = f.readlines()
 
 nodes = set()

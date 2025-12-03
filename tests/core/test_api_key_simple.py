@@ -5,11 +5,10 @@ These tests demonstrate that the API key functionality works correctly
 by testing the core functionality directly.
 """
 
-import pytest
-from ghostlink.database import Database, ApiKey
-from ghostlink.main import set_db
 from fastapi.testclient import TestClient
-from ghostlink.main import app
+
+from ghostlink.database import ApiKey, Database
+from ghostlink.main import app, set_db
 
 
 def test_api_key_creation_and_validation():

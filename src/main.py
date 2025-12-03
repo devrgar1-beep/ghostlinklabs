@@ -2,8 +2,8 @@
 """GhostLink AI Ecosystem - Main Entry Point"""
 
 import argparse
-import sys
 from pathlib import Path
+import sys
 
 # Add current directory to path
 sys.path.insert(0, str(Path(__file__).parent))

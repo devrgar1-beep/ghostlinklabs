@@ -2,7 +2,8 @@
 # Licensed under the MIT License. See LICENSE.md in the project root for license information.
 
 # This acts as a simple launcher for debugpy that only redirects the args to the actual launcher inside the container
-import os, sys
+import os
+import sys
 
 containerExePath = sys.argv[-2] # Container EXE path is the second-to-last arg
 containerId = sys.argv[-1] # Container id is the last arg

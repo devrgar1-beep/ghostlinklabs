@@ -3,7 +3,6 @@
 
 Outputs: /Users/ghostlink/ghostlink-wiki-organized/viewer/index.html
 """
-import os
 from pathlib import Path
 
 WORK_DIR = Path('/Users/ghostlink/ghostlink-wiki-organized')
@@ -25,20 +24,20 @@ for a in ARTIFACTS:
         with open(src, 'rb') as fsrc, open(dst, 'wb') as fdst:
             fdst.write(fsrc.read())
 
-html = f"""
+html = """
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <title>GhostLink Mental Model Viewer</title>
   <style>
-    body {{ font-family: Arial, sans-serif; margin: 20px; max-width: 1100px; }}
-    h1 {{ color: #0c4a6e; }}
-    pre {{ background: #f6f8fa; padding: 10px; border-radius: 6px; overflow-x:auto; }}
-    .columns {{ display:flex; gap:20px; }}
-    .col {{ flex:1; min-width: 300px; }}
-    .file-list {{ height: 500px; overflow: auto; border: 1px solid #ddd; padding: 8px; background: #fff; }}
-    input[type=search] {{ width: 100%; padding: 8px; margin-bottom: 10px; }}
+    body { font-family: Arial, sans-serif; margin: 20px; max-width: 1100px; }
+    h1 { color: #0c4a6e; }
+    pre { background: #f6f8fa; padding: 10px; border-radius: 6px; overflow-x:auto; }
+    .columns { display:flex; gap:20px; }
+    .col { flex:1; min-width: 300px; }
+    .file-list { height: 500px; overflow: auto; border: 1px solid #ddd; padding: 8px; background: #fff; }
+    input[type=search] { width: 100%; padding: 8px; margin-bottom: 10px; }
   </style>
 </head>
 <body>
@@ -61,15 +60,15 @@ html = f"""
   <pre id="dryrun"></pre>
 
   <script>
-    async function loadJSON(path) {{
-      try {{
+    async function loadJSON(path) {
+      try {
         const resp = await fetch(path);
         if(!resp.ok) return null;
         return await resp.json();
-      }} catch(e) {{ console.error(e); return null; }}
-    }}
+      } catch(e) { console.error(e); return null; }
+    }
 
-    async function init() {{
+    async function init() {
       const mental = await loadJSON('ghostlink_mental_model.json');
       const summary = await loadJSON('ghostlink_provenance_summary.json');
       const dryrun = await loadJSON('ghostlink_refactor_dryrun.json');
@@ -78,25 +77,25 @@ html = f"""
       if(dryrun) document.getElementById('dryrun').textContent = JSON.stringify(dryrun, null, 2);
 
       const fileListEl = document.getElementById('fileList');
-      if(summary && summary.files) {{
-        summary.files.slice(0,500).forEach(f => {{
+      if(summary && summary.files) {
+        summary.files.slice(0,500).forEach(f => {
           const el = document.createElement('div');
-          el.innerHTML = `<strong>${{f.file}}</strong> - matches: ${{f.match_count}}<br/><em>top: ${{f.top_terms.join(', ')}}</em>`;
+          el.innerHTML = `<strong>${f.file}</strong> - matches: ${f.match_count}<br/><em>top: ${f.top_terms.join(', ')}</em>`;
           fileListEl.appendChild(el);
-        }});
-      }}
+        });
+      }
 
-      document.getElementById('search').addEventListener('input', (e) => {{
+      document.getElementById('search').addEventListener('input', (e) => {
         const q = e.target.value.toLowerCase().trim();
         fileListEl.innerHTML = '';
         const files = (summary && summary.files) ? summary.files : [];
-        files.filter(f => f.file.toLowerCase().includes(q) || f.top_terms.join(' ').toLowerCase().includes(q)).slice(0,500).forEach(f => {{
+        files.filter(f => f.file.toLowerCase().includes(q) || f.top_terms.join(' ').toLowerCase().includes(q)).slice(0,500).forEach(f => {
           const el = document.createElement('div');
-          el.innerHTML = `<strong>${{f.file}}</strong> - matches: ${{f.match_count}}<br/><em>top: ${{f.top_terms.join(', ')}}</em>`;
+          el.innerHTML = `<strong>${f.file}</strong> - matches: ${f.match_count}<br/><em>top: ${f.top_terms.join(', ')}</em>`;
           fileListEl.appendChild(el);
-        }});
-      }});
-    }}
+        });
+      });
+    }
 
     init();
   </script>

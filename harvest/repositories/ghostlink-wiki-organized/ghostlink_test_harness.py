@@ -4,8 +4,8 @@
 This harness imports DesignClarityOS, instantiates it with the workspace path,
 replaces heavy subsystems with safe stubs, and prints a protocol status snapshot.
 """
-import sys
 from pathlib import Path
+import sys
 
 # Ensure local module path
 sys.path.insert(0, str(Path(__file__).resolve().parent))

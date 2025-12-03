@@ -8,7 +8,6 @@ from __future__ import annotations
 import json
 import logging
 import subprocess
-from typing import List
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +58,7 @@ def is_virtual_machine() -> bool:
         return False
 
 
-def list_physical_nics() -> List[dict]:
+def list_physical_nics() -> list[dict]:
     """Return a list of physical network adapters (name, mac address, status).
 
     Uses Get-NetAdapter to detect NICs. If command fails, returns empty list.
@@ -117,7 +116,7 @@ def bind_to_nic(mac: str) -> bool:
     return True
 
 
-def list_physical_disks() -> List[dict]:
+def list_physical_disks() -> list[dict]:
     """List physical disks (DeviceID, Model, Size)."""
     try:
         command = "Get-CimInstance -ClassName Win32_DiskDrive | Select-Object DeviceID,Model,Size | ConvertTo-Json"

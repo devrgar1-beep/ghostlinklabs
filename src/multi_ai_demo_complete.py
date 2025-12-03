@@ -6,8 +6,8 @@ Shows all working providers and autonomous coordination capabilities.
 """
 
 import asyncio
-import subprocess
 from datetime import datetime
+import subprocess
 
 
 async def demonstrate_multi_ai():

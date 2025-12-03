@@ -11,14 +11,14 @@ Enhancements:
 """
 
 import argparse
+from datetime import datetime
 import hashlib
 import json
 import logging
 import os
+from pathlib import Path
 import re
 import time
-from datetime import datetime
-from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 
@@ -230,7 +230,7 @@ def safe_write_code_block(
         raise ValueError("Unsafe target path")
 
     # Dedup: if a file with same hash already exists, skip write
-    existing = [p for p in category_dir.glob(f"*{h}*")]
+    existing = list(category_dir.glob(f"*{h}*"))
     if existing:
         logging.info(
             "Duplicate content detected; skipping write: %s",
@@ -340,7 +340,7 @@ def load_markdown_files(source_dir: Path) -> List[Dict[str, Any]]:
     
     for md_file in source_dir.glob("*.md"):
         try:
-            with open(md_file, "r", encoding="utf-8") as f:
+            with open(md_file, encoding="utf-8") as f:
                 content = f.read()
             results.append({
                 "content": content,

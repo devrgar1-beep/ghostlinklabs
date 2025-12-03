@@ -5,9 +5,9 @@ This script is cautious: It uses the /ghostlink_refactor_dryrun.json to apply re
 and by default operates in dry-run mode. The --apply flag actually modifies files, backing up originals
 into .bak files; the process is non-destructive because backups are kept.
 """
+import argparse
 import json
 from pathlib import Path
-import argparse
 import shutil
 
 WORK_DIR = Path('/Users/ghostlink/ghostlink-wiki-organized')
@@ -22,7 +22,7 @@ if not DRYRUN_PATH.exists():
     print('Dry-run report not found:', DRYRUN_PATH)
     raise SystemExit(1)
 
-with open(DRYRUN_PATH, 'r', encoding='utf-8') as f:
+with open(DRYRUN_PATH, encoding='utf-8') as f:
     dryrun = json.load(f)
 
 replacements = dryrun.get('replacements', [])

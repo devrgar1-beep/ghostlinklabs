@@ -22,12 +22,13 @@ Environment:
   MAX_WORKERS             Parallel iDRAC polls (default: 16)
 """
 from __future__ import annotations
+
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 import os
 import socket
 import sys
 import time
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any
 
 try:
@@ -50,7 +51,7 @@ def load_inventory(path: str) -> list[dict[str, str]]:
     if not os.path.exists(path):
         return []
     hosts = []
-    with open(path, "r") as f:
+    with open(path) as f:
         for line in f:
             stripped = line.strip()
             if not stripped or stripped.startswith("#"):

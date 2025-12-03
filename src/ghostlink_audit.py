@@ -17,13 +17,13 @@ This script performs a complete system audit by:
 - Generating comprehensive audit report
 """
 
+from datetime import datetime
 import hashlib
 import json
 import os
+from pathlib import Path
 import re
 import sys
-from datetime import datetime
-from pathlib import Path
 from typing import Dict, List
 
 
@@ -531,7 +531,7 @@ class GhostLinkAuditor:
         links = []
         link_pattern = r"\[([^\]]+)\]\(([^)]+)\)"
         matches = re.findall(link_pattern, content)
-        for text, url in matches:
+        for _text, url in matches:
             if url.startswith(("http://", "https://")) and "localhost" not in url:
                 links.append(url)
         return links
@@ -824,7 +824,7 @@ class GhostLinkAuditor:
             "universal_api_references": 0,
         }
 
-        for file_path, file_info in self.audit_results["file_analysis"].items():
+        for _file_path, file_info in self.audit_results["file_analysis"].items():
             if "content_analysis" in file_info:
                 content = file_info["content_analysis"]
 
@@ -867,7 +867,7 @@ class GhostLinkAuditor:
             "external_services": [],
         }
 
-        for file_path, file_info in self.audit_results["file_analysis"].items():
+        for _file_path, file_info in self.audit_results["file_analysis"].items():
             if "content_analysis" in file_info:
                 content = file_info["content_analysis"]
 

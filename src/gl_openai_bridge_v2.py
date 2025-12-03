@@ -3,7 +3,12 @@
 # - "align"  → JSON command via json_schema
 # - "chat"   → freeform assistant text
 # NDJSON over TCP on 127.0.0.1:7422
-import os, json, socket, threading, requests
+import json
+import os
+import socket
+import threading
+
+import requests
 
 HOST, PORT = "127.0.0.1", 7422
 API_URL = "https://api.openai.com/v1/responses"

@@ -164,9 +164,9 @@ ai_bus = AIBus()
 
 if __name__ == "__main__":
     async def test():
-        from ai_bots.core import SystemBot, MetricsBot, AccessLevel
-        from ai_bots.plugins.calculator import CalculatorBot
+        from ai_bots.core import AccessLevel, MetricsBot, SystemBot
         from ai_bots.plugins.ai_orchestration import AIOrchestrationBot
+        from ai_bots.plugins.calculator import CalculatorBot
         
         # Setup
         system_bot = SystemBot()

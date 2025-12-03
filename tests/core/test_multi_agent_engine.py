@@ -6,7 +6,9 @@ Demonstrates full model optimization workflow
 
 import asyncio
 import json
-from multi_agent_engine import MultiAgentExpansionCompressionEngine, ModelSize
+
+from multi_agent_engine import ModelSize, MultiAgentExpansionCompressionEngine
+
 
 async def test_multi_agent_engine():
     """Comprehensive test of the multi-agent engine"""

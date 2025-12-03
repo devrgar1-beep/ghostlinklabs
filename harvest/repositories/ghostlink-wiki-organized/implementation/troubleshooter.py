@@ -17,7 +17,7 @@ import re
 import subprocess
 import sys
 import traceback
-from typing import Any, Callable, Optional
+from typing import Any, Callable
 
 logger = logging.getLogger(__name__)
 
@@ -59,13 +59,13 @@ class ErrorReport:
     suggested_fixes: list[str] = field(default_factory=list)
     auto_fixable: bool = False
     fix_applied: bool = False
-    fix_result: Optional[str] = None
+    fix_result: str | None = None
 
 
 class AutoTroubleshooter:
     """Automatic troubleshooting and error correction system."""
 
-    def __init__(self, workspace_root: Optional[Path] = None):
+    def __init__(self, workspace_root: Path | None = None):
         """Initialize troubleshooter.
 
         Args:
@@ -98,7 +98,7 @@ class AutoTroubleshooter:
             self.fix_handlers[category] = []
         self.fix_handlers[category].append(handler)
 
-    def analyze_error(self, error: Exception, context: Optional[dict] = None) -> ErrorReport:
+    def analyze_error(self, error: Exception, context: dict | None = None) -> ErrorReport:
         """Analyze an error and create a detailed report.
 
         Args:
@@ -445,7 +445,7 @@ class AutoTroubleshooter:
 
         return diagnostics
 
-    def export_report(self, output_file: Optional[Path] = None) -> str:
+    def export_report(self, output_file: Path | None = None) -> str:
         """Export error history to JSON report.
 
         Args:
@@ -484,7 +484,7 @@ class AutoTroubleshooter:
 
 
 # Global troubleshooter instance
-_troubleshooter: Optional[AutoTroubleshooter] = None
+_troubleshooter: AutoTroubleshooter | None = None
 
 
 def get_troubleshooter() -> AutoTroubleshooter:
@@ -500,7 +500,7 @@ def get_troubleshooter() -> AutoTroubleshooter:
 
 
 async def handle_error(
-    error: Exception, context: Optional[dict] = None, auto_fix: bool = True
+    error: Exception, context: dict | None = None, auto_fix: bool = True
 ) -> ErrorReport:
     """Handle an error with automatic troubleshooting.
 

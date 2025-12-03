@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Export the provenance summary into a CSV of top files and counts."""
-import json
 import csv
+import json
 from pathlib import Path
 
 PROV_SUM = Path('/Users/ghostlink/ghostlink-wiki-organized/ghostlink_provenance_summary.json')
@@ -11,7 +11,7 @@ if not PROV_SUM.exists():
     print('Provenance summary not found')
     raise SystemExit(1)
 
-with open(PROV_SUM, 'r', encoding='utf-8') as f:
+with open(PROV_SUM, encoding='utf-8') as f:
     summary = json.load(f)
 
 files = summary.get('files', [])

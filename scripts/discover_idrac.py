@@ -17,10 +17,11 @@ Env:
   VERIFY_SSL     Verify SSL certs (default: 0, skip verification)
 """
 from __future__ import annotations
+
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import ipaddress
 import os
 import sys
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any
 
 try:
@@ -70,7 +71,7 @@ def load_existing_inventory(path: str) -> dict[str, str]:
     existing = {}
     if not os.path.exists(path):
         return existing
-    with open(path, "r") as f:
+    with open(path) as f:
         for line in f:
             stripped = line.strip()
             if not stripped or stripped.startswith("#"):
@@ -89,7 +90,7 @@ def write_inventory(path: str, discovered: list[str], existing: dict[str, str]):
     # Read header lines
     header_lines = []
     if os.path.exists(path):
-        with open(path, "r") as f:
+        with open(path) as f:
             for line in f:
                 if line.strip().startswith("#") or not line.strip():
                     header_lines.append(line.rstrip())

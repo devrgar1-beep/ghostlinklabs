@@ -7,8 +7,8 @@ Commands:
   render_graphs  : try to render graphs to PNG (requires Graphviz)
 """
 import argparse
-import subprocess
 from pathlib import Path
+import subprocess
 
 SCRIPTS = Path('/Users/ghostlink/scripts')
 
@@ -34,7 +34,7 @@ if args.command == 'run_all':
         subprocess.run(s, shell=True)
 
 elif args.command == 'apply_refactor':
-    cmd = f'python3 /Users/ghostlink/scripts/apply_refactor.py'
+    cmd = 'python3 /Users/ghostlink/scripts/apply_refactor.py'
     if args.max > 0:
         cmd += f' --max {args.max}'
     if args.apply:

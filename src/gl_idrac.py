@@ -19,9 +19,9 @@ Environment:
   IDRAC_TIMEOUT       Request timeout in seconds (default: 10)
 """
 from __future__ import annotations
+
 import json
 import os
-import time
 from typing import Any
 from urllib.parse import urljoin
 
@@ -351,7 +351,7 @@ def load_credentials(creds_file: str = "creds/idrac_creds.json") -> dict[str, di
     """
     if not os.path.exists(creds_file):
         return {}
-    with open(creds_file, "r") as f:
+    with open(creds_file) as f:
         data = json.load(f)
     creds = {}
     for entry in data.get("hosts", []):
@@ -401,7 +401,7 @@ def main():
         print(f"[idrac] Health: {health['health']} / State: {health['state']}")
         
         temps = client.get_temperatures()
-        print(f"[idrac] Temperatures:")
+        print("[idrac] Temperatures:")
         for t in temps[:5]:
             print(f"  {t['name']}: {t['reading_c']}°C ({t['status']})")
         

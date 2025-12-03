@@ -4,8 +4,8 @@
 import argparse
 import asyncio
 import logging
-import sys
 from pathlib import Path
+import sys
 
 from ghostlink.interfaces.cli import cli
 from ghostlink.interfaces.terminal_90s import launch_90s_terminal

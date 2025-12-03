@@ -14,8 +14,8 @@ Enhanced entry point that demonstrates the complete GhostLink system:
 
 import asyncio
 import json
-import time
 from pathlib import Path
+import time
 
 from ghostlink.core.ai_providers import ai_manager
 from ghostlink.core.api_integration import api_integration

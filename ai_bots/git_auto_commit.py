@@ -3,10 +3,10 @@
 Auto-commit wrapper for git operations
 Automatically commits changes after every action
 """
-import os
-import subprocess
 from datetime import datetime
+import os
 from pathlib import Path
+import subprocess
 from typing import Optional
 
 

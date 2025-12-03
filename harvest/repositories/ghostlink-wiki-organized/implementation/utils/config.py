@@ -4,9 +4,9 @@ import os
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-import yaml
 from dotenv import load_dotenv
 from loguru import logger
+import yaml
 
 # Load environment variables
 load_dotenv()

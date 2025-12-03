@@ -10,11 +10,10 @@ It shows:
 4. Permission-based access control
 """
 
-import uvicorn
-from ghostlink.main import app, set_db
-from ghostlink.database import Database, ApiKey
 from fastapi.testclient import TestClient
-import json
+
+from ghostlink.database import Database
+from ghostlink.main import app, set_db
 
 
 def main():
@@ -64,7 +63,7 @@ def main():
         keys.append(("ADMIN", admin_key))
         print(f"   ✓ Admin key: {admin_key['key'][:20]}...")
     
-    print(f"\n2. 🔍 Validating API Keys...")
+    print("\n2. 🔍 Validating API Keys...")
     for key_type, key_data in keys:
         response = client.get("/api_keys/validate", headers={"X-API-Key": key_data["key"]})
         if response.status_code == 200:
@@ -72,7 +71,7 @@ def main():
         else:
             print(f"   ✗ {key_type} key invalid")
     
-    print(f"\n3. 🚪 Testing Endpoint Access...")
+    print("\n3. 🚪 Testing Endpoint Access...")
     
     # Test without API key (should work for most endpoints)
     response = client.get("/items")
@@ -87,7 +86,7 @@ def main():
     response = client.get("/external_api/data", headers={"X-API-Key": read_key_data["key"]})
     print(f"   External API with read key: {'✓ Allowed' if response.status_code == 200 else '✗ Blocked'}")
     
-    print(f"\n4. 📊 Creating Test Data with API Keys...")
+    print("\n4. 📊 Creating Test Data with API Keys...")
     
     # Create items with different API keys
     write_key_data = keys[1][1]
@@ -102,7 +101,7 @@ def main():
         item_data = response.json()
         print(f"   Create item with API key: ✓ (created_by: {item_data.get('created_by', 'N/A')})")
     
-    print(f"\n5. 🔒 Testing Permission Levels...")
+    print("\n5. 🔒 Testing Permission Levels...")
     
     # Get data with different permission levels
     for key_type, key_data in keys:
@@ -112,24 +111,24 @@ def main():
             items_returned = len(data.get('data', []))
             print(f"   {key_type} user sees {items_returned} items")
     
-    print(f"\n✅ API Key Demo Complete!")
-    print(f"\n📋 Summary:")
+    print("\n✅ API Key Demo Complete!")
+    print("\n📋 Summary:")
     print(f"   • Created {len(keys)} API keys with different permission levels")
-    print(f"   • Demonstrated permission-based access control")
-    print(f"   • Showed API key validation and authentication")
-    print(f"   • Tested both public and protected endpoints")
+    print("   • Demonstrated permission-based access control")
+    print("   • Showed API key validation and authentication")
+    print("   • Tested both public and protected endpoints")
     
-    print(f"\n🔗 Available Endpoints:")
-    print(f"   POST /api_keys           - Create API keys")
-    print(f"   GET  /api_keys/validate  - Validate API keys")
-    print(f"   GET  /external_api/data  - Protected endpoint (requires API key)")
-    print(f"   POST /items              - Create items (optional API key)")
-    print(f"   GET  /items              - List items (optional API key)")
-    print(f"   POST /reasoning/         - Process text (optional API key)")
-    print(f"   POST /ipfs/store         - Store data (optional API key)")
-    print(f"   GET  /ipfs/{{hash}}        - Retrieve data (optional API key)")
+    print("\n🔗 Available Endpoints:")
+    print("   POST /api_keys           - Create API keys")
+    print("   GET  /api_keys/validate  - Validate API keys")
+    print("   GET  /external_api/data  - Protected endpoint (requires API key)")
+    print("   POST /items              - Create items (optional API key)")
+    print("   GET  /items              - List items (optional API key)")
+    print("   POST /reasoning/         - Process text (optional API key)")
+    print("   POST /ipfs/store         - Store data (optional API key)")
+    print("   GET  /ipfs/{hash}        - Retrieve data (optional API key)")
     
-    print(f"\n🌐 To start the server: uvicorn ghostlink.main:app --reload")
+    print("\n🌐 To start the server: uvicorn ghostlink.main:app --reload")
 
 
 if __name__ == "__main__":

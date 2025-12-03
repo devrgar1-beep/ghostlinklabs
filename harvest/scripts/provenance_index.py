@@ -3,10 +3,10 @@
 
 Search roots (configurable) for files and record term hits with context.
 """
-import os
 import json
-import re
+import os
 from pathlib import Path
+import re
 
 ROOTS = [
     "/Users/ghostlink/ghostlink-wiki-organized",
@@ -32,6 +32,7 @@ out = {
 }
 
 import datetime
+
 out['generated_at'] = datetime.datetime.utcnow().isoformat() + 'Z'
 
 term_regex = re.compile('|'.join(TERMS))
@@ -39,7 +40,7 @@ term_regex = re.compile('|'.join(TERMS))
 for root in ROOTS:
     if not os.path.exists(root):
         continue
-    for dirpath, dirnames, filenames in os.walk(root):
+    for dirpath, _dirnames, filenames in os.walk(root):
         # skip hidden dirs
         if any(part.startswith('.') for part in Path(dirpath).parts):
             continue
@@ -49,7 +50,7 @@ for root in ROOTS:
                 continue
             path = os.path.join(dirpath, fn)
             try:
-                with open(path, 'r', encoding='utf-8', errors='ignore') as f:
+                with open(path, encoding='utf-8', errors='ignore') as f:
                     for i, line in enumerate(f, start=1):
                         if term_regex.search(line):
                             snippet = line.strip()
@@ -58,7 +59,7 @@ for root in ROOTS:
                                 'line': i,
                                 'snippet': snippet
                             })
-            except Exception as e:
+            except Exception:
                 # skip unreadable files
                 continue
 

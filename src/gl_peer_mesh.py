@@ -9,7 +9,6 @@ import os
 import socket
 import threading
 import time
-from collections import defaultdict
 from typing import Any
 
 # Network configuration
@@ -25,7 +24,7 @@ _NEIGHBORS_FILE = os.getenv("NEIGHBORS_FILE", "").strip()
 def _load_neighbors_from_file(path: str) -> list[str]:
     out: list[str] = []
     try:
-        with open(path, "r") as f:
+        with open(path) as f:
             for line in f:
                 s = line.strip()
                 if not s or s.startswith("#"):  # comments
@@ -108,7 +107,7 @@ class PeerMesh:
 
                 sock.close()
 
-            except Exception as e:
+            except Exception:
                 pass
 
         return discovered
@@ -194,7 +193,7 @@ class PeerMesh:
 
                 return response
 
-        except Exception as e:
+        except Exception:
             peer.active = False
 
         return None
@@ -270,7 +269,7 @@ class PeerMesh:
             vals = []
             for path in glob.glob("/sys/class/thermal/thermal_zone*/temp"):
                 try:
-                    with open(path, "r") as f:
+                    with open(path) as f:
                         val = int(f.read().strip())
                         vals.append(val / 1000.0)
                 except Exception:

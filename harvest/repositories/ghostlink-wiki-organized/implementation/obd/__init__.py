@@ -7,12 +7,12 @@ automotive diagnostics using substrate computing.
 from __future__ import annotations
 
 import asyncio
-import hashlib
-import logging
-import time
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime
+import hashlib
+import logging
+import time
 from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
@@ -24,11 +24,11 @@ class ComponentSpec:
 
     name: str
     purpose: str
-    inputs: List[str]
-    outputs: List[str]
-    invariants: List[str]
-    critical_threshold: Optional[float] = None
-    warning_threshold: Optional[float] = None
+    inputs: list[str]
+    outputs: list[str]
+    invariants: list[str]
+    critical_threshold: float | None = None
+    warning_threshold: float | None = None
 
 
 @dataclass
@@ -36,8 +36,8 @@ class SCARState:
     """Self-Correcting Adaptive Recovery state for learning failure patterns."""
 
     input_hash: str
-    failure_trace: List[str]
-    recovery_path: List[str]
+    failure_trace: list[str]
+    recovery_path: list[str]
     weight: float = 1.0
     timestamp: float = field(default_factory=lambda: datetime.now().timestamp())
     occurrences: int = 1
@@ -69,7 +69,7 @@ class SemanticInterpreter:
             "diagnose": lambda state: {**state, "diagnosed": True},
         }
 
-    def interpret(self, spec: ComponentSpec, state: Dict[str, Any]) -> Dict[str, Any]:
+    def interpret(self, spec: ComponentSpec, state: dict[str, Any]) -> dict[str, Any]:
         """Interpret component specification and update state."""
         for word in spec.purpose.lower().split():
             if word in self.lexicon:
@@ -82,10 +82,10 @@ class SubstrateEngine:
 
     def __init__(self):
         self.interpreter = SemanticInterpreter()
-        self.scar_memory: Dict[str, SCARState] = {}
-        self.sensor_history: Dict[str, List[float]] = defaultdict(list)
-        self.component_specs: Dict[str, ComponentSpec] = {}
-        self.active_predictions: Dict[str, Dict[str, Any]] = {}
+        self.scar_memory: dict[str, SCARState] = {}
+        self.sensor_history: dict[str, list[float]] = defaultdict(list)
+        self.component_specs: dict[str, ComponentSpec] = {}
+        self.active_predictions: dict[str, dict[str, Any]] = {}
 
     def register_component(self, spec: ComponentSpec) -> None:
         """Register a component specification."""
@@ -93,8 +93,8 @@ class SubstrateEngine:
         logger.info(f"Registered component: {spec.name}")
 
     def process_sensor_data(
-        self, sensor: str, value: float, timestamp: Optional[float] = None
-    ) -> Dict[str, Any]:
+        self, sensor: str, value: float, timestamp: float | None = None
+    ) -> dict[str, Any]:
         """Process sensor data through substrate computing."""
         if timestamp is None:
             timestamp = datetime.now().timestamp()
@@ -153,7 +153,7 @@ class SubstrateEngine:
                     continue
         return float("inf")
 
-    def _analyze_patterns(self, sensor: str, value: float, timestamp: float) -> Dict[str, Any]:
+    def _analyze_patterns(self, sensor: str, value: float, timestamp: float) -> dict[str, Any]:
         """Analyze sensor patterns for anomalies and predictions."""
         analysis = {}
 
@@ -184,7 +184,7 @@ class SubstrateEngine:
         return analysis
 
     def record_failure(
-        self, sensor: str, failure_description: str, recovery_actions: List[str]
+        self, sensor: str, failure_description: str, recovery_actions: list[str]
     ) -> None:
         """Record a failure pattern in SCAR memory."""
         state_data = {
@@ -204,7 +204,7 @@ class SubstrateEngine:
         self.scar_memory[pattern_hash] = scar_state
         logger.info(f"Recorded SCAR pattern for {sensor}: {failure_description}")
 
-    def get_scar_memory(self) -> Dict[str, Dict[str, Any]]:
+    def get_scar_memory(self) -> dict[str, dict[str, Any]]:
         """Get SCAR memory for inspection."""
         return {
             hash_key: {
@@ -225,7 +225,7 @@ class OBDInterface:
         self.substrate = substrate_engine
         self.connected = False
         self.device_info = {}
-        self.active_sensors: Dict[str, ComponentSpec] = {}
+        self.active_sensors: dict[str, ComponentSpec] = {}
 
     async def connect(self, device: str = "autel_ms906s") -> bool:
         """Connect to OBD-II device."""
@@ -255,7 +255,7 @@ class OBDInterface:
         self.device_info = {}
         logger.info("Disconnected from OBD-II device")
 
-    async def read_sensor(self, sensor: str) -> Optional[float]:
+    async def read_sensor(self, sensor: str) -> float | None:
         """Read sensor value from OBD-II device."""
         if not self.connected:
             return None
@@ -272,7 +272,7 @@ class OBDInterface:
             logger.error(f"Failed to read sensor {sensor}: {e}")
             return None
 
-    async def monitor_vehicle(self, duration_seconds: int = 60) -> Dict[str, List[Dict[str, Any]]]:
+    async def monitor_vehicle(self, duration_seconds: int = 60) -> dict[str, list[dict[str, Any]]]:
         """Monitor vehicle sensors for the specified duration."""
         if not self.connected:
             raise RuntimeError("Not connected to OBD-II device")
@@ -283,7 +283,7 @@ class OBDInterface:
         logger.info(f"Starting vehicle monitoring for {duration_seconds} seconds...")
 
         while time.time() - start_time < duration_seconds:
-            for sensor_name, spec in self.active_sensors.items():
+            for sensor_name, _spec in self.active_sensors.items():
                 value = await self.read_sensor(sensor_name)
                 if value is not None:
                     result = self.substrate.process_sensor_data(sensor_name, value)
@@ -364,7 +364,7 @@ def create_obd_interface() -> OBDInterface:
 
 async def main():
     """Pure pipeline orchestration matrix for OBD-II operations."""
-    engine = create_substrate_engine()
+    create_substrate_engine()
 
     # Pipeline orchestration: continuous sensor monitoring and processing
     logger.info("Starting OBD-II pipeline orchestration matrix...")

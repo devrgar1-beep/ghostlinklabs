@@ -5,18 +5,15 @@ Intelligent Model Refinement for Small and Big Model Optimization
 """
 
 import asyncio
-import json
-import os
-import sys
-import threading
-import time
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from datetime import datetime
-from pathlib import Path
-from typing import Dict, List, Any, Optional, Callable, Set, Tuple
-from concurrent.futures import ThreadPoolExecutor
 from enum import Enum
-import gc
+import json
+from pathlib import Path
+import sys
+import time
+from typing import Any, Dict, List, Optional, Set
 
 # Optional imports for enhanced capabilities
 try:
@@ -915,7 +912,7 @@ async def main():
             "efficiency_score": 1.0
         }
 
-        model_state = engine.register_model(model_id, model_path, initial_metrics)
+        engine.register_model(model_id, model_path, initial_metrics)
         print(f"✅ Registered model {model_id}")
         print(json.dumps(engine.get_model_status(model_id), indent=2))
 
