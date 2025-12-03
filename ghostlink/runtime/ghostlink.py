@@ -82,9 +82,7 @@ def gather_events(kernel: dict[str, Any]) -> dict[str, Any]:
 def gather_integrity(kernel: dict[str, Any]) -> dict[str, Any]:
     manifest = kernel["integrity"].get("manifest", {})
     return {
-        "manifest": {
-            "files": [dict(entry) for entry in manifest.get("files", [])]
-        },
+        "manifest": {"files": [dict(entry) for entry in manifest.get("files", [])]},
         "policy": dict(kernel["integrity"].get("policy", {})),
     }
 
@@ -163,7 +161,10 @@ def _render_section(section: str, data: Any) -> str:
         return NEWLINE.join(f"{label:<{width}} : {value}" for label, value in pairs)
     if section == "sovereignty":
         deny = ", ".join(data.get("denylist", [])) or "<none>"
-        caps = [f"- {entry['cap']} (default={str(entry['default']).lower()})" for entry in data.get("capabilities", [])]
+        caps = [
+            f"- {entry['cap']} (default={str(entry['default']).lower()})"
+            for entry in data.get("capabilities", [])
+        ]
         block = ["Denylist: " + deny, "Capabilities:"] + caps
         return NEWLINE.join(block)
     if section == "agents":
@@ -208,10 +209,14 @@ def _render_section(section: str, data: Any) -> str:
         lines = []
         for shard in data:
             variants = ", ".join(shard["variants"])
-            lines.append(f"{shard['id']} {shard['name']} — {shard['purpose']} (variants: {variants})")
+            lines.append(
+                f"{shard['id']} {shard['name']} — {shard['purpose']} (variants: {variants})"
+            )
         return NEWLINE.join(lines)
     if section == "mirrors":
-        return NEWLINE.join(f"{mirror['id']} {mirror['name']} — {mirror['domain']}" for mirror in data)
+        return NEWLINE.join(
+            f"{mirror['id']} {mirror['name']} — {mirror['domain']}" for mirror in data
+        )
     if section == "ui_layers":
         return NEWLINE.join(f"- {layer}" for layer in data)
     if section == "ui_drivers":
@@ -229,7 +234,7 @@ def _render_section(section: str, data: Any) -> str:
     if section == "function_register":
         lines = []
         for category, entries in data.items():
-            lines.append(f"[{category}]" )
+            lines.append(f"[{category}]")
             lines.extend(f"- {entry}" for entry in entries)
             lines.append("")
         return NEWLINE.join(lines).strip()

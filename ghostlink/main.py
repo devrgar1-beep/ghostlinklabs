@@ -1,16 +1,14 @@
-import json
 import datetime
+import json
 from typing import Optional
-from fastapi import FastAPI, HTTPException, Request, Depends
+
+from fastapi import Depends, FastAPI, HTTPException, Request
 from pydantic import BaseModel
 
-from .storage import MockIPFS
-from .reasoning import process_metaphors
-from .database import Database, ApiKey
 from .auth import get_api_key_from_request
-from .config import config
-from .automation import policy
-from .net import backbone
+from .database import ApiKey, Database
+from .reasoning import process_metaphors
+from .storage import MockIPFS
 
 app = FastAPI(title="GhostLink")
 
@@ -62,6 +60,17 @@ class ApiKeyResponse(BaseModel):
     expires_at: Optional[datetime.datetime]
 
 
+# Basic health check
+@app.get("/health")
+def health() -> dict:
+    """Health endpoint for container orchestration."""
+    return {
+        "status": "healthy",
+        "timestamp": datetime.datetime.utcnow().isoformat(),
+        "items_count": len(items)
+    }
+
+
 # API Key Management Endpoints
 @app.post("/api_keys", response_model=ApiKeyResponse)
 def create_api_key(api_key_data: ApiKeyCreate, db: Database = Depends(get_db)) -> ApiKeyResponse:
@@ -69,7 +78,7 @@ def create_api_key(api_key_data: ApiKeyCreate, db: Database = Depends(get_db)) -
     created_key = db.create_api_key(
         user_id=api_key_data.user_id,
         permissions=api_key_data.permissions,
-        expires_at=api_key_data.expires_at
+        expires_at=api_key_data.expires_at,
     )
     return ApiKeyResponse(
         id=created_key.id,
@@ -77,7 +86,7 @@ def create_api_key(api_key_data: ApiKeyCreate, db: Database = Depends(get_db)) -
         user_id=created_key.user_id,
         permissions=created_key.permissions,
         created_at=created_key.created_at,
-        expires_at=created_key.expires_at
+        expires_at=created_key.expires_at,
     )
 
 
@@ -96,62 +105,14 @@ def validate_api_key(request: Request, db: Database = Depends(get_db)) -> dict:
         "valid": True,
         "user_id": validated_key.user_id,
         "permissions": validated_key.permissions,
-        "expires_at": validated_key.expires_at
-    }
-
-
-@app.get("/status")
-def get_status() -> dict:
-    """Get system status and configuration settings."""
-    bb = backbone.get_backbone()
-    return {
-        "service": "GhostLink",
-        "status": "running",
-        "automation": {
-            "automate_all": policy.automate_all(),
-            "auto_approve": policy.auto_approve(),
-            "experimental_mode": policy.experimental_level(),
-            "experimental_enabled": policy.experimental_enabled(),
-        },
-        "backbone": {
-            "class": bb.backbone_class.value,
-            "primary_interface": bb.primary_iface,
-            "linked_servers": len(bb.servers),
-        },
-        "config": {
-            "debug": config.DEBUG,
-            "database_url": config.DATABASE_URL.split("///")[-1] if "///" in config.DATABASE_URL else "configured",
-        },
-    }
-
-
-@app.get("/backbone")
-def get_backbone_info() -> dict:
-    """Get backbone network topology and linked servers."""
-    bb = backbone.get_backbone()
-    return bb.get_topology()
-
-
-@app.post("/backbone/link")
-def link_to_backbone() -> dict:
-    """Link this server to the backbone network."""
-    result = backbone.link_local_server(api_port=8000)
-    return result
-
-
-@app.get("/backbone/discover")
-def discover_peers() -> dict:
-    """Discover other GhostLink nodes on the backbone."""
-    bb = backbone.get_backbone()
-    peers = bb.discover_peers(port=8000)
-    return {
-        "discovered": len(peers),
-        "peers": peers,
+        "expires_at": validated_key.expires_at,
     }
 
 
 # Helper functions for authentication
-def validate_optional_api_key(request: Request, db: Database, permission: str = "read") -> Optional[ApiKey]:
+def validate_optional_api_key(
+    request: Request, db: Database, permission: str = "read"
+) -> Optional[ApiKey]:
     """Helper to validate optional API key."""
     api_key = get_api_key_from_request(request)
     if api_key:
@@ -243,5 +204,9 @@ def external_api_data(request: Request, db: Database = Depends(get_db)) -> dict:
         "user_id": api_key.user_id,
         "permissions": api_key.permissions,
         "items_count": len(items),
-        "data": items if api_key.has_permission("admin") else [item for item in items if not item.get("sensitive", False)]
+        "data": (
+            items
+            if api_key.has_permission("admin")
+            else [item for item in items if not item.get("sensitive", False)]
+        ),
     }

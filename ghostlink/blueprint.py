@@ -4,20 +4,6 @@ from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
-import sys
-
-
-def dataclass_slots(*dargs, **dkwargs):
-    """Compatibility wrapper around dataclass that supports slots when available.
-
-    For Python 3.10+ dataclass supports the slots parameter. For older versions,
-    we simply remove the slots kwarg to remain compatible.
-    """
-    if sys.version_info < (3, 10) and "slots" in dkwargs:
-        dkwargs.pop("slots")
-    return dataclass(*dargs, **dkwargs)
-
-
 from typing import Any, TypedDict, cast
 
 __all__ = [
@@ -46,7 +32,7 @@ class ComponentDict(TypedDict):
 ComponentFactory = Callable[[], "ComponentDict"]
 
 
-@dataclass_slots(slots=True)
+@dataclass(slots=True)
 class ComponentValidationError(ValueError):
     """Raised when a component dictionary fails validation."""
 

@@ -1,7 +1,6 @@
 import re
 from typing import Dict
 
-
 METAPHOR_MAP: Dict[str, str] = {
     "life": "journey",
     "love": "light",

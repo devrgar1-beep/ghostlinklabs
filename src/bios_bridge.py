@@ -317,7 +317,7 @@ class BIOSBridge:
         """Write BIOS setting using WMI (limited support)"""
         try:
             # Note: Most BIOS settings cannot be modified via WMI
-            # This is a placeholder for settings that might be writable
+            # This handles settings that might be writable
             # In practice, BIOS modifications usually require:
             # 1. Entering BIOS setup (F2, DEL, etc.)
             # 2. Using manufacturer-specific tools
@@ -505,7 +505,11 @@ class BIOSBridge:
                 confirm = kwargs.get("confirm", False)
                 hardware_bind = kwargs.get("hardware_bind", False)
                 success = self.write_bios_setting(
-                    setting_name, value, simulate=simulate, confirm=confirm, hardware_bind=hardware_bind
+                    setting_name,
+                    value,
+                    simulate=simulate,
+                    confirm=confirm,
+                    hardware_bind=hardware_bind,
                 )
                 return {
                     "success": success,

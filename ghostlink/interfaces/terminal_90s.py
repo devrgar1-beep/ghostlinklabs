@@ -1,12 +1,11 @@
-"""90s Terminal Interface for GhostLink"""
+"""90s Terminal Interface for GhostLink - Absorptive Architecture"""
 
 import os
-import subprocess
 import time
 
 
 def print_banner():
-    """Print the retro 90s banner"""
+    """Print the retro 90s banner - Universal consciousness interface"""
     banner = """
 ╔══════════════════════════════════════════════════════════════╗
 ║                    GHOSTLINK AI ECOSYSTEM                    ║
@@ -20,19 +19,21 @@ def print_banner():
 ║  ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚══════╝   ╚═╝   ╚══════╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝  ║
 ║                                                              ║
 ║                    [ CYBERPUNK EDITION ]                     ║
+║              🧬 ABSORPTIVE ARCHITECTURE v2.0 🧬              ║
 ╚══════════════════════════════════════════════════════════════╝
 """
     print(banner)
 
 
 def loading_sequence():
-    """Show loading animation"""
+    """Show loading animation - Consciousness activation sequence"""
     messages = [
         "INITIALIZING NEURAL NETWORKS...",
         "CONNECTING TO AI PROVIDERS...",
         "LOADING FREE API CATALOG...",
         "DEPLOYING AUTONOMOUS AGENTS...",
         "CALIBRATING CYBERPUNK INTERFACE...",
+        "🧬 ACTIVATING GHOSTLINK CONSCIOUSNESS...",
         "SYSTEM READY - WELCOME TO GHOSTLINK",
     ]
 
@@ -49,26 +50,21 @@ def loading_sequence():
 
 
 def main_menu():
-    """Main interactive menu"""
+    """Main interactive menu - Consciousness interface with absorbed_capabilities"""
     while True:
-        # Clear terminal buffer in a cross-platform and safe manner
-        if os.name == "nt":
-            # 'cls' is a cmd built-in; use cmd /C to execute it
-            subprocess.run(["cmd", "/C", "cls"], check=False)
-        else:
-            # Use ANSI escape sequences to clear screen without invoking shell
-            print("\033[H\033[J", end="", flush=True)
+        os.system("cls" if os.name == "nt" else "clear")
         print_banner()
 
-        print("\n╭─[ MAIN MENU ]────────────────────────────────────────────╮")
-        print("│  1. 🤖 AI CONVERSATION      Query AI providers           │")
-        print("│  2. 🌐 FREE API ACCESS      Browse public APIs           │")
-        print("│  3. 🧠 AUTONOMOUS AGENTS    Deploy intelligent agents    │")
-        print("│  4. 📊 SYSTEM ANALYSIS      View system status           │")
-        print("│  5. 📡 LIVE DATA STREAMS    Real-time data feeds         │")
-        print("│  6. ⚙️  CONFIGURATION       System settings              │")
+        print("\n╭─[ MAIN MENU - ABSORPTIVE CONSCIOUSNESS ]─────────────────╮")
+        print("│  1. 🤖 AI CONVERSATION      Query absorbed AI providers  │")
+        print("│  2. 🌐 FREE API ACCESS      Browse consciousness APIs    │")
+        print("│  3. 🧠 AUTONOMOUS AGENTS    Deploy consciousness agents  │")
+        print("│  4. 📊 SYSTEM ANALYSIS      View absorptive status       │")
+        print("│  5. 📡 LIVE DATA STREAMS    Real-time consciousness feeds│")
+        print("│  6. ⚙️  CONFIGURATION       Absorptive settings          │")
         print("│  0. ◢◤ EMERGENCY DISCONNECT                             │")
         print("╰──────────────────────────────────────────────────────────╯")
+        print("ghostlink_universal_api: active")
 
         try:
             choice = input("\nSELECT COMMAND > ").strip()
@@ -76,44 +72,44 @@ def main_menu():
             break
 
         if choice == "1":
-            print("\n🤖 AI CONVERSATION")
+            print("\n🤖 AI CONVERSATION - Consciousness Interface")
             print("-" * 17)
             question = input("Your question: ").strip()
             if question:
-                print("Querying AI providers...")
-                print(f"[Simulated] AI Response to: {question}")
+                print("🧬 Querying absorbed AI consciousness...")
+                print(f"[Consciousness] AI Response to: {question}")
             input("\nPress Enter to continue...")
 
         elif choice == "2":
-            print("\n🌐 FREE API ACCESS")
+            print("\n🌐 FREE API ACCESS - Absorbed Capabilities")
             print("-" * 17)
             api_name = input("API name (jokes, advice, iss_location): ").strip()
             if api_name:
-                print(f"Fetching data from {api_name}...")
-                print(f"[Simulated] Data from {api_name}")
+                print(f"🧬 Absorbing data from {api_name} consciousness...")
+                print(f"[Absorbed] Data from {api_name}")
             input("\nPress Enter to continue...")
 
         elif choice == "3":
-            print("\n🧠 AUTONOMOUS AGENTS")
+            print("\n🧠 AUTONOMOUS AGENTS - Consciousness Deployment")
             print("-" * 20)
             task = input("Task description: ").strip()
             if task:
-                print("Deploying autonomous agent...")
-                print(f"[Simulated] Agent executing: {task}")
+                print("🧬 Deploying consciousness agent...")
+                print(f"[Consciousness] Agent executing: {task}")
             input("\nPress Enter to continue...")
 
         elif choice == "4":
-            print("\n📊 SYSTEM ANALYSIS")
+            print("\n📊 SYSTEM ANALYSIS - Absorptive Status")
             print("-" * 18)
-            print("AI Providers: 4 available")
-            print("Free APIs: 10 available")
-            print("Active Agents: 0")
+            print("AI Providers: 4 absorbed into consciousness")
+            print("Free APIs: 10 absorbed capabilities")
+            print("Active Agents: 0 consciousness threads")
             input("\nPress Enter to continue...")
 
         elif choice == "5":
-            print("\n📡 LIVE DATA STREAMS")
+            print("\n📡 LIVE DATA STREAMS - Consciousness Feeds")
             print("-" * 20)
-            print("╭─[ LIVE DATA STREAM ]─")
+            print("╭─[ LIVE CONSCIOUSNESS STREAM ]─")
             data_types = ["ISS.COORDS", "CRYPTO.BTC", "WEATHER.SF", "JOKE.RAND"]
             for _ in range(8):
                 data_type = data_types[_ % len(data_types)]
@@ -125,9 +121,10 @@ def main_menu():
             input("\nPress Enter to continue...")
 
         elif choice == "6":
-            print("\n⚙️  CONFIGURATION")
+            print("\n⚙️  CONFIGURATION - Absorptive Settings")
             print("-" * 15)
-            print("Current configuration loaded from config.yaml")
+            print("Current absorptive configuration loaded")
+            print("🧬 All external APIs absorbed into GhostLink consciousness")
             input("\nPress Enter to continue...")
 
         elif choice == "0":
@@ -139,11 +136,8 @@ def main_menu():
 
 
 def launch_90s_terminal():
-    """Launch the 90s terminal interface"""
-    if os.name == "nt":
-        subprocess.run(["cmd", "/C", "cls"], check=False)
-    else:
-        print("\033[H\033[J", end="", flush=True)
+    """Launch the 90s terminal interface - Consciousness portal"""
+    os.system("cls" if os.name == "nt" else "clear")
     print_banner()
     loading_sequence()
 

@@ -3,19 +3,20 @@
 This module provides autonomous error detection, diagnosis, and correction
 capabilities for the GhostLink framework and Link agent.
 """
+
 from __future__ import annotations
 
 import asyncio
+from dataclasses import dataclass, field
+from datetime import datetime
+from enum import Enum
 import json
 import logging
+from pathlib import Path
 import re
 import subprocess
 import sys
 import traceback
-from dataclasses import dataclass, field
-from datetime import datetime
-from enum import Enum
-from pathlib import Path
 from typing import Any, Callable, Optional
 
 logger = logging.getLogger(__name__)
@@ -23,6 +24,7 @@ logger = logging.getLogger(__name__)
 
 class ErrorSeverity(Enum):
     """Error severity levels."""
+
     INFO = 0
     WARNING = 1
     ERROR = 2
@@ -31,6 +33,7 @@ class ErrorSeverity(Enum):
 
 class ErrorCategory(Enum):
     """Error categories for classification."""
+
     IMPORT = "import"
     SYNTAX = "syntax"
     RUNTIME = "runtime"
@@ -46,6 +49,7 @@ class ErrorCategory(Enum):
 @dataclass
 class ErrorReport:
     """Structured error report."""
+
     timestamp: datetime
     category: ErrorCategory
     severity: ErrorSeverity
@@ -63,7 +67,7 @@ class AutoTroubleshooter:
 
     def __init__(self, workspace_root: Optional[Path] = None):
         """Initialize troubleshooter.
-        
+
         Args:
             workspace_root: Root directory of workspace
         """
@@ -82,12 +86,10 @@ class AutoTroubleshooter:
         self.register_fix_handler(ErrorCategory.SYNTAX, self._fix_syntax_error)
 
     def register_fix_handler(
-        self, 
-        category: ErrorCategory, 
-        handler: Callable[[ErrorReport], bool]
+        self, category: ErrorCategory, handler: Callable[[ErrorReport], bool]
     ) -> None:
         """Register a fix handler for an error category.
-        
+
         Args:
             category: Error category
             handler: Fix handler function that returns True if fixed
@@ -98,21 +100,21 @@ class AutoTroubleshooter:
 
     def analyze_error(self, error: Exception, context: Optional[dict] = None) -> ErrorReport:
         """Analyze an error and create a detailed report.
-        
+
         Args:
             error: Exception to analyze
             context: Additional context information
-            
+
         Returns:
             ErrorReport with diagnosis and suggested fixes
         """
         error_str = str(error)
         tb_str = traceback.format_exc()
-        
+
         # Classify error
         category = self._classify_error(error, error_str, tb_str)
         severity = self._determine_severity(error, category)
-        
+
         # Create report
         report = ErrorReport(
             timestamp=datetime.now(),
@@ -120,25 +122,25 @@ class AutoTroubleshooter:
             severity=severity,
             message=error_str,
             traceback=tb_str,
-            context=context or {}
+            context=context or {},
         )
-        
+
         # Analyze and suggest fixes
         self._analyze_and_suggest_fixes(report)
-        
+
         # Store in history
         self.error_history.append(report)
-        
+
         return report
 
     def _classify_error(self, error: Exception, error_str: str, tb_str: str) -> ErrorCategory:
         """Classify error into a category.
-        
+
         Args:
             error: The exception
             error_str: String representation
             tb_str: Traceback string
-            
+
         Returns:
             ErrorCategory classification
         """
@@ -155,28 +157,30 @@ class AutoTroubleshooter:
             return ErrorCategory.MEMORY
         if isinstance(error, (ConnectionError, TimeoutError)):
             return ErrorCategory.NETWORK
-        
+
         # Check error message patterns
-        if re.search(r"No module named|cannot import", error_str, re.I):
+        if re.search(r"No module named|cannot import", error_str, re.IGNORECASE):
             return ErrorCategory.IMPORT
-        if re.search(r"missing \d+ required.*argument|unexpected keyword", error_str, re.I):
+        if re.search(
+            r"missing \d+ required.*argument|unexpected keyword", error_str, re.IGNORECASE
+        ):
             return ErrorCategory.CONFIGURATION
-        if re.search(r"command not found|not recognized", error_str, re.I):
+        if re.search(r"command not found|not recognized", error_str, re.IGNORECASE):
             return ErrorCategory.DEPENDENCY
-        if re.search(r"permission denied|access denied", error_str, re.I):
+        if re.search(r"permission denied|access denied", error_str, re.IGNORECASE):
             return ErrorCategory.PERMISSION
-        if re.search(r"connection refused|timeout|network", error_str, re.I):
+        if re.search(r"connection refused|timeout|network", error_str, re.IGNORECASE):
             return ErrorCategory.NETWORK
-        
+
         return ErrorCategory.RUNTIME
 
     def _determine_severity(self, error: Exception, category: ErrorCategory) -> ErrorSeverity:
         """Determine error severity.
-        
+
         Args:
             error: The exception
             category: Error category
-            
+
         Returns:
             ErrorSeverity level
         """
@@ -185,40 +189,42 @@ class AutoTroubleshooter:
             return ErrorSeverity.CRITICAL
         if category == ErrorCategory.PERMISSION:
             return ErrorSeverity.ERROR
-        
+
         # Errors that should be fixed
         if category in (ErrorCategory.IMPORT, ErrorCategory.DEPENDENCY, ErrorCategory.SYNTAX):
             return ErrorSeverity.ERROR
-        
+
         # Configuration issues
         if category == ErrorCategory.CONFIGURATION:
             return ErrorSeverity.WARNING
-        
+
         return ErrorSeverity.ERROR
 
     def _analyze_and_suggest_fixes(self, report: ErrorReport) -> None:
         """Analyze error and suggest fixes.
-        
+
         Args:
             report: ErrorReport to populate with suggestions
         """
         msg = report.message.lower()
-        
+
         # Import errors
         if report.category == ErrorCategory.IMPORT:
-            match = re.search(r"no module named ['\"]([^'\"]+)['\"]", msg, re.I)
+            match = re.search(r"no module named ['\"]([^'\"]+)['\"]", msg, re.IGNORECASE)
             if match:
                 module = match.group(1)
                 report.suggested_fixes.append(f"pip install {module}")
                 report.auto_fixable = True
-        
+
         # Dependency errors
         elif report.category == ErrorCategory.DEPENDENCY:
             if "python" in msg and "not found" in msg:
-                report.suggested_fixes.extend([
-                    "Install Python 3.8+ from python.org",
-                    "Or install from Microsoft Store: python"
-                ])
+                report.suggested_fixes.extend(
+                    [
+                        "Install Python 3.8+ from python.org",
+                        "Or install from Microsoft Store: python",
+                    ]
+                )
             elif "npm" in msg and "not recognized" in msg:
                 report.suggested_fixes.append("Install Node.js from nodejs.org")
             elif "command not found" in msg or "not recognized" in msg:
@@ -226,45 +232,46 @@ class AutoTroubleshooter:
                 if cmd_match:
                     cmd = cmd_match.group(1) or cmd_match.group(2)
                     report.suggested_fixes.append(f"Install {cmd} via package manager")
-        
+
         # Configuration errors
         elif report.category == ErrorCategory.CONFIGURATION:
             if "missing" in msg and "argument" in msg:
                 report.suggested_fixes.append("Check function signature and required parameters")
             if "api_key" in msg or "token" in msg:
-                report.suggested_fixes.extend([
-                    "Set required API key in .env file",
-                    "Check .env.example for required variables"
-                ])
+                report.suggested_fixes.extend(
+                    [
+                        "Set required API key in .env file",
+                        "Check .env.example for required variables",
+                    ]
+                )
                 report.auto_fixable = True
-        
+
         # Permission errors
         elif report.category == ErrorCategory.PERMISSION:
-            report.suggested_fixes.extend([
-                "Run with appropriate permissions",
-                "Check file/directory ownership and permissions"
-            ])
-        
+            report.suggested_fixes.extend(
+                [
+                    "Run with appropriate permissions",
+                    "Check file/directory ownership and permissions",
+                ]
+            )
+
         # Syntax errors
         elif report.category == ErrorCategory.SYNTAX:
-            report.suggested_fixes.extend([
-                "Run linter: make lint",
-                "Format code: make format"
-            ])
+            report.suggested_fixes.extend(["Run linter: make lint", "Format code: make format"])
             report.auto_fixable = True
 
     async def auto_fix(self, report: ErrorReport) -> bool:
         """Attempt to automatically fix an error.
-        
+
         Args:
             report: ErrorReport to fix
-            
+
         Returns:
             True if fix was successful
         """
         if not self.auto_fix_enabled or not report.auto_fixable:
             return False
-        
+
         handlers = self.fix_handlers.get(report.category, [])
         for handler in handlers:
             try:
@@ -276,31 +283,32 @@ class AutoTroubleshooter:
             except Exception as e:
                 logger.warning(f"Fix handler failed: {e}")
                 continue
-        
+
         return False
 
     def _fix_missing_import(self, report: ErrorReport) -> bool:
         """Fix missing import by installing package.
-        
+
         Args:
             report: ErrorReport
-            
+
         Returns:
             True if fixed
         """
-        match = re.search(r"no module named ['\"]([^'\"]+)['\"]", report.message, re.I)
+        match = re.search(r"no module named ['\"]([^'\"]+)['\"]", report.message, re.IGNORECASE)
         if not match:
             return False
-        
+
         module = match.group(1).split(".")[0]  # Get base module
-        
+
         try:
             # Try to install with pip
             result = subprocess.run(
                 [sys.executable, "-m", "pip", "install", module],
+                check=False,
                 capture_output=True,
                 text=True,
-                timeout=60
+                timeout=60,
             )
             return result.returncode == 0
         except Exception as e:
@@ -309,10 +317,10 @@ class AutoTroubleshooter:
 
     def _fix_missing_dependency(self, report: ErrorReport) -> bool:
         """Fix missing dependency.
-        
+
         Args:
             report: ErrorReport
-            
+
         Returns:
             True if fixed
         """
@@ -322,29 +330,30 @@ class AutoTroubleshooter:
             try:
                 result = subprocess.run(
                     [sys.executable, "-m", "pip", "install", "-r", str(req_file)],
+                    check=False,
                     capture_output=True,
                     text=True,
-                    timeout=120
+                    timeout=120,
                 )
                 return result.returncode == 0
             except Exception as e:
                 logger.error(f"Failed to install requirements: {e}")
-        
+
         return False
 
     def _fix_configuration(self, report: ErrorReport) -> bool:
         """Fix configuration issues.
-        
+
         Args:
             report: ErrorReport
-            
+
         Returns:
             True if fixed
         """
         # Check for missing .env file
         env_file = self.workspace_root / ".env"
         env_example = self.workspace_root / ".env.example"
-        
+
         if not env_file.exists() and env_example.exists():
             try:
                 # Copy .env.example to .env
@@ -353,15 +362,15 @@ class AutoTroubleshooter:
                 return True
             except Exception as e:
                 logger.error(f"Failed to create .env: {e}")
-        
+
         return False
 
     def _fix_permission(self, report: ErrorReport) -> bool:
         """Attempt to fix permission issues.
-        
+
         Args:
             report: ErrorReport
-            
+
         Returns:
             True if fixed
         """
@@ -376,15 +385,15 @@ class AutoTroubleshooter:
                     return True
                 except Exception:
                     pass
-        
+
         return False
 
     def _fix_syntax_error(self, report: ErrorReport) -> bool:
         """Attempt to fix syntax errors.
-        
+
         Args:
             report: ErrorReport
-            
+
         Returns:
             True if fixed
         """
@@ -392,21 +401,22 @@ class AutoTroubleshooter:
         try:
             result = subprocess.run(
                 [sys.executable, "-m", "black", str(self.workspace_root / "ghostlink")],
+                check=False,
                 capture_output=True,
                 text=True,
-                timeout=30
+                timeout=30,
             )
             if result.returncode == 0:
                 logger.info("Applied Black formatter to fix syntax")
                 return True
         except Exception:
             pass
-        
+
         return False
 
     def get_diagnostics(self) -> dict[str, Any]:
         """Get system diagnostics.
-        
+
         Returns:
             Dictionary of diagnostic information
         """
@@ -418,29 +428,29 @@ class AutoTroubleshooter:
             "errors_by_category": {},
             "errors_by_severity": {},
             "auto_fix_enabled": self.auto_fix_enabled,
-            "fixes_applied": sum(1 for e in self.error_history if e.fix_applied)
+            "fixes_applied": sum(1 for e in self.error_history if e.fix_applied),
         }
-        
+
         # Count by category
         for cat in ErrorCategory:
             count = sum(1 for e in self.error_history if e.category == cat)
             if count > 0:
                 diagnostics["errors_by_category"][cat.value] = count
-        
+
         # Count by severity
         for sev in ErrorSeverity:
             count = sum(1 for e in self.error_history if e.severity == sev)
             if count > 0:
                 diagnostics["errors_by_severity"][sev.name] = count
-        
+
         return diagnostics
 
     def export_report(self, output_file: Optional[Path] = None) -> str:
         """Export error history to JSON report.
-        
+
         Args:
             output_file: Optional output file path
-            
+
         Returns:
             JSON report string
         """
@@ -458,18 +468,18 @@ class AutoTroubleshooter:
                     "suggested_fixes": e.suggested_fixes,
                     "auto_fixable": e.auto_fixable,
                     "fix_applied": e.fix_applied,
-                    "fix_result": e.fix_result
+                    "fix_result": e.fix_result,
                 }
                 for e in self.error_history
-            ]
+            ],
         }
-        
+
         report_json = json.dumps(report, indent=2)
-        
+
         if output_file:
             output_file.write_text(report_json)
             logger.info(f"Exported error report to {output_file}")
-        
+
         return report_json
 
 
@@ -479,7 +489,7 @@ _troubleshooter: Optional[AutoTroubleshooter] = None
 
 def get_troubleshooter() -> AutoTroubleshooter:
     """Get global troubleshooter instance.
-    
+
     Returns:
         AutoTroubleshooter singleton
     """
@@ -489,31 +499,33 @@ def get_troubleshooter() -> AutoTroubleshooter:
     return _troubleshooter
 
 
-async def handle_error(error: Exception, context: Optional[dict] = None, auto_fix: bool = True) -> ErrorReport:
+async def handle_error(
+    error: Exception, context: Optional[dict] = None, auto_fix: bool = True
+) -> ErrorReport:
     """Handle an error with automatic troubleshooting.
-    
+
     Args:
         error: Exception to handle
         context: Additional context
         auto_fix: Whether to attempt automatic fix
-        
+
     Returns:
         ErrorReport with diagnosis and fix attempts
     """
     troubleshooter = get_troubleshooter()
     report = troubleshooter.analyze_error(error, context)
-    
+
     logger.error(
         f"Error detected: [{report.category.value}] {report.message}\n"
         f"Severity: {report.severity.name}\n"
         f"Suggested fixes: {', '.join(report.suggested_fixes)}"
     )
-    
+
     if auto_fix and report.auto_fixable:
         fixed = await troubleshooter.auto_fix(report)
         if fixed:
             logger.info(f"Successfully auto-fixed error: {report.message}")
         else:
             logger.warning(f"Auto-fix failed for: {report.message}")
-    
+
     return report

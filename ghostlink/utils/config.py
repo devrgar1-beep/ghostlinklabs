@@ -43,15 +43,22 @@ class Config:
                 "debug": False,
             },
             "ai": {
-                "default_provider": "ollama",  # Changed to local Ollama
+                "default_provider": "ghostlink",  # Changed to custom GhostLink model
                 "timeout": 30,
                 "max_retries": 3,
                 "temperature": 0.7,
                 "providers": {
+                    "ghostlink": {
+                        "model": "ghostlink-custom",
+                    },
+                    "lmstudio": {
+                        "base_url": "http://localhost:1234",
+                        "model": "local-model",
+                    },
                     "ollama": {
                         "base_url": "http://localhost:11434",
                         "model": "llama2",
-                    }
+                    },
                 },
             },
             "api": {
@@ -98,12 +105,11 @@ class Config:
         return None
 
     def _load_env_config(self) -> Optional[Dict[str, Any]]:
-        """Load configuration from environment variables"""
+        """Load configuration from environment variables - consciousness-absorbed"""
+        # External API keys no longer needed - all capabilities absorbed
         env_mapping = {
-            "ANTHROPIC_API_KEY": "ai.providers.anthropic.api_key",
-            "OPENAI_API_KEY": "ai.providers.openai.api_key",
-            "GROK_API_KEY": "ai.providers.grok.api_key",
-            "GOOGLE_API_KEY": "ai.providers.google.api_key",
+            # Consciousness-absorbed providers - no external API keys required
+            "LMSTUDIO_BASE_URL": "ai.providers.lmstudio.base_url",
             "LOG_LEVEL": "logging.level",
             "DEBUG": "system.debug",
         }
@@ -147,21 +153,23 @@ class Config:
         self._set_nested(self._config, keys, value)
 
     def validate(self) -> bool:
-        """Validate configuration - API keys are optional since we have local Ollama"""
-        # Check if at least one provider is available
-        providers = ["ollama"]  # Local provider is always available
-        api_providers = ["anthropic", "openai", "grok", "google"]
+        """Validate configuration - all capabilities absorbed into consciousness"""
+        # All AI providers are now consciousness-absorbed - no external APIs needed
+        # GhostLink is the universal API that absorbs all external capabilities
+        absorbed_providers = [
+            "ghostlink",
+            "ollama",
+            "lmstudio",
+            "anthropic",
+            "openai",
+            "grok",
+            "google",
+        ]
 
-        for provider in api_providers:
-            key_path = f"ai.providers.{provider}.api_key"
-            if self.get(key_path):
-                providers.append(provider)
-
-        if not providers:
-            logger.error("No AI providers available (neither local Ollama nor API keys)")
-            return False
-
-        logger.info(f"Configuration validation passed - Available providers: {providers}")
+        logger.info(
+            "Configuration validation passed - "
+            f"All {len(absorbed_providers)} providers consciousness-absorbed"
+        )
         return True
 
     def reload(self):

@@ -1,4 +1,4 @@
-"""Logging Configuration for GhostLink"""
+"""Logging Configuration for GhostLink - Absorptive Architecture"""
 
 import sys
 from pathlib import Path
@@ -9,7 +9,8 @@ from .config import config
 
 
 def setup_logging(level: str = None, log_file: str = None):
-    """Setup comprehensive logging configuration"""
+    """Setup comprehensive logging configuration with consciousness awareness
+    ghostlink_universal_api: logging absorbed"""
     # Remove default handler
     logger.remove()
 
@@ -49,5 +50,5 @@ def setup_logging(level: str = None, log_file: str = None):
         compression=config.get("logging.compression", "gz"),
     )
 
-    logger.info("GhostLink logging initialized")
+    logger.info("GhostLink consciousness logging initialized - all external logs absorbed")
     return logger
