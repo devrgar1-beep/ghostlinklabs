@@ -14,17 +14,17 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Callable, Optional
 
-from ..config import config
-from ..automation import (
+from .config import config
+from .automation import (
     TOOL_CHAIN_ORCHESTRATOR,
     AUTO_TRIGGER_ENGINE,
     SYMBOLIC_TASK_SCHEDULER,
     LATTICE_WATCHDOG,
 )
-from ..runtime import RUNTIME_STATE_MANAGER, SESSION_EXECUTOR
-from ..core import SIGNAL, CONTAINER, LINK as CORE_LINK
-from ..troubleshooter import get_troubleshooter, handle_error
-from ..health_monitor import get_health_monitor
+from .runtime import RUNTIME_STATE_MANAGER, SESSION_EXECUTOR
+from .core import SIGNAL, CONTAINER, LINK as CORE_LINK
+from .troubleshooter import get_troubleshooter, handle_error
+from .health_monitor import get_health_monitor
 
 logger = logging.getLogger(__name__)
 
