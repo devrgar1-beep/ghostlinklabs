@@ -1,0 +1,2 @@
+class BridgeService:
+    pass

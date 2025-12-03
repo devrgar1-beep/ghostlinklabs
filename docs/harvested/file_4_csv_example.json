@@ -1,0 +1,260 @@
+{
+  "workflow_name": "CSV Batch Processor",
+  "description": "Process multiple CSV files with validation and merge results",
+  "use_case": "Batch process customer data files, clean duplicates, merge into master file",
+  
+  "workflow_steps": [
+    {
+      "step": 1,
+      "agent_id": 1,
+      "agent_role": "Recursive",
+      "action": "Decompose the high-level task",
+      "input": "Process all CSV files in /data directory",
+      "output": {
+        "subtask_1": "Find all CSV files in directory",
+        "subtask_2": "For each file: read and parse",
+        "subtask_3": "For each file: clean and validate",
+        "subtask_4": "Collect all valid records",
+        "subtask_5": "Merge into single output file",
+        "subtask_6": "Generate processing report"
+      },
+      "why": "Agent 1 breaks complex task into manageable pieces"
+    },
+    {
+      "step": 2,
+      "agent_id": 13,
+      "agent_role": "Planner",
+      "action": "Create detailed execution plan",
+      "input": "Subtasks from step 1",
+      "output": {
+        "execution_order": [
+          {"order": 1, "task": "subtask_1", "parallel": false},
+          {"order": 2, "task": "subtask_2", "parallel": true},
+          {"order": 3, "task": "subtask_3", "parallel": true},
+          {"order": 4, "task": "subtask_4", "parallel": false},
+          {"order": 5, "task": "subtask_5", "parallel": false},
+          {"order": 6, "task": "subtask_6", "parallel": false}
+        ],
+        "dependencies": {
+          "subtask_2": ["subtask_1"],
+          "subtask_3": ["subtask_2"],
+          "subtask_4": ["subtask_3"],
+          "subtask_5": ["subtask_4"],
+          "subtask_6": ["subtask_5"]
+        },
+        "estimated_duration": "5 minutes for 100 files"
+      },
+      "why": "Agent 13 maps out exactly how to execute the work"
+    },
+    {
+      "step": 3,
+      "agent_id": 30,
+      "agent_role": "Channel",
+      "action": "Route each file to appropriate pipeline",
+      "input": "List of CSV files from step 2",
+      "output": {
+        "routing_map": {
+          "file_1.csv": "Pipeline P-02 (CLEANSE)",
+          "file_2.csv": "Pipeline P-02 (CLEANSE)",
+          "file_N.csv": "Pipeline P-02 (CLEANSE)"
+        },
+        "parallel_groups": [
+          "Group 1: Files 1-25",
+          "Group 2: Files 26-50",
+          "Group 3: Files 51-75",
+          "Group 4: Files 76-100"
+        ]
+      },
+      "why": "Agent 30 distributes work for parallel processing"
+    },
+    {
+      "step": 4,
+      "pipeline_id": "P-02",
+      "pipeline_name": "CLEANSE",
+      "action": "Clean each CSV file",
+      "stages": [
+        {
+          "stage": "trim",
+          "action": "Remove leading/trailing whitespace from all fields"
+        },
+        {
+          "stage": "dedup",
+          "action": "Remove duplicate rows based on ID column"
+        },
+        {
+          "stage": "validate",
+          "action": "Check email format, phone format, required fields"
+        },
+        {
+          "stage": "sanitize",
+          "action": "Remove potentially dangerous characters"
+        }
+      ],
+      "output": {
+        "clean_files": 100,
+        "rows_removed": 347,
+        "invalid_records": 12,
+        "total_clean_rows": 9641
+      },
+      "why": "Pipeline P-02 ensures data quality"
+    },
+    {
+      "step": 5,
+      "agent_id": 4,
+      "agent_role": "Validation",
+      "action": "Verify all cleaned files meet requirements",
+      "input": "Cleaned CSV files from step 4",
+      "checks": [
+        {
+          "check": "All files have consistent columns",
+          "status": "PASS"
+        },
+        {
+          "check": "No duplicate IDs across all files",
+          "status": "PASS"
+        },
+        {
+          "check": "All required fields present",
+          "status": "PASS"
+        },
+        {
+          "check": "Data types correct",
+          "status": "PASS"
+        },
+        {
+          "check": "No malformed records",
+          "status": "PASS"
+        }
+      ],
+      "output": {
+        "validation_passed": true,
+        "files_validated": 100,
+        "total_records": 9641,
+        "issues_found": 0
+      },
+      "why": "Agent 4 confirms everything is correct before merging"
+    },
+    {
+      "step": 6,
+      "agent_id": 64,
+      "agent_role": "Synthesizer",
+      "action": "Merge all cleaned CSV files into one",
+      "input": "100 validated CSV files",
+      "process": [
+        "Read all CSV files",
+        "Combine into single dataframe",
+        "Sort by ID",
+        "Add metadata (source_file column)",
+        "Write to master CSV"
+      ],
+      "output": {
+        "output_file": "master_data.csv",
+        "total_rows": 9641,
+        "total_columns": 15,
+        "file_size": "1.2 MB",
+        "processing_time": "4.7 seconds"
+      },
+      "why": "Agent 64 combines all results into single output"
+    },
+    {
+      "step": 7,
+      "agent_id": 40,
+      "agent_role": "Observer",
+      "action": "Log complete workflow execution",
+      "log_entries": [
+        {"timestamp": "2025-10-08T10:00:00Z", "event": "Workflow started"},
+        {"timestamp": "2025-10-08T10:00:01Z", "event": "Found 100 CSV files"},
+        {"timestamp": "2025-10-08T10:00:05Z", "event": "Cleaning complete - 9641 records"},
+        {"timestamp": "2025-10-08T10:00:06Z", "event": "Validation passed"},
+        {"timestamp": "2025-10-08T10:00:11Z", "event": "Merge complete"},
+        {"timestamp": "2025-10-08T10:00:11Z", "event": "Workflow finished"}
+      ],
+      "why": "Agent 40 provides audit trail of all operations"
+    }
+  ],
+  
+  "summary": {
+    "total_steps": 7,
+    "agents_used": [1, 4, 13, 30, 40, 64],
+    "pipelines_used": ["P-02"],
+    "total_time": "11 seconds",
+    "files_processed": 100,
+    "output_records": 9641,
+    "success": true
+  },
+  
+  "python_implementation": {
+    "description": "Conceptual Python code showing how you might implement this workflow",
+    "code": [
+      "import json",
+      "import glob",
+      "import pandas as pd",
+      "",
+      "# Load GHOSTLINK kernel",
+      "with open('kernel.json') as f:",
+      "    kernel = json.load(f)",
+      "",
+      "# Step 1: Find CSV files (simulating Agent 1 - Recursive)",
+      "csv_files = glob.glob('/data/*.csv')",
+      "print(f'Found {len(csv_files)} CSV files')",
+      "",
+      "# Step 2: Process each file (simulating Pipeline P-02 - CLEANSE)",
+      "cleaned_dfs = []",
+      "for csv_file in csv_files:",
+      "    # Read CSV",
+      "    df = pd.read_csv(csv_file)",
+      "    ",
+      "    # Trim whitespace (P-02 stage 1)",
+      "    df = df.apply(lambda x: x.str.strip() if x.dtype == 'object' else x)",
+      "    ",
+      "    # Remove duplicates (P-02 stage 2)",
+      "    df = df.drop_duplicates(subset=['id'])",
+      "    ",
+      "    # Validate (P-02 stage 3) - example: check email format",
+      "    df = df[df['email'].str.contains('@', na=False)]",
+      "    ",
+      "    cleaned_dfs.append(df)",
+      "",
+      "# Step 3: Validate all (simulating Agent 4 - Validation)",
+      "total_rows = sum(len(df) for df in cleaned_dfs)",
+      "print(f'Validation: {total_rows} clean records')",
+      "",
+      "# Step 4: Merge (simulating Agent 64 - Synthesizer)",
+      "master_df = pd.concat(cleaned_dfs, ignore_index=True)",
+      "master_df = master_df.sort_values('id')",
+      "",
+      "# Step 5: Save output",
+      "master_df.to_csv('master_data.csv', index=False)",
+      "print(f'Saved {len(master_df)} records to master_data.csv')",
+      "",
+      "# Step 6: Log (simulating Agent 40 - Observer)",
+      "print('Workflow complete - all steps logged')"
+    ]
+  },
+  
+  "variations": {
+    "faster_processing": {
+      "change": "Use Pipeline P-03 (SURGE) instead of P-02",
+      "benefit": "Parallel processing for 3-5x speed boost",
+      "trade_off": "Higher memory usage"
+    },
+    "stricter_validation": {
+      "change": "Add Agent 11 (Integrity) to verify file checksums",
+      "benefit": "Detect corrupted files before processing",
+      "trade_off": "Slight processing overhead"
+    },
+    "with_backup": {
+      "change": "Add Agent 51 (Snapshot) before step 6",
+      "benefit": "Can rollback if merge fails",
+      "trade_off": "Extra storage space needed"
+    }
+  },
+  
+  "next_steps": [
+    "1. Adapt this pattern to your CSV structure",
+    "2. Add your validation rules to step 5",
+    "3. Customize merge logic in step 6",
+    "4. Add error handling for edge cases",
+    "5. Scale to larger datasets with P-03 (SURGE)"
+  ]
+}

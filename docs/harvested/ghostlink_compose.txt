@@ -1,0 +1,180 @@
+version: '3.8'
+
+services:
+  # GhostLink Core Controller
+  ghostlink-controller:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: ghostlink-controller
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    volumes:
+      - ghostlink_data:/data
+      - ghostlink_vault:/data/vault
+      - ghostlink_state:/data/state
+      - ghostlink_keys:/data/keys:ro
+      - ./configs:/opt/ghostlink/configs:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - GHOSTLINK_MODE=controller
+      - NEURAL_MODE=offline_local
+      - SOVEREIGNTY_GATE=closed
+      - GHOSTLINK_CONTROLLER_HOST=0.0.0.0
+      - GHOSTLINK_CONTROLLER_PORT=8080
+    networks:
+      - ghostlink-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Neural Node Service
+  ghostlink-neural:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: ghostlink-neural
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    volumes:
+      - ghostlink_models:/opt/ghostlink/models
+      - ghostlink_data:/data:ro
+    environment:
+      - GHOSTLINK_MODE=neural
+      - NEURAL_MODE=offline_local
+      - NEURAL_MODEL_PATH=/opt/ghostlink/models
+    networks:
+      - ghostlink-net
+    depends_on:
+      - ghostlink-controller
+
+  # Wired Core Service (V8)
+  ghostlink-wired:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: ghostlink-wired
+    restart: unless-stopped
+    ports:
+      - "8082:8080"
+    volumes:
+      - ghostlink_wired:/opt/ghostlink/wired
+      - ghostlink_logs:/opt/ghostlink/logs
+    environment:
+      - GHOSTLINK_MODE=wired
+      - WIRED_VERSION=v8
+      - WIRED_NETWORK_CONFIG=/opt/ghostlink/configs/wired_network.json
+    networks:
+      - ghostlink-net
+    depends_on:
+      - ghostlink-controller
+
+  # Bridge Service for External Connectivity
+  ghostlink-bridge:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: ghostlink-bridge
+    restart: unless-stopped
+    ports:
+      - "8083:8080"
+    volumes:
+      - ghostlink_keys:/data/keys:ro
+    environment:
+      - GHOSTLINK_MODE=bridge
+      - SOVEREIGNTY_GATE=closed
+      - BRIDGE_ALLOW_EXTERNAL=false
+    networks:
+      - ghostlink-net
+    depends_on:
+      - ghostlink-controller
+
+  # Monitoring and Metrics
+  ghostlink-monitor:
+    image: prom/prometheus:latest
+    container_name: ghostlink-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    networks:
+      - ghostlink-net
+
+  # Dashboard
+  ghostlink-dashboard:
+    image: grafana/grafana:latest
+    container_name: ghostlink-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=ghostlink
+      - GF_USERS_ALLOW_SIGN_UP=false
+    networks:
+      - ghostlink-net
+    depends_on:
+      - ghostlink-monitor
+
+  # Console React Dashboard
+  ghostlink-console:
+    build:
+      context: ./console
+      dockerfile: Dockerfile.console
+    container_name: ghostlink-console
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./console/src:/app/src:ro
+    environment:
+      - REACT_APP_GHOSTLINK_API=http://localhost:8080
+      - REACT_APP_NEURAL_API=http://localhost:8081
+      - REACT_APP_WIRED_API=http://localhost:8082
+    networks:
+      - ghostlink-net
+    depends_on:
+      - ghostlink-controller
+
+networks:
+  ghostlink-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  ghostlink_data:
+    driver: local
+  ghostlink_vault:
+    driver: local
+  ghostlink_state:
+    driver: local
+  ghostlink_keys:
+    driver: local
+  ghostlink_models:
+    driver: local
+  ghostlink_wired:
+    driver: local
+  ghostlink_logs:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local

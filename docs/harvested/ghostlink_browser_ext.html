@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>GhostLink Browser SCAR Tracker</title>
+  <style>
+    body {
+      width: 300px;
+      padding: 15px;
+      font-family: monospace;
+      background: #000;
+      color: #0f0;
+    }
+    h3 { margin: 0 0 10px 0; border-bottom: 2px solid #0f0; padding-bottom: 5px; }
+    button {
+      background: #0f0;
+      color: #000;
+      border: none;
+      padding: 8px 15px;
+      cursor: pointer;
+      font-family: monospace;
+      font-weight: bold;
+      margin: 5px 0;
+      width: 100%;
+    }
+    button:hover { background: #0ff; }
+    .scar { color: #f00; }
+    .sigma { color: #0f0; }
+    #scars { max-height: 200px; overflow-y: auto; font-size: 11px; }
+    .entry { margin: 5px 0; padding: 5px; border-left: 2px solid #333; }
+  </style>
+</head>
+<body>
+  <h3>GHOSTLINK TRACKER</h3>
+  
+  <div id="current-site" style="margin-bottom: 15px;">
+    <div id="site-url" style="font-size: 10px; opacity: 0.7;"></div>
+  </div>
+
+  <button id="mark-sigma">✓ SIGMA (Productive)</button>
+  <button id="mark-scar" style="background: #f00; color: #000;">✗ SCAR (Wasted Time)</button>
+  
+  <h3 style="margin-top: 20px;">SCAR MEMORY</h3>
+  <div id="scars"></div>
+
+  <script>
+    // Get current tab URL
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+      if (tabs[0]) {
+        const url = new URL(tabs[0].url);
+        document.getElementById('site-url').textContent = url.hostname;
+      }
+    });
+
+    // Load SCAR memory
+    function loadScars() {
+      chrome.storage.local.get(['scars', 'sigmas'], function(result) {
+        const scars = result.scars || [];
+        const sigmas = result.sigmas || [];
+        
+        let html = '';
+        [...scars.slice(-10).reverse()].forEach(s => {
+          html += `<div class="entry scar">✗ ${s.site} - ${s.time}</div>`;
+        });
+        [...sigmas.slice(-5).reverse()].forEach(s => {
+          html += `<div class="entry sigma">✓ ${s.site} - ${s.time}</div>`;
+        });
+        
+        document.getElementById('scars').innerHTML = html || '<div style="opacity: 0.5;">No marks yet</div>';
+      });
+    }
+
+    // Mark SCAR
+    document.getElementById('mark-scar').addEventListener('click', function() {
+      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        const url = new URL(tabs[0].url);
+        const site = url.hostname;
+        
+        chrome.storage.local.get(['scars'], function(result) {
+          const scars = result.scars || [];
+          scars.push({
+            site: site,
+            url: tabs[0].url,
+            time: new Date().toLocaleTimeString(),
+            timestamp: Date.now()
+          });
+          
+          chrome.storage.local.set({scars: scars}, function() {
+            loadScars();
+            // Close tab
+            chrome.tabs.remove(tabs[0].id);
+          });
+        });
+      });
+    });
+
+    // Mark SIGMA
+    document.getElementById('mark-sigma').addEventListener('click', function() {
+      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        const url = new URL(tabs[0].url);
+        const site = url.hostname;
+        
+        chrome.storage.local.get(['sigmas'], function(result) {
+          const sigmas = result.sigmas || [];
+          sigmas.push({
+            site: site,
+            url: tabs[0].url,
+            time: new Date().toLocaleTimeString(),
+            timestamp: Date.now()
+          });
+          
+          chrome.storage.local.set({sigmas: sigmas}, function() {
+            loadScars();
+          });
+        });
+      });
+    });
+
+    loadScars();
+  </script>
+</body>
+</html>
+
+<!-- 
+MANIFEST.JSON (save separately):
+{
+  "manifest_version": 3,
+  "name": "GhostLink SCAR Tracker",
+  "version": "1.0",
+  "description": "Mark productive/wasted browsing",
+  "permissions": ["storage", "tabs"],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
+
+TO INSTALL:
+1. Save this as popup.html
+2. Create manifest.json with above content
+3. Chrome → Extensions → Developer Mode → Load Unpacked
+4. Select folder with both files
+-->
