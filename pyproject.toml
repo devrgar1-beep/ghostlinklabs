@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = ["setuptools>=75.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,7 +7,7 @@ name = "ghostlink"
 version = "0.1.0"
 description = "GhostLink - A sovereign AI framework with symbolic reasoning and diagnostic tools"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 license = { text = "Proprietary" }
 authors = [{ name = "Ghost", email = "ghost@ghostlink.engineering" }]
 keywords = ["ai", "framework", "symbolic", "reasoning", "diagnostics"]
@@ -15,11 +15,11 @@ classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
 
 dependencies = [
@@ -54,7 +54,7 @@ addopts = "-v --tb=short"
 
 [tool.black]
 line-length = 100
-target-version = ['py38', 'py39', 'py310', 'py311', 'py312']
+target-version = ['py39', 'py310', 'py311', 'py312', 'py313']
 include = '\.pyi?$'
 extend-exclude = '''
 /(
@@ -75,7 +75,7 @@ extend-exclude = '''
 
 [tool.ruff]
 line-length = 100
-target-version = "py38"
+target-version = "py39"
 select = [
     "E",    # pycodestyle errors
     "W",    # pycodestyle warnings
@@ -153,7 +153,7 @@ split-on-trailing-comma = true
 "scripts/**/*" = ["T201", "T203"]
 
 [tool.mypy]
-python_version = "3.8"
+python_version = "3.9"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true

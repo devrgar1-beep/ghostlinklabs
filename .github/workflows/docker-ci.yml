@@ -20,7 +20,7 @@ jobs:
         run: docker build -f docker/Dockerfile -t ghostlink-orchestrator:ci .
 
       - name: Start NATS messaging
-        run: docker run -d --name nats -p 4222:4222 -p 8222:8222 nats:2.10-alpine -DV
+        run: docker run -d --name nats -p 4222:4222 -p 8222:8222 nats:2.11-alpine -DV
 
       - name: Run cold boot health check
         run: |
