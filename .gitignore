@@ -248,3 +248,11 @@ docs/source/_build/
 *.backup
 *.old
 *.orig
+# Runtime files - do not commit
+cold_boot_health.json
+orchestrator.pid
+ai_health_report.json
+*.log
+__pycache__/
+*.pyc
+.DS_Store
