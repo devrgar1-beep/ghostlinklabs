@@ -8,10 +8,10 @@ services:
       - HOST=127.0.0.1
       # Toggle processes
       - RUN_CONTROLLER=1
-      - RUN_PEER=0          # set to 1 to read sensors (mount /sys below)
-      - RUN_BRIDGE=0        # set to 1 and provide OPENAI_API_KEY
-      - RUN_MESH=0          # set to 1 to enable mesh aggregator
-      - RUN_RESPONDER=0     # set to 1 to enable peer responder (7422)
+      - RUN_PEER=0 # set to 1 to read sensors (mount /sys below)
+      - RUN_BRIDGE=0 # set to 1 and provide OPENAI_API_KEY
+      - RUN_MESH=0 # set to 1 to enable mesh aggregator
+      - RUN_RESPONDER=0 # set to 1 to enable peer responder (7422)
       # Mesh discovery configuration (choose ONE)
       # - NEIGHBOR_IPS=192.168.4.22,192.168.4.24
       # - NEIGHBORS_FILE=/run/ghostlink/neighbors.txt
@@ -21,7 +21,7 @@ services:
       # - GL_TLS_CERT=/run/ghostlink/ctl.crt
       # - GL_TLS_KEY=/run/ghostlink/ctl.key
       # - GL_TLS_CA=/run/ghostlink/ca.crt
-    # Use host networking for simplest loopback bindings and metrics access
+      # Use host networking for simplest loopback bindings and metrics access
     network_mode: host
     # If not using host networking, comment the above and uncomment ports:
     # ports:

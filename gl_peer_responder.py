@@ -3,6 +3,8 @@
 
 Lightweight service that can be deployed on neighbor hosts to provide
 thermal data to the mesh network.
+
+Optional iDRAC integration: set IDRAC_HOST to query out-of-band thermal sensors.
 """
 import json
 import os
@@ -12,10 +14,13 @@ import glob
 
 HOST = os.getenv("HOST", "0.0.0.0")
 PORT = int(os.getenv("PORT", "7422"))
+IDRAC_HOST = os.getenv("IDRAC_HOST", "").strip()
+IDRAC_USER = os.getenv("IDRAC_USER", "root")
+IDRAC_PASS = os.getenv("IDRAC_PASS", "")
 
 
 def read_temp_c() -> float | None:
-    """Read system temperature."""
+    """Read system temperature from OS sensors."""
     try:
         import psutil
         temps = getattr(psutil, "sensors_temperatures", lambda **k: None)(fahrenheit=False) or {}
@@ -42,6 +47,33 @@ def read_temp_c() -> float | None:
     return None
 
 
+def read_idrac_temp_c() -> float | None:
+    """Read temperature from iDRAC via Redfish if IDRAC_HOST is set."""
+    if not IDRAC_HOST or not IDRAC_PASS:
+        return None
+    
+    try:
+        import sys
+        import importlib.util
+        # Import gl_idrac from parent directory
+        spec = importlib.util.spec_from_file_location("gl_idrac", os.path.join(os.path.dirname(__file__), "gl_idrac.py"))
+        if not spec or not spec.loader:
+            return None
+        gl_idrac = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(gl_idrac)
+        
+        client = gl_idrac.IDRACClient(IDRAC_HOST, IDRAC_USER, IDRAC_PASS)
+        temps = client.get_temperatures()
+        if temps:
+            readings = [t["reading_c"] for t in temps if t["reading_c"] is not None]
+            if readings:
+                return float(sum(readings) / len(readings))
+    except Exception as e:
+        print(f"[responder] iDRAC query failed: {e}")
+    
+    return None
+
+
 def handle_client(conn: socket.socket, addr: tuple):
     """Handle a single client connection."""
     try:
@@ -63,13 +95,18 @@ def handle_client(conn: socket.socket, addr: tuple):
             }
 
         elif msg_type == "query":
-            temp = read_temp_c()
+            # Try iDRAC first if configured, fallback to OS sensors
+            temp = read_idrac_temp_c()
+            if temp is None:
+                temp = read_temp_c()
+            
             response = {
                 "type": "data",
                 "proto": "glp/0",
                 "hostname": socket.gethostname(),
                 "temp": temp,
                 "timestamp": time.time(),
+                "source": "idrac" if IDRAC_HOST and temp else "os",
             }
 
         else:
@@ -101,6 +138,8 @@ def main():
         print(f"[responder] GhostLink Peer Responder")
         print(f"[responder] Hostname: {hostname}")
         print(f"[responder] Listening on {HOST}:{PORT}")
+        if IDRAC_HOST:
+            print(f"[responder] iDRAC integration: {IDRAC_HOST} (user: {IDRAC_USER})")
         print(f"[responder] Ready to respond to mesh queries")
 
         try:

@@ -80,6 +80,30 @@ neighbors-file:
 	grep -q '^NEIGHBOR_IPS=' .env && sed -i 's/^NEIGHBOR_IPS=.*/NEIGHBOR_IPS=/' .env || true
 	@echo 'Updated .env to use NEIGHBORS_FILE=/run/ghostlink/neighbors.txt. Ensure ./creds/neighbors.txt exists.'
 
+# iDRAC operations
+.PHONY: idrac-discover idrac-status idrac-health idrac-monitor
+
+# Discover iDRACs on management network and update idrac_inventory.txt
+# Example: make idrac-discover MGMT_CIDR="10.10.100.0/24"
+idrac-discover:
+	[[ -n "${MGMT_CIDR}" ]] || (echo "Set MGMT_CIDR=..." && exit 1)
+	scripts/discover_idrac.py ${MGMT_CIDR}
+
+# Show status of an iDRAC host
+# Example: make idrac-status HOST=10.10.100.21
+idrac-status:
+	[[ -n "${HOST}" ]] || (echo "Set HOST=..." && exit 1)
+	scripts/idrac_ctl.sh status ${HOST}
+
+# Show health of an iDRAC host
+idrac-health:
+	[[ -n "${HOST}" ]] || (echo "Set HOST=..." && exit 1)
+	scripts/idrac_ctl.sh health ${HOST}
+
+# Start iDRAC health monitor daemon
+idrac-monitor:
+	python3 gl_idrac_monitor.py
+
 # CI compose with port mappings
 ci-up:
 	docker compose -f docker-compose.ci.yml up -d --build
