@@ -1,6 +1,7 @@
 """90s Terminal Interface for GhostLink"""
 
 import os
+import subprocess
 import time
 
 
@@ -50,7 +51,13 @@ def loading_sequence():
 def main_menu():
     """Main interactive menu"""
     while True:
-        os.system("cls" if os.name == "nt" else "clear")
+        # Clear terminal buffer in a cross-platform and safe manner
+        if os.name == "nt":
+            # 'cls' is a cmd built-in; use cmd /C to execute it
+            subprocess.run(["cmd", "/C", "cls"], check=False)
+        else:
+            # Use ANSI escape sequences to clear screen without invoking shell
+            print("\033[H\033[J", end="", flush=True)
         print_banner()
 
         print("\n╭─[ MAIN MENU ]────────────────────────────────────────────╮")
@@ -133,7 +140,10 @@ def main_menu():
 
 def launch_90s_terminal():
     """Launch the 90s terminal interface"""
-    os.system("cls" if os.name == "nt" else "clear")
+    if os.name == "nt":
+        subprocess.run(["cmd", "/C", "cls"], check=False)
+    else:
+        print("\033[H\033[J", end="", flush=True)
     print_banner()
     loading_sequence()
 

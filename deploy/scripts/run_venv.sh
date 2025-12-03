@@ -9,7 +9,12 @@ PY=${PYTHON:-python3}
 
 cmd="${1:-}"; shift || true
 
+# Ensure cleanup on exit or signals - kill background processes
+trap 'echo "[!] Signal received, stopping background services..."; bg_down; exit 0' SIGINT SIGTERM EXIT
+
 mkdir -p "$RUN_DIR" "$LOG_DIR"
+chmod 750 "$RUN_DIR" || true
+chmod 750 "$LOG_DIR" || true
 
 ensure_venv() {
   if [[ ! -d "$VENV_DIR" ]]; then
@@ -57,6 +62,11 @@ bg_up() {
     echo $! > "$RUN_DIR/peer.pid"
     echo "[*] peer started (pid $(cat "$RUN_DIR/peer.pid"))"
   fi
+  # spawn a background monitor to watch for dead processes and shut down others
+  if [[ ! -f "$RUN_DIR/monitor.pid" ]]; then
+    monitor_bg &
+    echo $! > "$RUN_DIR/monitor.pid"
+  fi
 }
 
 bg_down() {
@@ -69,6 +79,40 @@ bg_down() {
       fi
       rm -f "$RUN_DIR/${name}.pid"
     fi
+  done
+  # also stop the monitor if running
+  if [[ -f "$RUN_DIR/monitor.pid" ]]; then
+    mpid=$(cat "$RUN_DIR/monitor.pid")
+    if kill -0 "$mpid" 2>/dev/null; then
+      kill "$mpid" 2>/dev/null || true
+    fi
+    rm -f "$RUN_DIR/monitor.pid" || true
+  fi
+}
+
+monitor_bg() {
+  # Monitor background processes and shut down all if any one dies
+  while true; do
+    for pidfile in "$RUN_DIR"/*.pid; do
+      [[ -f "$pidfile" ]] || continue
+      pid=$(cat "$pidfile")
+      # ignore the monitor pid itself
+      if [[ "$pidfile" == "$RUN_DIR/monitor.pid" ]]; then
+        continue
+      fi
+      if ! kill -0 "$pid" 2>/dev/null; then
+        echo "[!] Process $(basename "$pidfile" .pid) (pid $pid) died, shutting down all..."
+        for f in "$RUN_DIR"/*.pid; do
+          [[ -f "$f" ]] || continue
+          p=$(cat "$f")
+          if [[ "$p" != "$pid" ]]; then
+            kill "$p" 2>/dev/null || true
+          fi
+        done
+        exit 0
+      fi
+    done
+    sleep 1
   done
 }
 

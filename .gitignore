@@ -129,7 +129,6 @@ dmypy.json
 .pyre/
 
 # IDE and Editor files
-.vscode/
 .idea/
 *.swp
 *.swo
@@ -256,3 +255,12 @@ ai_health_report.json
 __pycache__/
 *.pyc
 .DS_Store
+
+# Test reports
+*_report.json
+test_report.json
+full_system_test_report.json
+
+# Binaries
+bin/
+

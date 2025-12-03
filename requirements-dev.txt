@@ -1,0 +1,9 @@
+pytest>=7.0
+pytest-cov
+black
+ruff
+mypy
+bandit
+isort
+pre-commit
+flake8

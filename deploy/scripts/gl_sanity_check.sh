@@ -7,7 +7,7 @@ set -euo pipefail
 # Exit code: 0 on PASS, 1 on FAIL, 2 on partial (warnings).
 
 MODE=""
-VENV_DIR="${HOME}/gl/ghostlink_venv_runner"
+VENV_DIR="${HOME}/ghostlink_venv_runner"
 CTL_HOST="127.0.0.1"
 
 while [[ $# -gt 0 ]]; do

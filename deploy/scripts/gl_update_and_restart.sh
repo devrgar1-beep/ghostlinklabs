@@ -13,7 +13,7 @@ set -euo pipefail
 #   3) Print health checks (sockets & last log lines)
 
 MODE=""
-VENV_DIR="${HOME}/gl/ghostlink_venv_runner"
+VENV_DIR="${HOME}/ghostlink_venv_runner"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in

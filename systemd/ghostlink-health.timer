@@ -1,0 +1,13 @@
+[Unit]
+Description=GhostLink Health Check Timer
+Documentation=man:ghostlink(1)
+Requires=ghostlink.service
+
+[Timer]
+OnBootSec=30s
+OnUnitActiveSec=5m
+Unit=ghostlink-health.service
+Persistent=true
+
+[Install]
+WantedBy=timers.target

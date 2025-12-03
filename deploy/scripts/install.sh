@@ -76,13 +76,23 @@ do_systemd() {
     popd >/dev/null
   else
     echo "[!] ghostlink_automation_cfg.tgz missing."
-    exit 1
+    echo "    Provide ghostlink_automation_cfg.tgz to install systemd units and automation configurations."
+    echo "    You can also use --venv to run the venv-based deployment or provide the tarball and re-run."
+    exit 2
   fi
 }
 
 do_venv() {
   echo "[*] Installing virtual environment runner in ~/ghostlink_venv_runner"
-  tar xzf ghostlink_venv_runner.tgz -C ~/
+  if [[ -f ghostlink_venv_runner.tgz ]]; then
+    tar xzf ghostlink_venv_runner.tgz -C ~/
+  elif [[ -d "${HOME}/ghostlink_venv_runner" ]]; then
+    echo "[i] Skipping unpack; found existing ~/ghostlink_venv_runner directory"
+  else
+    echo "[!] ghostlink_venv_runner.tgz missing and no existing ~/ghostlink_venv_runner directory found."
+    echo "    Please supply the tarball or create the venv runner manually."
+    exit 2
+  fi
   pushd ~/ghostlink_venv_runner >/dev/null
   bash run_venv.sh up
   bash run_venv.sh status || true
