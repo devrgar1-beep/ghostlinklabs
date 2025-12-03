@@ -96,3 +96,12 @@ coverage.out
 *.sqlite3
 test_*.db
 demo_*.db
+
+# Credentials and secrets
+creds/idrac_creds.json
+creds/*.key
+creds/*.pem
+creds/*.p12
+creds/*.pfx
+*.cred
+*.secret

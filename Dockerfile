@@ -8,8 +8,8 @@ RUN useradd -m -u $UID -s /usr/sbin/nologin $USER
 
 # System deps (curl for healthcheck)
 RUN apt-get update -y && apt-get install -y --no-install-recommends \
-    curl ca-certificates && \
-    rm -rf /var/lib/apt/lists/*
+  curl ca-certificates && \
+  rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -43,7 +43,7 @@ ENV RUN_CONTROLLER=1 \
   RUN_BRIDGE=0 \
   RUN_MESH=0 \
   RUN_RESPONDER=0 \
-    HOST=127.0.0.1 \
-    GL_MODEL=gpt-4.1-mini
+  HOST=127.0.0.1 \
+  GL_MODEL=gpt-4.1-mini
 
 ENTRYPOINT ["/app/entrypoint.sh"]

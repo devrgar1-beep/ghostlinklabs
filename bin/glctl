@@ -29,6 +29,16 @@ Backbone helpers:
   backbone:discover <cidr>  Discover responders on CIDR(s) -> creds/neighbors.txt
   neighbors:use-file        Point .env at /run/ghostlink/neighbors.txt
 
+iDRAC operations:
+  idrac:discover <cidr>     Discover iDRACs on management network
+  idrac:status <host>       Show power state and health of iDRAC host
+  idrac:power-on <host>     Power on R630 via iDRAC
+  idrac:power-off <host>    Power off R630 (graceful)
+  idrac:reset <host>        Reboot R630 (graceful)
+  idrac:thermal <host>      Show temperature sensors
+  idrac:health <host>       Show detailed health (PSU, fans, SEL)
+  idrac:monitor             Start continuous health monitoring daemon
+
 Utilities:
   doctor                    Run health checks (ports, metrics)
   install-docker            Install Docker Engine + Compose (Ubuntu)
@@ -71,6 +81,45 @@ case "$cmd" in
     if grep -q '^NEIGHBORS_FILE=' .env; then sed -i 's#^NEIGHBORS_FILE=.*#NEIGHBORS_FILE=/run/ghostlink/neighbors.txt#' .env; else echo 'NEIGHBORS_FILE=/run/ghostlink/neighbors.txt' >> .env; fi
     if grep -q '^NEIGHBOR_IPS=' .env; then sed -i 's/^NEIGHBOR_IPS=.*/NEIGHBOR_IPS=/' .env; fi
     echo 'Updated .env to use NEIGHBORS_FILE=/run/ghostlink/neighbors.txt. Ensure ./creds/neighbors.txt exists.'
+    ;;
+
+  idrac:discover)
+    shift || true
+    if [[ $# -eq 0 ]]; then echo "Usage: glctl idrac:discover <mgmt_cidr> [cidr...]"; exit 2; fi
+    scripts/discover_idrac.py "$@"
+    ;;
+  idrac:status)
+    shift || true
+    if [[ $# -eq 0 ]]; then echo "Usage: glctl idrac:status <idrac_host>"; exit 2; fi
+    scripts/idrac_ctl.sh status "$1"
+    ;;
+  idrac:power-on)
+    shift || true
+    if [[ $# -eq 0 ]]; then echo "Usage: glctl idrac:power-on <idrac_host>"; exit 2; fi
+    scripts/idrac_ctl.sh power-on "$1"
+    ;;
+  idrac:power-off)
+    shift || true
+    if [[ $# -eq 0 ]]; then echo "Usage: glctl idrac:power-off <idrac_host>"; exit 2; fi
+    scripts/idrac_ctl.sh power-off "$1"
+    ;;
+  idrac:reset)
+    shift || true
+    if [[ $# -eq 0 ]]; then echo "Usage: glctl idrac:reset <idrac_host>"; exit 2; fi
+    scripts/idrac_ctl.sh reset "$1"
+    ;;
+  idrac:thermal)
+    shift || true
+    if [[ $# -eq 0 ]]; then echo "Usage: glctl idrac:thermal <idrac_host>"; exit 2; fi
+    scripts/idrac_ctl.sh thermal "$1"
+    ;;
+  idrac:health)
+    shift || true
+    if [[ $# -eq 0 ]]; then echo "Usage: glctl idrac:health <idrac_host>"; exit 2; fi
+    scripts/idrac_ctl.sh health "$1"
+    ;;
+  idrac:monitor)
+    python3 gl_idrac_monitor.py
     ;;
 
   doctor)
