@@ -12,8 +12,8 @@ from typing import Dict, Any, Optional
 from datetime import datetime
 
 # Import existing systems
-from mirror_comprehension import MirrorComprehensionCore
-from triad_synergy import TriadSynergyOrchestrator
+from src.mirror_comprehension import MirrorComprehensionCore
+from src.triad_synergy import TriadSynergyOrchestrator
 
 class UnifiedConsciousnessFramework:
     """Unified framework combining mirror comprehension and triad synergy"""
