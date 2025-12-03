@@ -4,13 +4,13 @@ Ghost Agent - Master Orchestrator Integration
 Real-time interface between VS Code and GhostLink AI ecosystem
 """
 
-import subprocess
-import json
-import sys
-import os
-import time
 from datetime import datetime
-from typing import Dict, Any, Optional
+import json
+import os
+import subprocess
+import sys
+from typing import Any, Dict
+
 
 class GhostAgentOrchestrator:
     """Master orchestrator interface for VS Code Ghost agent"""

@@ -3,9 +3,10 @@
 Provides command-line interface for auto-pull, auto-merge, and git sync.
 """
 import asyncio
+
 import click
 
-from .auto_git import get_auto_git, MergeStrategy
+from .auto_git import MergeStrategy, get_auto_git
 
 
 @click.group()
@@ -25,7 +26,7 @@ def pull(branch):
             click.secho("✗ Not a git repository", fg="red")
             return
         
-        click.echo(f"Pulling from remote...")
+        click.echo("Pulling from remote...")
         result = await auto_git.auto_pull(branch)
         
         if result.status.value == "success":
@@ -137,14 +138,14 @@ def status():
     click.echo(f"Current Branch: {click.style(status['current_branch'], fg='cyan')}")
     click.echo(f"Uncommitted Changes: {click.style('Yes' if status['has_changes'] else 'No', fg='yellow' if status['has_changes'] else 'green')}")
     
-    click.echo(f"\nAuto-Git Configuration:")
+    click.echo("\nAuto-Git Configuration:")
     click.echo(f"  Auto-pull: {click.style('Enabled' if auto_git.auto_pull_enabled else 'Disabled', fg='green' if auto_git.auto_pull_enabled else 'red')}")
     click.echo(f"  Auto-merge: {click.style('Enabled' if auto_git.auto_merge_enabled else 'Disabled', fg='green' if auto_git.auto_merge_enabled else 'red')}")
     click.echo(f"  Auto-resolve conflicts: {click.style('Enabled' if auto_git.auto_resolve_conflicts else 'Disabled', fg='green' if auto_git.auto_resolve_conflicts else 'red')}")
     click.echo(f"  Merge strategy: {auto_git.default_merge_strategy.value}")
     
     if auto_git.operation_history:
-        click.echo(f"\nRecent Operations:")
+        click.echo("\nRecent Operations:")
         for op in auto_git.operation_history[-5:]:
             status_color = {
                 "success": "green",

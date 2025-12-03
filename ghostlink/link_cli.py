@@ -7,15 +7,13 @@ Example usage:
     python -m ghostlink.link_cli stop
 """
 import asyncio
-import sys
-from pathlib import Path
 from typing import Optional
 
 import click
 
-from .link import Link, TaskPriority, get_link
 from .diagnostics_cli import diagnostics
 from .git_cli import git
+from .link import TaskPriority, get_link
 
 
 @click.group()

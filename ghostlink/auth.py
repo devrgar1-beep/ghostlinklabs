@@ -1,7 +1,9 @@
 from functools import wraps
 from typing import Optional
+
 from fastapi import HTTPException, Request
-from .database import Database, ApiKey
+
+from .database import ApiKey, Database
 
 db = Database()
 
@@ -20,7 +22,7 @@ def require_api_key(permission: str = "read"):
                 if isinstance(arg, Request):
                     request = arg
                     break
-            for key, value in kwargs.items():
+            for _key, value in kwargs.items():
                 if isinstance(value, Request):
                     request = value
                     break
@@ -53,7 +55,7 @@ def optional_api_key(permission: str = "read"):
                 if isinstance(arg, Request):
                     request = arg
                     break
-            for key, value in kwargs.items():
+            for _key, value in kwargs.items():
                 if isinstance(value, Request):
                     request = value
                     break

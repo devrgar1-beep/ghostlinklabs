@@ -4,11 +4,11 @@ GhostLink Cold Boot Status Check
 Starts components on-demand, checks functionality, then shuts them down
 """
 
+import os
 import subprocess
 import sys
 import time
-import json
-import os
+
 
 def check_ai_engine():
     """Check multi-agent engine by starting it briefly"""

@@ -5,17 +5,15 @@ with the GhostLink troubleshooting system.
 """
 from __future__ import annotations
 
-import asyncio
-import logging
-import re
-import subprocess
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
+import logging
 from pathlib import Path
-from typing import Any, Optional
+import subprocess
+from typing import Any
 
-from .troubleshooter import get_troubleshooter, handle_error, ErrorCategory
+from .troubleshooter import handle_error
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +50,7 @@ class GitOperationResult:
 class AutoGit:
     """Automatic git operations manager."""
 
-    def __init__(self, repo_path: Optional[Path] = None):
+    def __init__(self, repo_path: Path | None = None):
         """Initialize AutoGit.
         
         Args:
@@ -143,7 +141,7 @@ class AutoGit:
             "remote_branches": self.get_remote_branches(),
         }
 
-    async def auto_pull(self, branch: Optional[str] = None) -> GitOperationResult:
+    async def auto_pull(self, branch: str | None = None) -> GitOperationResult:
         """Automatically pull from remote.
         
         Args:
@@ -215,7 +213,7 @@ class AutoGit:
                     if resolved:
                         result = GitOperationResult(
                             status=GitOperationStatus.SUCCESS,
-                            message=f"Pulled with auto-resolved conflicts",
+                            message="Pulled with auto-resolved conflicts",
                             conflicts=conflicts,
                             changes={"branch": current_branch, "resolved": True},
                             timestamp=datetime.now(),
@@ -256,8 +254,8 @@ class AutoGit:
     async def auto_merge(
         self,
         source_branch: str,
-        target_branch: Optional[str] = None,
-        strategy: Optional[MergeStrategy] = None
+        target_branch: str | None = None,
+        strategy: MergeStrategy | None = None
     ) -> GitOperationResult:
         """Automatically merge branches.
         
@@ -330,7 +328,7 @@ class AutoGit:
                     if resolved:
                         result = GitOperationResult(
                             status=GitOperationStatus.SUCCESS,
-                            message=f"Merged with auto-resolved conflicts",
+                            message="Merged with auto-resolved conflicts",
                             conflicts=conflicts,
                             changes={
                                 "source": source_branch,
@@ -431,7 +429,7 @@ class AutoGit:
         
         return False
 
-    async def sync(self, branch: Optional[str] = None) -> dict[str, GitOperationResult]:
+    async def sync(self, branch: str | None = None) -> dict[str, GitOperationResult]:
         """Perform full sync: pull and merge.
         
         Args:
@@ -468,7 +466,7 @@ class AutoGit:
 
 
 # Global AutoGit instance
-_auto_git: Optional[AutoGit] = None
+_auto_git: AutoGit | None = None
 
 
 def get_auto_git() -> AutoGit:

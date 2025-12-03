@@ -1,16 +1,17 @@
-import json
 import datetime
+import json
 from typing import Optional
-from fastapi import FastAPI, HTTPException, Request, Depends
+
+from fastapi import Depends, FastAPI, HTTPException, Request
 from pydantic import BaseModel
 
-from .storage import MockIPFS
-from .reasoning import process_metaphors
-from .database import Database, ApiKey
 from .auth import get_api_key_from_request
-from .config import config
 from .automation import policy
+from .config import config
+from .database import ApiKey, Database
 from .net import backbone
+from .reasoning import process_metaphors
+from .storage import MockIPFS
 
 app = FastAPI(title="GhostLink")
 

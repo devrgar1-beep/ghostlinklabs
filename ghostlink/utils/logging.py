@@ -1,7 +1,7 @@
 """Logging Configuration for GhostLink"""
 
-import sys
 from pathlib import Path
+import sys
 
 from loguru import logger
 
