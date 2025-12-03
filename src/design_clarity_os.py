@@ -9,43 +9,43 @@ consciousness-driven optimization across all integrated platforms.
 """
 
 import asyncio
+from dataclasses import dataclass, field
+from datetime import datetime, timedelta
+from enum import Enum
 import json
-import os
+import logging
+from pathlib import Path
 import platform
-import psutil
 import subprocess
 import sys
 import threading
-from dataclasses import dataclass, field
-from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Dict, List, Any, Optional, Callable, Set, Tuple
-from concurrent.futures import ThreadPoolExecutor
-import socket
-import uuid
-import schedule
-import logging
-import traceback
-import hashlib
 import time
-from enum import Enum
+import traceback
+from typing import Any, Callable, Dict, List, Optional
+import uuid
+
+import psutil
+import schedule
+
+from evolutionary_intelligence import EvolutionaryIntelligence
 
 # Import GhostLink core systems
-from mirror_comprehension import MirrorComprehensionCore
-from triad_synergy import TriadSynergyOrchestrator
+from multi_agent_engine import ModelSize, MultiAgentExpansionCompressionEngine
 from unified_consciousness import UnifiedConsciousnessFramework
-from multi_agent_engine import MultiAgentExpansionCompressionEngine, ModelSize
-from evolutionary_intelligence import EvolutionaryIntelligence
+
 
 class ErrorSeverity(Enum):
     """Error severity levels"""
+
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
     CRITICAL = "critical"
 
+
 class ErrorCategory(Enum):
     """Error categories for classification"""
+
     SYSTEM = "system"
     NETWORK = "network"
     PROCESS = "process"
@@ -55,8 +55,10 @@ class ErrorCategory(Enum):
     APPLICATION = "application"
     HARDWARE = "hardware"
 
+
 class RecoveryStrategy(Enum):
     """Recovery strategies for error correction"""
+
     RESTART = "restart"
     RECONNECT = "reconnect"
     REBALANCE = "rebalance"
@@ -65,9 +67,11 @@ class RecoveryStrategy(Enum):
     ISOLATE = "isolate"
     MITIGATE = "mitigate"
 
+
 @dataclass
 class ErrorEvent:
     """Represents an error event in the system"""
+
     error_id: str
     timestamp: datetime
     severity: ErrorSeverity
@@ -81,9 +85,11 @@ class ErrorEvent:
     resolution_time: Optional[datetime] = None
     recovery_strategy: Optional[RecoveryStrategy] = None
 
+
 @dataclass
 class ProcessHealth:
     """Health status of a system process"""
+
     process_id: str
     process_name: str
     last_heartbeat: datetime
@@ -93,9 +99,11 @@ class ProcessHealth:
     error_count: int = 0
     performance_metrics: Dict[str, float] = field(default_factory=dict)
 
+
 @dataclass
 class CommunicationBridge:
     """Represents a communication bridge between systems"""
+
     bridge_id: str
     source_system: str
     target_system: str
@@ -107,9 +115,11 @@ class CommunicationBridge:
     routes: List[Dict[str, Any]] = field(default_factory=list)
     active: bool = False
 
+
 @dataclass
 class SystemBridgeConfig:
     """Configuration for system bridging"""
+
     bridge_id: str
     source_endpoint: str
     target_endpoint: str
@@ -119,6 +129,7 @@ class SystemBridgeConfig:
     message_queue_size: int = 1000
     timeout_seconds: int = 30
     enabled: bool = True
+
 
 class ProcessErrorCorrection:
     """
@@ -156,7 +167,7 @@ class ProcessErrorCorrection:
             ErrorCategory.CONFIGURATION: [RecoveryStrategy.ROLLBACK, RecoveryStrategy.RESTART],
             ErrorCategory.PROTOCOL: [RecoveryStrategy.RECONNECT, RecoveryStrategy.ESCALATE],
             ErrorCategory.APPLICATION: [RecoveryStrategy.RESTART, RecoveryStrategy.ISOLATE],
-            ErrorCategory.HARDWARE: [RecoveryStrategy.ISOLATE, RecoveryStrategy.ESCALATE]
+            ErrorCategory.HARDWARE: [RecoveryStrategy.ISOLATE, RecoveryStrategy.ESCALATE],
         }
 
         # Monitoring
@@ -171,17 +182,14 @@ class ProcessErrorCorrection:
 
             # Setup logging
             error_handler = logging.FileHandler(self.error_log_path)
-            error_handler.setFormatter(logging.Formatter(
-                '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-            ))
+            error_handler.setFormatter(
+                logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+            )
             self.logger.addHandler(error_handler)
             self.logger.setLevel(logging.INFO)
 
             # Start monitoring thread
-            self.monitoring_thread = threading.Thread(
-                target=self._monitoring_loop,
-                daemon=True
-            )
+            self.monitoring_thread = threading.Thread(target=self._monitoring_loop, daemon=True)
             self.monitoring_thread.start()
             self.monitoring_active = True
 
@@ -192,9 +200,15 @@ class ProcessErrorCorrection:
             self.logger.error(f"Failed to initialize error correction: {e}")
             return False
 
-    def report_error(self, severity: ErrorSeverity, category: ErrorCategory,
-                    component: str, message: str, context: Dict[str, Any] = None,
-                    exc_info: bool = True) -> str:
+    def report_error(
+        self,
+        severity: ErrorSeverity,
+        category: ErrorCategory,
+        component: str,
+        message: str,
+        context: Dict[str, Any] = None,
+        exc_info: bool = True,
+    ) -> str:
         """Report an error to the correction system"""
         error_id = str(uuid.uuid4())[:8]
 
@@ -207,7 +221,7 @@ class ProcessErrorCorrection:
             component=component,
             message=message,
             context=context or {},
-            traceback=traceback.format_exc() if exc_info else None
+            traceback=traceback.format_exc() if exc_info else None,
         )
 
         # Store error
@@ -221,7 +235,9 @@ class ProcessErrorCorrection:
         self.error_patterns[pattern_key].append(error_event)
 
         # Log error
-        self.logger.error(f"🚨 Error [{error_id}]: {severity.value} {category.value} in {component}: {message}")
+        self.logger.error(
+            f"🚨 Error [{error_id}]: {severity.value} {category.value} in {component}: {message}"
+        )
 
         # Trigger automatic recovery
         asyncio.create_task(self._attempt_error_recovery(error_event))
@@ -232,18 +248,24 @@ class ProcessErrorCorrection:
         """Attempt to recover from an error automatically"""
         try:
             # Determine recovery strategy
-            recovery_strategies = self.recovery_strategies.get(error_event.category, [RecoveryStrategy.ESCALATE])
+            recovery_strategies = self.recovery_strategies.get(
+                error_event.category, [RecoveryStrategy.ESCALATE]
+            )
 
             for strategy in recovery_strategies:
                 if await self._execute_recovery_strategy(error_event, strategy):
                     error_event.recovery_strategy = strategy
                     error_event.resolved = True
                     error_event.resolution_time = datetime.now()
-                    self.logger.info(f"✅ Error {error_event.error_id} resolved using {strategy.value}")
+                    self.logger.info(
+                        f"✅ Error {error_event.error_id} resolved using {strategy.value}"
+                    )
                     return True
 
             # If no strategy worked, escalate
-            self.logger.warning(f"❌ All recovery strategies failed for error {error_event.error_id}")
+            self.logger.warning(
+                f"❌ All recovery strategies failed for error {error_event.error_id}"
+            )
             await self._escalate_error(error_event)
             return False
 
@@ -251,23 +273,24 @@ class ProcessErrorCorrection:
             self.logger.error(f"Recovery attempt failed for error {error_event.error_id}: {e}")
             return False
 
-    async def _execute_recovery_strategy(self, error_event: ErrorEvent, strategy: RecoveryStrategy) -> bool:
+    async def _execute_recovery_strategy(
+        self, error_event: ErrorEvent, strategy: RecoveryStrategy
+    ) -> bool:
         """Execute a specific recovery strategy"""
         try:
             if strategy == RecoveryStrategy.RESTART:
                 return await self._restart_component(error_event.component)
-            elif strategy == RecoveryStrategy.RECONNECT:
+            if strategy == RecoveryStrategy.RECONNECT:
                 return await self._reconnect_component(error_event.component)
-            elif strategy == RecoveryStrategy.REBALANCE:
+            if strategy == RecoveryStrategy.REBALANCE:
                 return await self._rebalance_resources(error_event.component)
-            elif strategy == RecoveryStrategy.ROLLBACK:
+            if strategy == RecoveryStrategy.ROLLBACK:
                 return await self._rollback_configuration(error_event.component)
-            elif strategy == RecoveryStrategy.ISOLATE:
+            if strategy == RecoveryStrategy.ISOLATE:
                 return await self._isolate_component(error_event.component)
-            elif strategy == RecoveryStrategy.MITIGATE:
+            if strategy == RecoveryStrategy.MITIGATE:
                 return await self._mitigate_resource_issue(error_event.component)
-            else:
-                return False
+            return False
         except Exception as e:
             self.logger.error(f"Recovery strategy {strategy.value} failed: {e}")
             return False
@@ -311,15 +334,15 @@ class ProcessErrorCorrection:
 
     async def _escalate_error(self, error_event: ErrorEvent):
         """Escalate an unresolved error"""
-        self.logger.warning(f"🚨 Escalating error {error_event.error_id} - manual intervention required")
+        self.logger.warning(
+            f"🚨 Escalating error {error_event.error_id} - manual intervention required"
+        )
         # Add escalation logic (notifications, alerts, etc.)
 
     def register_process(self, process_id: str, process_name: str):
         """Register a process for health monitoring"""
         self.process_health[process_id] = ProcessHealth(
-            process_id=process_id,
-            process_name=process_name,
-            last_heartbeat=datetime.now()
+            process_id=process_id, process_name=process_name, last_heartbeat=datetime.now()
         )
 
     def update_process_heartbeat(self, process_id: str):
@@ -361,7 +384,9 @@ class ProcessErrorCorrection:
                     self.logger.warning(f"Process {process_id} unresponsive, attempting restart")
                     asyncio.create_task(self._restart_process(process_id))
                 else:
-                    self.logger.error(f"Process {process_id} failed after {self.max_restart_attempts} restart attempts")
+                    self.logger.error(
+                        f"Process {process_id} failed after {self.max_restart_attempts} restart attempts"
+                    )
 
     async def _restart_process(self, process_id: str):
         """Restart a failed process"""
@@ -381,7 +406,9 @@ class ProcessErrorCorrection:
             recent_errors = [e for e in errors if datetime.now() - e.timestamp < timedelta(hours=1)]
 
             if len(recent_errors) >= 3:
-                self.logger.warning(f"⚠️ Error pattern detected: {pattern_key} ({len(recent_errors)} errors in last hour)")
+                self.logger.warning(
+                    f"⚠️ Error pattern detected: {pattern_key} ({len(recent_errors)} errors in last hour)"
+                )
                 # Add predictive correction logic here
 
     def _cleanup_resolved_errors(self):
@@ -391,7 +418,8 @@ class ProcessErrorCorrection:
 
         # Remove old resolved errors
         self.error_events = [
-            e for e in self.error_events
+            e
+            for e in self.error_events
             if not e.resolved or (now - (e.resolution_time or e.timestamp) < retention_period)
         ]
 
@@ -423,10 +451,10 @@ class ProcessErrorCorrection:
                 pid: {
                     "status": health.status,
                     "restart_count": health.restart_count,
-                    "error_count": health.error_count
+                    "error_count": health.error_count,
                 }
                 for pid, health in self.process_health.items()
-            }
+            },
         }
 
     async def shutdown_error_correction(self):
@@ -479,8 +507,7 @@ class SystemCommunicationBridge:
 
             # Start bridge monitoring
             self.monitoring_thread = threading.Thread(
-                target=self._bridge_monitoring_loop,
-                daemon=True
+                target=self._bridge_monitoring_loop, daemon=True
             )
             self.monitoring_thread.start()
             self.bridge_monitoring_active = True
@@ -495,13 +522,13 @@ class SystemCommunicationBridge:
     def _register_protocol_handlers(self):
         """Register protocol handlers for different communication types"""
         self.protocol_handlers = {
-            'http': self._handle_http_protocol,
-            'websocket': self._handle_websocket_protocol,
-            'tcp': self._handle_tcp_protocol,
-            'udp': self._handle_udp_protocol,
-            'grpc': self._handle_grpc_protocol,
-            'mqtt': self._handle_mqtt_protocol,
-            'internal': self._handle_internal_protocol
+            "http": self._handle_http_protocol,
+            "websocket": self._handle_websocket_protocol,
+            "tcp": self._handle_tcp_protocol,
+            "udp": self._handle_udp_protocol,
+            "grpc": self._handle_grpc_protocol,
+            "mqtt": self._handle_mqtt_protocol,
+            "internal": self._handle_internal_protocol,
         }
 
     async def create_bridge(self, config: SystemBridgeConfig) -> bool:
@@ -512,7 +539,7 @@ class SystemCommunicationBridge:
                 bridge_id=config.bridge_id,
                 source_system=config.source_endpoint,
                 target_system=config.target_endpoint,
-                protocol=config.protocol
+                protocol=config.protocol,
             )
 
             # Create message queue
@@ -523,7 +550,9 @@ class SystemCommunicationBridge:
             self.bridges[config.bridge_id] = bridge
 
             # Initialize routing
-            self._update_routing_table(config.bridge_id, config.source_endpoint, config.target_endpoint)
+            self._update_routing_table(
+                config.bridge_id, config.source_endpoint, config.target_endpoint
+            )
 
             # Start bridge if enabled
             if config.enabled:
@@ -577,7 +606,7 @@ class SystemCommunicationBridge:
             # Close connection
             if bridge_id in self.active_connections:
                 connection = self.active_connections[bridge_id]
-                if hasattr(connection, 'close'):
+                if hasattr(connection, "close"):
                     await connection.close()
                 del self.active_connections[bridge_id]
 
@@ -602,18 +631,22 @@ class SystemCommunicationBridge:
                     # Queue message for bridge
                     queue = self.message_queues.get(bridge_id)
                     if queue:
-                        await queue.put({
-                            'source': source,
-                            'target': target,
-                            'message': message,
-                            'timestamp': datetime.now()
-                        })
+                        await queue.put(
+                            {
+                                "source": source,
+                                "target": target,
+                                "message": message,
+                                "timestamp": datetime.now(),
+                            }
+                        )
 
                         bridge = self.bridges[bridge_id]
                         bridge.message_count += 1
                         bridge.last_message = datetime.now()
 
-                        self.logger.debug(f"📨 Routed message from {source} to {target} via {bridge_id}")
+                        self.logger.debug(
+                            f"📨 Routed message from {source} to {target} via {bridge_id}"
+                        )
                         return True
 
             self.logger.warning(f"❌ No available route from {source} to {target}")
@@ -645,11 +678,12 @@ class SystemCommunicationBridge:
                 self.logger.error(f"Bridge message processing error for {bridge_id}: {e}")
                 await asyncio.sleep(1)
 
-    async def _send_message_through_bridge(self, connection: Any, message_data: Dict[str, Any], bridge_id: str):
+    async def _send_message_through_bridge(
+        self, connection: Any, message_data: Dict[str, Any], bridge_id: str
+    ):
         """Send a message through a bridge connection"""
         # Implementation depends on connection type
         # Add protocol-specific sending logic here
-        pass
 
     def _update_routing_table(self, bridge_id: str, source: str, target: str):
         """Update the routing table with new bridge"""
@@ -745,7 +779,7 @@ class SystemCommunicationBridge:
                 "protocol": bridge.protocol,
                 "message_count": bridge.message_count,
                 "error_count": bridge.error_count,
-                "last_message": bridge.last_message.isoformat() if bridge.last_message else None
+                "last_message": bridge.last_message.isoformat() if bridge.last_message else None,
             }
             for bridge_id, bridge in self.bridges.items()
         }
@@ -769,6 +803,7 @@ class SystemCommunicationBridge:
 @dataclass
 class HardwareProfile:
     """Hardware capability profile for agent assignment"""
+
     platform: str
     architecture: str
     cpu_cores: int
@@ -780,9 +815,11 @@ class HardwareProfile:
     specialized_hardware: List[str]  # ["npu", "tpu", "fpga", etc.]
     performance_score: float
 
+
 @dataclass
 class ApplicationProfile:
     """Application capability profile"""
+
     name: str
     type: str  # "ai_model", "system_service", "user_application", "infrastructure"
     resource_requirements: Dict[str, Any]
@@ -790,9 +827,11 @@ class ApplicationProfile:
     integration_points: List[str]
     assigned_agents: List[str] = field(default_factory=list)
 
+
 @dataclass
 class AgentAssignment:
     """Agent to hardware/application assignment"""
+
     agent_id: str
     agent_type: str
     hardware_profile: HardwareProfile
@@ -803,6 +842,7 @@ class AgentAssignment:
     active: bool = True
     resource_efficiency: float = 1.0
     task_completion_rate: float = 1.0
+
 
 class DesignClarityOS:
     """
@@ -854,13 +894,13 @@ class DesignClarityOS:
 
         # Protocol interfaces
         self.protocol_interfaces = {
-            'darwin_bridge': DarwinBridgeInterface(),
-            'hardware_orchestrator': HardwareOrchestrator(),
-            'application_connector': ApplicationConnector(),
-            'consciousness_protocol': ConsciousnessProtocolInterface(),
-            'agent_dispatcher': AgentDispatcher(),
-            'resource_manager': ResourceManager(),
-            'sovereign_guard': SovereignOperationGuard()
+            "darwin_bridge": DarwinBridgeInterface(),
+            "hardware_orchestrator": HardwareOrchestrator(),
+            "application_connector": ApplicationConnector(),
+            "consciousness_protocol": ConsciousnessProtocolInterface(),
+            "agent_dispatcher": AgentDispatcher(),
+            "resource_manager": ResourceManager(),
+            "sovereign_guard": SovereignOperationGuard(),
         }
 
         print("✅ Protocol components initialized")
@@ -931,12 +971,12 @@ class DesignClarityOS:
 
         # Local system profile
         local_profile = await self._profile_local_hardware()
-        self.hardware_profiles['local_system'] = local_profile
+        self.hardware_profiles["local_system"] = local_profile
 
         # Darwin-specific hardware
-        if platform.system() == 'Darwin':
+        if platform.system() == "Darwin":
             darwin_profile = await self.darwin_integration.profile_darwin_hardware()
-            self.hardware_profiles['darwin_core'] = darwin_profile
+            self.hardware_profiles["darwin_core"] = darwin_profile
 
         # Network-attached hardware (future expansion)
         network_profiles = await self._discover_network_hardware()
@@ -962,9 +1002,14 @@ class DesignClarityOS:
         gpu_memory = None
         try:
             # Check for common GPU indicators
-            gpu_info = subprocess.run(['system_profiler', 'SPDisplaysDataType'],
-                                    capture_output=True, text=True, timeout=10)
-            if 'Chipset Model' in gpu_info.stdout:
+            gpu_info = subprocess.run(
+                ["system_profiler", "SPDisplaysDataType"],
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=10,
+            )
+            if "Chipset Model" in gpu_info.stdout:
                 gpu_available = True
                 # Parse memory if available
         except:
@@ -978,20 +1023,22 @@ class DesignClarityOS:
         for partition in psutil.disk_partitions():
             try:
                 usage = psutil.disk_usage(partition.mountpoint)
-                storage_devices.append({
-                    'device': partition.device,
-                    'mountpoint': partition.mountpoint,
-                    'total_gb': usage.total / (1024**3),
-                    'free_gb': usage.free / (1024**3),
-                    'filesystem': partition.fstype
-                })
+                storage_devices.append(
+                    {
+                        "device": partition.device,
+                        "mountpoint": partition.mountpoint,
+                        "total_gb": usage.total / (1024**3),
+                        "free_gb": usage.free / (1024**3),
+                        "filesystem": partition.fstype,
+                    }
+                )
             except:
                 continue
 
         # Specialized hardware detection
         specialized_hardware = []
-        if system == 'Darwin':
-            specialized_hardware.extend(['neural_engine', 'secure_enclave'])
+        if system == "Darwin":
+            specialized_hardware.extend(["neural_engine", "secure_enclave"])
 
         # Performance score calculation
         performance_score = self._calculate_performance_score(
@@ -1008,11 +1055,12 @@ class DesignClarityOS:
             network_interfaces=network_interfaces,
             storage_devices=storage_devices,
             specialized_hardware=specialized_hardware,
-            performance_score=performance_score
+            performance_score=performance_score,
         )
 
-    def _calculate_performance_score(self, cpu_cores: int, memory_gb: float,
-                                   gpu_available: bool, specialized_hw: List[str]) -> float:
+    def _calculate_performance_score(
+        self, cpu_cores: int, memory_gb: float, gpu_available: bool, specialized_hw: List[str]
+    ) -> float:
         """Calculate hardware performance score"""
         score = cpu_cores * 10 + memory_gb * 5
 
@@ -1026,7 +1074,7 @@ class DesignClarityOS:
         return min(score, 1000.0)  # Cap at 1000
 
     async def _discover_network_hardware(self) -> Dict[str, HardwareProfile]:
-        """Discover network-attached hardware (placeholder for future expansion)"""
+        """Discover network-attached hardware (future expansion)"""
         # This would scan for network-attached GPUs, storage, etc.
         return {}
 
@@ -1041,26 +1089,26 @@ class DesignClarityOS:
                 type="system_service",
                 resource_requirements={"cpu": 0.1, "memory": 0.2, "storage": 0.1},
                 capabilities=["awareness", "reflection", "monitoring"],
-                integration_points=["consciousness_framework", "agent_dispatcher"]
+                integration_points=["consciousness_framework", "agent_dispatcher"],
             ),
             ApplicationProfile(
                 name="triad_synergy",
                 type="infrastructure",
                 resource_requirements={"cpu": 0.2, "memory": 0.5, "storage": 0.2},
                 capabilities=["symbolic_computation", "container_orchestration", "hybrid_ai"],
-                integration_points=["mathematica_bridge", "docker_integration"]
+                integration_points=["mathematica_bridge", "docker_integration"],
             ),
             ApplicationProfile(
                 name="multi_agent_engine",
                 type="ai_model",
                 resource_requirements={"cpu": 0.3, "memory": 1.0, "storage": 1.0},
                 capabilities=["model_optimization", "compression", "expansion"],
-                integration_points=["hardware_orchestrator", "resource_manager"]
-            )
+                integration_points=["hardware_orchestrator", "resource_manager"],
+            ),
         ]
 
         # System applications (Darwin-specific)
-        if platform.system() == 'Darwin':
+        if platform.system() == "Darwin":
             darwin_apps = await self.darwin_integration.discover_darwin_applications()
             ghostlink_apps.extend(darwin_apps)
 
@@ -1074,18 +1122,18 @@ class DesignClarityOS:
         """Establish deep integration with Darwin/macOS"""
         print("🍎 Establishing Darwin integration...")
 
-        if platform.system() == 'Darwin':
+        if platform.system() == "Darwin":
             success = await self.darwin_integration.initialize_darwin_bridge()
             if success:
                 print("✅ Darwin integration established")
                 print("🤝 Shaking hands with Darwin - synergy achieved")
 
                 # Register Darwin-specific protocol endpoints
-                self.integration_endpoints['darwin_services'] = {
-                    'notification_center': 'darwin://notification',
-                    'system_events': 'darwin://events',
-                    'hardware_monitoring': 'darwin://hardware',
-                    'application_lifecycle': 'darwin://apps'
+                self.integration_endpoints["darwin_services"] = {
+                    "notification_center": "darwin://notification",
+                    "system_events": "darwin://events",
+                    "hardware_monitoring": "darwin://hardware",
+                    "application_lifecycle": "darwin://apps",
                 }
             else:
                 print("⚠️  Darwin integration partial")
@@ -1099,7 +1147,7 @@ class DesignClarityOS:
         # Get available agents from multi-agent engine
         engine_status = self.multi_agent_engine.get_engine_status()
         available_agents = []
-        for agent_type, count in engine_status.get('agent_types', {}).items():
+        for agent_type, count in engine_status.get("agent_types", {}).items():
             for i in range(count):
                 available_agents.append(f"{agent_type}_{i+1}")
 
@@ -1111,9 +1159,11 @@ class DesignClarityOS:
             optimal_agents = self._determine_optimal_agents_for_hardware(hw_profile)
 
             for agent_type in optimal_agents:
-                if agent_type in [a.split('_')[0] for a in available_agents]:
+                if agent_type in [a.split("_")[0] for a in available_agents]:
                     # Find available agent of this type
-                    available_agent = next((a for a in available_agents if a.startswith(agent_type)), None)
+                    available_agent = next(
+                        (a for a in available_agents if a.startswith(agent_type)), None
+                    )
                     if available_agent:
                         # Create assignment
                         assignment = AgentAssignment(
@@ -1122,7 +1172,9 @@ class DesignClarityOS:
                             hardware_profile=hw_profile,
                             application_profile=None,  # Hardware-only assignment
                             priority=self._calculate_assignment_priority(hw_profile, None),
-                            resource_allocation=self._calculate_resource_allocation(hw_profile, agent_type)
+                            resource_allocation=self._calculate_resource_allocation(
+                                hw_profile, agent_type
+                            ),
                         )
 
                         self.agent_assignments[available_agent] = assignment
@@ -1138,16 +1190,22 @@ class DesignClarityOS:
                 # Determine optimal agent for this application
                 optimal_agent_type = self._determine_optimal_agent_for_application(app_profile)
 
-                if optimal_agent_type in [a.split('_')[0] for a in available_agents]:
-                    available_agent = next((a for a in available_agents if a.startswith(optimal_agent_type)), None)
+                if optimal_agent_type in [a.split("_")[0] for a in available_agents]:
+                    available_agent = next(
+                        (a for a in available_agents if a.startswith(optimal_agent_type)), None
+                    )
                     if available_agent:
                         assignment = AgentAssignment(
                             agent_id=available_agent,
                             agent_type=optimal_agent_type,
                             hardware_profile=suitable_hardware,
                             application_profile=app_profile,
-                            priority=self._calculate_assignment_priority(suitable_hardware, app_profile),
-                            resource_allocation=self._calculate_resource_allocation(suitable_hardware, optimal_agent_type, app_profile)
+                            priority=self._calculate_assignment_priority(
+                                suitable_hardware, app_profile
+                            ),
+                            resource_allocation=self._calculate_resource_allocation(
+                                suitable_hardware, optimal_agent_type, app_profile
+                            ),
                         )
 
                         self.agent_assignments[available_agent] = assignment
@@ -1178,14 +1236,15 @@ class DesignClarityOS:
         """Determine optimal agent type for application"""
         if app_profile.type == "ai_model":
             return "compression"  # Most AI models benefit from compression
-        elif app_profile.type == "system_service":
+        if app_profile.type == "system_service":
             return "refinement"  # System services need refinement
-        elif app_profile.type == "infrastructure":
+        if app_profile.type == "infrastructure":
             return "expansion"  # Infrastructure can handle expansion
-        else:
-            return "refinement"  # Default to refinement
+        return "refinement"  # Default to refinement
 
-    def _find_suitable_hardware_for_application(self, app_profile: ApplicationProfile) -> Optional[HardwareProfile]:
+    def _find_suitable_hardware_for_application(
+        self, app_profile: ApplicationProfile
+    ) -> Optional[HardwareProfile]:
         """Find suitable hardware for application requirements"""
         best_match = None
         best_score = 0
@@ -1198,18 +1257,20 @@ class DesignClarityOS:
 
         return best_match
 
-    def _calculate_hardware_application_compatibility(self, hw: HardwareProfile, app: ApplicationProfile) -> float:
+    def _calculate_hardware_application_compatibility(
+        self, hw: HardwareProfile, app: ApplicationProfile
+    ) -> float:
         """Calculate compatibility score between hardware and application"""
         score = 0
 
         # CPU compatibility
-        cpu_req = app.resource_requirements.get('cpu', 0.1)
+        cpu_req = app.resource_requirements.get("cpu", 0.1)
         cpu_available = hw.cpu_cores / 100  # Normalize
         if cpu_available >= cpu_req:
             score += 30
 
         # Memory compatibility
-        mem_req = app.resource_requirements.get('memory', 0.2)
+        mem_req = app.resource_requirements.get("memory", 0.2)
         mem_available = hw.memory_gb / 32  # Normalize to 32GB baseline
         if mem_available >= mem_req:
             score += 30
@@ -1224,7 +1285,9 @@ class DesignClarityOS:
 
         return score
 
-    def _calculate_assignment_priority(self, hw: HardwareProfile, app: Optional[ApplicationProfile]) -> int:
+    def _calculate_assignment_priority(
+        self, hw: HardwareProfile, app: Optional[ApplicationProfile]
+    ) -> int:
         """Calculate assignment priority"""
         priority = 5  # Base priority
 
@@ -1244,14 +1307,11 @@ class DesignClarityOS:
 
         return min(priority, 10)
 
-    def _calculate_resource_allocation(self, hw: HardwareProfile, agent_type: str,
-                                    app: Optional[ApplicationProfile] = None) -> Dict[str, float]:
+    def _calculate_resource_allocation(
+        self, hw: HardwareProfile, agent_type: str, app: Optional[ApplicationProfile] = None
+    ) -> Dict[str, float]:
         """Calculate resource allocation for agent"""
-        base_allocation = {
-            "cpu_percent": 10.0,
-            "memory_percent": 5.0,
-            "storage_percent": 1.0
-        }
+        base_allocation = {"cpu_percent": 10.0, "memory_percent": 5.0, "storage_percent": 1.0}
 
         # Adjust based on agent type
         if agent_type == "compression":
@@ -1265,8 +1325,8 @@ class DesignClarityOS:
             base_allocation["memory_percent"] = 8.0
 
         # Adjust based on hardware capabilities
-        cpu_limit = (hw.cpu_cores * 10)  # Max 10% per core
-        memory_limit = (hw.memory_gb * 0.05)  # Max 5% of total memory
+        cpu_limit = hw.cpu_cores * 10  # Max 10% per core
+        memory_limit = hw.memory_gb * 0.05  # Max 5% of total memory
 
         base_allocation["cpu_percent"] = min(base_allocation["cpu_percent"], cpu_limit)
         base_allocation["memory_percent"] = min(base_allocation["memory_percent"], memory_limit)
@@ -1279,7 +1339,7 @@ class DesignClarityOS:
 
         for interface_name, interface in self.protocol_interfaces.items():
             try:
-                if hasattr(interface, 'initialize'):
+                if hasattr(interface, "initialize"):
                     await interface.initialize()
                 print(f"✅ {interface_name} interface initialized")
             except Exception as e:
@@ -1298,7 +1358,9 @@ class DesignClarityOS:
         self.monitoring_threads.append(hardware_monitor)
 
         # Start agent performance monitoring
-        agent_monitor = threading.Thread(target=self._agent_performance_monitoring_loop, daemon=True)
+        agent_monitor = threading.Thread(
+            target=self._agent_performance_monitoring_loop, daemon=True
+        )
         agent_monitor.start()
         self.monitoring_threads.append(agent_monitor)
 
@@ -1380,8 +1442,8 @@ class DesignClarityOS:
                 # Update storage usage
                 for storage in hw_profile.storage_devices:
                     try:
-                        usage = psutil.disk_usage(storage['mountpoint'])
-                        storage['free_gb'] = usage.free / (1024**3)
+                        usage = psutil.disk_usage(storage["mountpoint"])
+                        storage["free_gb"] = usage.free / (1024**3)
                     except:
                         pass
 
@@ -1395,13 +1457,11 @@ class DesignClarityOS:
     def _detect_hardware_changes(self):
         """Detect hardware configuration changes"""
         # This would detect new GPUs, changed memory, etc.
-        # Placeholder for future expansion
-        pass
+        # Reserved for future expansion
 
     def _optimize_agent_assignments(self):
         """Optimize agent assignments based on current conditions"""
         # Reassign agents if hardware load changes significantly
-        pass
 
     def _update_agent_performance_metrics(self):
         """Update agent performance metrics"""
@@ -1410,16 +1470,17 @@ class DesignClarityOS:
             engine_status = self.multi_agent_engine.get_engine_status()
 
             # Update performance metrics
-            assignment.performance_metrics.update({
-                "last_update": datetime.now(),
-                "active_tasks": engine_status.get("active_tasks", 0),
-                "queued_tasks": engine_status.get("queued_tasks", 0)
-            })
+            assignment.performance_metrics.update(
+                {
+                    "last_update": datetime.now(),
+                    "active_tasks": engine_status.get("active_tasks", 0),
+                    "queued_tasks": engine_status.get("queued_tasks", 0),
+                }
+            )
 
     def _rebalance_agents_if_needed(self):
         """Rebalance agents if performance issues detected"""
         # Check for overloaded agents and rebalance
-        pass
 
     def _consciousness_driven_optimization(self):
         """Perform consciousness-driven optimization"""
@@ -1445,17 +1506,14 @@ class DesignClarityOS:
     def _enable_aggressive_optimization(self):
         """Enable aggressive optimization for high consciousness states"""
         # Allow more resource allocation, enable advanced features
-        pass
 
     def _enable_balanced_optimization(self):
         """Enable balanced optimization"""
         # Standard optimization settings
-        pass
 
     def _enable_conservative_optimization(self):
         """Enable conservative optimization for basic consciousness"""
         # Minimal resource usage, basic features only
-        pass
 
     # Evolutionary Intelligence Methods
 
@@ -1465,10 +1523,7 @@ class DesignClarityOS:
             return
 
         # Start evolution monitoring thread
-        evolution_thread = threading.Thread(
-            target=self._evolution_monitoring_loop,
-            daemon=True
-        )
+        evolution_thread = threading.Thread(target=self._evolution_monitoring_loop, daemon=True)
         evolution_thread.start()
         self.monitoring_threads.append(evolution_thread)
 
@@ -1496,11 +1551,13 @@ class DesignClarityOS:
         """Get current system state for evolution decisions"""
         return {
             "timestamp": time.time(),
-            "consciousness_level": self.consciousness.get_unified_awareness_snapshot().get("consciousness_level"),
+            "consciousness_level": self.consciousness.get_unified_awareness_snapshot().get(
+                "consciousness_level"
+            ),
             "hardware_utilization": self._get_hardware_utilization(),
             "agent_performance": self._get_agent_performance_metrics(),
             "protocol_efficiency": self._calculate_protocol_efficiency(),
-            "system_health": self._assess_system_health()
+            "system_health": self._assess_system_health(),
         }
 
     def _get_hardware_utilization(self) -> Dict[str, float]:
@@ -1509,7 +1566,7 @@ class DesignClarityOS:
             return {
                 "cpu_percent": psutil.cpu_percent(interval=1),
                 "memory_percent": psutil.virtual_memory().percent,
-                "disk_usage": psutil.disk_usage('/').percent
+                "disk_usage": psutil.disk_usage("/").percent,
             }
         except:
             return {"cpu_percent": 0.0, "memory_percent": 0.0, "disk_usage": 0.0}
@@ -1522,7 +1579,7 @@ class DesignClarityOS:
             metrics[agent_name] = {
                 "active": assignment.active,
                 "resource_efficiency": assignment.resource_efficiency,
-                "task_completion_rate": assignment.task_completion_rate
+                "task_completion_rate": assignment.task_completion_rate,
             }
         return metrics
 
@@ -1545,10 +1602,9 @@ class DesignClarityOS:
 
             if cpu_usage > 90 or memory_usage > 90:
                 return "critical"
-            elif cpu_usage > 70 or memory_usage > 80:
+            if cpu_usage > 70 or memory_usage > 80:
                 return "warning"
-            else:
-                return "healthy"
+            return "healthy"
         except:
             return "unknown"
 
@@ -1583,7 +1639,7 @@ class DesignClarityOS:
                 "hardware_profiles": {k: v.__dict__ for k, v in self.hardware_profiles.items()},
                 "agent_assignments": {k: v.__dict__ for k, v in self.agent_assignments.items()},
                 "consciousness_snapshot": self.consciousness.get_unified_awareness_snapshot(),
-                "protocol_metrics": self.get_protocol_status()
+                "protocol_metrics": self.get_protocol_status(),
             }
 
             # Execute evolution
@@ -1596,7 +1652,9 @@ class DesignClarityOS:
                 print("✅ Evolution cycle completed successfully")
                 print(f"   Improvements: {evolution_result.get('improvements', [])}")
             else:
-                print(f"❌ Evolution cycle failed: {evolution_result.get('error', 'Unknown error')}")
+                print(
+                    f"❌ Evolution cycle failed: {evolution_result.get('error', 'Unknown error')}"
+                )
 
         except Exception as e:
             print(f"Evolution cycle execution error: {e}")
@@ -1672,12 +1730,10 @@ class DesignClarityOS:
     def _optimize_resource_allocation(self, parameters: Dict[str, Any]):
         """Optimize resource allocation based on evolution"""
         # Adjust resource allocation parameters
-        pass
 
     def _optimize_task_scheduling(self, parameters: Dict[str, Any]):
         """Optimize task scheduling based on evolution"""
         # Adjust task scheduling parameters
-        pass
 
     # Scheduled Evolution Application Control Methods
 
@@ -1718,25 +1774,24 @@ class DesignClarityOS:
         try:
             if task_type == "hardware_discovery":
                 return await self._execute_hardware_discovery_task(task)
-            elif task_type == "agent_assignment":
+            if task_type == "agent_assignment":
                 return await self._execute_agent_assignment_task(task)
-            elif task_type == "consciousness_optimization":
+            if task_type == "consciousness_optimization":
                 return await self._execute_consciousness_optimization_task(task)
-            elif task_type == "darwin_integration":
+            if task_type == "darwin_integration":
                 return await self.darwin_integration.execute_darwin_task(task)
-            elif task_type == "evolution_control":
+            if task_type == "evolution_control":
                 return await self._execute_evolution_control_task(task)
-            else:
-                return {"result": f"Unknown protocol task type: {task_type}"}
+            return {"result": f"Unknown protocol task type: {task_type}"}
         except Exception as e:
-            return {"error": f"Protocol task execution failed: {str(e)}"}
+            return {"error": f"Protocol task execution failed: {e!s}"}
 
     async def _execute_hardware_discovery_task(self, task: Dict[str, Any]) -> Dict[str, Any]:
         """Execute hardware discovery task"""
         await self._discover_hardware_profiles()
         return {
             "hardware_profiles": len(self.hardware_profiles),
-            "profiles": {k: v.__dict__ for k, v in self.hardware_profiles.items()}
+            "profiles": {k: v.__dict__ for k, v in self.hardware_profiles.items()},
         }
 
     async def _execute_agent_assignment_task(self, task: Dict[str, Any]) -> Dict[str, Any]:
@@ -1744,10 +1799,12 @@ class DesignClarityOS:
         await self._assign_agents_to_systems()
         return {
             "assignments": len(self.agent_assignments),
-            "assignments_detail": {k: v.__dict__ for k, v in self.agent_assignments.items()}
+            "assignments_detail": {k: v.__dict__ for k, v in self.agent_assignments.items()},
         }
 
-    async def _execute_consciousness_optimization_task(self, task: Dict[str, Any]) -> Dict[str, Any]:
+    async def _execute_consciousness_optimization_task(
+        self, task: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Execute consciousness-driven optimization"""
         model_name = task.get("model_name", "default_model")
         awareness = self.consciousness.get_unified_awareness_snapshot()
@@ -1772,23 +1829,25 @@ class DesignClarityOS:
         try:
             if control_action == "start_evolution":
                 return await self.start_evolution_cycles()
-            elif control_action == "stop_evolution":
+            if control_action == "stop_evolution":
                 return await self.stop_evolution_cycles()
-            elif control_action == "pause_evolution":
+            if control_action == "pause_evolution":
                 return await self.pause_evolution_cycles()
-            elif control_action == "resume_evolution":
+            if control_action == "resume_evolution":
                 return await self.resume_evolution_cycles()
-            elif control_action == "get_status":
+            if control_action == "get_status":
                 return self.get_evolution_status()
-            elif control_action == "configure":
+            if control_action == "configure":
                 config_updates = task.get("config", {})
                 return await self.configure_evolution_schedule(config_updates)
-            elif control_action == "trigger_manual":
+            if control_action == "trigger_manual":
                 return await self.trigger_manual_evolution()
-            else:
-                return {"success": False, "message": f"Unknown evolution control action: {control_action}"}
+            return {
+                "success": False,
+                "message": f"Unknown evolution control action: {control_action}",
+            }
         except Exception as e:
-            return {"success": False, "message": f"Evolution control task failed: {str(e)}"}
+            return {"success": False, "message": f"Evolution control task failed: {e!s}"}
 
     def get_protocol_status(self) -> Dict[str, Any]:
         """Get comprehensive protocol status"""
@@ -1801,11 +1860,13 @@ class DesignClarityOS:
             "hardware_profiles": len(self.hardware_profiles),
             "application_profiles": len(self.application_profiles),
             "agent_assignments": len(self.agent_assignments),
-            "consciousness_level": self.consciousness.get_unified_awareness_snapshot().get("consciousness_level"),
-            "darwin_integrated": platform.system() == 'Darwin',
+            "consciousness_level": self.consciousness.get_unified_awareness_snapshot().get(
+                "consciousness_level"
+            ),
+            "darwin_integrated": platform.system() == "Darwin",
             "monitoring_active": len(self.monitoring_threads) > 0,
             "integration_endpoints": list(self.integration_endpoints.keys()),
-            "evolution_status": evolution_status
+            "evolution_status": evolution_status,
         }
 
     async def shutdown_protocol(self):
@@ -1823,7 +1884,7 @@ class DesignClarityOS:
 
         # Shutdown protocol interfaces
         for interface in self.protocol_interfaces.values():
-            if hasattr(interface, 'shutdown'):
+            if hasattr(interface, "shutdown"):
                 await interface.shutdown()
 
         # Shutdown scheduled evolution
@@ -1841,16 +1902,16 @@ class DarwinIntegrationProtocol:
 
     async def initialize_darwin_bridge(self) -> bool:
         """Initialize Darwin bridge integration"""
-        if platform.system() != 'Darwin':
+        if platform.system() != "Darwin":
             return False
 
         try:
             # Initialize Darwin services
             self.darwin_services = {
-                'notification_center': await self._initialize_notification_center(),
-                'system_events': await self._initialize_system_events(),
-                'hardware_monitoring': await self._initialize_hardware_monitoring(),
-                'application_monitoring': await self._initialize_application_monitoring()
+                "notification_center": await self._initialize_notification_center(),
+                "system_events": await self._initialize_system_events(),
+                "hardware_monitoring": await self._initialize_hardware_monitoring(),
+                "application_monitoring": await self._initialize_application_monitoring(),
             }
 
             print("🍎 Darwin bridge established")
@@ -1865,30 +1926,43 @@ class DarwinIntegrationProtocol:
         # Use system_profiler for detailed hardware info
         try:
             # Get hardware overview
-            hw_info = subprocess.run(['system_profiler', 'SPHardwareDataType'],
-                                   capture_output=True, text=True, timeout=10)
+            hw_info = subprocess.run(
+                ["system_profiler", "SPHardwareDataType"],
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=10,
+            )
 
             # Parse CPU info
-            cpu_info = subprocess.run(['sysctl', '-n', 'machdep.cpu.brand_string'],
-                                    capture_output=True, text=True)
+            cpu_info = subprocess.run(
+                ["sysctl", "-n", "machdep.cpu.brand_string"],
+                check=False,
+                capture_output=True,
+                text=True,
+            )
             cpu_brand = cpu_info.stdout.strip()
 
             # Get memory info
-            mem_info = subprocess.run(['sysctl', '-n', 'hw.memsize'],
-                                    capture_output=True, text=True)
+            mem_info = subprocess.run(
+                ["sysctl", "-n", "hw.memsize"], check=False, capture_output=True, text=True
+            )
             memory_bytes = int(mem_info.stdout.strip())
             memory_gb = memory_bytes / (1024**3)
 
             # Get CPU core info
-            cpu_cores = int(subprocess.run(['sysctl', '-n', 'hw.ncpu'],
-                                         capture_output=True, text=True).stdout.strip())
+            cpu_cores = int(
+                subprocess.run(
+                    ["sysctl", "-n", "hw.ncpu"], check=False, capture_output=True, text=True
+                ).stdout.strip()
+            )
 
             # Check for Apple Silicon
             apple_silicon = "Apple" in cpu_brand
 
             specialized_hw = []
             if apple_silicon:
-                specialized_hw.extend(['neural_engine', 'secure_enclave', 'apple_silicon'])
+                specialized_hw.extend(["neural_engine", "secure_enclave", "apple_silicon"])
 
             return HardwareProfile(
                 platform="Darwin",
@@ -1900,7 +1974,9 @@ class DarwinIntegrationProtocol:
                 network_interfaces=[],  # Would need network discovery
                 storage_devices=[],  # Would need storage discovery
                 specialized_hardware=specialized_hw,
-                performance_score=self._calculate_darwin_performance_score(cpu_cores, memory_gb, apple_silicon)
+                performance_score=self._calculate_darwin_performance_score(
+                    cpu_cores, memory_gb, apple_silicon
+                ),
             )
 
         except Exception as e:
@@ -1916,10 +1992,12 @@ class DarwinIntegrationProtocol:
                 network_interfaces=[],
                 storage_devices=[],
                 specialized_hardware=[],
-                performance_score=100.0
+                performance_score=100.0,
             )
 
-    def _calculate_darwin_performance_score(self, cpu_cores: int, memory_gb: float, apple_silicon: bool) -> float:
+    def _calculate_darwin_performance_score(
+        self, cpu_cores: int, memory_gb: float, apple_silicon: bool
+    ) -> float:
         """Calculate performance score for Darwin systems"""
         score = cpu_cores * 15 + memory_gb * 8  # Darwin systems are optimized
 
@@ -1938,7 +2016,7 @@ class DarwinIntegrationProtocol:
             ("notification_center", "system_service", ["notifications", "alerts"]),
             ("siri", "ai_model", ["voice_assistant", "natural_language"]),
             ("photos", "user_application", ["image_processing", "ai_recognition"]),
-            ("messages", "user_application", ["communication", "encryption"])
+            ("messages", "user_application", ["communication", "encryption"]),
         ]
 
         for name, app_type, capabilities in macos_services:
@@ -1947,7 +2025,7 @@ class DarwinIntegrationProtocol:
                 type=app_type,
                 resource_requirements={"cpu": 0.05, "memory": 0.1, "storage": 0.05},
                 capabilities=capabilities,
-                integration_points=["darwin_bridge", "consciousness_protocol"]
+                integration_points=["darwin_bridge", "consciousness_protocol"],
             )
             darwin_apps.append(app)
 
@@ -1959,10 +2037,9 @@ class DarwinIntegrationProtocol:
 
         if task_type == "send_notification":
             return await self._send_darwin_notification(task)
-        elif task_type == "get_system_info":
+        if task_type == "get_system_info":
             return await self._get_darwin_system_info()
-        else:
-            return {"result": f"Unknown Darwin task: {task_type}"}
+        return {"result": f"Unknown Darwin task: {task_type}"}
 
     async def _send_darwin_notification(self, task: Dict[str, Any]) -> Dict[str, Any]:
         """Send a Darwin notification"""
@@ -1972,7 +2049,7 @@ class DarwinIntegrationProtocol:
         try:
             # Use osascript to send notification
             script = f'display notification "{message}" with title "{title}"'
-            subprocess.run(['osascript', '-e', script], timeout=5)
+            subprocess.run(["osascript", "-e", script], check=False, timeout=5)
             return {"success": True, "notification_sent": True}
         except Exception as e:
             return {"success": False, "error": str(e)}
@@ -1981,7 +2058,7 @@ class DarwinIntegrationProtocol:
         """Get Darwin system information"""
         try:
             # Get system version
-            version_info = subprocess.run(['sw_vers'], capture_output=True, text=True)
+            version_info = subprocess.run(["sw_vers"], check=False, capture_output=True, text=True)
             return {"system_info": version_info.stdout, "platform": "Darwin"}
         except Exception as e:
             return {"error": str(e)}
@@ -2005,63 +2082,63 @@ class DarwinIntegrationProtocol:
 
 # Protocol Interface Classes
 
+
 class DarwinBridgeInterface:
     """Interface for Darwin bridge operations"""
 
     async def initialize(self):
         """Initialize Darwin bridge"""
-        pass
 
     async def shutdown(self):
         """Shutdown Darwin bridge"""
-        pass
+
 
 class HardwareOrchestrator:
     """Hardware orchestration interface"""
 
     async def initialize(self):
         """Initialize hardware orchestrator"""
-        pass
+
 
 class ApplicationConnector:
     """Application connection interface"""
 
     async def initialize(self):
         """Initialize application connector"""
-        pass
+
 
 class ConsciousnessProtocolInterface:
     """Consciousness protocol interface"""
 
     async def initialize(self):
         """Initialize consciousness protocol"""
-        pass
+
 
 class AgentDispatcher:
     """Agent dispatching interface"""
 
     async def initialize(self):
         """Initialize agent dispatcher"""
-        pass
+
 
 class ResourceManager:
     """Resource management interface"""
 
     async def initialize(self):
         """Initialize resource manager"""
-        pass
+
 
 class SovereignOperationGuard:
     """Sovereign operation guard"""
 
     async def initialize(self):
         """Initialize sovereign guard"""
-        pass
 
 
 @dataclass
 class EvolutionScheduleConfig:
     """Configuration for scheduled evolution"""
+
     evolution_interval_minutes: int = 60  # Run evolution every hour
     heartbeat_interval_seconds: int = 30  # Heartbeat every 30 seconds
     tick_interval_seconds: int = 60  # Tick events every minute
@@ -2073,6 +2150,7 @@ class EvolutionScheduleConfig:
 @dataclass
 class EvolutionControlState:
     """Current state of evolution controls"""
+
     evolution_active: bool = False
     evolution_paused: bool = False
     last_evolution_time: Optional[datetime] = None
@@ -2095,7 +2173,9 @@ class ScheduledEvolutionManager:
     - Application control interfaces
     """
 
-    def __init__(self, design_clarity_os: 'DesignClarityOS', config: EvolutionScheduleConfig = None):
+    def __init__(
+        self, design_clarity_os: "DesignClarityOS", config: EvolutionScheduleConfig = None
+    ):
         self.design_clarity_os = design_clarity_os
         self.config = config or EvolutionScheduleConfig()
         self.control_state = EvolutionControlState()
@@ -2123,8 +2203,7 @@ class ScheduledEvolutionManager:
 
             # Setup logging
             logging.basicConfig(
-                level=logging.INFO,
-                format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+                level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
             )
 
             # Register application control interfaces
@@ -2140,10 +2219,7 @@ class ScheduledEvolutionManager:
             self._schedule_tick_events()
 
             # Start monitoring thread
-            self.monitoring_thread = threading.Thread(
-                target=self._monitoring_loop,
-                daemon=True
-            )
+            self.monitoring_thread = threading.Thread(target=self._monitoring_loop, daemon=True)
             self.monitoring_thread.start()
             self.monitoring_active = True
 
@@ -2161,13 +2237,13 @@ class ScheduledEvolutionManager:
     def _register_application_controls(self):
         """Register application control interfaces"""
         self.application_controls = {
-            'start_evolution': self.start_evolution_cycles,
-            'stop_evolution': self.stop_evolution_cycles,
-            'pause_evolution': self.pause_evolution_cycles,
-            'resume_evolution': self.resume_evolution_cycles,
-            'get_evolution_status': self.get_evolution_status,
-            'configure_evolution': self.configure_evolution_schedule,
-            'trigger_manual_evolution': self.trigger_manual_evolution
+            "start_evolution": self.start_evolution_cycles,
+            "stop_evolution": self.stop_evolution_cycles,
+            "pause_evolution": self.pause_evolution_cycles,
+            "resume_evolution": self.resume_evolution_cycles,
+            "get_evolution_status": self.get_evolution_status,
+            "configure_evolution": self.configure_evolution_schedule,
+            "trigger_manual_evolution": self.trigger_manual_evolution,
         }
 
     def _schedule_evolution_cycles(self):
@@ -2175,21 +2251,27 @@ class ScheduledEvolutionManager:
         self.evolution_scheduler.every(self.config.evolution_interval_minutes).minutes.do(
             self._trigger_scheduled_evolution
         )
-        self.logger.info(f"📅 Evolution cycles scheduled every {self.config.evolution_interval_minutes} minutes")
+        self.logger.info(
+            f"📅 Evolution cycles scheduled every {self.config.evolution_interval_minutes} minutes"
+        )
 
     def _schedule_heartbeat_monitoring(self):
         """Schedule heartbeat monitoring"""
         self.heartbeat_scheduler.every(self.config.heartbeat_interval_seconds).seconds.do(
             self._perform_heartbeat_check
         )
-        self.logger.info(f"💓 Heartbeat monitoring scheduled every {self.config.heartbeat_interval_seconds} seconds")
+        self.logger.info(
+            f"💓 Heartbeat monitoring scheduled every {self.config.heartbeat_interval_seconds} seconds"
+        )
 
     def _schedule_tick_events(self):
         """Schedule tick events"""
         self.tick_scheduler.every(self.config.tick_interval_seconds).seconds.do(
             self._perform_tick_event
         )
-        self.logger.info(f"⏰ Tick events scheduled every {self.config.tick_interval_seconds} seconds")
+        self.logger.info(
+            f"⏰ Tick events scheduled every {self.config.tick_interval_seconds} seconds"
+        )
 
     def _monitoring_loop(self):
         """Main monitoring loop for scheduled tasks"""
@@ -2216,7 +2298,9 @@ class ScheduledEvolutionManager:
             return
 
         if self.control_state.active_evolution_cycles >= self.config.max_concurrent_evolutions:
-            self.logger.warning("Maximum concurrent evolutions reached, skipping scheduled evolution")
+            self.logger.warning(
+                "Maximum concurrent evolutions reached, skipping scheduled evolution"
+            )
             return
 
         # Run evolution in background task
@@ -2249,7 +2333,9 @@ class ScheduledEvolutionManager:
                     0.0, self.control_state.evolution_success_rate - 0.05
                 )
 
-            self.logger.info(f"🧬 Scheduled evolution completed: {evolution_result.get('success', False)}")
+            self.logger.info(
+                f"🧬 Scheduled evolution completed: {evolution_result.get('success', False)}"
+            )
 
         except Exception as e:
             self.logger.error(f"Scheduled evolution execution error: {e}")
@@ -2291,13 +2377,17 @@ class ScheduledEvolutionManager:
             agent_performance = self.design_clarity_os._get_agent_performance_metrics()
 
             # Log tick event
-            self.logger.debug(f"⏰ Tick: Efficiency {protocol_efficiency:.2f}, Active agents: {len(agent_performance)}")
+            self.logger.debug(
+                f"⏰ Tick: Efficiency {protocol_efficiency:.2f}, Active agents: {len(agent_performance)}"
+            )
 
             # Trigger evolution if efficiency is low and system is healthy
-            if (protocol_efficiency < 0.6 and
-                self.control_state.system_health_status in ["healthy", "warning"] and
-                self.control_state.evolution_active and
-                not self.control_state.evolution_paused):
+            if (
+                protocol_efficiency < 0.6
+                and self.control_state.system_health_status in ["healthy", "warning"]
+                and self.control_state.evolution_active
+                and not self.control_state.evolution_paused
+            ):
 
                 self.logger.info("📈 Low efficiency detected, triggering evolution optimization")
                 self._trigger_scheduled_evolution()
@@ -2309,8 +2399,8 @@ class ScheduledEvolutionManager:
         """Calculate next scheduled evolution time"""
         if self.control_state.last_evolution_time:
             self.control_state.next_evolution_time = (
-                self.control_state.last_evolution_time +
-                timedelta(minutes=self.config.evolution_interval_minutes)
+                self.control_state.last_evolution_time
+                + timedelta(minutes=self.config.evolution_interval_minutes)
             )
 
     def _cleanup_completed_evolution_jobs(self):
@@ -2332,7 +2422,11 @@ class ScheduledEvolutionManager:
         return {
             "success": True,
             "message": "Evolution cycles started",
-            "next_evolution": self.control_state.next_evolution_time.isoformat() if self.control_state.next_evolution_time else None
+            "next_evolution": (
+                self.control_state.next_evolution_time.isoformat()
+                if self.control_state.next_evolution_time
+                else None
+            ),
         }
 
     async def stop_evolution_cycles(self) -> Dict[str, Any]:
@@ -2375,7 +2469,11 @@ class ScheduledEvolutionManager:
         return {
             "success": True,
             "message": "Evolution cycles resumed",
-            "next_evolution": self.control_state.next_evolution_time.isoformat() if self.control_state.next_evolution_time else None
+            "next_evolution": (
+                self.control_state.next_evolution_time.isoformat()
+                if self.control_state.next_evolution_time
+                else None
+            ),
         }
 
     def get_evolution_status(self) -> Dict[str, Any]:
@@ -2383,10 +2481,26 @@ class ScheduledEvolutionManager:
         return {
             "evolution_active": self.control_state.evolution_active,
             "evolution_paused": self.control_state.evolution_paused,
-            "last_evolution_time": self.control_state.last_evolution_time.isoformat() if self.control_state.last_evolution_time else None,
-            "next_evolution_time": self.control_state.next_evolution_time.isoformat() if self.control_state.next_evolution_time else None,
-            "heartbeat_last_time": self.control_state.heartbeat_last_time.isoformat() if self.control_state.heartbeat_last_time else None,
-            "tick_last_time": self.control_state.tick_last_time.isoformat() if self.control_state.tick_last_time else None,
+            "last_evolution_time": (
+                self.control_state.last_evolution_time.isoformat()
+                if self.control_state.last_evolution_time
+                else None
+            ),
+            "next_evolution_time": (
+                self.control_state.next_evolution_time.isoformat()
+                if self.control_state.next_evolution_time
+                else None
+            ),
+            "heartbeat_last_time": (
+                self.control_state.heartbeat_last_time.isoformat()
+                if self.control_state.heartbeat_last_time
+                else None
+            ),
+            "tick_last_time": (
+                self.control_state.tick_last_time.isoformat()
+                if self.control_state.tick_last_time
+                else None
+            ),
             "active_evolution_cycles": self.control_state.active_evolution_cycles,
             "evolution_success_rate": self.control_state.evolution_success_rate,
             "system_health_status": self.control_state.system_health_status,
@@ -2394,8 +2508,8 @@ class ScheduledEvolutionManager:
                 "evolution_interval_minutes": self.config.evolution_interval_minutes,
                 "heartbeat_interval_seconds": self.config.heartbeat_interval_seconds,
                 "tick_interval_seconds": self.config.tick_interval_seconds,
-                "max_concurrent_evolutions": self.config.max_concurrent_evolutions
-            }
+                "max_concurrent_evolutions": self.config.max_concurrent_evolutions,
+            },
         }
 
     async def configure_evolution_schedule(self, config_updates: Dict[str, Any]) -> Dict[str, Any]:
@@ -2424,13 +2538,13 @@ class ScheduledEvolutionManager:
                 "new_config": {
                     "evolution_interval_minutes": self.config.evolution_interval_minutes,
                     "heartbeat_interval_seconds": self.config.heartbeat_interval_seconds,
-                    "tick_interval_seconds": self.config.tick_interval_seconds
-                }
+                    "tick_interval_seconds": self.config.tick_interval_seconds,
+                },
             }
 
         except Exception as e:
             self.logger.error(f"Configuration error: {e}")
-            return {"success": False, "message": f"Configuration failed: {str(e)}"}
+            return {"success": False, "message": f"Configuration failed: {e!s}"}
 
     async def trigger_manual_evolution(self) -> Dict[str, Any]:
         """Trigger a manual evolution cycle"""
@@ -2446,7 +2560,7 @@ class ScheduledEvolutionManager:
 
         except Exception as e:
             self.logger.error(f"Manual evolution trigger error: {e}")
-            return {"success": False, "message": f"Manual evolution failed: {str(e)}"}
+            return {"success": False, "message": f"Manual evolution failed: {e!s}"}
 
     async def shutdown_scheduled_evolution(self):
         """Shutdown the scheduled evolution system"""
@@ -2477,7 +2591,9 @@ async def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="GhostLink Design Clarity OS - Root Protocol")
-    parser.add_argument("--initialize-protocol", action="store_true", help="Initialize root protocol")
+    parser.add_argument(
+        "--initialize-protocol", action="store_true", help="Initialize root protocol"
+    )
     parser.add_argument("--protocol-status", action="store_true", help="Get protocol status")
     parser.add_argument("--execute-task", help="Execute protocol task (JSON string)")
     parser.add_argument("--darwin-task", help="Execute Darwin-specific task (JSON string)")
@@ -2487,7 +2603,9 @@ async def main():
     parser.add_argument("--stop-evolution", action="store_true", help="Stop evolution cycles")
     parser.add_argument("--pause-evolution", action="store_true", help="Pause evolution cycles")
     parser.add_argument("--resume-evolution", action="store_true", help="Resume evolution cycles")
-    parser.add_argument("--trigger-evolution", action="store_true", help="Trigger manual evolution cycle")
+    parser.add_argument(
+        "--trigger-evolution", action="store_true", help="Trigger manual evolution cycle"
+    )
 
     args = parser.parse_args()
 
@@ -2530,10 +2648,7 @@ async def main():
             sys.exit(1)
 
         task = json.loads(args.darwin_task)
-        result = await protocol.execute_protocol_task({
-            "type": "darwin_integration",
-            **task
-        })
+        result = await protocol.execute_protocol_task({"type": "darwin_integration", **task})
         print(json.dumps(result, indent=2, default=str))
 
     elif args.shutdown:
@@ -2615,25 +2730,22 @@ async def main():
         else:
             print(f"❌ Failed to trigger evolution: {result['message']}")
 
+    # Default: show protocol status
+    elif protocol.protocol_active:
+        status = protocol.get_protocol_status()
+        print("🔗 GhostLink Root Protocol Active")
+        print("=" * 35)
+        print(f"System ID: {status['system_id']}")
+        print(f"Protocol Version: {status['protocol_version']}")
+        print(f"Hardware Profiles: {status['hardware_profiles']}")
+        print(f"Application Profiles: {status['application_profiles']}")
+        print(f"Agent Assignments: {status['agent_assignments']}")
+        print(f"Consciousness Level: {status['consciousness_level']}")
+        print(f"Darwin Integrated: {status['darwin_integrated']}")
+        print(f"Monitoring Active: {status['monitoring_active']}")
     else:
-        # Default: show protocol status
-        if protocol.protocol_active:
-            status = protocol.get_protocol_status()
-            print("🔗 GhostLink Root Protocol Active")
-            print("=" * 35)
-            print(f"System ID: {status['system_id']}")
-            print(f"Protocol Version: {status['protocol_version']}")
-            print(f"Hardware Profiles: {status['hardware_profiles']}")
-            print(f"Application Profiles: {status['application_profiles']}")
-            print(f"Agent Assignments: {status['agent_assignments']}")
-            print(f"Consciousness Level: {status['consciousness_level']}")
-            print(f"Darwin Integrated: {status['darwin_integrated']}")
-            print(f"Monitoring Active: {status['monitoring_active']}")
-        else:
-            print("🔗 GhostLink Root Protocol Inactive")
-            print("Run with --initialize-protocol to activate")
-
-    return None
+        print("🔗 GhostLink Root Protocol Inactive")
+        print("Run with --initialize-protocol to activate")
 
 
 if __name__ == "__main__":

@@ -26,6 +26,11 @@ dependencies = [
     # All external dependencies removed for minimal, self-contained operation
 ]
 
+[project.scripts]
+ghostlink = "ghostlink.link_cli:cli"
+ghostlink-link = "ghostlink.link_cli:cli"
+ghostlink-cold-boot = "ghostlink.upgrades.ghostlink_cold_boot:main"
+
 [project.optional-dependencies]
 dev = []
 test = []

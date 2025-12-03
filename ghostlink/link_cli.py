@@ -6,26 +6,49 @@ Example usage:
     python -m ghostlink.link_cli status
     python -m ghostlink.link_cli stop
 """
+
 import asyncio
-import sys
-from pathlib import Path
 from typing import Optional
-import json
 
 import click
 
-from .link import Link, TaskPriority, get_link
+try:
+    # Attempt to import bios bridge from package layout
+    from .bios_bridge import (
+        BIOSOperation,
+        get_bios_status,
+        initialize_bios_bridge,
+        supergrok_bios,
+    )
+except Exception:
+    try:
+        # Fallback: import from the bridge subpackage if available
+        from .bridge.bios_bridge import (
+            BIOSOperation,
+            get_bios_status,
+            initialize_bios_bridge,
+            supergrok_bios,
+        )
+    except Exception:
+        # Stubs if BIOS bridge is not available - keep CLI usable
+        BIOSOperation = None
+
+        def get_bios_status(*args, **kwargs):
+            return None
+
+        def initialize_bios_bridge(*args, **kwargs):
+            return False
+
+        supergrok_bios = None
 from .diagnostics_cli import diagnostics
 from .git_cli import git
-from .system_audit import SystemAuditor
-from .orchestrator import PipelineOrchestrator
-from .health import HealthMonitor, HealthCheckService
+from .hardware_utils import bind_to_disk, bind_to_nic, is_admin, is_virtual_machine
+from .link import TaskPriority, get_link
 
 
 @click.group()
 def cli():
     """Link - Your AI orchestration brain."""
-    pass
 
 
 # Add subcommand groups
@@ -35,13 +58,53 @@ cli.add_command(git)
 
 @cli.command()
 @click.option("--name", default="Link", help="Link's display name")
-def start(name: str):
+@click.option(
+    "--hardware/--no-hardware",
+    default=False,
+    help="Bind Link to physical hardware and enable hardware mode",
+)
+@click.option("--bind-nic", default=None, help="MAC address of NIC to bind to (physical)")
+@click.option("--bind-disk", default=None, help="Disk DeviceID to bind to (physical)")
+@click.option(
+    "--confirm-hardware",
+    is_flag=True,
+    default=False,
+    help="Requires explicit confirmation for hardware binding",
+)
+def start(name: str, hardware: bool, bind_nic: str, bind_disk: str, confirm_hardware: bool):
     """Start Link's autonomous operation."""
     link = get_link()
     link.name = name
+    # Apply hardware binding if requested
+    if hardware:
+        if is_virtual_machine():
+            click.echo(
+                "⚠️ VM detected. Hardware binding is not supported in virtualized environments. Aborting."
+            )
+            return
+        if not is_admin():
+            click.echo(
+                "⚠️ Administrator privileges required to bind to hardware. Please run as elevated user."
+            )
+            return
+        if not confirm_hardware:
+            click.echo(
+                "⚠️ Hardware binding requires explicit confirmation via --confirm-hardware. Aborting."
+            )
+            return
+        bound_ok = True
+        if bind_nic:
+            if not bind_to_nic(bind_nic):
+                bound_ok = False
+        if bind_disk:
+            if not bind_to_disk(bind_disk):
+                bound_ok = False
+        if not bound_ok:
+            click.echo("⚠️ Failed to bind to requested hardware devices. Aborting.")
+            return
 
     async def run():
-        await link.start()
+        await link.start(hardware_mode=hardware, bound_devices={"nic": bind_nic, "disk": bind_disk})
         click.echo(f"🧠 {name} started. Press Ctrl+C to stop.")
         try:
             while link.active:
@@ -80,9 +143,106 @@ def status():
 
 
 @cli.group()
+def bios():
+    """BIOS bridge operations"""
+
+
+@bios.command("info")
+def bios_info():
+    """Show BIOS bridge status and key settings"""
+    if not initialize_bios_bridge():
+        click.echo("⚠️ BIOS bridge not available or failed to initialize")
+        return
+    status = get_bios_status()
+    click.echo(f"{status}")
+
+
+@bios.command("read")
+@click.argument("setting_name")
+def bios_read(setting_name: str):
+    """Read a BIOS setting"""
+    if not initialize_bios_bridge():
+        click.echo("⚠️ BIOS bridge not available")
+        return
+    bridge = supergrok_bios.bridge
+    result = bridge.perform_bios_operation(BIOSOperation.READ_SETTING, setting_name=setting_name)
+    click.echo(f"{result}")
+
+
+@bios.command("write")
+@click.argument("setting_name")
+@click.option("--value", required=True, help="Value to set")
+@click.option("--simulate/--no-simulate", default=True, help="Run in simulation (dry-run) mode")
+@click.option("--confirm", is_flag=True, default=False, help="Confirm to apply changes")
+@click.option(
+    "--hardware",
+    is_flag=True,
+    default=False,
+    help="Indicates you want to perform the operation on physical hardware",
+)
+def bios_write(setting_name: str, value: str, simulate: bool, confirm: bool, hardware: bool):
+    """Write a BIOS setting (requires explicit confirm to apply)"""
+    if not initialize_bios_bridge():
+        click.echo("⚠️ BIOS bridge not available")
+        return
+    if hardware:
+        if is_virtual_machine():
+            click.echo(
+                "⚠️ VM detected. Hardware binding is not supported in virtualized environments. Aborting."
+            )
+            return
+        if not is_admin():
+            click.echo(
+                "⚠️ Administrator privileges required to bind to hardware. Please run as elevated user."
+            )
+            return
+    bridge = supergrok_bios.bridge
+    result = bridge.perform_bios_operation(
+        BIOSOperation.WRITE_SETTING,
+        setting_name=setting_name,
+        value=value,
+        simulate=simulate,
+        confirm=confirm,
+        hardware_bind=hardware,
+    )
+    click.echo(f"{result}")
+
+
+@bios.command("firmware")
+@click.option("--simulate/--no-simulate", default=True)
+@click.option("--confirm", is_flag=True, default=False)
+@click.option(
+    "--hardware",
+    is_flag=True,
+    default=False,
+    help="Indicates you want to run firmware tasks on a physical device",
+)
+def bios_firmware(simulate: bool, confirm: bool, hardware: bool):
+    """Discover vendor firmware tools and prepare (simulation by default)"""
+    if not initialize_bios_bridge():
+        click.echo("⚠️ BIOS bridge not available")
+        return
+    if hardware:
+        if is_virtual_machine():
+            click.echo(
+                "⚠️ VM detected. Hardware binding is not supported in virtualized environments. Aborting."
+            )
+            return
+        if not is_admin():
+            click.echo(
+                "⚠️ Administrator privileges required to bind to hardware. Please run as elevated user."
+            )
+            return
+    bridge = supergrok_bios.bridge
+    result = bridge.perform_bios_operation(
+        BIOSOperation.UPDATE_FIRMWARE, simulate=simulate, confirm=confirm, hardware_bind=hardware
+    )
+    click.echo(f"{result}")
+
+
+@cli.group()
 def task():
     """Task management commands."""
-    pass
 
 
 @task.command("add")
@@ -114,6 +274,39 @@ def task_add(description: str, name: Optional[str], priority: str):
     click.echo(f"✅ Task created: {task.id}")
 
 
+@cli.group()
+def hardware():
+    """Hardware and device operations (read-only listing)."""
+
+
+@hardware.command("nics")
+def hardware_nics():
+    """List physical network adapters."""
+    from .hardware_utils import list_physical_nics
+
+    nics = list_physical_nics()
+    if not nics:
+        click.echo("No physical NICs found or insufficient permission")
+        return
+    click.echo("\n🔗 Physical NICs:")
+    for nic in nics:
+        click.echo(f" - {nic.get('name')} ({nic.get('mac')}) - {nic.get('status')}")
+
+
+@hardware.command("disks")
+def hardware_disks():
+    """List physical disks."""
+    from .hardware_utils import list_physical_disks
+
+    disks = list_physical_disks()
+    if not disks:
+        click.echo("No physical disks found or insufficient permission")
+        return
+    click.echo("\n💾 Physical Disks:")
+    for d in disks:
+        click.echo(f" - {d.get('device')} {d.get('model')} size={d.get('size')}")
+
+
 @task.command("list")
 @click.option("--status", help="Filter by status")
 def task_list(status: Optional[str]):
@@ -140,7 +333,6 @@ def task_list(status: Optional[str]):
 @cli.group()
 def context():
     """Context management commands."""
-    pass
 
 
 @context.command("set")
@@ -183,7 +375,6 @@ def context_list():
 @cli.group()
 def learn():
     """Learning and preferences commands."""
-    pass
 
 
 @learn.command("set")
@@ -226,228 +417,13 @@ def history():
 
 
 @cli.command()
-@click.option("--confirm", is_flag=True, help="Confirm memory wipe")
-def reset(confirm: bool):
+def reset():
     """Reset Link's memory."""
-    if not confirm:
-        click.echo("⚠️  This will erase all of Link's memory!")
-        click.echo("Use --confirm flag to proceed.")
-        return
-
+    click.echo("⚠️  Resetting Link's memory...")
     link = get_link()
     link.memory = type(link.memory)()  # Fresh memory
     link.memory.save(link.memory_path)
     click.echo("✅ Memory reset complete.")
-
-
-@cli.group()
-def audit():
-    """System audit commands."""
-    pass
-
-
-@audit.command("run")
-@click.option("--save-report", is_flag=True, default=True, help="Save audit report")
-@click.option("--show-findings", is_flag=True, help="Show detailed findings")
-def audit_run(save_report: bool, show_findings: bool):
-    """Run system audit."""
-    click.echo("🔍 Running system audit...")
-
-    auditor = SystemAuditor()
-    report = auditor.audit()
-
-    # Display summary
-    audit_data = report["audit"]
-    click.echo(f"\n✓ Audit complete in {audit_data['duration_seconds']:.2f}s")
-    click.echo(f"Status: {audit_data['status']}")
-
-    summary = audit_data["findings_summary"]
-    click.echo(f"Findings: {summary['total']} total")
-    if summary["critical"] > 0:
-        click.echo(f"  🔴 Critical: {summary['critical']}")
-    if summary["errors"] > 0:
-        click.echo(f"  ⚠️  Error: {summary['errors']}")
-    if summary["warnings"] > 0:
-        click.echo(f"  ⚡ Warning: {summary['warnings']}")
-    if summary["total"] == 0:
-        click.echo("  ✅ No issues found")
-
-    # Show findings if requested
-    if show_findings and report["findings"]:
-        click.echo("\n📋 Findings:")
-        for finding in report["findings"]:
-            level = finding["level"]
-            if level == "CRITICAL":
-                symbol = "🔴"
-            elif level == "ERROR":
-                symbol = "⚠️ "
-            elif level == "WARNING":
-                symbol = "⚡"
-            else:
-                symbol = "ℹ️ "
-
-            click.echo(f"\n  {symbol} [{finding['category']}] {finding['title']}")
-            click.echo(f"     {finding['message']}")
-            if finding.get("recommendations"):
-                click.echo(f"     Recommendation: {finding['recommendations'][0]}")
-
-    # Show system info
-    system = report["system"]
-    click.echo(f"\n🖥️  System Info:")
-    click.echo(f"  Platform: {system['platform']}")
-    click.echo(f"  Python: {system['python_version']}")
-    click.echo(f"  CPUs: {system['cpu_count']}")
-
-
-@audit.command("view")
-def audit_view():
-    """View latest audit report."""
-    report_path = Path.home() / ".local" / "share" / "ghostlink" / "audit_report.json"
-
-    if not report_path.exists():
-        click.echo("❌ No audit report found. Run 'ghostlink audit run' first.")
-        return
-
-    with open(report_path) as f:
-        report = json.load(f)
-
-    # Display in formatted way
-    audit_data = report["audit"]
-    click.echo(f"📊 Latest Audit Report")
-    click.echo(f"Timestamp: {audit_data['timestamp']}")
-    click.echo(f"Status: {audit_data['status']}")
-    summary = audit_data["findings_summary"]
-    click.echo(f"Findings: {summary['total']} ({summary['critical']} critical, {summary['errors']} errors, {summary['warnings']} warnings)")
-
-
-@cli.group()
-def health():
-    """Health monitoring commands."""
-    pass
-
-
-@health.command("check")
-@click.option("--export", is_flag=True, help="Export to JSON")
-def health_check(export: bool):
-    """Check system health."""
-    click.echo("🏥 Checking system health...")
-
-    service = HealthCheckService(check_interval=5)
-    result = service.perform_check()
-
-    click.echo(f"\n✓ Health check complete")
-    click.echo(f"Status: {result['overall_status'].upper()}")
-
-    checks = result["checks"]
-    click.echo(f"\n📊 Metrics:")
-    click.echo(f"  CPU: {checks['cpu']['value']:.1f}% ({checks['cpu']['status']})")
-    click.echo(f"  Memory: {checks['memory']['value']:.1f}% ({checks['memory']['status']})")
-    click.echo(f"  Disk: {checks['disk']['value']:.1f}% ({checks['disk']['status']})")
-
-    if export:
-        export_file = Path.home() / ".local" / "share" / "ghostlink" / "health_check.json"
-        export_file.parent.mkdir(parents=True, exist_ok=True)
-        with open(export_file, "w") as f:
-            json.dump(result, f, indent=2, default=str)
-        click.echo(f"\n✓ Exported to {export_file}")
-@health.command("monitor")
-@click.option("--duration", default=60, help="Monitoring duration in seconds")
-@click.option("--interval", default=5, help="Update interval in seconds")
-def health_monitor(duration: int, interval: int):
-    """Monitor system health in real-time."""
-    click.echo(f"🔴 Monitoring system health for {duration}s (interval: {interval}s)...")
-    click.echo("Press Ctrl+C to stop\n")
-
-    async def run():
-        monitor = HealthMonitor(update_interval=interval)
-        task = monitor.start()
-
-        try:
-            elapsed = 0
-            while elapsed < duration:
-                await asyncio.sleep(interval)
-                latest = monitor.get_latest()
-
-                if latest:
-                    status_symbol = "✅" if latest.overall_status == "HEALTHY" else "⚠️ " if latest.overall_status == "WARNING" else "🔴"
-                    click.echo(f"{status_symbol} CPU: {latest.cpu_percent:.1f}% | Memory: {latest.memory_percent:.1f}% | Disk: {latest.disk_percent:.1f}% | Status: {latest.overall_status}")
-
-                elapsed += interval
-        except KeyboardInterrupt:
-            click.echo("\n⏹️  Monitoring stopped")
-        finally:
-            monitor.stop()
-            await task
-
-            # Show summary
-            report = monitor.get_report()
-            click.echo(f"\n📊 Summary:")
-            click.echo(f"  Avg CPU: {report['averages']['avg_cpu']:.1f}%")
-            click.echo(f"  Avg Memory: {report['averages']['avg_memory']:.1f}%")
-            click.echo(f"  Avg Disk: {report['averages']['avg_disk']:.1f}%")
-            click.echo(f"  Samples: {report['history_size']}")
-
-    asyncio.run(run())
-
-
-@health.command("export")
-@click.option("--output", help="Output file path", default=None)
-def health_export(output: Optional[str]):
-    """Export health history to JSON."""
-    service = HealthCheckService()
-
-    if output:
-        output_path = Path(output)
-    else:
-        output_path = Path.home() / ".local" / "share" / "ghostlink" / "health_history.json"
-
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-
-    # Get current check and save
-    result = service.perform_check()
-    with open(output_path, "w") as f:
-        json.dump(result, f, indent=2, default=str)
-
-    click.echo(f"✓ Exported to {output_path}")
-
-
-@cli.group()
-def pipeline():
-    """Pipeline orchestration commands."""
-    pass
-
-
-@pipeline.command("create")
-@click.argument("name")
-@click.option("--description", help="Pipeline description")
-def pipeline_create(name: str, description: Optional[str]):
-    """Create a new pipeline."""
-    pipeline = PipelineOrchestrator(name, description or "")
-    click.echo(f"✅ Pipeline created: {name}")
-    click.echo(f"   ID: {pipeline.pipeline_id}")
-
-
-@pipeline.command("execute")
-@click.argument("name")
-@click.option("--save-report", is_flag=True, default=True, help="Save execution report")
-@click.option("--parallel", is_flag=True, help="Enable parallel execution")
-def pipeline_execute(name: str, save_report: bool, parallel: bool):
-    """Execute a pipeline by name."""
-    click.echo(f"▶️  Executing pipeline '{name}'...")
-
-    # This is a placeholder - in real implementation, would load pipeline from storage
-    pipeline = PipelineOrchestrator(name, "Executing pipeline")
-
-    click.echo("Note: Create actual pipeline tasks via API to execute them.")
-    click.echo("See documentation for pipeline execution examples.")
-
-
-@pipeline.command("list")
-def pipeline_list():
-    """List available pipelines."""
-    click.echo("📋 Pipelines:")
-    click.echo("  Note: Use API to create and list pipelines")
-    click.echo("  See: ghostlink pipeline create --help")
 
 
 if __name__ == "__main__":

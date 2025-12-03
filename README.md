@@ -17,6 +17,24 @@ A completely local AI orchestration system with symbolic reasoning, hardware bin
 # No installation required - just run directly
 ```
 
+### Local Release (Automated)
+
+If you want a reproducible local install and a quick smoke test, use the included helper script:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python scripts/local_release.py
+```
+
+This installs the package locally and runs basic smoke tests (CLI status + diagnostics). It does not enable hardware binding by default.
+
+If you installed using `pip install .` and you'd like to use the `ghostlink` CLI without `python -m`, add your site scripts directory to PATH. On macOS this is often:
+
+```bash
+export PATH="$HOME/Library/Python/3.9/bin:$PATH"
+```
+
 ### Basic Usage
 ```bash
 # Start the Link AI brain
@@ -301,7 +319,7 @@ The GhostLink API now supports secure API key authentication with permission-bas
 #### Enhanced Existing Endpoints
 All original endpoints now support optional API key authentication:
 - `POST /items` - Create items (tracks creator if API key provided)
-- `GET /items` - List items 
+- `GET /items` - List items
 - `POST /reasoning/` - Process text
 - `POST /ipfs/store` - Store data (tracks creator if API key provided)
 - `GET /ipfs/{hash}` - Retrieve data
@@ -310,7 +328,7 @@ All original endpoints now support optional API key authentication:
 
 Three permission levels are supported:
 - **read** - Can access read-only endpoints
-- **write** - Can access read and write endpoints  
+- **write** - Can access read and write endpoints
 - **admin** - Can access all endpoints including sensitive data
 
 ### ✅ Security Features
@@ -604,5 +622,5 @@ python3 consolidate_ghostlink.py
 
 ---
 
-**Generated**: 2025-10-06  
+**Generated**: 2025-10-06
 **Repository**: https://github.com/devrgar-cyber/ghostlinklabs

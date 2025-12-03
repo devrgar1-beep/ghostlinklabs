@@ -1,4 +1,5 @@
 """Audit helpers for validating GhostLink component modules."""
+
 from __future__ import annotations
 
 from collections.abc import Callable, Iterator
@@ -17,8 +18,8 @@ from .blueprint import (
 __all__ = [
     "AuditIssue",
     "ComponentRecord",
-    "iter_component_factories",
     "audit_components",
+    "iter_component_factories",
 ]
 
 
@@ -99,7 +100,9 @@ def _classify_import_error(
     return "error", f"import failed: {exc.__class__.__name__}: {exc}"
 
 
-def audit_components(root_package: str = "ghostlink") -> tuple[Sequence[ComponentRecord], Sequence[AuditIssue]]:
+def audit_components(
+    root_package: str = "ghostlink",
+) -> tuple[Sequence[ComponentRecord], Sequence[AuditIssue]]:
     """Audit component factories and return validated components with issues."""
 
     records: list[ComponentRecord] = []
@@ -110,7 +113,9 @@ def audit_components(root_package: str = "ghostlink") -> tuple[Sequence[Componen
         severity, reason = _classify_import_error(root_package, module_name, exc)
         issues.append(AuditIssue(module_name, "<module>", reason, severity))
 
-    for module_name, factory_name, factory in iter_component_factories(root_package, on_error=_record_import_error):
+    for module_name, factory_name, factory in iter_component_factories(
+        root_package, on_error=_record_import_error
+    ):
         expected_layer = _expected_layer(module_name)
         try:
             component_data = factory()

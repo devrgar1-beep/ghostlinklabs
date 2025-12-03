@@ -5,28 +5,28 @@ Single-source bootstrap for complete GhostLink system
 Run: python3 ghostlink_cold_boot.py
 """
 
-import os
-import json
-import hashlib
-import zipfile
 import datetime
+import hashlib
+import json
+import os
 from pathlib import Path
-from typing import Dict, List, Tuple
+import zipfile
+
 
 class GhostLinkColdBoot:
     """Single-source cold boot system for GhostLink"""
-    
+
     def __init__(self):
-        self.timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+        self.timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         self.base_dir = Path.home() / "Downloads" / f"ghostlink_cold_boot_{self.timestamp}"
         self.manifest = {}
-        
+
     def build_all(self):
         """Execute complete cold boot sequence"""
         print("═" * 60)
         print("  GHOSTLINK COLD BOOT SYSTEM")
         print("═" * 60)
-        
+
         self.create_structure()
         self.write_core_engine()
         self.write_launchers()
@@ -34,32 +34,32 @@ class GhostLinkColdBoot:
         self.write_config()
         self.create_manifest()
         self.package_system()
-        
+
         print("\n✅ Cold boot complete!")
         print(f"📦 Package: {self.base_dir.parent / f'GhostLink_USB_{self.timestamp}.zip'}")
-        
+
     def create_structure(self):
         """Create complete directory structure"""
         print("\n📁 Creating directory structure...")
-        
+
         dirs = [
-            "bin",           # Executables and launchers
-            "core",          # Core engine code
-            "data",          # Runtime data
-            "logs",          # System logs
-            "docs",          # Documentation
-            "config",        # Configuration files
-            "venv",          # Virtual environment placeholder
+            "bin",  # Executables and launchers
+            "core",  # Core engine code
+            "data",  # Runtime data
+            "logs",  # System logs
+            "docs",  # Documentation
+            "config",  # Configuration files
+            "venv",  # Virtual environment directory
         ]
-        
+
         for d in dirs:
             (self.base_dir / d).mkdir(parents=True, exist_ok=True)
             print(f"  ✓ {d}/")
-    
+
     def write_core_engine(self):
         """Write complete GhostLink cellular automaton engine"""
         print("\n🧬 Writing GhostLink core engine...")
-        
+
         engine_code = '''#!/usr/bin/env python3
 """
 GhostLink Cellular Automaton Engine
@@ -82,7 +82,7 @@ class State(IntEnum):
 
 class GhostLink:
     """Cellular automaton with 5-state transitions"""
-    
+
     def __init__(self, width: int = 100, height: int = 100):
         self.width = width
         self.height = height
@@ -97,7 +97,7 @@ class GhostLink:
             'compost_count': [],
             'activity': []
         }
-        
+
     def spawn(self, x: int, y: int, radius: int = 3):
         """Spawn DELTA cells from VOID (VOID → DELTA)"""
         for dy in range(-radius, radius + 1):
@@ -106,39 +106,39 @@ class GhostLink:
                     nx, ny = (x + dx) % self.width, (y + dy) % self.height
                     if self.grid[ny, nx] == State.VOID:
                         self.grid[ny, nx] = State.DELTA
-    
-    def collapse(self, collapse_prob: float = 0.3, 
+
+    def collapse(self, collapse_prob: float = 0.3,
                  scar_prob: float = 0.2, compost_prob: float = 0.1):
         """Collapse DELTA → {SIGMA, SCAR, COMPOST}"""
         delta_mask = (self.grid == State.DELTA)
         rand = np.random.random(self.grid.shape)
-        
+
         # DELTA → COMPOST (highest priority)
         compost_mask = delta_mask & (rand < compost_prob)
         self.grid[compost_mask] = State.COMPOST
         self.density_compost[compost_mask] += 1.0
-        
+
         # DELTA → SCAR
         scar_mask = delta_mask & ~compost_mask & (rand < scar_prob + compost_prob)
         self.grid[scar_mask] = State.SCAR
         self.density_scar[scar_mask] += 1.0
-        
+
         # DELTA → SIGMA (remaining collapses)
         sigma_mask = delta_mask & ~compost_mask & ~scar_mask & (rand < collapse_prob + scar_prob + compost_prob)
         self.grid[sigma_mask] = State.SIGMA
-    
+
     def recycle(self, recycle_prob: float = 0.05):
         """Recycle COMPOST → DELTA"""
         compost_mask = (self.grid == State.COMPOST)
         rand = np.random.random(self.grid.shape)
         recycle_mask = compost_mask & (rand < recycle_prob)
         self.grid[recycle_mask] = State.DELTA
-    
+
     def decay_density(self, decay_rate: float = 0.01):
         """Decay density traces"""
         self.density_scar *= (1.0 - decay_rate)
         self.density_compost *= (1.0 - decay_rate)
-    
+
     def step(self):
         """Execute one generation step"""
         self.collapse()
@@ -146,18 +146,18 @@ class GhostLink:
         self.decay_density()
         self.generation += 1
         self._update_history()
-    
+
     def _update_history(self):
         """Track state counts and activity"""
         self.history['sigma_count'].append(np.sum(self.grid == State.SIGMA))
         self.history['scar_count'].append(np.sum(self.grid == State.SCAR))
         self.history['delta_count'].append(np.sum(self.grid == State.DELTA))
         self.history['compost_count'].append(np.sum(self.grid == State.COMPOST))
-        
+
         # Activity = total non-VOID cells
         activity = np.sum(self.grid != State.VOID)
         self.history['activity'].append(activity)
-    
+
     def get_state(self) -> Dict:
         """Export current state"""
         return {
@@ -168,18 +168,18 @@ class GhostLink:
             'history': self.history,
             'timestamp': datetime.now().isoformat()
         }
-    
+
     def save(self, filepath: str):
         """Save state to JSON"""
         with open(filepath, 'w') as f:
             json.dump(self.get_state(), f, indent=2)
-    
+
     @classmethod
     def load(cls, filepath: str) -> 'GhostLink':
         """Load state from JSON"""
         with open(filepath, 'r') as f:
             data = json.load(f)
-        
+
         gl = cls(width=len(data['grid'][0]), height=len(data['grid']))
         gl.grid = np.array(data['grid'], dtype=np.int8)
         gl.density_scar = np.array(data['density_scar'], dtype=np.float32)
@@ -192,12 +192,12 @@ def demo():
     """Demo GhostLink system"""
     print("GhostLink Engine Demo")
     print("=" * 40)
-    
+
     gl = GhostLink(50, 50)
-    
+
     # Spawn initial pattern
     gl.spawn(25, 25, 5)
-    
+
     # Run simulation
     for i in range(20):
         gl.step()
@@ -207,7 +207,7 @@ def demo():
                   f"SIGMA={gl.history['sigma_count'][-1]} "
                   f"SCAR={gl.history['scar_count'][-1]} "
                   f"COMPOST={gl.history['compost_count'][-1]}")
-    
+
     # Save state
     gl.save('ghostlink_demo.json')
     print(f"\\n✓ Saved to ghostlink_demo.json")
@@ -215,18 +215,18 @@ def demo():
 if __name__ == '__main__':
     demo()
 '''
-        
+
         engine_path = self.base_dir / "core" / "ghostlink_engine.py"
         engine_path.write_text(engine_code)
-        self.manifest['core/ghostlink_engine.py'] = self._hash_file(engine_path)
-        print(f"  ✓ ghostlink_engine.py")
-    
+        self.manifest["core/ghostlink_engine.py"] = self._hash_file(engine_path)
+        print("  ✓ ghostlink_engine.py")
+
     def write_launchers(self):
         """Write platform-specific launchers"""
         print("\n🚀 Writing launchers...")
-        
+
         # Unix launcher
-        unix_launcher = '''#!/bin/bash
+        unix_launcher = """#!/bin/bash
 # GhostLink Unix Launcher
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -248,10 +248,10 @@ python3 core/ghostlink_engine.py
 echo ""
 echo "✓ Session complete"
 read -p "Press Enter to exit..."
-'''
-        
+"""
+
         # Windows launcher
-        win_launcher = '''@echo off
+        win_launcher = """@echo off
 REM GhostLink Windows Launcher
 
 cd /d "%~dp0"
@@ -274,31 +274,32 @@ python core\\ghostlink_engine.py
 echo.
 echo ✓ Session complete
 pause
-'''
-        
+"""
+
         unix_path = self.base_dir / "bin" / "launch.sh"
         win_path = self.base_dir / "bin" / "launch.bat"
-        
+
         unix_path.write_text(unix_launcher)
         win_path.write_text(win_launcher)
-        
+
         # Make Unix launcher executable
         try:
             os.chmod(unix_path, 0o755)
         except:
             pass
-        
-        self.manifest['bin/launch.sh'] = self._hash_file(unix_path)
-        self.manifest['bin/launch.bat'] = self._hash_file(win_path)
-        
-        print(f"  ✓ launch.sh")
-        print(f"  ✓ launch.bat")
-    
+
+        self.manifest["bin/launch.sh"] = self._hash_file(unix_path)
+        self.manifest["bin/launch.bat"] = self._hash_file(win_path)
+
+        print("  ✓ launch.sh")
+        print("  ✓ launch.bat")
+
     def write_documentation(self):
         """Write complete documentation"""
         print("\n📄 Writing documentation...")
-        
-        readme = '''# GhostLink Portable System
+
+        readme = (
+            """# GhostLink Portable System
 
 ## Overview
 GhostLink is a cellular automaton system with 5 states:
@@ -375,22 +376,24 @@ To rebuild: python3 ghostlink_cold_boot.py
 
 ---
 Generated: %s
-''' % datetime.datetime.now().isoformat()
-        
+"""
+            % datetime.datetime.now().isoformat()
+        )
+
         readme_path = self.base_dir / "README.md"
         readme_path.write_text(readme)
-        self.manifest['README.md'] = self._hash_file(readme_path)
-        print(f"  ✓ README.md")
-    
+        self.manifest["README.md"] = self._hash_file(readme_path)
+        print("  ✓ README.md")
+
     def write_config(self):
         """Write default configuration"""
         print("\n⚙️  Writing configuration...")
-        
+
         config = {
             "system": {
                 "name": "GhostLink",
                 "version": "1.0.0-coldboot",
-                "build_date": datetime.datetime.now().isoformat()
+                "build_date": datetime.datetime.now().isoformat(),
             },
             "simulation": {
                 "grid_width": 100,
@@ -399,72 +402,73 @@ Generated: %s
                 "scar_probability": 0.2,
                 "compost_probability": 0.1,
                 "recycle_probability": 0.05,
-                "density_decay_rate": 0.01
+                "density_decay_rate": 0.01,
             },
             "output": {
                 "save_interval": 100,
                 "log_level": "INFO",
                 "data_dir": "data",
-                "log_dir": "logs"
-            }
+                "log_dir": "logs",
+            },
         }
-        
+
         config_path = self.base_dir / "config" / "ghostlink.json"
-        with open(config_path, 'w') as f:
+        with open(config_path, "w") as f:
             json.dump(config, f, indent=2)
-        
-        self.manifest['config/ghostlink.json'] = self._hash_file(config_path)
-        print(f"  ✓ ghostlink.json")
-    
+
+        self.manifest["config/ghostlink.json"] = self._hash_file(config_path)
+        print("  ✓ ghostlink.json")
+
     def create_manifest(self):
         """Create integrity manifest"""
         print("\n🔐 Creating integrity manifest...")
-        
+
         manifest_data = {
             "build_date": datetime.datetime.now().isoformat(),
             "build_type": "cold_boot",
             "version": "1.0.0",
-            "files": self.manifest
+            "files": self.manifest,
         }
-        
+
         manifest_path = self.base_dir / "MANIFEST.json"
-        with open(manifest_path, 'w') as f:
+        with open(manifest_path, "w") as f:
             json.dump(manifest_data, f, indent=2)
-        
+
         print(f"  ✓ MANIFEST.json ({len(self.manifest)} files)")
-    
+
     def package_system(self):
         """Package into deployable ZIP"""
         print("\n📦 Packaging system...")
-        
+
         zip_name = f"GhostLink_USB_{self.timestamp}.zip"
         zip_path = self.base_dir.parent / zip_name
-        
-        with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zf:
+
+        with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
             for root, dirs, files in os.walk(self.base_dir):
                 for file in files:
                     file_path = Path(root) / file
                     arc_name = file_path.relative_to(self.base_dir.parent)
                     zf.write(file_path, arc_name)
-                    
+
         size_mb = zip_path.stat().st_size / (1024 * 1024)
         print(f"  ✓ {zip_name} ({size_mb:.2f} MB)")
         print(f"\n📍 Location: {zip_path}")
         print(f"📁 Extracted: {self.base_dir}")
-    
+
     def _hash_file(self, filepath: Path) -> str:
         """Calculate SHA256 hash of file"""
         sha256 = hashlib.sha256()
-        with open(filepath, 'rb') as f:
-            for block in iter(lambda: f.read(4096), b''):
+        with open(filepath, "rb") as f:
+            for block in iter(lambda: f.read(4096), b""):
                 sha256.update(block)
         return sha256.hexdigest()
+
 
 def main():
     """Execute cold boot"""
     builder = GhostLinkColdBoot()
     builder.build_all()
-    
+
     print("\n" + "═" * 60)
     print("  DEPLOYMENT INSTRUCTIONS")
     print("═" * 60)
@@ -473,5 +477,6 @@ def main():
     print("3. System will execute from USB without installation")
     print("\n✅ GhostLink ready for cold deployment")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

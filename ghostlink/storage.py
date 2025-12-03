@@ -1,5 +1,5 @@
 from hashlib import sha256
-from typing import Dict
+from typing import Dict, Optional
 
 
 class MockIPFS:
@@ -14,6 +14,6 @@ class MockIPFS:
         self.storage[digest] = data
         return digest
 
-    def retrieve(self, data_hash: str) -> str | None:
+    def retrieve(self, data_hash: str) -> Optional[str]:
         """Retrieve data by its hash."""
         return self.storage.get(data_hash)

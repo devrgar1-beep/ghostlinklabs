@@ -3,26 +3,28 @@
 Link is the autonomous orchestrator that coordinates all GhostLink operations,
 manages tasks, routes workflows, and serves as your personal AI assistant brain.
 """
+
 from __future__ import annotations
 
 import asyncio
-import json
-import logging
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
+import json
+import logging
 from pathlib import Path
 from typing import Any, Callable, Optional
 
-from .config import config
-from .troubleshooter import get_troubleshooter, handle_error
+from .hardware_utils import is_admin, is_virtual_machine
 from .health_monitor import get_health_monitor
+from .troubleshooter import get_troubleshooter, handle_error
 
 logger = logging.getLogger(__name__)
 
 
 class TaskPriority(Enum):
     """Task priority levels."""
+
     LOW = 0
     NORMAL = 1
     HIGH = 2
@@ -31,6 +33,7 @@ class TaskPriority(Enum):
 
 class TaskStatus(Enum):
     """Task execution status."""
+
     PENDING = "pending"
     RUNNING = "running"
     COMPLETED = "completed"
@@ -41,6 +44,7 @@ class TaskStatus(Enum):
 @dataclass
 class Task:
     """Represents a task for Link to execute."""
+
     id: str
     name: str
     description: str
@@ -52,7 +56,7 @@ class Task:
     result: Optional[Any] = None
     error: Optional[str] = None
     metadata: dict[str, Any] = field(default_factory=dict)
-    
+
     def to_dict(self) -> dict[str, Any]:
         """Convert task to dictionary."""
         return {
@@ -73,11 +77,12 @@ class Task:
 @dataclass
 class LinkMemory:
     """Link's persistent memory storage."""
+
     tasks: list[Task] = field(default_factory=list)
     context: dict[str, Any] = field(default_factory=dict)
     preferences: dict[str, Any] = field(default_factory=dict)
     history: list[dict[str, Any]] = field(default_factory=list)
-    
+
     def save(self, path: Path) -> None:
         """Save memory to disk."""
         data = {
@@ -88,20 +93,20 @@ class LinkMemory:
         }
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(data, indent=2))
-    
+
     @classmethod
-    def load(cls, path: Path) -> "LinkMemory":
+    def load(cls, path: Path) -> LinkMemory:
         """Load memory from disk."""
         if not path.exists():
             return cls()
-        
+
         data = json.loads(path.read_text())
         memory = cls(
             context=data.get("context", {}),
             preferences=data.get("preferences", {}),
             history=data.get("history", []),
         )
-        
+
         # Reconstruct tasks
         for task_data in data.get("tasks", []):
             task = Task(
@@ -120,16 +125,16 @@ class LinkMemory:
             if task_data.get("completed_at"):
                 task.completed_at = datetime.fromisoformat(task_data["completed_at"])
             memory.tasks.append(task)
-        
+
         return memory
 
 
 class Link:
     """Link - Your autonomous AI orchestration brain.
-    
+
     Link coordinates all GhostLink operations, manages tasks, learns your
     preferences, and serves as your personal AI assistant.
-    
+
     Features:
     - Autonomous task orchestration
     - Priority-based task scheduling
@@ -138,14 +143,16 @@ class Link:
     - Integration with all GhostLink components
     - LLM integration for natural language interaction (optional)
     """
-    
+
     def __init__(
         self,
         name: str = "Link",
         memory_path: Optional[Path] = None,
+        hardware_mode: bool = False,
+        bound_devices: Optional[dict] = None,
     ):
         """Initialize Link.
-        
+
         Args:
             name: Link's display name
             memory_path: Path to persistent memory file
@@ -156,26 +163,47 @@ class Link:
         self.active = False
         self.task_queue: list[Task] = []
         self._handlers: dict[str, Callable] = {}
-        
+        self.hardware_mode = hardware_mode
+        self.bound_devices = bound_devices or {}
+        if self.hardware_mode:
+            self.set_context("hardware_bound", True)
+            self.set_context("bound_devices", self.bound_devices)
+
         # Automatic troubleshooting and monitoring
         self.troubleshooter = get_troubleshooter()
         self.health_monitor = get_health_monitor()
         self.auto_fix_enabled = True
         self.proactive_monitoring = False
-        
-    async def start(self) -> None:
+
+    async def start(
+        self, hardware_mode: bool = False, bound_devices: Optional[dict] = None
+    ) -> None:
         """Start Link's autonomous operation."""
         if self.active:
             return
-        
+
+        self.hardware_mode = hardware_mode
+        self.bound_devices = bound_devices or {}
         self.active = True
+        # If hardware_mode set, ensure system is not virtualized and we have admin privileges
+        if self.hardware_mode:
+            if is_virtual_machine():
+                logger.error(
+                    "⚠️ Host appears to be virtualized; hardware bind mode is not supported."
+                )
+                self.active = False
+                return
+            if not is_admin():
+                logger.error("⚠️ Administrator privileges required for hardware mode.")
+                self.active = False
+                return
         print(f"🧠 {self.name} is now active")
-        
+
         # Start health monitoring if enabled
         if self.proactive_monitoring:
             await self.health_monitor.start_monitoring()
             logger.info("Proactive health monitoring started")
-        
+
         # Run initial health check
         try:
             health_status = await self.health_monitor.check_health()
@@ -185,24 +213,24 @@ class Link:
                 logger.warning(f"Warnings: {', '.join(health_status.warnings)}")
         except Exception as e:
             logger.warning(f"Initial health check failed: {e}")
-        
+
         # Load pending tasks from memory
         self.task_queue = [t for t in self.memory.tasks if t.status == TaskStatus.PENDING]
-        
+
         # Start background task processing
         asyncio.create_task(self._process_tasks())
-        
+
     async def stop(self) -> None:
         """Stop Link's operation."""
         self.active = False
-        
+
         # Stop health monitoring
         if self.proactive_monitoring:
             await self.health_monitor.stop_monitoring()
-        
+
         self.memory.save(self.memory_path)
         print(f"🧠 {self.name} is now offline")
-        
+
     def add_task(
         self,
         name: str,
@@ -211,13 +239,13 @@ class Link:
         **metadata: Any,
     ) -> Task:
         """Add a new task for Link to execute.
-        
+
         Args:
             name: Task name
             description: Task description
             priority: Task priority level
             **metadata: Additional task metadata
-            
+
         Returns:
             Created task
         """
@@ -228,25 +256,25 @@ class Link:
             priority=priority,
             metadata=metadata,
         )
-        
+
         self.task_queue.append(task)
         self.memory.tasks.append(task)
-        
+
         # Sort by priority
         self.task_queue.sort(key=lambda t: t.priority.value, reverse=True)
-        
+
         print(f"📋 Task added: {name} (Priority: {priority.name})")
         return task
-        
+
     def register_handler(self, task_type: str, handler: Callable) -> None:
         """Register a handler for a specific task type.
-        
+
         Args:
             task_type: Type of task to handle
             handler: Async function to handle the task
         """
         self._handlers[task_type] = handler
-        
+
     async def _process_tasks(self) -> None:
         """Background task processing loop."""
         while self.active:
@@ -255,18 +283,18 @@ class Link:
                 await self._execute_task(task)
             else:
                 await asyncio.sleep(1)
-                
+
     async def _execute_task(self, task: Task) -> None:
         """Execute a single task.
-        
+
         Args:
             task: Task to execute
         """
         task.status = TaskStatus.RUNNING
         task.started_at = datetime.utcnow()
-        
+
         print(f"🔄 Executing: {task.name}")
-        
+
         try:
             # Check for registered handler
             handler = self._handlers.get(task.metadata.get("type"))
@@ -275,31 +303,31 @@ class Link:
             else:
                 # Default orchestration using GhostLink components
                 task.result = await self._orchestrate_default(task)
-            
+
             task.status = TaskStatus.COMPLETED
             task.completed_at = datetime.utcnow()
             print(f"✅ Completed: {task.name}")
-            
+
         except Exception as e:
             task.status = TaskStatus.FAILED
             task.error = str(e)
             task.completed_at = datetime.utcnow()
             print(f"❌ Failed: {task.name} - {e}")
-            
+
             # Automatic error handling and troubleshooting
             if self.auto_fix_enabled:
                 logger.error(f"Task {task.name} failed: {e}")
                 try:
                     error_report = await handle_error(
-                        e, 
+                        e,
                         context={
                             "task_id": task.id,
                             "task_name": task.name,
-                            "task_description": task.description
+                            "task_description": task.description,
                         },
-                        auto_fix=True
+                        auto_fix=True,
                     )
-                    
+
                     if error_report.fix_applied:
                         # Retry task after successful fix
                         logger.info(f"Auto-fixed error, retrying task {task.name}")
@@ -307,29 +335,31 @@ class Link:
                         self.task_queue.insert(0, task)
                 except Exception as fix_error:
                     logger.error(f"Auto-fix failed: {fix_error}")
-        
+
         # Save memory after each task
         self.memory.save(self.memory_path)
-        
+
         # Add to history
-        self.memory.history.append({
-            "timestamp": datetime.utcnow().isoformat(),
-            "task": task.to_dict(),
-        })
-        
+        self.memory.history.append(
+            {
+                "timestamp": datetime.utcnow().isoformat(),
+                "task": task.to_dict(),
+            }
+        )
+
     async def _orchestrate_default(self, task: Task) -> Any:
         """Default task orchestration using GhostLink components.
-        
+
         Args:
             task: Task to orchestrate
-            
+
         Returns:
             Task execution result
         """
         # This is where Link coordinates with other GhostLink components
         # to accomplish tasks autonomously
-        
-        # For now, return a placeholder
+
+        # Default orchestration response
         return {
             "status": "orchestrated",
             "components_used": [
@@ -337,33 +367,35 @@ class Link:
                 "SYMBOLIC_TASK_SCHEDULER",
             ],
             "task_id": task.id,
+            "execution_mode": "default",
+            "timestamp": datetime.utcnow().isoformat(),
         }
-        
+
     def set_context(self, key: str, value: Any) -> None:
         """Set a context variable for Link to remember.
-        
+
         Args:
             key: Context key
             value: Context value
         """
         self.memory.context[key] = value
         self.memory.save(self.memory_path)
-        
+
     def get_context(self, key: str, default: Any = None) -> Any:
         """Get a context variable.
-        
+
         Args:
             key: Context key
             default: Default value if key not found
-            
+
         Returns:
             Context value
         """
         return self.memory.context.get(key, default)
-        
+
     def learn_preference(self, key: str, value: Any) -> None:
         """Learn a user preference.
-        
+
         Args:
             key: Preference key
             value: Preference value
@@ -371,10 +403,10 @@ class Link:
         self.memory.preferences[key] = value
         self.memory.save(self.memory_path)
         print(f"📚 Learned: {key} = {value}")
-        
+
     def get_status(self) -> dict[str, Any]:
         """Get Link's current status.
-        
+
         Returns:
             Status dictionary
         """
@@ -382,7 +414,9 @@ class Link:
             "name": self.name,
             "active": self.active,
             "pending_tasks": len([t for t in self.memory.tasks if t.status == TaskStatus.PENDING]),
-            "completed_tasks": len([t for t in self.memory.tasks if t.status == TaskStatus.COMPLETED]),
+            "completed_tasks": len(
+                [t for t in self.memory.tasks if t.status == TaskStatus.COMPLETED]
+            ),
             "failed_tasks": len([t for t in self.memory.tasks if t.status == TaskStatus.FAILED]),
             "context_vars": len(self.memory.context),
             "preferences": len(self.memory.preferences),
@@ -405,9 +439,9 @@ def get_link() -> Link:
 async def main():
     """Example usage of Link."""
     link = get_link()
-    
+
     await link.start()
-    
+
     # Add some tasks
     link.add_task(
         "Analyze codebase",
@@ -415,25 +449,25 @@ async def main():
         priority=TaskPriority.HIGH,
         type="analysis",
     )
-    
+
     link.add_task(
         "Check system health",
         "Monitor system metrics and report any issues",
         priority=TaskPriority.NORMAL,
         type="monitoring",
     )
-    
+
     # Set some context
     link.set_context("user_name", "Ghost")
     link.learn_preference("output_format", "concise")
-    
+
     # Wait a bit
     await asyncio.sleep(5)
-    
+
     # Check status
     status = link.get_status()
     print(f"\n📊 Link Status: {json.dumps(status, indent=2)}")
-    
+
     await link.stop()
 
 
