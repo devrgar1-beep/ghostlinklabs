@@ -1,0 +1,13 @@
+{
+  "generated_at": "2025-11-27T20:16:29.929667Z",
+  "suggested_mapping": {
+    "Wraithgate": "secure_gateway",
+    "WraithGate": "secure_gateway",
+    "wraithgate": "secure_gateway",
+    "GhostLinkLabs": "ghostlink_docs",
+    "GhostLink": "GhostLink",
+    "Sentinel": "sentinel_watchdog",
+    "Dak": "dak_kill_switch",
+    "Lumara": "lumara_profile"
+  }
+}

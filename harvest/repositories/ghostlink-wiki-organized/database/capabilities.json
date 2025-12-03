@@ -1,0 +1,110 @@
+{
+  "ghostlink_core": {
+    "description": "Core GhostLink quantum coherence engine",
+    "allow": [
+      "read_quantum_state",
+      "write_quantum_state",
+      "execute_coherence_check",
+      "access_governance_laws",
+      "modify_quantum_parameters",
+      "initiate_quantum_operations",
+      "access_core_memory",
+      "execute_system_diagnostics",
+      "manage_quantum_resources",
+      "override_safety_protocols",
+      "access_restricted_memory",
+      "execute_emergency_procedures"
+    ],
+    "deny": []
+  },
+  "ai_providers": {
+    "description": "AI model providers interface",
+    "allow": [
+      "call_ai_models",
+      "validate_responses",
+      "cache_results",
+      "modify_model_weights",
+      "access_raw_training_data",
+      "train_custom_models",
+      "deploy_models",
+      "monitor_model_performance",
+      "access_model_metadata",
+      "execute_model_experiments",
+      "manage_model_versions",
+      "access_confidential_data"
+    ],
+    "deny": []
+  },
+  "auth_system": {
+    "description": "Authentication and authorization",
+    "allow": [
+      "validate_api_keys",
+      "check_permissions",
+      "log_access_attempts",
+      "create_super_user",
+      "bypass_auth_checks",
+      "manage_user_sessions",
+      "access_user_data",
+      "modify_permissions",
+      "grant_admin_access",
+      "revoke_credentials",
+      "access_security_logs",
+      "execute_security_audits"
+    ],
+    "deny": []
+  },
+  "data_manager": {
+    "description": "Data persistence and retrieval",
+    "allow": [
+      "read_data",
+      "write_data",
+      "validate_schemas",
+      "backup_data",
+      "delete_all_data",
+      "modify_audit_logs",
+      "access_raw_database",
+      "execute_custom_queries",
+      "manage_database_schema",
+      "perform_data_migrations",
+      "access_archived_data",
+      "execute_bulk_operations"
+    ],
+    "deny": []
+  },
+  "monitoring": {
+    "description": "System monitoring and observability",
+    "allow": [
+      "read_metrics",
+      "log_events",
+      "send_alerts",
+      "view_system_status",
+      "modify_metrics",
+      "suppress_alerts",
+      "access_system_logs",
+      "configure_alerts",
+      "manage_monitoring_rules",
+      "access_performance_data",
+      "execute_system_commands",
+      "bypass_monitoring_checks"
+    ],
+    "deny": []
+  },
+  "api_endpoints": {
+    "description": "External API interfaces",
+    "allow": [
+      "handle_requests",
+      "validate_input",
+      "format_responses",
+      "rate_limit",
+      "bypass_rate_limits",
+      "access_admin_endpoints",
+      "modify_api_behavior",
+      "access_internal_apis",
+      "execute_privileged_operations",
+      "manage_api_keys",
+      "access_debug_endpoints",
+      "override_api_limits"
+    ],
+    "deny": []
+  }
+}

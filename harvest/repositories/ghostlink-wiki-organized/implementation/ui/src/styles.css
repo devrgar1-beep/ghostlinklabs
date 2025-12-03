@@ -1,0 +1,210 @@
+/* GhostLink Lattice UI Styles */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #0a0a0a;
+  color: #e0e0e0;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: #1a1a1a;
+  border-bottom: 1px solid #333;
+}
+
+.app-header h1 {
+  margin: 0;
+  color: #00ff88;
+}
+
+.time-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.time-controls button {
+  background: #333;
+  color: #e0e0e0;
+  border: 1px solid #555;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.time-controls button:hover {
+  background: #444;
+}
+
+.app-layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 300px;
+  background: #1a1a1a;
+  border-right: 1px solid #333;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #0a0a0a;
+}
+
+.lattice-view {
+  background: #111;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.1);
+}
+
+/* Probe Panel */
+.probe-panel h3 {
+  margin-top: 0;
+  color: #00ff88;
+}
+
+.probe-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.probe-item {
+  background: #222;
+  padding: 0.75rem;
+  border-radius: 4px;
+  border: 1px solid #333;
+}
+
+.probe-item label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.probe-name {
+  font-weight: bold;
+}
+
+.probe-stats {
+  font-size: 0.8rem;
+  color: #aaa;
+  margin-top: 0.25rem;
+}
+
+/* Signal Input */
+.signal-input h3 {
+  margin-top: 0;
+  color: #00ff88;
+}
+
+.input-group {
+  margin-bottom: 1rem;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.input-group select,
+.input-group textarea {
+  width: 100%;
+  padding: 0.5rem;
+  background: #222;
+  color: #e0e0e0;
+  border: 1px solid #555;
+  border-radius: 4px;
+}
+
+.input-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.signal-input button {
+  background: #00ff88;
+  color: #000;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  width: 100%;
+}
+
+.signal-input button:hover:not(:disabled) {
+  background: #00cc66;
+}
+
+.signal-input button:disabled {
+  background: #444;
+  cursor: not-allowed;
+}
+
+/* Resonance Panel */
+.resonance-panel h3 {
+  margin-top: 0;
+  color: #00ff88;
+}
+
+.resonance-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.resonance-item {
+  background: #222;
+  padding: 0.75rem;
+  border-radius: 4px;
+  border: 1px solid #333;
+}
+
+.resonance-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.strength {
+  font-weight: bold;
+  color: #00ff88;
+}
+
+.timestamp {
+  font-size: 0.8rem;
+  color: #aaa;
+}
+
+.resonance-details {
+  font-size: 0.9rem;
+}
+
+.resonance-details > div {
+  margin-bottom: 0.25rem;
+}
+
+.spectrum {
+  font-family: monospace;
+  background: #111;
+  padding: 0.25rem;
+  border-radius: 2px;
+  margin-top: 0.5rem;
+}
