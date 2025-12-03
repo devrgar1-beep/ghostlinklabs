@@ -8,6 +8,18 @@ This bundle gives you three deployment paths and the tools to harden, audit, and
 
 Also included: firewall hardening, periodic sanity-check, OS update+restart, audit collector, and a bridge to ChatGPT.
 
+## Prerequisites
+
+The following tools and settings are recommended/required depending on the deployment mode:
+
+- Python 3.8+ and `pip` for the venv runner and development tools
+- `tmux` (recommended) for `run_venv.sh up` interactive background sessions
+- `ufw` or `firewalld` if you want to use the hardening script; otherwise configure your firewall manually
+- `openssl` for mTLS certificate generation and TLS sanity checks
+- If you use Docker, ensure Docker Engine and Docker Compose are installed
+
+Note: The venv runner unpacks into `~/ghostlink_venv_runner` by default; the scripts and documentation expect that path.
+
 ## Quick install (systemd, minimal + safe)
 
 ```bash
@@ -53,6 +65,19 @@ curl -s 127.0.0.1:9108/metrics | head
   sudo bash ghostlink_automation_cfg/bootstrap/gl_tls_bootstrap.sh /etc/ghostlink
   sudo systemctl restart ghostlink-controller
   ```
+
+If you prefer to deploy the controller in Docker, mount your TLS certs at `/run/ghostlink` and set the appropriate env vars in `docker-compose.yml`:
+
+```yaml
+services:
+  controller:
+    volumes:
+      - ./creds:/run/ghostlink:ro
+    environment:
+      - GL_TLS_CERT=/run/ghostlink/ctl.crt
+      - GL_TLS_KEY=/run/ghostlink/ctl.key
+      - GL_TLS_CA=/run/ghostlink/ca.crt
+```
 
 ## Operate
 

@@ -1,0 +1,13 @@
+[Unit]
+Description=GhostLink Socket
+PartOf=ghostlink.service
+
+[Socket]
+ListenStream=8000
+Accept=no
+SocketMode=0600
+User=%u
+Group=%u
+
+[Install]
+WantedBy=sockets.target

@@ -4,14 +4,13 @@ GhostLink Toolbox Forge
 A unified command center and toolkit for all GhostLink operations
 """
 
-import os
-import sys
-import json
-import subprocess
 import argparse
-from pathlib import Path
-from typing import Optional, List, Dict, Any
 from datetime import datetime
+import json
+from pathlib import Path
+import subprocess
+import sys
+from typing import List, Optional
 
 GHOSTLINK_ROOT = Path(__file__).parent.absolute()
 
@@ -27,19 +26,14 @@ class ToolboxForge:
     def load_config(self):
         """Load forge configuration"""
         if self.config_file.exists():
-            with open(self.config_file, 'r') as f:
+            with open(self.config_file) as f:
                 self.config = json.load(f)
         else:
-            self.config = {
-                "initialized": False,
-                "tools": {},
-                "shortcuts": {},
-                "history": []
-            }
+            self.config = {"initialized": False, "tools": {}, "shortcuts": {}, "history": []}
 
     def save_config(self):
         """Save forge configuration"""
-        with open(self.config_file, 'w') as f:
+        with open(self.config_file, "w") as f:
             json.dump(self.config, indent=2, fp=f)
 
     def log_action(self, action: str, status: str, details: str = ""):
@@ -48,22 +42,27 @@ class ToolboxForge:
             "timestamp": datetime.now().isoformat(),
             "action": action,
             "status": status,
-            "details": details
+            "details": details,
         }
         self.config["history"].append(entry)
         self.save_config()
 
-    def run_command(self, cmd: List[str], cwd: Optional[Path] = None,
-                   capture: bool = False) -> subprocess.CompletedProcess:
+    def run_command(
+        self, cmd: List[str], cwd: Optional[Path] = None, capture: bool = False
+    ) -> subprocess.CompletedProcess:
         """Run a shell command"""
         try:
             if capture:
                 result = subprocess.run(
-                    cmd, cwd=cwd or self.root,
-                    capture_output=True, text=True, timeout=30
+                    cmd,
+                    check=False,
+                    cwd=cwd or self.root,
+                    capture_output=True,
+                    text=True,
+                    timeout=30,
                 )
             else:
-                result = subprocess.run(cmd, cwd=cwd or self.root, timeout=30)
+                result = subprocess.run(cmd, check=False, cwd=cwd or self.root, timeout=30)
             return result
         except Exception as e:
             print(f"❌ Command failed: {e}")
@@ -86,8 +85,7 @@ class ToolboxForge:
         modules = ["ghostlink.link_cli", "ghostlink.main", "ghostlink.health_monitor"]
         for mod in modules:
             result = self.run_command(
-                [sys.executable, "-c", f"import {mod}; print('✅')"],
-                capture=True
+                [sys.executable, "-c", f"import {mod}; print('✅')"], capture=True
             )
             status = "✅" if result.returncode == 0 else "❌"
             print(f"{mod}: {status}")
@@ -120,7 +118,9 @@ class ToolboxForge:
         audit_file = self.root / "ghostlink_audit.py"
         if audit_file.exists():
             result = self.run_command([sys.executable, str(audit_file), target])
-            self.log_action("system_audit", "completed" if result.returncode == 0 else "failed", target)
+            self.log_action(
+                "system_audit", "completed" if result.returncode == 0 else "failed", target
+            )
         else:
             print("❌ Audit tool not found")
 
@@ -131,10 +131,19 @@ class ToolboxForge:
     def start_server(self, port: int = 8001, host: str = "127.0.0.1"):
         """Start FastAPI server"""
         print(f"🚀 Starting FastAPI server on {host}:{port}...\n")
-        result = self.run_command([
-            sys.executable, "-m", "uvicorn", "ghostlink.main:app",
-            "--host", host, "--port", str(port), "--reload"
-        ])
+        result = self.run_command(
+            [
+                sys.executable,
+                "-m",
+                "uvicorn",
+                "ghostlink.main:app",
+                "--host",
+                host,
+                "--port",
+                str(port),
+                "--reload",
+            ]
+        )
         self.log_action("start_server", "started", f"{host}:{port}")
 
     def stop_server(self):
@@ -142,12 +151,16 @@ class ToolboxForge:
         print("🛑 Stopping servers...\n")
         # Windows: Find and kill Python processes running uvicorn
         if sys.platform == "win32":
-            subprocess.run([
-                "powershell", "-Command",
-                "Get-Process python | Where-Object {$_.CommandLine -like '*uvicorn*'} | Stop-Process -Force"
-            ])
+            subprocess.run(
+                [
+                    "powershell",
+                    "-Command",
+                    "Get-Process python | Where-Object {$_.CommandLine -like '*uvicorn*'} | Stop-Process -Force",
+                ],
+                check=False,
+            )
         else:
-            subprocess.run(["pkill", "-f", "uvicorn"])
+            subprocess.run(["pkill", "-f", "uvicorn"], check=False)
         print("✅ Servers stopped")
         self.log_action("stop_server", "stopped")
 
@@ -169,10 +182,14 @@ class ToolboxForge:
     def bios_bridge(self):
         """Bridge BIOS and hardware"""
         print("🧠 Bridging BIOS and Hardware...\n")
-        result = self.run_command([
-            sys.executable, str(self.root / "void_activation.py"),
-            "--admin-override", "--bridge-bios"
-        ])
+        result = self.run_command(
+            [
+                sys.executable,
+                str(self.root / "void_activation.py"),
+                "--admin-override",
+                "--bridge-bios",
+            ]
+        )
         self.log_action("bios_bridge", "completed" if result.returncode == 0 else "failed")
 
     # ============================================================
@@ -253,12 +270,13 @@ class ToolboxForge:
             "**/*.egg-info",
             ".pytest_cache",
             "dist",
-            "build"
+            "build",
         ]
         for pattern in artifacts:
             for path in self.root.glob(pattern):
                 if path.is_dir():
                     import shutil
+
                     shutil.rmtree(path)
                     print(f"  Removed: {path}")
                 else:
@@ -303,17 +321,23 @@ class ToolboxForge:
         if result.returncode == 0:
             self.log_action("groq_test", "success", "Internal communication AI operational")
         else:
-            self.log_action("groq_test", "failed", result.stderr if hasattr(result, 'stderr') else "")
+            self.log_action(
+                "groq_test", "failed", result.stderr if hasattr(result, "stderr") else ""
+            )
 
     def groq_status(self):
         """Check Groq AI status"""
         print("🧠 Groq Internal Communication AI Status\n")
         try:
             from groq_integration import GroqClient
+
             client = GroqClient()
-            print(f"✅ API Key: {client.api_key[:20]}...")
+            if client.api_key:
+                print("✅ API Key: [REDACTED] set")
+            else:
+                print("✅ API Key: not set")
             print(f"✅ Model: {client.model}")
-            print(f"✅ Purpose: Internal component coordination")
+            print("✅ Purpose: Internal component coordination")
             models = client.list_models()
             print(f"✅ Available models: {len(models)}")
             self.log_action("groq_status", "success", f"{len(models)} models available")
@@ -326,6 +350,7 @@ class ToolboxForge:
         print(f"🔗 Internal Communication: {sender} → {receiver}\n")
         try:
             from groq_integration import GroqClient
+
             client = GroqClient()
             response = client.internal_communication(sender, receiver, message)
             print(f"Response:\n{response}\n")
@@ -409,11 +434,9 @@ class ToolboxForge:
     def shell_integration(self):
         """Enable shell integration"""
         print("🐚 Enabling Shell Integration...\n")
-        result = self.run_command([
-            sys.executable,
-            str(self.root / "enable_shell_integration.py"),
-            "enable"
-        ])
+        result = self.run_command(
+            [sys.executable, str(self.root / "enable_shell_integration.py"), "enable"]
+        )
         self.log_action("shell_integration", "enabled" if result.returncode == 0 else "failed")
 
     def show_history(self, limit: int = 20):
@@ -491,7 +514,11 @@ class ToolboxForge:
                     "clean": self.clean,
                     "groq-test": self.groq_test,
                     "groq-status": self.groq_status,
-                    "groq-comm": lambda: self.groq_communicate(*args) if len(args) >= 3 else print("Usage: groq-comm <sender> <receiver> <message>"),
+                    "groq-comm": lambda: (
+                        self.groq_communicate(*args)
+                        if len(args) >= 3
+                        else print("Usage: groq-comm <sender> <receiver> <message>")
+                    ),
                     "lattice-demo": self.lattice_demo,
                     "lattice-state": self.lattice_state,
                     "lattice-start": self.lattice_start,
@@ -540,7 +567,7 @@ Available Commands:
   Utility:    shell, history, info
 
 Interactive: Run without arguments for interactive mode
-        """
+        """,
     )
 
     parser.add_argument("command", nargs="?", help="Command to execute")
@@ -576,7 +603,11 @@ Interactive: Run without arguments for interactive mode
         "clean": forge.clean,
         "groq-test": forge.groq_test,
         "groq-status": forge.groq_status,
-        "groq-comm": lambda: forge.groq_communicate(args.args[0], args.args[1], " ".join(args.args[2:])) if len(args.args) >= 3 else print("Usage: groq-comm <sender> <receiver> <message>"),
+        "groq-comm": lambda: (
+            forge.groq_communicate(args.args[0], args.args[1], " ".join(args.args[2:]))
+            if len(args.args) >= 3
+            else print("Usage: groq-comm <sender> <receiver> <message>")
+        ),
         "lattice-demo": forge.lattice_demo,
         "lattice-state": forge.lattice_state,
         "lattice-start": forge.lattice_start,
