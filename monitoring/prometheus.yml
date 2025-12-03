@@ -7,99 +7,20 @@ rule_files:
   # - "second_rules.yml"
 
 scrape_configs:
-  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  # GhostLink Cold Boot Orchestrator
+  - job_name: 'ghostlink-orchestrator'
+    static_configs:
+      - targets: ['ghostlink-orchestrator:9108']
+    scrape_interval: 30s
+    metrics_path: '/metrics'
+
+  # NATS Messaging Server
+  - job_name: 'nats'
+    static_configs:
+      - targets: ['nats:8222']
+    scrape_interval: 30s
+
+  # Prometheus (self-monitoring)
   - job_name: 'prometheus'
     static_configs:
       - targets: ['localhost:9090']
-
-  # GhostLink Controller Node
-  - job_name: 'ghostlink-controller'
-    static_configs:
-      - targets: ['192.168.1.100:8000']
-    scrape_interval: 10s
-    metrics_path: '/metrics'
-
-  # GhostLink Training Node
-  - job_name: 'ghostlink-trainer'
-    static_configs:
-      - targets: ['192.168.1.101:8002']
-    scrape_interval: 30s
-    metrics_path: '/metrics'
-
-  # GhostLink Inference Node
-  - job_name: 'ghostlink-inference'
-    static_configs:
-      - targets: ['192.168.1.102:8001']
-    scrape_interval: 10s
-    metrics_path: '/metrics'
-
-  # Redis Controller
-  - job_name: 'redis-controller'
-    static_configs:
-      - targets: ['192.168.1.110:6379']
-
-  # PostgreSQL Controller
-  - job_name: 'postgres-controller'
-    static_configs:
-      - targets: ['192.168.1.111:5432']
-
-  # Ollama Service
-  - job_name: 'ollama'
-    static_configs:
-      - targets: ['192.168.1.112:11434']
-
-  # Node Exporters for each Dell R630 server
-  - job_name: 'r630-1'
-    static_configs:
-      - targets: ['192.168.1.100:9100']
-    scrape_interval: 30s
-
-  - job_name: 'r630-2'
-    static_configs:
-      - targets: ['192.168.1.101:9100']
-    scrape_interval: 30s
-
-  - job_name: 'r630-3'
-    static_configs:
-      - targets: ['192.168.1.102:9100']
-    scrape_interval: 30s
-
-  # Storage Systems
-  - job_name: 'md3600i'
-    static_configs:
-      - targets: ['192.168.1.103:9100']
-    scrape_interval: 60s
-
-  - job_name: 'synology-1'
-    static_configs:
-      - targets: ['192.168.1.104:9100']
-    scrape_interval: 60s
-
-  - job_name: 'synology-2'
-    static_configs:
-      - targets: ['192.168.1.105:9100']
-    scrape_interval: 60s
-
-  - job_name: 'synology-3'
-    static_configs:
-      - targets: ['192.168.1.106:9100']
-    scrape_interval: 60s
-
-  # NVIDIA GPU Metrics
-  - job_name: 'nvidia-gpu-r630-1'
-    static_configs:
-      - targets: ['192.168.1.100:9400']
-
-  - job_name: 'nvidia-gpu-r630-2'
-    static_configs:
-      - targets: ['192.168.1.101:9400']
-
-  - job_name: 'nvidia-gpu-r630-3'
-    static_configs:
-      - targets: ['192.168.1.102:9400']
-
-  # Docker Metrics
-  - job_name: 'docker-containers'
-    static_configs:
-      - targets: ['192.168.1.100:9323', '192.168.1.101:9323', '192.168.1.102:9323']
-    scrape_interval: 30s

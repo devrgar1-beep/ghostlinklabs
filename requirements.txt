@@ -1,0 +1,5 @@
+# GhostLink Cold Boot Dependencies
+# Minimal external dependencies for self-contained operation
+
+psutil>=5.9.0  # System monitoring
+requests>=2.31.0  # HTTP client for future integrations

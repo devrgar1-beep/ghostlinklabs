@@ -1,0 +1,260 @@
+{
+  "report_timestamp": "2025-12-03T10:06:12.867164",
+  "test_session": {
+    "timestamp": "2025-12-03T10:05:38.057095",
+    "test_suites": {
+      "unit": {
+        "suite_name": "unit",
+        "total_tests": 4,
+        "passed_tests": 4,
+        "failed_tests": 0,
+        "tests": [
+          {
+            "test_name": "configuration_loading",
+            "status": "passed",
+            "duration": 0.0005011558532714844,
+            "details": {
+              "passed": true,
+              "details": "All required configuration keys present"
+            }
+          },
+          {
+            "test_name": "basic_imports",
+            "status": "passed",
+            "duration": 2.288818359375e-05,
+            "details": {
+              "passed": true,
+              "details": "All basic modules imported successfully"
+            }
+          },
+          {
+            "test_name": "scheduler_initialization",
+            "status": "passed",
+            "duration": 0.0006639957427978516,
+            "details": {
+              "passed": true,
+              "details": "Scheduler initialized successfully"
+            }
+          },
+          {
+            "test_name": "api_server_startup",
+            "status": "passed",
+            "duration": 1.0967254638671875e-05,
+            "details": {
+              "passed": true,
+              "details": "API server module imported successfully"
+            }
+          }
+        ],
+        "status": "passed"
+      },
+      "integration": {
+        "suite_name": "integration",
+        "total_tests": 4,
+        "passed_tests": 4,
+        "failed_tests": 0,
+        "tests": [
+          {
+            "test_name": "vscode_integration",
+            "status": "passed",
+            "duration": 10.641597032546997,
+            "details": {
+              "passed": true,
+              "details": "VS Code integration status check successful"
+            }
+          },
+          {
+            "test_name": "api_endpoints",
+            "status": "passed",
+            "duration": 0.002938985824584961,
+            "details": {
+              "passed": true,
+              "details": "API health endpoint returned status 200"
+            }
+          },
+          {
+            "test_name": "scheduler_operations",
+            "status": "passed",
+            "duration": 0.04671502113342285,
+            "details": {
+              "passed": true,
+              "details": "Scheduler status check successful"
+            }
+          },
+          {
+            "test_name": "orchestrator_commands",
+            "status": "passed",
+            "duration": 10.454256296157837,
+            "details": {
+              "passed": true,
+              "details": "Orchestrator health check successful"
+            }
+          }
+        ],
+        "status": "passed"
+      },
+      "system": {
+        "suite_name": "system",
+        "total_tests": 4,
+        "passed_tests": 4,
+        "failed_tests": 0,
+        "tests": [
+          {
+            "test_name": "full_system_health",
+            "status": "passed",
+            "duration": 10.414301872253418,
+            "details": {
+              "passed": true,
+              "details": "System health: healthy"
+            }
+          },
+          {
+            "test_name": "performance_metrics",
+            "status": "passed",
+            "duration": 1.0053980350494385,
+            "details": {
+              "passed": true,
+              "details": "CPU: 18.7%, Memory: 60.6% (Thresholds: CPU<95%, Memory<95%)"
+            }
+          },
+          {
+            "test_name": "memory_usage",
+            "status": "passed",
+            "duration": 0.0003991127014160156,
+            "details": {
+              "passed": true,
+              "details": "Memory usage: 29.0 MB (Threshold: 2048 MB)"
+            }
+          },
+          {
+            "test_name": "network_connectivity",
+            "status": "passed",
+            "duration": 0.030060768127441406,
+            "details": {
+              "passed": true,
+              "details": "Network connectivity confirmed"
+            }
+          }
+        ],
+        "status": "passed"
+      },
+      "experimental": {
+        "suite_name": "experimental",
+        "total_tests": 4,
+        "passed_tests": 4,
+        "failed_tests": 0,
+        "tests": [
+          {
+            "test_name": "chaos_engineering",
+            "status": "passed",
+            "duration": 0.00012803077697753906,
+            "details": {
+              "passed": true,
+              "details": "Chaos engineering test completed: network_delay (simulated)",
+              "risk_level": "high"
+            }
+          },
+          {
+            "test_name": "edge_case_scenarios",
+            "status": "passed",
+            "duration": 1.1064882278442383,
+            "details": {
+              "passed": true,
+              "details": "Edge case testing completed",
+              "risk_level": "medium"
+            }
+          },
+          {
+            "test_name": "random_operations",
+            "status": "passed",
+            "duration": 1.1029541492462158,
+            "details": {
+              "passed": true,
+              "details": "Random operation executed: random_task_3",
+              "risk_level": "high"
+            }
+          },
+          {
+            "test_name": "unstable_features",
+            "status": "passed",
+            "duration": 2.193450927734375e-05,
+            "details": {
+              "passed": true,
+              "details": "Unstable feature tested: beta_feature_2",
+              "risk_level": "very_high"
+            }
+          }
+        ],
+        "status": "passed"
+      },
+      "yolo": {
+        "suite_name": "yolo",
+        "total_tests": 4,
+        "passed_tests": 4,
+        "failed_tests": 0,
+        "tests": [
+          {
+            "test_name": "maximum_risk_operations",
+            "status": "passed",
+            "duration": 0.00010013580322265625,
+            "details": {
+              "passed": true,
+              "details": "YOLO operation executed: shutdown_services",
+              "risk_level": "maximum",
+              "warning": "UNRESTRICTED YOLO MODE ACTIVE"
+            }
+          },
+          {
+            "test_name": "unrestricted_execution",
+            "status": "passed",
+            "duration": 0.00010013580322265625,
+            "details": {
+              "passed": true,
+              "details": "Unrestricted code executed: print('YOLO execution: 284')",
+              "risk_level": "maximum"
+            }
+          },
+          {
+            "test_name": "chaos_monkey",
+            "status": "passed",
+            "duration": 5.2928924560546875e-05,
+            "details": {
+              "passed": true,
+              "details": "Chaos monkey executed: random_shutdown",
+              "risk_level": "catastrophic"
+            }
+          },
+          {
+            "test_name": "self_modifying_code",
+            "status": "passed",
+            "duration": 4.6253204345703125e-05,
+            "details": {
+              "passed": true,
+              "details": "Self-modifying code executed",
+              "risk_level": "existential"
+            }
+          }
+        ],
+        "status": "passed"
+      }
+    },
+    "overall_status": "passed",
+    "total_tests": 20,
+    "passed_tests": 20,
+    "failed_tests": 0,
+    "coverage_percentage": 100.0
+  },
+  "summary": {
+    "total_suites": 5,
+    "overall_status": "passed",
+    "total_tests": 20,
+    "passed_tests": 20,
+    "failed_tests": 0,
+    "success_rate": 100.0,
+    "coverage_percentage": 100.0
+  },
+  "recommendations": [
+    "Monitor experimental features closely for stability issues",
+    "YOLO mode active - consider safety implications for production use"
+  ]
+}

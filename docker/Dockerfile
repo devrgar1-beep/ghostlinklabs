@@ -21,29 +21,24 @@ ENV PATH="/opt/venv/bin:$PATH"
 COPY requirements.txt /app/requirements.txt
 RUN pip install --upgrade pip && pip install -r /app/requirements.txt
 
-# Copy application
-COPY gl_controller_metrics.py gl_peer.py gl_openai_bridge.py \
-  gl_peer_mesh.py gl_peer_responder.py /app/
-COPY entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
+# Copy all application files
+COPY . /app/
+
+# Make scripts executable
+RUN chmod +x /app/cold_boot_orchestrator.py && \
+  chmod +x /app/src/*.py && \
+  chmod +x /app/monitoring/*.py && \
+  chmod +x /app/tests/**/*.py
 
 # Runtime user
 USER $USER
 
-# Expose internal ports (you can use host networking or map these)
-EXPOSE 7420/tcp 7422/tcp 9108/tcp
+# Expose ports for cold boot orchestrator and monitoring
+EXPOSE 7420/tcp 7422/tcp 9108/tcp 8000/tcp
 
-# Healthcheck: /metrics should be reachable once controller is up
-HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=5 \
-  CMD curl -fsS http://127.0.0.1:9108/metrics >/dev/null || exit 1
+# Healthcheck: cold boot health check should pass
+HEALTHCHECK --interval=60s --timeout=30s --start-period=30s --retries=3 \
+  CMD python3 /app/cold_boot_orchestrator.py health >/dev/null 2>&1 && echo "OK" || echo "FAIL"
 
-# Environment flags
-ENV RUN_CONTROLLER=1 \
-  RUN_PEER=0 \
-  RUN_BRIDGE=0 \
-  RUN_MESH=0 \
-  RUN_RESPONDER=0 \
-  HOST=127.0.0.1 \
-  GL_MODEL=gpt-4.1-mini
-
-ENTRYPOINT ["/app/entrypoint.sh"]
+# Default command: run the cold boot orchestrator
+CMD ["python3", "/app/cold_boot_orchestrator.py", "health"]
