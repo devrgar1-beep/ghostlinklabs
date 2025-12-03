@@ -1,0 +1,17 @@
+services:
+  ghostlink:
+    build: .
+    container_name: ghostlink-ci
+    restart: unless-stopped
+    environment:
+      - HOST=0.0.0.0
+      - RUN_CONTROLLER=1
+      - RUN_PEER=0
+      - RUN_MESH=0
+      - RUN_RESPONDER=0
+      - RUN_BRIDGE=0
+    ports:
+      - "7420:7420"
+      - "9108:9108"
+    # No host network in CI runners
+    user: "10001:10001"

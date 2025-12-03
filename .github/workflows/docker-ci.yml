@@ -1,0 +1,36 @@
+name: Docker CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-smoke-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image
+        run: docker build -t ghostlink:ci .
+
+      - name: Compose up (controller only)
+        run: docker compose -f docker-compose.ci.yml up -d --build
+
+      - name: Wait for metrics
+        run: |
+          for i in {1..20}; do
+            if curl -fsS http://127.0.0.1:9108/metrics >/dev/null; then
+              echo "metrics up"; exit 0; fi; sleep 2; done; exit 1
+
+      - name: Show sample metrics
+        run: curl -s http://127.0.0.1:9108/metrics | head -n 30
+
+      - name: Compose down
+        if: always()
+        run: docker compose -f docker-compose.ci.yml down
