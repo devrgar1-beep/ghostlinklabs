@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"/.. && pwd)"
+cd "$ROOT_DIR"
+
+usage() {
+  cat <<USAGE
+GhostLink control tool
+
+Usage: glctl <command>
+
+Local runtime:
+  up                Start tmux-based local runtime (controller+peer)
+  down              Stop local runtime
+  status            Show socket status and logs tail
+  logs              Tail controller/peer logs
+
+Docker runtime:
+  docker:build      Build Docker image (ghostlink:latest)
+  docker:up         Start docker-compose (controller only by default)
+  docker:down       Stop docker-compose
+  docker:logs       Tail docker container logs
+  docker:mesh       Enable mesh + responder (compose reload)
+  docker:peer       Enable peer sensor streamer (compose reload)
+
+Utilities:
+  doctor            Run health checks (ports, metrics)
+  install-docker    Install Docker Engine + Compose (Ubuntu)
+USAGE
+}
+
+cmd=${1:-}
+case "$cmd" in
+  up)               bash run_venv.sh up ;;
+  down)             bash run_venv.sh down ;;
+  status)           bash run_venv.sh status ;;
+  logs)             bash run_venv.sh logs ;;
+
+  docker:build)     docker build -t ghostlink:latest . ;;
+  docker:up)        docker compose up -d ;;
+  docker:down)      docker compose down ;;
+  docker:logs)      docker logs -f ghostlink ;;
+  docker:mesh)
+    # Toggle mesh/responder on via compose override using envsubst path
+    echo "Enabling mesh + responder in docker-compose.yml"
+    sed -i 's/RUN_MESH=0/RUN_MESH=1/' docker-compose.yml
+    sed -i 's/RUN_RESPONDER=0/RUN_RESPONDER=1/' docker-compose.yml
+    docker compose up -d --build
+    ;;
+  docker:peer)
+    echo "Enabling peer in docker-compose.yml"
+    sed -i 's/RUN_PEER=0/RUN_PEER=1/' docker-compose.yml
+    docker compose up -d --build
+    ;;
+
+  doctor)
+    echo "-- sockets --" && (ss -ltnp 2>/dev/null || true) | egrep ':7420|:7422|:9108' || true
+    echo "-- metrics --" && curl -fsS http://127.0.0.1:9108/metrics | head -n 10 || true
+    ;;
+  install-docker)
+    bash scripts/provision_docker.sh
+    ;;
+  *) usage; exit 2 ;;
+esac

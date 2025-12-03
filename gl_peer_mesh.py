@@ -18,16 +18,37 @@ CONTROLLER_PORT = int(os.getenv("CONTROLLER_PORT", "7420"))
 DISCOVERY_PORT = int(os.getenv("DISCOVERY_PORT", "7422"))
 MESH_DISCOVERY_INTERVAL = int(os.getenv("MESH_DISCOVERY_INTERVAL", "30"))
 
-# Known neighbor IPs from network scan
-NEIGHBOR_IPS = [
-    "192.168.4.2",
-    "192.168.4.22",
-    "192.168.4.23",
-    "192.168.4.24",
-    "192.168.4.42",
-    "192.168.4.45",
-    "192.168.4.46",
-]
+# Known neighbor IPs from network scan or environment
+_ENV_NEIGHBORS = os.getenv("NEIGHBOR_IPS", "").strip()
+_NEIGHBORS_FILE = os.getenv("NEIGHBORS_FILE", "").strip()
+
+def _load_neighbors_from_file(path: str) -> list[str]:
+    out: list[str] = []
+    try:
+        with open(path, "r") as f:
+            for line in f:
+                s = line.strip()
+                if not s or s.startswith("#"):  # comments
+                    continue
+                out.append(s)
+    except Exception:
+        pass
+    return out
+
+if _ENV_NEIGHBORS:
+    NEIGHBOR_IPS = [ip.strip() for ip in _ENV_NEIGHBORS.split(",") if ip.strip()]
+elif _NEIGHBORS_FILE:
+    NEIGHBOR_IPS = _load_neighbors_from_file(_NEIGHBORS_FILE)
+else:
+    NEIGHBOR_IPS = [
+        "192.168.4.2",
+        "192.168.4.22",
+        "192.168.4.23",
+        "192.168.4.24",
+        "192.168.4.42",
+        "192.168.4.45",
+        "192.168.4.46",
+    ]
 
 
 class PeerConnection:

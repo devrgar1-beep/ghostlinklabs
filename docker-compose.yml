@@ -12,6 +12,9 @@ services:
       - RUN_BRIDGE=0        # set to 1 and provide OPENAI_API_KEY
       - RUN_MESH=0          # set to 1 to enable mesh aggregator
       - RUN_RESPONDER=0     # set to 1 to enable peer responder (7422)
+      # Mesh discovery configuration (choose ONE)
+      # - NEIGHBOR_IPS=192.168.4.22,192.168.4.24
+      # - NEIGHBORS_FILE=/run/ghostlink/neighbors.txt
       # OpenAI (only if RUN_BRIDGE=1)
       # - OPENAI_API_KEY=sk-...
       # TLS (mTLS) optional: mount certs and set env if not using defaults
