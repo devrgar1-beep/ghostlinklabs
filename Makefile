@@ -34,7 +34,7 @@ down:
 	bash run_venv.sh down
 
 # Docker helpers
-.PHONY: docker-build docker-up docker-down dlogs doctor mesh responder dpeer ci-up ci-down
+.PHONY: docker-build docker-up docker-down dlogs doctor mesh responder dpeer ci-up ci-down backbone-deploy backbone-discover neighbors-file
 
 docker-build:
 	docker build -t ghostlink:latest .
@@ -63,6 +63,22 @@ responder:
 dpeer:
 	sed -i 's/RUN_PEER=0/RUN_PEER=1/' docker-compose.yml
 	docker compose up -d --build
+
+# Deploy responders to backbone hosts listed in backbone_hosts.txt
+backbone-deploy:
+	BACKBONE_USER=${BACKBONE_USER} scripts/deploy_responder.sh backbone_hosts.txt
+
+# Discover responders on the backbone CIDR(s) and write creds/neighbors.txt
+# Example: make backbone-discover CIDR="192.168.4.0/22 10.10.0.0/24"
+backbone-discover:
+	[[ -n "${CIDR}" ]] || (echo "Set CIDR=..." && exit 1)
+	OUT_FILE=./creds/neighbors.txt scripts/discover_backbone.py ${CIDR}
+
+# Configure .env to use the neighbors file mounted into the container
+neighbors-file:
+	grep -q '^NEIGHBORS_FILE=' .env && sed -i 's#^NEIGHBORS_FILE=.*#NEIGHBORS_FILE=/run/ghostlink/neighbors.txt#' .env || echo 'NEIGHBORS_FILE=/run/ghostlink/neighbors.txt' >> .env
+	grep -q '^NEIGHBOR_IPS=' .env && sed -i 's/^NEIGHBOR_IPS=.*/NEIGHBOR_IPS=/' .env || true
+	@echo 'Updated .env to use NEIGHBORS_FILE=/run/ghostlink/neighbors.txt. Ensure ./creds/neighbors.txt exists.'
 
 # CI compose with port mappings
 ci-up:
