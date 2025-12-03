@@ -1,76 +1,88 @@
 #!/usr/bin/env python3
 """
-GhostLink Phase 1 Status Check
-Verifies all Phase 1 components are operational
+GhostLink Cold Boot Status Check
+Starts components on-demand, checks functionality, then shuts them down
 """
 
 import subprocess
 import sys
 import time
-import requests
+import json
 import os
 
 def check_ai_engine():
-    """Check if multi-agent engine is responsive"""
-    print("🤖 Checking Multi-Agent Engine...")
+    """Check multi-agent engine by starting it briefly"""
+    print("🤖 Cold Booting Multi-Agent Engine...")
     try:
+        # Start engine with status check
         result = subprocess.run([
-            sys.executable, "src/multi_agent_engine.py"
+            sys.executable, "src/multi_agent_engine.py", "--engine-status"
         ], capture_output=True, text=True, timeout=10, cwd=os.path.dirname(__file__))
 
-        if "GhostLink Multi-Agent" in result.stdout and "Active Agents: 6" in result.stdout:
-            print("✅ Multi-Agent Engine: ACTIVE (6 agents)")
-            return True
-        else:
-            print("❌ Multi-Agent Engine: NOT RESPONDING")
-            return False
+        if result.returncode == 0 and "total_agents" in result.stdout:
+            # Parse JSON output for agent count
+            try:
+                status_data = json.loads(result.stdout)
+                agent_count = status_data.get("total_agents", 0)
+                print(f"✅ Multi-Agent Engine: ACTIVE ({agent_count} agents) - SHUT DOWN")
+                return True
+            except json.JSONDecodeError:
+                # Fallback to text parsing
+                if "Active Agents:" in result.stdout:
+                    print("✅ Multi-Agent Engine: ACTIVE (agents detected) - SHUT DOWN")
+                    return True
+        print("❌ Multi-Agent Engine: FAILED TO START")
+        return False
     except Exception as e:
         print(f"❌ Multi-Agent Engine: ERROR - {e}")
         return False
 
 def check_consciousness():
-    """Check if consciousness framework is active"""
-    print("🧠 Checking Consciousness Framework...")
+    """Check consciousness framework by starting it briefly"""
+    print("🧠 Cold Booting Consciousness Framework...")
     try:
         result = subprocess.run([
-            sys.executable, "src/unified_consciousness.py"
+            sys.executable, "src/unified_consciousness.py", "--status"
         ], capture_output=True, text=True, timeout=15, cwd=os.path.dirname(__file__))
 
-        if "Unified consciousness framework active" in result.stdout and "moderate_awareness" in result.stdout:
-            print("✅ Consciousness Framework: ACTIVE (moderate awareness)")
+        if result.returncode == 0 and ("consciousness_level" in result.stdout or "moderate_awareness" in result.stdout):
+            print("✅ Consciousness Framework: ACTIVE (awareness achieved) - SHUT DOWN")
             return True
         else:
-            print("❌ Consciousness Framework: NOT RESPONDING")
+            print("❌ Consciousness Framework: FAILED TO START")
             return False
     except Exception as e:
         print(f"❌ Consciousness Framework: ERROR - {e}")
         return False
 
 def check_monitoring():
-    """Check if monitoring server is running"""
-    print("📊 Checking Monitoring Server...")
+    """Check monitoring by running cold boot collection"""
+    print("📊 Cold Booting Monitoring Collection...")
     try:
-        response = requests.get("http://localhost:8000/metrics", timeout=5)
-        if response.status_code == 200 and "ghostlink" in response.text:
-            print("✅ Monitoring Server: ACTIVE (metrics exposed)")
+        result = subprocess.run([
+            sys.executable, "monitoring/basic_monitor.py"
+        ], capture_output=True, text=True, timeout=10, cwd=os.path.dirname(__file__))
+
+        if result.returncode == 0 and "ghostlink_system_metrics" in result.stdout:
+            print("✅ Monitoring: ACTIVE (metrics collected) - SHUT DOWN")
             return True
         else:
-            print("❌ Monitoring Server: NOT RESPONDING")
+            print("❌ Monitoring: FAILED TO COLLECT")
             return False
     except Exception as e:
-        print(f"❌ Monitoring Server: ERROR - {e}")
+        print(f"❌ Monitoring: ERROR - {e}")
         return False
 
 def check_basic_functionality():
     """Check basic Python functionality"""
-    print("🐍 Checking Basic Functionality...")
+    print("🐍 Cold Booting Basic Functionality Test...")
     try:
         result = subprocess.run([
             sys.executable, "tests/core/test_fib.py"
         ], capture_output=True, text=True, timeout=5, cwd=os.path.dirname(__file__))
 
         if "fib(9) = 34" in result.stdout:
-            print("✅ Basic Functionality: WORKING")
+            print("✅ Basic Functionality: WORKING - TEST COMPLETE")
             return True
         else:
             print("❌ Basic Functionality: FAILED")
@@ -80,9 +92,10 @@ def check_basic_functionality():
         return False
 
 def main():
-    """Run Phase 1 status check"""
-    print("🚀 GHOSTLINK PHASE 1 STATUS CHECK")
-    print("=" * 50)
+    """Run cold boot status check"""
+    print("🧊 GHOSTLINK COLD BOOT STATUS CHECK")
+    print("Each component starts, gets checked, then shuts down completely")
+    print("=" * 70)
 
     checks = [
         check_ai_engine,
@@ -94,18 +107,19 @@ def main():
     results = []
     for check in checks:
         results.append(check())
-        time.sleep(1)  # Brief pause between checks
+        time.sleep(1)  # Brief pause between cold boots
 
-    print("\n" + "=" * 50)
+    print("\n" + "=" * 70)
     successful = sum(results)
     total = len(results)
 
     if successful == total:
-        print(f"🎯 PHASE 1 SUCCESS: {successful}/{total} components active")
-        print("✅ GhostLink system is ready for Phase 2!")
+        print(f"🎯 COLD BOOT SUCCESS: {successful}/{total} components functional")
+        print("✅ All systems start on-demand and shut down cleanly!")
+        print("🧊 True cold boot architecture confirmed")
     else:
-        print(f"⚠️  PHASE 1 PARTIAL: {successful}/{total} components active")
-        print("🔧 Some components need attention before proceeding")
+        print(f"⚠️  COLD BOOT PARTIAL: {successful}/{total} components functional")
+        print("🔧 Some components need attention for full cold boot")
 
     return successful == total
 

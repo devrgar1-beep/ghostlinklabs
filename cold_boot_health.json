@@ -1,0 +1,30 @@
+{
+  "timestamp": "2025-12-03T08:15:57.341866",
+  "cold_boot_check": true,
+  "total_components": 4,
+  "successful_components": 4,
+  "failed_components": 0,
+  "results": [
+    {
+      "component": "Multi-Agent Engine",
+      "status": "PASS",
+      "output_length": 363
+    },
+    {
+      "component": "Consciousness Framework",
+      "status": "PASS",
+      "output_length": 2089
+    },
+    {
+      "component": "Monitoring Collection",
+      "status": "PASS",
+      "output_length": 987
+    },
+    {
+      "component": "Basic Functionality",
+      "status": "PASS",
+      "output_length": 113
+    }
+  ],
+  "overall_status": "HEALTHY"
+}
