@@ -8,8 +8,8 @@ RUN useradd -m -u $UID -s /usr/sbin/nologin $USER
 
 # System deps (curl for healthcheck)
 RUN apt-get update -y && apt-get install -y --no-install-recommends \
-    curl ca-certificates && \
-    rm -rf /var/lib/apt/lists/*
+  curl ca-certificates && \
+  rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -22,7 +22,8 @@ COPY requirements.txt /app/requirements.txt
 RUN pip install --upgrade pip && pip install -r /app/requirements.txt
 
 # Copy application
-COPY gl_controller_metrics.py gl_peer.py gl_openai_bridge.py /app/
+COPY gl_controller_metrics.py gl_peer.py gl_openai_bridge.py \
+  gl_peer_mesh.py gl_peer_responder.py /app/
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
@@ -38,9 +39,11 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=5 \
 
 # Environment flags
 ENV RUN_CONTROLLER=1 \
-    RUN_PEER=0 \
-    RUN_BRIDGE=0 \
-    HOST=127.0.0.1 \
-    GL_MODEL=gpt-4.1-mini
+  RUN_PEER=0 \
+  RUN_BRIDGE=0 \
+  RUN_MESH=0 \
+  RUN_RESPONDER=0 \
+  HOST=127.0.0.1 \
+  GL_MODEL=gpt-4.1-mini
 
 ENTRYPOINT ["/app/entrypoint.sh"]

@@ -16,6 +16,8 @@ from .ghostlink import (
     main,
     summarize_kernel,
 )
+from .runtime_state_manager import RUNTIME_STATE_MANAGER
+from .session_executor import SESSION_EXECUTOR
 
 __all__ = [
     "gather_capabilities",
@@ -34,4 +36,6 @@ __all__ = [
     "load_kernel",
     "main",
     "summarize_kernel",
+    "RUNTIME_STATE_MANAGER",
+    "SESSION_EXECUTOR",
 ]

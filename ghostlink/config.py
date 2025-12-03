@@ -19,6 +19,26 @@ class Config:
     
     # Application settings
     DEBUG: bool = os.getenv("DEBUG", "false").lower() == "true"
+    # Automation settings
+    # When AUTOMATE_ALL is true, components that support automation should
+    # run without manual confirmation where safe.
+    AUTOMATE_ALL: bool = os.getenv("AUTOMATE_ALL", "true").lower() == "true"
+
+    # If AUTO_APPROVE is true, actions that normally require approval
+    # should be auto-approved. Use with caution in production.
+    AUTO_APPROVE: bool = os.getenv("AUTO_APPROVE", "true").lower() == "true"
+
+    # Experimental mode level: one of 'off', 'partial', 'full'.
+    # 'full' enables all experimental features; 'partial' enables a subset.
+    EXPERIMENTAL_MODE: str = os.getenv("EXPERIMENTAL_MODE", "full").lower()
+
+    @classmethod
+    def experimental_enabled(cls) -> bool:
+        """Return True if experimental features are enabled.
+
+        Use `EXPIRIMENTAL_MODE` to decide the level of feature exposure.
+        """
+        return cls.EXPERIMENTAL_MODE != "off"
     
     @classmethod
     def get_openai_api_key(cls) -> str:
