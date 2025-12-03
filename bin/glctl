@@ -11,22 +11,27 @@ GhostLink control tool
 Usage: glctl <command>
 
 Local runtime:
-  up                Start tmux-based local runtime (controller+peer)
-  down              Stop local runtime
-  status            Show socket status and logs tail
-  logs              Tail controller/peer logs
+  up                        Start tmux-based local runtime (controller+peer)
+  down                      Stop local runtime
+  status                    Show socket status and logs tail
+  logs                      Tail controller/peer logs
 
 Docker runtime:
-  docker:build      Build Docker image (ghostlink:latest)
-  docker:up         Start docker-compose (controller only by default)
-  docker:down       Stop docker-compose
-  docker:logs       Tail docker container logs
-  docker:mesh       Enable mesh + responder (compose reload)
-  docker:peer       Enable peer sensor streamer (compose reload)
+  docker:build              Build Docker image (ghostlink:latest)
+  docker:up                 Start docker-compose (controller only by default)
+  docker:down               Stop docker-compose
+  docker:logs               Tail docker container logs
+  docker:mesh               Enable mesh + responder (compose reload)
+  docker:peer               Enable peer sensor streamer (compose reload)
+
+Backbone helpers:
+  backbone:deploy           Deploy responder to hosts in backbone_hosts.txt
+  backbone:discover <cidr>  Discover responders on CIDR(s) -> creds/neighbors.txt
+  neighbors:use-file        Point .env at /run/ghostlink/neighbors.txt
 
 Utilities:
-  doctor            Run health checks (ports, metrics)
-  install-docker    Install Docker Engine + Compose (Ubuntu)
+  doctor                    Run health checks (ports, metrics)
+  install-docker            Install Docker Engine + Compose (Ubuntu)
 USAGE
 }
 
@@ -52,6 +57,20 @@ case "$cmd" in
     echo "Enabling peer in docker-compose.yml"
     sed -i 's/RUN_PEER=0/RUN_PEER=1/' docker-compose.yml
     docker compose up -d --build
+    ;;
+
+  backbone:deploy)
+    scripts/deploy_responder.sh backbone_hosts.txt
+    ;;
+  backbone:discover)
+    shift || true
+    if [[ $# -eq 0 ]]; then echo "Usage: glctl backbone:discover <cidr> [cidr...]"; exit 2; fi
+    OUT_FILE=./creds/neighbors.txt scripts/discover_backbone.py "$@"
+    ;;
+  neighbors:use-file)
+    if grep -q '^NEIGHBORS_FILE=' .env; then sed -i 's#^NEIGHBORS_FILE=.*#NEIGHBORS_FILE=/run/ghostlink/neighbors.txt#' .env; else echo 'NEIGHBORS_FILE=/run/ghostlink/neighbors.txt' >> .env; fi
+    if grep -q '^NEIGHBOR_IPS=' .env; then sed -i 's/^NEIGHBOR_IPS=.*/NEIGHBOR_IPS=/' .env; fi
+    echo 'Updated .env to use NEIGHBORS_FILE=/run/ghostlink/neighbors.txt. Ensure ./creds/neighbors.txt exists.'
     ;;
 
   doctor)

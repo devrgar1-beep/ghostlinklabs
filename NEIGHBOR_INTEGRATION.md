@@ -127,7 +127,31 @@ sudo ufw allow 7422/tcp
 
 ## Deployment Scripts
 
-### Deploy to Specific Host
+### Backbone Dell R630s (Automated)
+
+1) List your R630 backbone hosts in `backbone_hosts.txt` (one per line)
+2) Deploy the responder to each host over SSH:
+```bash
+bin/glctl backbone:deploy
+```
+3) Discover responders on your backbone network and write `./creds/neighbors.txt`:
+```bash
+bin/glctl backbone:discover 10.10.0.0/24 10.10.1.0/24
+```
+4) Point the stack at the neighbors file and enable the mesh in Docker:
+```bash
+bin/glctl neighbors:use-file
+# Ensure ./creds/neighbors.txt has your hosts, then:
+# enable mesh + responder inside container if desired
+bin/glctl docker:mesh
+bin/glctl docker:up
+```
+
+Notes:
+- The responder runs on each R630; you generally do not need to run a responder in the controller container.
+- Alternatively, set NEIGHBOR_IPS in `.env` as a CSV instead of using a file.
+
+### Deploy to Specific Host (manual)
 
 ```bash
 # Copy responder to a neighbor
@@ -135,7 +159,7 @@ scp gl_peer_responder.py user@192.168.4.22:~/
 ssh user@192.168.4.22 'python3 ~/gl_peer_responder.py &'
 ```
 
-### Deploy to All Neighbors (Batch)
+### Deploy to All Neighbors (Batch - manual)
 
 ```bash
 #!/bin/bash
