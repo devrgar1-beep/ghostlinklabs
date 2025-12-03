@@ -1,0 +1,62 @@
+{
+  "audit_id": "ccba63c8",
+  "timestamp": 1763697043.1392446,
+  "overall_score": 0,
+  "summary": {
+    "total_findings": 793,
+    "critical": 1,
+    "high": 1,
+    "medium": 2,
+    "low": 789,
+    "info": 0
+  },
+  "metrics": {
+    "security_score": 70,
+    "performance_score": 85.0,
+    "total_files": 3890,
+    "total_lines": 1492872,
+    "memory_usage_mb": 26.0703125
+  },
+  "top_risks": [
+    {
+      "category": "security",
+      "severity": "critical",
+      "component": "secrets",
+      "description": "Potential hardcoded secrets detected",
+      "risk_score": 10.0
+    },
+    {
+      "category": "security",
+      "severity": "high",
+      "component": "authorization",
+      "description": "No capability configuration found",
+      "risk_score": 7.0
+    },
+    {
+      "category": "architecture",
+      "severity": "medium",
+      "component": "coupling",
+      "description": "High coupling detected",
+      "risk_score": 5.0
+    },
+    {
+      "category": "architecture",
+      "severity": "medium",
+      "component": "modularity",
+      "description": "Insufficient modularity",
+      "risk_score": 4.0
+    },
+    {
+      "category": "architecture",
+      "severity": "low",
+      "component": "complexity",
+      "description": "Large file: ghost_consciousness_daemon_optimized.py",
+      "risk_score": 3.0
+    }
+  ],
+  "recommendations": [
+    "ADDRESS IMMEDIATELY: 2 critical/high severity issues",
+    "Enhance security: 2 security issues found",
+    "Refactor: Codebase size exceeds recommended limits"
+  ]
+}

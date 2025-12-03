@@ -1,8 +1,98 @@
 {
-  "context_window": 128000,
-  "reserve": 0.18,
-  "fixed": 2000,
-  "plan": 800,
-  "state": 1200,
-  "tool_max": 3500
+  "version": "2.0",
+  "system": {
+    "name": "GhostLink Unified AI Framework",
+    "description": "A sovereign AI framework with symbolic reasoning and diagnostic tools",
+    "environment": "development"
+  },
+  "ai": {
+    "context_window": 128000,
+    "reserve_ratio": 0.18,
+    "fixed_tokens": 2000,
+    "plan_tokens": 800,
+    "state_tokens": 1200,
+    "tool_max_tokens": 3500,
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "max_retries": 3,
+    "timeout_seconds": 30
+  },
+  "providers": {
+    "openai": {
+      "enabled": true,
+      "models": ["gpt-4o", "gpt-4o-mini", "gpt-3.5-turbo"],
+      "default_model": "gpt-4o",
+      "api_version": "2024-02-01"
+    },
+    "anthropic": {
+      "enabled": true,
+      "models": ["claude-3-opus-20240229", "claude-3-sonnet-20240229", "claude-3-haiku-20240307"],
+      "default_model": "claude-3-sonnet-20240229"
+    },
+    "grok": {
+      "enabled": true,
+      "models": ["grok-1", "grok-1-mini"],
+      "default_model": "grok-1"
+    },
+    "google": {
+      "enabled": true,
+      "models": ["gemini-pro", "gemini-pro-vision"],
+      "default_model": "gemini-pro"
+    },
+    "ollama": {
+      "enabled": true,
+      "base_url": "http://localhost:11434",
+      "models": ["llama2", "codellama", "mistral"],
+      "default_model": "mistral"
+    }
+  },
+  "agents": {
+    "max_concurrent": 10,
+    "default_timeout": 300,
+    "security_enabled": true,
+    "governance_enabled": true,
+    "learning_enabled": true
+  },
+  "networking": {
+    "fiber_network_enabled": true,
+    "websocket_enabled": true,
+    "zeromq_enabled": true,
+    "p2p_enabled": false
+  },
+  "database": {
+    "type": "sqlite",
+    "url": "./data/ghostlink.db",
+    "pool_size": 10,
+    "max_overflow": 20
+  },
+  "caching": {
+    "redis_enabled": true,
+    "redis_url": "redis://localhost:6379",
+    "ttl_seconds": 3600
+  },
+  "logging": {
+    "level": "INFO",
+    "format": "json",
+    "file_enabled": true,
+    "console_enabled": true,
+    "structured": true
+  },
+  "monitoring": {
+    "prometheus_enabled": true,
+    "metrics_port": 9108,
+    "health_check_interval": 30
+  },
+  "security": {
+    "jwt_enabled": true,
+    "jwt_expiry_hours": 24,
+    "rate_limiting_enabled": true,
+    "cors_enabled": true,
+    "helmet_enabled": true
+  },
+  "performance": {
+    "async_enabled": true,
+    "concurrency_limit": 100,
+    "memory_limit_mb": 2048,
+    "cpu_limit": 2.0
+  }
 }

@@ -1,0 +1,143 @@
+{
+  "recursive_genomes": [
+    {
+      "level": 0,
+      "genome_id": "0951ab2434ae5231",
+      "evolutionary_parameters": {
+        "mutation_rate": 0.1,
+        "crossover_rate": 0.7,
+        "population_size": 50,
+        "elitism_count": 5,
+        "tournament_size": 5,
+        "selection_pressure": 1.0,
+        "mutation_strength": 0.1,
+        "adaptation_rate": 0.01,
+        "exploration_ratio": 0.5,
+        "diversity_maintenance": 0.3
+      },
+      "nested_genomes": [],
+      "fitness_score": 50.0,
+      "generation": 0,
+      "parent_genomes": [],
+      "timestamp": "2025-11-27T14:10:53.299011"
+    },
+    {
+      "level": 1,
+      "genome_id": "f51afed364a1fb48",
+      "evolutionary_parameters": {
+        "mutation_rate": 0.1,
+        "crossover_rate": 0.7,
+        "population_size": 50,
+        "elitism_count": 5,
+        "tournament_size": 4,
+        "selection_pressure": 1.0,
+        "mutation_strength": 0.1,
+        "adaptation_rate": 0.01,
+        "exploration_ratio": 0.5,
+        "diversity_maintenance": 0.3094455772877635
+      },
+      "nested_genomes": [],
+      "fitness_score": 55.0,
+      "generation": 1,
+      "parent_genomes": [
+        "0951ab2434ae5231"
+      ],
+      "timestamp": "2025-11-27T14:10:53.777388"
+    }
+  ],
+  "current_recursive_genome": {
+    "level": 0,
+    "genome_id": "0951ab2434ae5231",
+    "evolutionary_parameters": {
+      "mutation_rate": 0.1,
+      "crossover_rate": 0.7,
+      "population_size": 50,
+      "elitism_count": 5,
+      "tournament_size": 5,
+      "selection_pressure": 1.0,
+      "mutation_strength": 0.1,
+      "adaptation_rate": 0.01,
+      "exploration_ratio": 0.5,
+      "diversity_maintenance": 0.3
+    },
+    "nested_genomes": [],
+    "fitness_score": 50.0,
+    "generation": 0,
+    "parent_genomes": [],
+    "timestamp": "2025-11-27T14:10:53.299011"
+  },
+  "meta_evolution_params": {
+    "mutation_rate": 0.2,
+    "crossover_rate": 0.5,
+    "population_size": 35,
+    "elitism_count": 9,
+    "tournament_size": 5,
+    "selection_pressure": 1.0,
+    "mutation_strength": 0.1,
+    "adaptation_rate": 0.01,
+    "exploration_exploitation_ratio": 0.5,
+    "diversity_maintenance": 0.3
+  },
+  "recursive_evolution_metrics": {
+    "meta_fitness": 55.0,
+    "evolution_efficiency": 0.525,
+    "adaptation_speed": 0.0,
+    "convergence_rate": 0.0,
+    "diversity_index": 0.0,
+    "innovation_rate": 0.0,
+    "stability_score": 0.0,
+    "recursion_depth": 1,
+    "hierarchical_fitness": [
+      50.0,
+      55.0
+    ]
+  },
+  "recursion_level": 1,
+  "evolution_strategies": [
+    {
+      "name": "standard_ga",
+      "description": "Standard genetic algorithm",
+      "parameters": {
+        "selection": "tournament",
+        "crossover": "single_point",
+        "mutation": "gaussian",
+        "replacement": "elitism"
+      },
+      "fitness": 10.0
+    },
+    {
+      "name": "adaptive_ga",
+      "description": "Adaptive genetic algorithm",
+      "parameters": {
+        "selection": "roulette",
+        "crossover": "uniform",
+        "mutation": "adaptive",
+        "replacement": "steady_state"
+      },
+      "fitness": 10.0
+    },
+    {
+      "name": "novelty_search",
+      "description": "Novelty-driven evolution",
+      "parameters": {
+        "selection": "novelty",
+        "crossover": "multi_point",
+        "mutation": "polynomial",
+        "replacement": "generational"
+      },
+      "fitness": 10.0
+    }
+  ],
+  "current_strategy": {
+    "name": "standard_ga",
+    "description": "Standard genetic algorithm",
+    "parameters": {
+      "selection": "tournament",
+      "crossover": "single_point",
+      "mutation": "gaussian",
+      "replacement": "elitism"
+    },
+    "fitness": 10.0
+  },
+  "last_updated": "2025-11-27T14:10:53.777495"
+}

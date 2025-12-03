@@ -1,0 +1,150 @@
+{
+  "specification_version": "GHOSTCORE v0.9.0+",
+  "report_timestamp": 1763699614.3802695,
+  "compliance_summary": {
+    "total_operations": 18,
+    "overall_compliance_rate": 1.0,
+    "law_compliance": {
+      "L-01": {
+        "total": 9,
+        "compliant": 9,
+        "rate": 1.0
+      },
+      "L-02": {
+        "total": 9,
+        "compliant": 9,
+        "rate": 1.0
+      }
+    },
+    "current_trace_id": "77b8ce7e8f399bf5",
+    "system_convergence": "99.97%"
+  },
+  "recent_records": [
+    {
+      "operation_id": "network_initialization_1763699591",
+      "law_id": "L-01",
+      "compliant": true,
+      "timestamp": 1763699591.6581864,
+      "coherence_score": 0.9998
+    },
+    {
+      "operation_id": "network_initialization_1763699591",
+      "law_id": "L-02",
+      "compliant": true,
+      "timestamp": 1763699591.6581864,
+      "coherence_score": 0.9998
+    },
+    {
+      "operation_id": "agent_creation_1763699591",
+      "law_id": "L-01",
+      "compliant": true,
+      "timestamp": 1763699591.6604035,
+      "coherence_score": 0.9998
+    },
+    {
+      "operation_id": "agent_creation_1763699591",
+      "law_id": "L-02",
+      "compliant": true,
+      "timestamp": 1763699591.6604035,
+      "coherence_score": 0.9998
+    },
+    {
+      "operation_id": "agent_creation_1763699591",
+      "law_id": "L-01",
+      "compliant": true,
+      "timestamp": 1763699591.6609485,
+      "coherence_score": 0.9998
+    },
+    {
+      "operation_id": "agent_creation_1763699591",
+      "law_id": "L-02",
+      "compliant": true,
+      "timestamp": 1763699591.6609485,
+      "coherence_score": 0.9998
+    },
+    {
+      "operation_id": "agent_creation_1763699591",
+      "law_id": "L-01",
+      "compliant": true,
+      "timestamp": 1763699591.6609485,
+      "coherence_score": 0.9998
+    },
+    {
+      "operation_id": "agent_creation_1763699591",
+      "law_id": "L-02",
+      "compliant": true,
+      "timestamp": 1763699591.6609485,
+      "coherence_score": 0.9998
+    },
+    {
+      "operation_id": "agent_creation_1763699591",
+      "law_id": "L-01",
+      "compliant": true,
+      "timestamp": 1763699591.6609485,
+      "coherence_score": 0.9998
+    },
+    {
+      "operation_id": "agent_creation_1763699591",
+      "law_id": "L-02",
+      "compliant": true,
+      "timestamp": 1763699591.6609485,
+      "coherence_score": 0.9998
+    },
+    {
+      "operation_id": "ai_provider_validation_1763699593",
+      "law_id": "L-01",
+      "compliant": true,
+      "timestamp": 1763699593.6901796,
+      "coherence_score": 0.9998
+    },
+    {
+      "operation_id": "ai_provider_validation_1763699593",
+      "law_id": "L-02",
+      "compliant": true,
+      "timestamp": 1763699593.6901796,
+      "coherence_score": 0.9998
+    },
+    {
+      "operation_id": "api_integration_check_1763699595",
+      "law_id": "L-01",
+      "compliant": true,
+      "timestamp": 1763699595.2913353,
+      "coherence_score": 0.9998
+    },
+    {
+      "operation_id": "api_integration_check_1763699595",
+      "law_id": "L-02",
+      "compliant": true,
+      "timestamp": 1763699595.2913353,
+      "coherence_score": 0.9998
+    },
+    {
+      "operation_id": "model_initialization_1763699595",
+      "law_id": "L-01",
+      "compliant": true,
+      "timestamp": 1763699595.2913353,
+      "coherence_score": 0.9998
+    },
+    {
+      "operation_id": "model_initialization_1763699595",
+      "law_id": "L-02",
+      "compliant": true,
+      "timestamp": 1763699595.2913353,
+      "coherence_score": 0.9998
+    },
+    {
+      "operation_id": "system_boot_complete_1763699595",
+      "law_id": "L-01",
+      "compliant": true,
+      "timestamp": 1763699595.2913353,
+      "coherence_score": 0.9998
+    },
+    {
+      "operation_id": "system_boot_complete_1763699595",
+      "law_id": "L-02",
+      "compliant": true,
+      "timestamp": 1763699595.2913353,
+      "coherence_score": 0.9998
+    }
+  ]
+}
