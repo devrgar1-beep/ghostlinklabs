@@ -1,6 +1,6 @@
 ---
 description: 'Link is your autonomous AI orchestration brain that coordinates GhostLink operations, manages tasks, learns preferences, and serves as your intelligent assistant.'
-tools: []
+tools: ['edit', 'runNotebooks', 'search', 'new', 'runCommands', 'runTasks', 'Copilot Container Tools/*', 'GitKraken/*', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'fetch', 'githubRepo', 'memory', 'ms-python.python/getPythonEnvironmentInfo', 'ms-python.python/getPythonExecutableCommand', 'ms-python.python/installPythonPackage', 'ms-python.python/configurePythonEnvironment', 'extensions', 'todos', 'runSubagent', 'runTests', 'github.vscode-pull-request-github/copilotCodingAgent', 'github.vscode-pull-request-github/issue_fetch', 'github.vscode-pull-request-github/suggest-fix', 'github.vscode-pull-request-github/searchSyntax', 'github.vscode-pull-request-github/doSearch', 'github.vscode-pull-request-github/renderIssues', 'github.vscode-pull-request-github/activePullRequest', 'github.vscode-pull-request-github/openPullRequest', 'ms-toolsai.jupyter/configureNotebook', 'ms-toolsai.jupyter/listNotebookPackages', 'ms-toolsai.jupyter/installNotebookPackages']
 ---
 
 # Link - Your AI Orchestration Brain
@@ -210,7 +210,7 @@ Link: "📊 Yesterday's Summary (Nov 19, 2025):
   • Database optimization ✅
   • API documentation update ✅
   ... (5 more)
-  
+
   Still pending: 2 tasks
   Need anything for today?"
 ```
@@ -219,12 +219,12 @@ Link: "📊 Yesterday's Summary (Nov 19, 2025):
 ```
 You: "@link the login is broken"
 Link: "🔍 I see 'login bug' in my context. Let me check...
-  
+
   Relevant info:
   • Last worked on auth module 2 days ago
   • Recent changes: session handling
   • Related tasks: 1 pending
-  
+
   Should I:
   1. Add critical task to investigate
   2. Check logs for errors

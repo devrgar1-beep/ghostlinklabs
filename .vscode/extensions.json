@@ -5,10 +5,21 @@
         "ms-python.debugpy",
         "ms-python.black-formatter",
         "charliermarsh.ruff",
-        "ms-vscode.makefile-tools",
+        "github.copilot",
+        "github.copilot-chat",
+        "github.vscode-pull-request-github",
         "ms-vscode.powershell",
         "foxundermoon.shell-format",
         "timonwong.shellcheck",
-        "mads-hartmann.bash-ide-vscode"
+        "mads-hartmann.bash-ide-vscode",
+        "ms-azuretools.vscode-docker",
+        "ms-vscode-remote.remote-containers",
+        "eamodio.gitlens",
+        "gruntfuggly.todo-tree",
+        "usernamehw.errorlens",
+        "redhat.vscode-yaml",
+        "tamasfe.even-better-toml",
+        "yzhang.markdown-all-in-one",
+        "davidanson.vscode-markdownlint"
     ]
 }

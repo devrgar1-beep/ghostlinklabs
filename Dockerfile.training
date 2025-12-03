@@ -1,0 +1,151 @@
+# ==========================================
+# GhostLink Training Node Dockerfile
+# Optimized for distributed AI training on Dell R630
+# ==========================================
+
+FROM nvidia/cuda:12.1-devel-ubuntu22.04 AS base
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV CUDA_HOME=/usr/local/cuda
+ENV PATH=$CUDA_HOME/bin:$PATH
+ENV LD_LIBRARY_PATH=$CUDA_HOME/lib64:$LD_LIBRARY_PATH
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    python3.11 \
+    python3.11-dev \
+    python3.11-venv \
+    python3-pip \
+    git \
+    curl \
+    wget \
+    build-essential \
+    libssl-dev \
+    libffi-dev \
+    libxml2-dev \
+    libxslt-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libtiff-dev \
+    libfreetype6-dev \
+    liblcms2-dev \
+    libwebp-dev \
+    tcl8.6-dev \
+    tk8.6-dev \
+    libharfbuzz-dev \
+    libfribidi-dev \
+    libxcb1-dev \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libgomp1 \
+    libgthread-2.0-0 \
+    openmpi-bin \
+    openmpi-doc \
+    libopenmpi-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create virtual environment
+RUN python3.11 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Upgrade pip and install Python dependencies
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
+
+# Install PyTorch with CUDA support
+RUN pip install --no-cache-dir \
+    torch==2.1.0+cu121 \
+    torchvision==0.16.0+cu121 \
+    torchaudio==2.1.0+cu121 \
+    --index-url https://download.pytorch.org/whl/cu121
+
+# Install core ML libraries
+RUN pip install --no-cache-dir \
+    transformers[torch]==4.35.0 \
+    accelerate==0.24.0 \
+    datasets==2.14.0 \
+    tokenizers==0.15.0 \
+    peft==0.5.0 \
+    bitsandbytes==0.41.0 \
+    deepspeed==0.12.0 \
+    optimum==1.13.0 \
+    sentencepiece \
+    protobuf \
+    safetensors
+
+# Install distributed training libraries
+RUN pip install --no-cache-dir \
+    horovod[pytorch] \
+    torchtext \
+    torchdata \
+    torchmetrics
+
+# Install monitoring and utilities
+RUN pip install --no-cache-dir \
+    psutil \
+    GPUtil \
+    pynvml \
+    prometheus-client \
+    aiohttp \
+    fastapi \
+    uvicorn[standard] \
+    pydantic \
+    python-multipart \
+    python-dotenv
+
+# Create app directory
+WORKDIR /app
+
+# Copy requirements and install project dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy source code
+COPY . .
+
+# Create necessary directories
+RUN mkdir -p /app/data /app/logs /app/models /app/training_data /mnt/models /mnt/datasets
+
+# Set permissions
+RUN chmod +x /app/entrypoint.sh
+
+# Expose ports
+EXPOSE 8002 7421
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8002/health || exit 1
+
+# Set entrypoint
+ENTRYPOINT ["/app/entrypoint.sh"]
+CMD ["trainer"]
+
+# ==========================================
+# Multi-stage build for production
+# ==========================================
+
+FROM base AS training
+
+# Install additional training-specific packages
+RUN pip install --no-cache-dir \
+    wandb \
+    tensorboard \
+    mlflow \
+    optuna \
+    ray[all] \
+    pytorch-lightning
+
+# Copy training scripts
+COPY train_ghostlink_model.py .
+COPY autonomous_evolution.py .
+
+# Set training-specific environment
+ENV ROLE=trainer
+ENV TRAINING_ENABLED=true
+ENV GPU_ENABLED=true
+
+CMD ["python", "train_ghostlink_model.py"]

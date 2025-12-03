@@ -1,190 +1,145 @@
-# GhostLink AI Ecosystem
+# GhostLink Labs - 100% Local Sovereign AI Framework
 
-A comprehensive, modular AI ecosystem with multi-provider support, autonomous agents, and free API integration. Now includes **local AI models** - no API keys required!
+A completely local AI orchestration system with symbolic reasoning, hardware binding, and autonomous operation. Zero external dependencies - runs on any platform with Python 3.8+.
 
-## Features
+## 🚀 Quick Start
 
-- **🔧 Local AI First**: Ollama integration for running AI models locally (no API keys needed!)
-- **🌐 Multi-Provider AI**: Claude, ChatGPT, Grok, and Gemini with automatic failover
-- **🤖 Autonomous Agents**: Self-directing AI agents with memory and coordination
-- **🎮 90s Terminal UI**: Retro cyberpunk interface with animated loading
-- **📡 Free API Integration**: 200+ public APIs for real-time data
-- **🏗️ Modular Architecture**: Clean separation of concerns
-- **⚡ Production Ready**: Comprehensive error handling and logging
+### Prerequisites
+- Python 3.8+ (built-in on most systems)
+- That's it - no external dependencies, no package managers, no virtual environments
 
-## Quick Start
-
-### Option 1: Local AI (Recommended - No API Keys Needed!)
-
-1. **Setup local AI:**
-   ```bash
-   # Linux/macOS
-   bash setup_local_ai.sh
-
-   # Windows
-   setup_local_ai.bat
-   ```
-
-2. **Test it:**
-   ```bash
-   python main.py ask "Hello local AI!"
-   ```
-
-### Option 2: API Providers (Requires API Keys)
-
-1. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-2. **Configure API keys:**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your API keys
-   ```
-
-3. **Test with API providers:**
-   ```bash
-   python main.py ask "Hello API AI!" --provider anthropic
-   ```
-
-## Usage Examples
-
-### Local AI Conversations
+### Installation
 ```bash
-python main.py ask "What is the meaning of life?"
-python main.py ask "Write a Python function to calculate fibonacci" --provider ollama
+# Copy files to your system
+# No installation required - just run directly
 ```
 
-### API Data Analysis
+### Basic Usage
 ```bash
-python main.py api jokes --question "Rate this joke's humor"
-python main.py api iss_location --question "Where is the ISS right now?"
+# Start the Link AI brain
+python main.py
+
+# Or use the CLI
+python -m ghostlink.link_cli start
+
+# Access web interface at http://localhost:8000
 ```
 
-### Autonomous Agent
+### Advanced Usage
 ```bash
-python main.py agent "Analyze current market trends" --agent-role analyst
+# Hardware-bound operation (requires admin privileges)
+python -m ghostlink.link_cli start --hardware --confirm-hardware
+
+# Lattice component coordination
+python ghostlink_lattice.py --demo
+
+# Symbolic reasoning demo
+python gdl_example.gdl
 ```
 
-### Cyberpunk Interface
-```bash
-python main.py --terminal-90s
-```
+## 🔒 Security & Sovereignty
 
-## Architecture
+- **100% Local**: No external dependencies or cloud services required
+- **Hardware Binding**: Direct BIOS/firmware interaction when needed
+- **VM Detection**: Prevents unsafe operations in virtual environments
+- **Optional Web Backup**: Web connectivity only for backup/sync (disabled by default)
+- **Platform Agnostic**: Runs on Windows, macOS, Linux, BSD, etc.
+
+## 📚 Core Components
+
+### Link AI Brain
+- Task management and orchestration
+- Context learning and adaptation
+- Autonomous decision making
+
+### Lattice Mesh Network
+- Component communication and coordination
+- Self-healing network topology
+- Real-time state synchronization
+
+### Symbolic Reasoning Engine (GDL)
+- Cellular automata-based reasoning
+- Pattern recognition and prediction
+- Hardware-accelerated when available
+
+### Hardware Bridge
+- Direct BIOS/firmware access (admin required)
+- Physical device binding and control
+- Manufacturer tool integration
+
+## 🤖 AI Integration
+
+### Internal AI
+- Groq-based ultra-fast inference
+- Component coordination
+- Real-time decision making
+
+### Local AI Support
+- Compatible with LM Studio, Ollama
+- No cloud dependencies required
+- Runs entirely offline
+
+## 🔧 Platform Support
+
+GhostLink runs on any platform with Python 3.8+:
+
+- **Windows**: Native support, hardware binding available
+- **macOS**: Full compatibility, hardware binding via system APIs
+- **Linux**: Native performance, full hardware access
+- **BSD variants**: Compatible with standard library
+- **Embedded systems**: Minimal resource requirements
+
+## 📁 File Structure
 
 ```
 ghostlink/
-├── core/           # Core business logic
-│   ├── ai_providers.py     # AI provider management (Ollama + APIs)
-│   ├── api_integration.py  # Free API integration
-│   └── autonomous_agents.py # Agent orchestration
-├── interfaces/     # User interfaces
-│   ├── cli.py             # Command-line interface
-│   ├── terminal_90s.py    # Retro terminal UI
-│   └── web.py             # Web interface (future)
-├── utils/          # Utilities
-│   ├── config.py          # Configuration management
-│   ├── logging.py         # Logging setup
-│   └── error_handling.py  # Error handling
-└── tests/          # Test suite
+├── main.py                 # Main entry point
+├── ghostlink_lattice.py    # Mesh network coordinator
+├── link_cli.py            # Command line interface
+├── groq_integration.py    # Internal AI client
+├── bios_bridge.py         # Hardware interface
+├── gdl_example.gdl        # Symbolic reasoning demo
+└── config.yaml            # Local configuration
 ```
 
-## Configuration
+## 🔄 Updates & Backup
 
-The system uses a hierarchical configuration system:
+### Offline Updates
+- Manual file replacement
+- Configuration preservation
+- No automatic update mechanisms
 
-1. **Environment variables** (highest priority)
-2. **YAML config file** (`config.yaml`)
-3. **Default values** (lowest priority)
-
-### Default Setup (Local AI)
-- **Default Provider**: `ollama` (local models)
-- **No API Keys Required**: Works out of the box with local models
-- **Fallback**: Automatically uses API providers if available
-
-### API Provider Setup (Optional)
-Set these in your `.env` file for API provider access:
-
+### Optional Web Backup
 ```bash
-ANTHROPIC_API_KEY=your_actual_anthropic_key
-OPENAI_API_KEY=your_actual_openai_key
-GROK_API_KEY=your_actual_grok_key
-GOOGLE_API_KEY=your_actual_google_key
+# Enable web backup (optional)
+python -m ghostlink.link_cli backup enable --endpoint https://your-backup-server
+
+# Sync to backup
+python -m ghostlink.link_cli backup sync
 ```
 
-## Local AI Models
+## 📄 License
 
-GhostLink supports local AI models through Ollama:
+Proprietary - See LICENSE file for details.
 
-### Popular Models to Try
-```bash
-# Fast and capable (recommended)
-ollama pull mistral
+## 🆘 Troubleshooting
 
-# Code-focused
-ollama pull codellama
+### Common Issues
+- **Hardware Binding Fails**: Ensure admin/root privileges and physical hardware
+- **Lattice Communication**: Check component health with `python ghostlink_lattice.py --state`
+- **Web Server Issues**: Verify port 8000 is available
+- **Permission Errors**: Run with appropriate privileges for hardware operations
 
-# General purpose
-ollama pull llama2:13b
+### Logs
+- All output goes to terminal/console
+- No external logging services
+- Self-contained operation logs
 
-# Creative writing
-ollama pull llama2:70b
-```
-
-### Switching Models
-```bash
-# Use different models
-python main.py ask "Hello!" --provider ollama
-
-# Configure default model in config.yaml
-ai:
-  providers:
-    ollama:
-      model: mistral  # Change from default llama2
-```
-
-## Development
-
-### Running Tests
-```bash
-pytest tests/
-```
-
-### Code Quality
-```bash
-black ghostlink/          # Format code
-flake8 ghostlink/         # Lint code
-mypy ghostlink/           # Type checking
-```
-
-### Adding New Features
-
-1. **New AI Provider**: Add to `ghostlink/core/ai_providers.py`
-2. **New API**: Add to `ghostlink/core/api_integration.py`
-3. **New Interface**: Add to `ghostlink/interfaces/`
-4. **New Utility**: Add to `ghostlink/utils/`
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Add tests for new functionality
-4. Ensure all tests pass
-5. Submit a pull request
-
-## License
-
-MIT License - see LICENSE file for details.
-
-## Support
-
-For issues and questions:
-- Create an issue on GitHub
-- Check the logs in `logs/ghostlink.log`
-- Run `python main.py status` for system diagnostics
+### Platform-Specific Notes
+- **Windows**: May require UAC elevation for hardware operations
+- **macOS**: May require sudo for system-level access
+- **Linux**: Full root access available for hardware binding
 
 ---
 
-**Built with ❤️ for the future of AI ecosystems - Local First! 🧠⚡🎮**
+**Built for complete local sovereignty - no external dependencies, no cloud requirements, no package managers. Just Python and your hardware.**

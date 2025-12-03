@@ -6,9 +6,14 @@
             "type": "shell",
             "command": "python -m ghostlink.link_cli start",
             "problemMatcher": [],
+            "isBackground": true,
+            "runOptions": {
+                "runOn": "folderOpen"
+            },
             "presentation": {
                 "reveal": "always",
-                "panel": "dedicated"
+                "panel": "dedicated",
+                "showReuseMessage": true
             },
             "group": {
                 "kind": "build",
