@@ -43,6 +43,24 @@ else
   log "bridge disabled (RUN_BRIDGE=0)"
 fi
 
+# Optional: start mesh aggregator
+if [[ "${RUN_MESH:-0}" == "1" ]]; then
+  log "starting mesh aggregator"
+  python /app/gl_peer_mesh.py &
+  pids+=($!)
+else
+  log "mesh disabled (RUN_MESH=0)"
+fi
+
+# Optional: start peer responder (listens on 0.0.0.0:7422 by default)
+if [[ "${RUN_RESPONDER:-0}" == "1" ]]; then
+  log "starting peer responder (port ${PORT:-7422})"
+  python /app/gl_peer_responder.py &
+  pids+=($!)
+else
+  log "responder disabled (RUN_RESPONDER=0)"
+fi
+
 # Wait for any process to exit; then exit with its code
 status=0
 for pid in "${pids[@]:-}"; do
