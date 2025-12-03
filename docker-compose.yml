@@ -10,6 +10,8 @@ services:
       - RUN_CONTROLLER=1
       - RUN_PEER=0          # set to 1 to read sensors (mount /sys below)
       - RUN_BRIDGE=0        # set to 1 and provide OPENAI_API_KEY
+      - RUN_MESH=0          # set to 1 to enable mesh aggregator
+      - RUN_RESPONDER=0     # set to 1 to enable peer responder (7422)
       # OpenAI (only if RUN_BRIDGE=1)
       # - OPENAI_API_KEY=sk-...
       # TLS (mTLS) optional: mount certs and set env if not using defaults

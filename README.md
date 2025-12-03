@@ -30,6 +30,45 @@ A comprehensive, modular AI ecosystem with multi-provider support, autonomous ag
    python main.py ask "Hello local AI!"
    ```
 
+## Docker (optional)
+
+Run GhostLink components in containers. This is handy for servers and quick setups.
+
+### Prerequisites
+- Docker Engine 24+ or Docker Desktop
+- Optional: `docker compose` plugin
+
+### Build image
+```bash
+docker build -t ghostlink:latest .
+```
+
+### Run with Docker Compose (recommended)
+By default only the controller runs and exposes Prometheus metrics on 9108 (host network).
+```bash
+docker compose up -d
+```
+
+Enable additional components by toggling environment flags in `docker-compose.yml`:
+- `RUN_PEER=1`         read local sensors (mounts `/sys/class/thermal`)
+- `RUN_MESH=1`         run mesh aggregator (connects to controller)
+- `RUN_RESPONDER=1`    run peer responder on port 7422
+- `RUN_BRIDGE=1`       run OpenAI bridge (requires `OPENAI_API_KEY`)
+
+Example: controller + mesh + responder
+```bash
+docker compose up -d --build
+```
+
+Check metrics
+```bash
+curl -s http://127.0.0.1:9108/metrics | head
+```
+
+Stop
+```bash
+docker compose down
+```
 ### Option 2: API Providers (Requires API Keys)
 
 1. **Install dependencies:**
