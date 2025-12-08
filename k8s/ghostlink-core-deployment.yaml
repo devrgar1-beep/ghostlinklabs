@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ghostlink-core
+  namespace: ghostlink
+  labels:
+    app: ghostlink-core
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ghostlink-core
+  template:
+    metadata:
+      labels:
+        app: ghostlink-core
+    spec:
+      containers:
+      - name: ghostlink
+        image: ghostlink:latest
+        envFrom:
+        - configMapRef:
+            name: ghostlink-config
+        ports:
+        - containerPort: 7420
+          name: controller
+        - containerPort: 7422
+          name: responder
+        - containerPort: 9108
+          name: metrics
+        volumeMounts:
+        - name: thermal-sensors
+          mountPath: /sys/class/thermal
+          readOnly: true
+        - name: creds
+          mountPath: /run/ghostlink
+          readOnly: true
+        securityContext:
+          runAsUser: 10001
+          runAsGroup: 10001
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+      volumes:
+      - name: thermal-sensors
+        hostPath:
+          path: /sys/class/thermal
+          type: Directory
+      - name: creds
+        secret:
+          secretName: ghostlink-secrets
+          optional: true

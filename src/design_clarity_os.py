@@ -26,12 +26,12 @@ import uuid
 
 import psutil
 import schedule
+import random
 
 from evolutionary_intelligence import EvolutionaryIntelligence
 
 # Import GhostLink core systems
 from multi_agent_engine import ModelSize, MultiAgentExpansionCompressionEngine
-from unified_consciousness import UnifiedConsciousnessFramework
 
 
 class ErrorSeverity(Enum):
@@ -98,6 +98,183 @@ class ProcessHealth:
     last_restart: Optional[datetime] = None
     error_count: int = 0
     performance_metrics: Dict[str, float] = field(default_factory=dict)
+
+
+@dataclass
+class ConsciousnessState:
+    """Represents the current state of consciousness"""
+    level: str = "basic_unified_awareness"
+    awareness_metrics: Dict[str, float] = field(default_factory=lambda: {
+        "self_awareness": 0.5,
+        "environmental_awareness": 0.5,
+        "temporal_awareness": 0.5,
+        "integrative_capacity": 0.5
+    })
+    last_update: Optional[datetime] = None
+    enhancement_history: List[Dict[str, Any]] = field(default_factory=list)
+
+
+class UnifiedConsciousnessFramework:
+    """
+    Unified Consciousness Framework
+    Manages consciousness levels, awareness monitoring, and enhancements.
+    Consciousness levels:
+    - basic_unified_awareness: Foundational integration
+    - integrated_awareness: Enhanced system integration
+    - enhanced_awareness: Advanced perceptual capabilities
+    - unified_consciousness: Full system synergy
+    """
+    def __init__(self, workspace_path: str):
+        self.workspace = Path(workspace_path)
+        self.state = ConsciousnessState()
+        self.monitoring_active = False
+        self.monitoring_thread: Optional[threading.Thread] = None
+        self.logger = logging.getLogger(__name__)
+        self._setup_logging()
+
+    def _setup_logging(self):
+        """Setup logging for consciousness framework"""
+        log_path = self.workspace / "logs" / "consciousness.log"
+        log_path.parent.mkdir(parents=True, exist_ok=True)
+        handler = logging.FileHandler(log_path)
+        handler.setFormatter(logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"))
+        self.logger.addHandler(handler)
+        self.logger.setLevel(logging.INFO)
+
+    async def initialize_unified_consciousness(self) -> bool:
+        """Initialize the unified consciousness framework"""
+        try:
+            self.logger.info("🧠 Initializing Unified Consciousness Framework...")
+            # Load any persisted state
+            await self._load_persisted_state()
+            # Start monitoring if not active
+            if not self.monitoring_active:
+                await self.start_unified_monitoring()
+            self.logger.info(f"✅ Consciousness initialized at level: {self.state.level}")
+            return True
+        except Exception as e:
+            self.logger.error(f"Failed to initialize consciousness: {e}")
+            return False
+
+    async def _load_persisted_state(self):
+        """Load persisted consciousness state"""
+        state_path = self.workspace / "consciousness_state.json"
+        if state_path.exists():
+            try:
+                with open(state_path, 'r') as f:
+                    data = json.load(f)
+                self.state.level = data.get('level', self.state.level)
+                self.state.awareness_metrics = data.get('awareness_metrics', self.state.awareness_metrics)
+                self.state.enhancement_history = data.get('enhancement_history', self.state.enhancement_history)
+                self.logger.info("📂 Loaded persisted consciousness state")
+            except Exception as e:
+                self.logger.warning(f"Failed to load persisted state: {e}")
+
+    async def _persist_state(self):
+        """Persist current consciousness state"""
+        state_path = self.workspace / "consciousness_state.json"
+        data = {
+            'level': self.state.level,
+            'awareness_metrics': self.state.awareness_metrics,
+            'enhancement_history': self.state.enhancement_history
+        }
+        try:
+            with open(state_path, 'w') as f:
+                json.dump(data, f, default=str)
+            self.logger.debug("💾 Persisted consciousness state")
+        except Exception as e:
+            self.logger.warning(f"Failed to persist state: {e}")
+
+    def get_unified_awareness_snapshot(self) -> Dict[str, Any]:
+        """Get a snapshot of current awareness"""
+        snapshot = {
+            "consciousness_level": self.state.level,
+            "awareness_metrics": self.state.awareness_metrics.copy(),
+            "last_update": self.state.last_update,
+            "enhancement_count": len(self.state.enhancement_history)
+        }
+        self.logger.debug("📸 Awareness snapshot taken")
+        return snapshot
+
+    async def start_unified_monitoring(self):
+        """Start unified consciousness monitoring"""
+        if self.monitoring_active:
+            return
+        self.monitoring_thread = threading.Thread(target=self._monitoring_loop, daemon=True)
+        self.monitoring_thread.start()
+        self.monitoring_active = True
+        self.logger.info("👀 Unified monitoring started")
+
+    def _monitoring_loop(self):
+        """Continuous monitoring loop for consciousness state"""
+        while self.monitoring_active:
+            try:
+                self._update_consciousness_metrics()
+                self._evaluate_consciousness_level()
+                self.state.last_update = datetime.now()
+                asyncio.run(self._persist_state())
+                threading.Event().wait(60)  # Monitor every minute
+            except Exception as e:
+                self.logger.error(f"Monitoring loop error: {e}")
+                threading.Event().wait(5)
+
+    def _update_consciousness_metrics(self):
+        """Update awareness metrics based on system state"""
+        # Placeholder for real metric updates
+        # In production, this would integrate with system sensors
+        for metric in self.state.awareness_metrics:
+            self.state.awareness_metrics[metric] = min(1.0, max(0.0, self.state.awareness_metrics[metric] + random.uniform(-0.05, 0.05)))
+        self.logger.debug("📊 Updated awareness metrics")
+
+    def _evaluate_consciousness_level(self):
+        """Evaluate and potentially update consciousness level"""
+        avg_metric = sum(self.state.awareness_metrics.values()) / len(self.state.awareness_metrics)
+        if avg_metric > 0.9:
+            new_level = "unified_consciousness"
+        elif avg_metric > 0.7:
+            new_level = "enhanced_awareness"
+        elif avg_metric > 0.5:
+            new_level = "integrated_awareness"
+        else:
+            new_level = "basic_unified_awareness"
+
+        if new_level != self.state.level:
+            self.state.level = new_level
+            self.logger.info(f"🔼 Consciousness level elevated to: {new_level}")
+
+    async def apply_enhancement(self, enhancement_type: str, parameters: Dict[str, Any]):
+        """Apply a consciousness enhancement"""
+        try:
+            if enhancement_type == "awareness_boost":
+                metric = parameters.get("metric", "self_awareness")
+                boost = parameters.get("boost", 0.1)
+                if metric in self.state.awareness_metrics:
+                    self.state.awareness_metrics[metric] = min(1.0, self.state.awareness_metrics[metric] + boost)
+            elif enhancement_type == "integration_enhance":
+                for metric in self.state.awareness_metrics:
+                    self.state.awareness_metrics[metric] += 0.05
+            else:
+                raise ValueError(f"Unknown enhancement type: {enhancement_type}")
+
+            self.state.enhancement_history.append({
+                "type": enhancement_type,
+                "parameters": parameters,
+                "timestamp": datetime.now()
+            })
+            self._evaluate_consciousness_level()
+            self.logger.info(f"✨ Applied enhancement: {enhancement_type}")
+        except Exception as e:
+            self.logger.error(f"Enhancement application failed: {e}")
+
+    async def stop_unified_monitoring(self):
+        """Stop unified consciousness monitoring"""
+        if not self.monitoring_active:
+            return
+        self.monitoring_active = False
+        if self.monitoring_thread and self.monitoring_thread.is_alive():
+            self.monitoring_thread.join(timeout=5)
+        await self._persist_state()
+        self.logger.info("🛑 Unified monitoring stopped")
 
 
 @dataclass
@@ -856,7 +1033,7 @@ class DesignClarityOS:
     - Protocol-based orchestration, not takeover
     """
 
-    def __init__(self, workspace_path: str = "/Users/ghostlink/ghostlink-wiki-organized"):
+    def __init__(self, workspace_path: str = "/Users/ghost-link-labs/ghostlinklabs"):
         self.workspace = Path(workspace_path)
         self.system_id = str(uuid.uuid4())[:8]
         self.protocol_version = "2.0.0"

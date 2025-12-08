@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: autoscaling-rules
+  namespace: ghostlink
+data:
+  autoscaling-rules.yml: |
+    groups:
+      - name: autoscaling
+        rules:
+          # Scale up API servers when CPU > threshold
+          - alert: HighCPUUsage
+            expr: rate(container_cpu_usage_seconds_total{pod=~"ghostlink-api-prod-.*"}[5m]) > 70
+            for: 5m
+            labels:
+              severity: warning
+              service: api
+              action: scale_up
+            annotations:
+              summary: "High CPU usage detected on API servers"
+              description: "CPU usage is above 70% for 5 minutes"
+
+          # Scale up API servers when memory > threshold
+          - alert: HighMemoryUsage
+            expr: container_memory_usage_bytes{pod=~"ghostlink-api-prod-.*"} / container_spec_memory_limit_bytes > 80
+            for: 5m
+            labels:
+              severity: warning
+              service: api
+              action: scale_up
+            annotations:
+              summary: "High memory usage detected on API servers"
+              description: "Memory usage is above 80% for 5 minutes"
+
+          # Scale up when response time > threshold
+          - alert: SlowResponseTime
+            expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job="ghostlink-api"}[5m])) > 2000
+            for: 3m
+            labels:
+              severity: warning
+              service: api
+              action: scale_up
+            annotations:
+              summary: "Slow response times detected"
+              description: "95th percentile response time above 2000ms"
+
+          # Scale down when low utilization
+          - alert: LowUtilization
+            expr: rate(container_cpu_usage_seconds_total{pod=~"ghostlink-api-prod-.*"}[10m]) < 20 AND container_memory_usage_bytes{pod=~"ghostlink-api-prod-.*"} / container_spec_memory_limit_bytes < 30
+            for: 15m
+            labels:
+              severity: info
+              service: api
+              action: scale_down
+            annotations:
+              summary: "Low resource utilization detected"
+              description: "Resources underutilized, consider scaling down"

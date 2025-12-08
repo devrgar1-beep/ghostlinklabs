@@ -31,9 +31,9 @@ export function generateRollbackPreview(entry: any): { title: string; markdown: 
     case 'file':
       const action = (entry.action || '').toLowerCase();
       if (action === 'create') {
-        lines.push(`- This rollback will DELETE the file created: \\`${entry.file}\\` (revert of create).`);
+        lines.push(`- This rollback will DELETE the file created: \`${entry.file}\` (revert of create).`);
       } else if (action === 'delete') {
-        lines.push(`- This rollback will RECREATE the deleted file: \\`${entry.file}\\` with previous contents (if present).`);
+        lines.push(`- This rollback will RECREATE the deleted file: \`${entry.file}\` with previous contents (if present).`);
       } else if (action === 'edit') {
         const beforeLen = entry.before ? String(entry.before).length : 0;
         lines.push(`- This rollback will RESTORE previous contents for file: \`${entry.file}\` (length: ${beforeLen} characters).`);
@@ -52,7 +52,7 @@ export function generateRollbackPreview(entry: any): { title: string; markdown: 
       if (Array.isArray(entry.changes)) {
         lines.push(`- Restore ${entry.changes.length} settings to their prior values:`);
         for (const c of entry.changes) {
-          lines.push(`  - \\`${c.key}\\`: revert to \\`${JSON.stringify(c.before)}\\``);
+          lines.push(`  - \`${c.key}\`: revert to \`${JSON.stringify(c.before)}\``);
         }
       } else {
         lines.push('- Settings rollback: preview not available.');
@@ -77,7 +77,7 @@ export function generateRollbackPreview(entry: any): { title: string; markdown: 
       lines.push('- Commit rollback is non-destructive: this will not undo commits created. Use Git to revert commit if needed.');
       break;
     case 'exec':
-      lines.push(`- Exec rollback: this entry ran command: \\`${entry.command} ${(entry.args || []).join(' ')}\\`. Manual review recommended.`);
+      lines.push(`- Exec rollback: this entry ran command: \`${entry.command} ${(entry.args || []).join(' ')}\`. Manual review recommended.`);
       break;
     default:
       lines.push('- Unknown or unhandled entry type; manual review recommended.');

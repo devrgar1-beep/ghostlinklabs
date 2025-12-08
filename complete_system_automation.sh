@@ -5,7 +5,7 @@
 set -e
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PYTHON_EXE="python3"
+PYTHON_EXE="$PROJECT_ROOT/.venv/bin/python3"
 LOG_FILE="$PROJECT_ROOT/complete_automation.log"
 
 # Colors for output
@@ -52,16 +52,16 @@ start_background_service() {
     local service_name="$1"
     local command="$2"
     local log_file="$3"
-    
+
     if is_process_running "$service_name"; then
         warning "$service_name already running"
         return 0
     fi
-    
+
     info "Starting $service_name..."
     nohup $command > "$log_file" 2>&1 &
     sleep 2
-    
+
     if is_process_running "$service_name"; then
         success "$service_name started successfully"
         return 0
@@ -76,14 +76,14 @@ test_api_endpoint() {
     local endpoint="$1"
     local expected_status="${2:-200}"
     local timeout="${3:-10}"
-    
+
     info "Testing API endpoint: $endpoint"
-    
+
     if command -v curl >/dev/null 2>&1; then
         # Use curl's built-in timeout instead of the missing `timeout` binary
         local response
         response=$(curl --max-time "$timeout" -s -o /dev/null -w "%{http_code}" "http://localhost:3000$endpoint" 2>/dev/null)
-        
+
         if [ "$response" = "$expected_status" ]; then
             success "API endpoint $endpoint responded with $response"
             return 0
@@ -101,9 +101,9 @@ test_api_endpoint() {
 activate_phase3_component() {
     local component_name="$1"
     local script_path="$2"
-    
+
     highlight "🔬 ACTIVATING: $component_name"
-    
+
     if [ -f "$script_path" ]; then
         info "Executing $script_path..."
         if timeout 30s $PYTHON_EXE "$script_path" > "${component_name}_activation.log" 2>&1; then
@@ -122,32 +122,32 @@ activate_phase3_component() {
 # Function to verify system integration
 verify_system_integration() {
     highlight "🔗 VERIFYING SYSTEM INTEGRATION"
-    
+
     # Test basic health
     if test_api_endpoint "/health"; then
         success "Basic health check passed"
     else
         warning "Basic health check failed"
     fi
-    
+
     # Test enhanced endpoints
     test_api_endpoint "/system-health"
-    test_api_endpoint "/scheduler-status" 
+    test_api_endpoint "/scheduler-status"
     test_api_endpoint "/audit-status"
     test_api_endpoint "/test-status"
-    
+
     # Test experimental capabilities
     info "Testing experimental task execution..."
     curl -s -X POST http://localhost:3000/experimental-task \
       -H 'Content-Type: application/json' \
       -d '{"task_type":"consciousness_scan"}' > /dev/null 2>&1 && success "Experimental task endpoint functional" || warning "Experimental task endpoint needs attention"
-    
+
     # Test YOLO capabilities
     info "Testing YOLO task execution..."
     curl -s -X POST http://localhost:3000/yolo-task \
       -H 'Content-Type: application/json' \
       -d '{"task_type":"chaos_test"}' > /dev/null 2>&1 && success "YOLO task endpoint functional" || warning "YOLO task endpoint needs attention"
-    
+
     # Test scheduling
     info "Testing task scheduling..."
     curl -s -X POST http://localhost:3000/schedule-task \
@@ -158,19 +158,19 @@ verify_system_integration() {
 # Function to run comprehensive system test
 run_comprehensive_test() {
     highlight "🧪 RUNNING COMPREHENSIVE SYSTEM TEST"
-    
+
     # Test cold boot orchestrator
     info "Testing cold boot orchestrator..."
     $PYTHON_EXE cold_boot_orchestrator.py health > /dev/null 2>&1 && success "Cold boot orchestrator functional" || warning "Cold boot orchestrator needs attention"
-    
+
     # Test enhanced orchestrator
     info "Testing enhanced orchestrator..."
     $PYTHON_EXE ghost_agent_orchestrator_enhanced.py health > /dev/null 2>&1 && success "Enhanced orchestrator functional" || warning "Enhanced orchestrator needs attention"
-    
+
     # Test scheduler
     info "Testing task scheduler..."
     $PYTHON_EXE ghostlink_scheduler.py status > /dev/null 2>&1 && success "Task scheduler functional" || warning "Task scheduler needs attention"
-    
+
     # Test auto tester
     info "Testing auto tester..."
     $PYTHON_EXE ghostlink_auto_tester.py status > /dev/null 2>&1 && success "Auto tester functional" || warning "Auto tester needs attention"
@@ -184,96 +184,96 @@ main() {
     log "📊 Current Status: 75% Complete (25% Manual)"
     log "🎲 Mode: Full YOLO Automation"
     log "==============================================="
-    
+
     cd "$PROJECT_ROOT"
-    
+
     # Phase 1: System Infrastructure Verification
     highlight "📊 PHASE 1: SYSTEM INFRASTRUCTURE VERIFICATION"
-    
+
     # Start core background services
     info "Starting core background services..."
     start_background_service "ghostlink_api_server_enhanced" \
         "$PYTHON_EXE ghostlink_api_server_enhanced.py --port 3000" \
         "$PROJECT_ROOT/api_automation.log"
-    
+
     start_background_service "ghostlink_scheduler" \
         "$PYTHON_EXE ghostlink_scheduler.py start" \
         "$PROJECT_ROOT/scheduler_automation.log"
-    
+
     start_background_service "ghostlink_auto_tester" \
         "$PYTHON_EXE ghostlink_auto_tester.py start" \
         "$PROJECT_ROOT/tester_automation.log"
-    
+
     # Wait for services to initialize
     info "Waiting for services to initialize..."
     sleep 5
-    
+
     # Phase 2: API Endpoint Verification
     highlight "🔌 PHASE 2: API ENDPOINT VERIFICATION"
     verify_system_integration
-    
+
     # Phase 3: AI Orchestration Activation
     highlight "🤖 PHASE 3: AI ORCHESTRATION ACTIVATION"
-    
+
     # Activate core AI systems
     activate_phase3_component "Triad Synergy Engine" "src/triad_synergy.py"
     activate_phase3_component "Evolutionary Intelligence" "src/evolutionary_intelligence.py"
     activate_phase3_component "Autonomous Evolution" "src/autonomous_evolution.py"
     activate_phase3_component "Void Activation System" "src/void_activation.py"
-    
+
     # Activate consciousness frameworks
     activate_phase3_component "Mirror Comprehension" "src/mirror_comprehension.py"
     activate_phase3_component "Design Clarity OS" "src/design_clarity_os.py"
     activate_phase3_component "Mental Model Integration" "src/ghostlink_comprehension_agent.py"
-    
+
     # Phase 4: System Integration Testing
     highlight "🔗 PHASE 4: SYSTEM INTEGRATION TESTING"
     run_comprehensive_test
-    
+
     # Phase 5: Protocol Synchronization
     highlight "🔄 PHASE 5: PROTOCOL SYNCHRONIZATION"
-    
+
     info "Synchronizing all protocols..."
     $PYTHON_EXE ghost_agent_orchestrator_enhanced.py sync-protocols > /dev/null 2>&1 && success "Protocol synchronization completed" || warning "Protocol sync had issues"
-    
+
     # Phase 6: Final System Audit
     highlight "🔍 PHASE 6: FINAL SYSTEM AUDIT"
-    
+
     info "Running comprehensive system audit..."
     $PYTHON_EXE ghost_agent_orchestrator_enhanced.py audit > /dev/null 2>&1 && success "System audit completed" || warning "System audit had issues"
-    
+
     # Phase 7: Autonomous Task Scheduling
     highlight "📅 PHASE 7: AUTONOMOUS TASK SCHEDULING"
-    
+
     info "Scheduling autonomous tasks..."
     $PYTHON_EXE ghost_agent_orchestrator_enhanced.py auto-schedule health_check high > /dev/null 2>&1
     $PYTHON_EXE ghost_agent_orchestrator_enhanced.py auto-schedule consciousness_scan medium > /dev/null 2>&1
     $PYTHON_EXE ghost_agent_orchestrator_enhanced.py auto-schedule experimental_task low > /dev/null 2>&1
     success "Autonomous tasks scheduled"
-    
+
     # Phase 8: Final Verification
     highlight "✅ PHASE 8: FINAL VERIFICATION"
-    
+
     # Final API test
     info "Running final API verification..."
     test_api_endpoint "/health"
-    
+
     # Check running processes
     info "Verifying background processes..."
     local process_count=0
     is_process_running "ghostlink_api_server_enhanced" && ((process_count++))
     is_process_running "ghostlink_scheduler" && ((process_count++))
     is_process_running "ghostlink_auto_tester" && ((process_count++))
-    
+
     if [ $process_count -ge 2 ]; then
         success "Background processes verified: $process_count services running"
     else
         warning "Only $process_count background processes running"
     fi
-    
+
     # Phase 9: VS Code Integration Guidance
     highlight "💻 PHASE 9: VS CODE INTEGRATION GUIDANCE"
-    
+
     log ""
     log "🎯 MANUAL VS CODE INTEGRATION REQUIRED:"
     log "======================================"
@@ -286,7 +286,7 @@ main() {
     log "7. Command Palette (Ctrl+Shift+P): 'VSCode HTTP API: Start'"
     log ""
     log "After manual steps, run: python3 ghost_vscode_integration.py status"
-    
+
     # Final Status Report
     highlight "📊 FINAL SYSTEM STATUS REPORT"
     log "=================================="
@@ -317,7 +317,7 @@ main() {
     log "  • Run Tests: curl -X POST http://localhost:3000/run-tests -H 'Content-Type: application/json' -d '{\"suite\":\"yolo\"}'"
     log ""
     log "⚡ The system will continue running autonomously with maximum experimental freedom!"
-    
+
     # Keep script running for monitoring
     info "System automation complete - monitoring active..."
     while true; do

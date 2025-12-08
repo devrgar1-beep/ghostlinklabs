@@ -850,7 +850,7 @@ export function activate(context: vscode.ExtensionContext) {
     const pruneInterval = (globalThis as any).setInterval(() => {
       try {
         // Run prune via command if available
-        vscode.commands.executeCommand('vscodeHttpApi.audit.prune').catch(() => {});
+        vscode.commands.executeCommand('vscodeHttpApi.audit.prune').then(undefined, () => {});
       } catch (e) {}
     }, 3600000); // 1 hour
     context.subscriptions.push({ dispose: () => (globalThis as any).clearInterval(pruneInterval) });

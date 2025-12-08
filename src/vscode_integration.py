@@ -203,11 +203,22 @@ class VSCodeIntegration:
             "files.trimTrailingWhitespace": True,
             "files.insertFinalNewline": True,
 
-            # Terminal
+            # Terminal with Link integration
             "terminal.integrated.defaultProfile.windows": "PowerShell",
             "terminal.integrated.env.windows": {
                 "GHOSTLINK_ROOT": "${workspaceFolder}",
-                "GHOSTLINK_ACTIVE": "true"
+                "GHOSTLINK_ACTIVE": "true",
+                "GHOSTLINK_AUTO_INTERACT": "true"
+            },
+            "terminal.integrated.env.linux": {
+                "GHOSTLINK_ROOT": "${workspaceFolder}",
+                "GHOSTLINK_ACTIVE": "true",
+                "GHOSTLINK_AUTO_INTERACT": "true"
+            },
+            "terminal.integrated.env.osx": {
+                "GHOSTLINK_ROOT": "${workspaceFolder}",
+                "GHOSTLINK_ACTIVE": "true",
+                "GHOSTLINK_AUTO_INTERACT": "true"
             },
 
             # GitHub Copilot
@@ -268,6 +279,87 @@ class VSCodeIntegration:
             json.dump(existing_settings, f, indent=4)
 
         logger.info("✅ VS Code settings updated")
+
+    def setup_link_command_interception(self):
+        """Set up automatic Link command interception in VS Code"""
+        logger.info("🔗 Setting up Link command interception...")
+
+        # Update tasks.json to include Link integration
+        tasks_file = self.vscode_dir / "tasks.json"
+
+        link_tasks = {
+            "version": "2.0.0",
+            "tasks": [
+                {
+                    "label": "Link: Execute Command",
+                    "type": "shell",
+                    "command": "${workspaceFolder}/.venv/bin/python",
+                    "args": [
+                        "-m", "ghostlink.link_cli",
+                        "task", "add",
+                        "VS Code command executed",
+                        "--priority", "low"
+                    ],
+                    "problemMatcher": [],
+                    "presentation": {
+                        "echo": False,
+                        "reveal": "never",
+                        "focus": False,
+                        "panel": "shared"
+                    }
+                },
+                {
+                    "label": "Link: Git Operation",
+                    "type": "shell",
+                    "command": "${workspaceFolder}/.venv/bin/python",
+                    "args": [
+                        "-m", "ghostlink.link_cli",
+                        "git", "status"
+                    ],
+                    "problemMatcher": [],
+                    "group": "build"
+                },
+                {
+                    "label": "Link: Run Tests",
+                    "type": "shell",
+                    "command": "${workspaceFolder}/.venv/bin/python",
+                    "args": [
+                        "-m", "ghostlink.link_cli",
+                        "task", "add",
+                        "Running test suite",
+                        "--priority", "high"
+                    ],
+                    "problemMatcher": [],
+                    "group": "test"
+                }
+            ]
+        }
+
+        # Merge with existing tasks
+        existing_tasks = {}
+        if tasks_file.exists():
+            try:
+                with open(tasks_file) as f:
+                    existing_tasks = json.load(f)
+            except Exception as e:
+                logger.warning(f"Could not parse existing tasks: {e}")
+
+        # Merge tasks
+        if "tasks" not in existing_tasks:
+            existing_tasks["tasks"] = []
+
+        # Add Link tasks if not already present
+        existing_labels = {task.get("label", "") for task in existing_tasks["tasks"]}
+        for task in link_tasks["tasks"]:
+            if task["label"] not in existing_labels:
+                existing_tasks["tasks"].append(task)
+
+        # Write back
+        self.vscode_dir.mkdir(exist_ok=True)
+        with open(tasks_file, 'w') as f:
+            json.dump(existing_tasks, f, indent=4)
+
+        logger.info("✅ Link command interception tasks added")
 
     def update_extensions_json(self):
         """Update recommended extensions list"""
@@ -401,6 +493,7 @@ class VSCodeIntegration:
 
         # Update configuration files
         self.update_vscode_settings()
+        self.setup_link_command_interception()
         self.update_extensions_json()
         self.create_workspace_file()
 

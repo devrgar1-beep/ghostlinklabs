@@ -24,8 +24,8 @@ import statistics
 import math
 
 # Import core systems
-from src.mirror_comprehension import MirrorComprehensionCore
-from src.multi_agent_engine import MultiAgentExpansionCompressionEngine, ModelSize
+from mirror_comprehension import MirrorComprehensionCore
+from multi_agent_engine import MultiAgentExpansionCompressionEngine, ModelSize
 
 @dataclass
 class RecursiveGenome:

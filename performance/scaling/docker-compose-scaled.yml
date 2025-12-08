@@ -1,0 +1,144 @@
+version: '3.8'
+
+services:
+  ghostlink:
+    build: .
+    container_name: ghostlink
+    restart: unless-stopped
+    environment:
+      - HOST=127.0.0.1
+      - RUN_CONTROLLER=1
+      - RUN_PEER=0
+      - RUN_BRIDGE=0
+      - RUN_MESH=0
+      - RUN_RESPONDER=0
+    network_mode: host
+    volumes:
+      - /sys/class/thermal:/sys/class/thermal:ro
+      - ./creds:/run/ghostlink:ro
+    user: "10001:10001"
+
+  # Horizontally scalable API servers
+  ghostlink-api-prod:
+    build: .
+    environment:
+      - GHOSTLINK_ENV=production
+      - PYTHONPATH=/app
+    volumes:
+      - ./logs:/app/logs
+      - ./data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    networks:
+      - ghostlink-network
+
+  # Horizontally scalable AI orchestrators
+  ghostlink-orchestrator-prod:
+    build: .
+    command: ["python3", "optimized_ai_orchestrator.py"]
+    environment:
+      - GHOSTLINK_ENV=production
+      - PYTHONPATH=/app
+    volumes:
+      - ./logs:/app/logs
+      - ./data:/app/data
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    depends_on:
+      ghostlink-api-prod:
+        condition: service_healthy
+    networks:
+      - ghostlink-network
+
+  # Load balancer for API servers
+  nginx-load-balancer:
+    image: nginx:alpine
+    container_name: ghostlink-nginx-lb
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx-lb.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./logs/nginx:/var/log/nginx
+    restart: unless-stopped
+    depends_on:
+      - ghostlink-api-prod
+    networks:
+      - ghostlink-network
+
+  # Monitoring stack (unchanged)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ghostlink-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+    networks:
+      - ghostlink-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ghostlink-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-ghostlink2025}
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+    networks:
+      - ghostlink-network
+
+volumes:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  ghostlink-network:
+    driver: bridge

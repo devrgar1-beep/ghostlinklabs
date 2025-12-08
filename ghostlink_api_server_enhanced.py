@@ -15,6 +15,43 @@ import os
 from urllib.parse import urlparse, parse_qs
 from datetime import datetime
 
+# Performance monitoring integration
+try:
+    import importlib.util
+    import sys
+    import os
+
+    # Add the performance directory to path
+    performance_path = os.path.join(os.path.dirname(__file__), 'performance', 'optimization')
+    if performance_path not in sys.path:
+        sys.path.insert(0, performance_path)
+
+    # Import performance monitor
+    perf_monitor_spec = importlib.util.spec_from_file_location(
+        "performance_monitor",
+        os.path.join(performance_path, "performance-monitor.py")
+    )
+    perf_monitor_module = importlib.util.module_from_spec(perf_monitor_spec)
+    perf_monitor_spec.loader.exec_module(perf_monitor_module)
+    performance_monitor = perf_monitor_module.PerformanceMonitor()
+
+    # Import connection pool
+    conn_pool_spec = importlib.util.spec_from_file_location(
+        "connection_pool",
+        os.path.join(performance_path, "connection-pool.py")
+    )
+    conn_pool_module = importlib.util.module_from_spec(conn_pool_spec)
+    conn_pool_spec.loader.exec_module(conn_pool_module)
+    init_connection_pools = conn_pool_module.init_connection_pools
+
+    PERFORMANCE_INTEGRATION = True
+    print("✅ Performance integration loaded successfully")
+except ImportError as e:
+    print(f"⚠️  Performance integration not available: {e}")
+    PERFORMANCE_INTEGRATION = False
+    performance_monitor = None
+    init_connection_pools = None
+
 class EnhancedGhostLinkAPIHandler(http.server.BaseHTTPRequestHandler):
     def __init__(self, *args, project_root=None, **kwargs):
         self.project_root = project_root or os.path.dirname(os.path.abspath(__file__))
@@ -77,6 +114,33 @@ class EnhancedGhostLinkAPIHandler(http.server.BaseHTTPRequestHandler):
             self.send_header('Content-type', 'application/json')
             self.end_headers()
             response = self.get_testing_status()
+            self.wfile.write(json.dumps(response).encode())
+
+        elif path == "/ide" or path == "/":
+            self.serve_web_interface()
+
+        elif path == "/ai-status":
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            response = self.get_ai_system_status()
+            self.wfile.write(json.dumps(response).encode())
+
+        elif path == "/orchestrator-control":
+            self.handle_orchestrator_control()
+
+        elif path == "/monitoring":
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            response = self.get_system_monitoring_data()
+            self.wfile.write(json.dumps(response).encode())
+
+        elif path == "/performance":
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            response = self.get_performance_metrics()
             self.wfile.write(json.dumps(response).encode())
 
         else:
@@ -557,6 +621,237 @@ class EnhancedGhostLinkAPIHandler(http.server.BaseHTTPRequestHandler):
         except Exception as e:
             return {"testing_status": "error", "error": str(e)}
 
+    def serve_web_interface(self):
+        """Serve the GhostLink IDE web interface"""
+        try:
+            # Path to the web interface file
+            web_interface_path = os.path.join(self.project_root, "ghostlink-ide.html")
+
+            if os.path.exists(web_interface_path):
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
+
+                with open(web_interface_path, 'rb') as f:
+                    self.wfile.write(f.read())
+            else:
+                self.send_response(404)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
+                html_content = """
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>GhostLink IDE - Interface Not Found</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+                        .error { color: #ff4444; }
+                    </style>
+                </head>
+                <body>
+                    <h1>GhostLink IDE</h1>
+                    <p class="error">Web interface file not found. Please ensure ghostlink-ide.html exists in the project root.</p>
+                </body>
+                </html>
+                """
+                self.wfile.write(html_content.encode())
+
+        except Exception as e:
+            self.send_response(500)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            response = {"error": f"Failed to serve web interface: {str(e)}"}
+            self.wfile.write(json.dumps(response).encode())
+
+    def get_ai_system_status(self):
+        """Get AI system status for web interface"""
+        try:
+            result = subprocess.run(
+                [sys.executable, "optimized_ai_orchestrator.py", "status"],
+                cwd=self.project_root,
+                capture_output=True,
+                text=True,
+                timeout=10
+            )
+
+            if result.returncode == 0:
+                # Parse the status output
+                lines = result.stdout.strip().split('\n')
+                status_info = {}
+                for line in lines:
+                    if 'Total Systems:' in line:
+                        status_info['total_systems'] = int(line.split(':')[1].strip())
+                    elif 'Active Systems:' in line:
+                        status_info['active_systems'] = int(line.split(':')[1].strip())
+                    elif 'CPU Usage:' in line:
+                        status_info['cpu_usage'] = float(line.split(':')[1].strip().replace('%', ''))
+                    elif 'Memory Usage:' in line:
+                        status_info['memory_usage'] = float(line.split(':')[1].strip().replace('%', ''))
+
+                return {
+                    "status": "success",
+                    "ai_systems": status_info,
+                    "timestamp": time.time()
+                }
+            else:
+                return {
+                    "status": "error",
+                    "error": result.stderr,
+                    "timestamp": time.time()
+                }
+
+        except Exception as e:
+            return {"status": "error", "error": str(e), "timestamp": time.time()}
+
+    def handle_orchestrator_control(self):
+        """Handle orchestrator control commands from web interface"""
+        if self.command == "POST":
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            data = json.loads(post_data.decode())
+
+            action = data.get('action', '')
+
+            try:
+                if action == "start":
+                    result = subprocess.run(
+                        [sys.executable, "optimized_ai_orchestrator.py", "start"],
+                        cwd=self.project_root,
+                        capture_output=True,
+                        text=True,
+                        timeout=30
+                    )
+                elif action == "stop":
+                    result = subprocess.run(
+                        [sys.executable, "optimized_ai_orchestrator.py", "stop"],
+                        cwd=self.project_root,
+                        capture_output=True,
+                        text=True,
+                        timeout=30
+                    )
+                else:
+                    self.send_response(400)
+                    self.send_header('Content-type', 'application/json')
+                    self.end_headers()
+                    response = {"error": f"Unknown action: {action}"}
+                    self.wfile.write(json.dumps(response).encode())
+                    return
+
+                self.send_response(200)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                response = {
+                    "success": result.returncode == 0,
+                    "action": action,
+                    "output": result.stdout,
+                    "error": result.stderr,
+                    "timestamp": time.time()
+                }
+                self.wfile.write(json.dumps(response).encode())
+
+            except subprocess.TimeoutExpired:
+                self.send_response(408)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                response = {"error": "Command timed out", "action": action}
+                self.wfile.write(json.dumps(response).encode())
+            except Exception as e:
+                self.send_response(500)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                response = {"error": str(e), "action": action}
+                self.wfile.write(json.dumps(response).encode())
+        else:
+            self.send_response(405)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            response = {"error": "Method not allowed. Use POST."}
+            self.wfile.write(json.dumps(response).encode())
+
+    def get_system_monitoring_data(self):
+        """Get comprehensive system monitoring data"""
+        try:
+            import psutil
+            import platform
+
+            # System metrics
+            cpu_percent = psutil.cpu_percent(interval=1)
+            memory = psutil.virtual_memory()
+            disk = psutil.disk_usage('/')
+
+            # Network info
+            net_io = psutil.net_io_counters()
+
+            # Process info
+            current_process = psutil.Process()
+            process_memory = current_process.memory_info()
+
+            # AI system status
+            ai_status = self.get_ai_system_status()
+
+            monitoring_data = {
+                "timestamp": time.time(),
+                "system": {
+                    "platform": platform.system(),
+                    "platform_version": platform.version(),
+                    "architecture": platform.machine(),
+                    "cpu_count": psutil.cpu_count(),
+                    "cpu_percent": cpu_percent,
+                    "memory_total": memory.total,
+                    "memory_used": memory.used,
+                    "memory_percent": memory.percent,
+                    "disk_total": disk.total,
+                    "disk_used": disk.used,
+                    "disk_percent": disk.percent,
+                    "network_bytes_sent": net_io.bytes_sent,
+                    "network_bytes_recv": net_io.bytes_recv
+                },
+                "process": {
+                    "pid": current_process.pid,
+                    "memory_rss": process_memory.rss,
+                    "memory_vms": process_memory.vms,
+                    "cpu_percent": current_process.cpu_percent(),
+                    "threads": len(current_process.threads())
+                },
+                "ai_systems": ai_status,
+                "uptime": time.time() - psutil.boot_time()
+            }
+
+            return monitoring_data
+
+        except ImportError:
+            return {
+                "error": "psutil not available for detailed monitoring",
+                "basic_info": {
+                    "timestamp": time.time(),
+                    "server_running": True
+                }
+            }
+        except Exception as e:
+            return {"error": str(e), "timestamp": time.time()}
+
+    def get_performance_metrics(self):
+        """Get performance monitoring metrics"""
+        try:
+            if PERFORMANCE_INTEGRATION and performance_monitor:
+                return {
+                    "performance_integration": True,
+                    "metrics": performance_monitor.get_performance_report(),
+                    "timestamp": time.time()
+                }
+            else:
+                return {
+                    "performance_integration": False,
+                    "error": "Performance monitoring not available",
+                    "timestamp": time.time()
+                }
+        except Exception as e:
+            return {
+                "performance_integration": False,
+                "error": str(e),
+                "timestamp": time.time()
+            }
+
     def log_message(self, format, *args):
         """Override to reduce noise"""
         pass
@@ -570,6 +865,16 @@ class EnhancedGhostLinkAPIServer:
 
     def start(self):
         """Start the enhanced HTTP API server"""
+        # Initialize performance monitoring
+        if PERFORMANCE_INTEGRATION and init_connection_pools:
+            try:
+                print("⚡ Initializing performance monitoring and connection pools...")
+                import asyncio
+                asyncio.run(init_connection_pools())
+                print("✅ Performance monitoring initialized")
+            except Exception as e:
+                print(f"⚠️  Failed to initialize performance monitoring: {e}")
+
         def run_server():
             with socketserver.TCPServer(("", self.port), lambda *args: EnhancedGhostLinkAPIHandler(*args, project_root=self.project_root)) as httpd:
                 self.server = httpd

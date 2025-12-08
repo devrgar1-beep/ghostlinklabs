@@ -29,6 +29,14 @@ try:
 except ImportError:
     BIOS_BRIDGE_AVAILABLE = False
 
+# Try to import FPGA Brain Stem (optional)
+try:
+    from fpga_brain_stem import FPGABrainStem, FPGABrainStemIntegration
+
+    FPGA_BRAIN_STEM_AVAILABLE = True
+except ImportError:
+    FPGA_BRAIN_STEM_AVAILABLE = False
+
 console = Console()
 
 
@@ -48,7 +56,13 @@ class GhostLinkRootControl:
 
     def __init__(self, project_root: Optional[Path] = None):
         self.project_root = project_root or Path.cwd()
+        self.fpga_brain_stem = None
+        if FPGA_BRAIN_STEM_AVAILABLE:
+            self.fpga_brain_stem = FPGABrainStemIntegration(self)
         self.config = self._load_config()
+
+        # Note: FPGA Brain Stem initialization is async and should be called separately
+        # Use initialize_fpga_brain_stem() method after instantiation
 
     def _load_config(self) -> Dict[str, Any]:
         """Load configuration from multiple sources"""
@@ -258,9 +272,9 @@ class GhostLinkRootControl:
             "AI consciousness active" if supergrok_available else "Not initialized",
         )
         system_table.add_row(
-            "Dependencies",
-            "[OK]" if dependencies_ok else "[FAIL]",
-            "All required installed" if dependencies_ok else "Missing required packages",
+            "FPGA Brain Stem",
+            "[OK]" if FPGA_BRAIN_STEM_AVAILABLE and self.fpga_brain_stem else "[FAIL]",
+            "Central nervous system active" if FPGA_BRAIN_STEM_AVAILABLE and self.fpga_brain_stem else "Not available",
         )
 
         console.print(system_table)
@@ -286,16 +300,12 @@ class GhostLinkRootControl:
 
         # Configuration Summary
 
-        config_panel = Panel(
-            f"API Host: {self.config['api']['host']}:{self.config['api']['port']}\n"
-            f"Database: {self.config['database']['type']}\n"
-            f"Monitoring: {'Enabled' if self.config['monitoring']['enabled'] else 'Disabled'}\n"
-            f"Security: {'JWT Enabled' if self.config['security']['jwt_enabled'] else 'JWT Disabled'}\n"
-            f"Cloudflare: {'Absorbed' if cloudflare_absorbed else 'Not absorbed'}\n"
-            f"SuperGrok: {'Enabled' if self.config['supergrok']['enabled'] else 'Disabled'}",
-            title="Configuration Summary",
-            border_style="blue",
-        )
+        # FPGA Brain Stem status
+        if FPGA_BRAIN_STEM_AVAILABLE and self.fpga_brain_stem:
+            fpga_status = self.fpga_brain_stem.get_brain_stem_status()
+            config_panel_content += f"FPGA Brain Stem: Active ({fpga_status.get('neural_cores_active', 0)} cores, {fpga_status.get('quantum_units_active', 0)} quantum units)\n"
+        else:
+            config_panel_content += "FPGA Brain Stem: Not available\n"
         console.print(config_panel)
 
     def create_scheduled_task(

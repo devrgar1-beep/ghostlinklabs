@@ -42,6 +42,7 @@ except Exception:
         supergrok_bios = None
 from .diagnostics_cli import diagnostics
 from .git_cli import git
+from .bridge_cli import bridge
 from .hardware_utils import bind_to_disk, bind_to_nic, is_admin, is_virtual_machine
 from .link import TaskPriority, get_link
 
@@ -54,6 +55,7 @@ def cli():
 # Add subcommand groups
 cli.add_command(diagnostics)
 cli.add_command(git)
+cli.add_command(bridge)
 
 
 @cli.command()

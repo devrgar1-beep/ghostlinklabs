@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   ghostlink:
     build: .
@@ -35,3 +37,105 @@ services:
       - ./creds:/run/ghostlink:ro
     # Security: run as the non-root UID created in Dockerfile
     user: "10001:10001"
+
+  # Production API Server
+  ghostlink-api-prod:
+    build: .
+    container_name: ghostlink-api-prod
+    ports:
+      - "3000:3000"
+    environment:
+      - GHOSTLINK_ENV=production
+      - PYTHONPATH=/app
+    volumes:
+      - ./logs:/app/logs
+      - ./data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - ghostlink-network
+
+  # AI Orchestrator Service
+  ghostlink-orchestrator-prod:
+    build: .
+    container_name: ghostlink-orchestrator-prod
+    command: ["python3", "optimized_ai_orchestrator.py"]
+    environment:
+      - GHOSTLINK_ENV=production
+      - PYTHONPATH=/app
+    volumes:
+      - ./logs:/app/logs
+      - ./data:/app/data
+    restart: unless-stopped
+    depends_on:
+      ghostlink-api-prod:
+        condition: service_healthy
+    networks:
+      - ghostlink-network
+
+  # Production Monitoring Stack
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ghostlink-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+    networks:
+      - ghostlink-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ghostlink-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-ghostlink2025}
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+    networks:
+      - ghostlink-network
+
+  # Production Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: ghostlink-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./logs/nginx:/var/log/nginx
+    restart: unless-stopped
+    depends_on:
+      - ghostlink-api-prod
+      - grafana
+    networks:
+      - ghostlink-network
+
+volumes:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  ghostlink-network:
+    driver: bridge

@@ -3,24 +3,32 @@ global:
   evaluation_interval: 15s
 
 rule_files:
-  # - "first_rules.yml"
-  # - "second_rules.yml"
+  - "../performance/scaling/autoscaling-rules.yml"
+  - "alert_rules.yml"
 
 scrape_configs:
-  # GhostLink Cold Boot Orchestrator
-  - job_name: 'ghostlink-orchestrator'
-    static_configs:
-      - targets: ['ghostlink-orchestrator:9108']
-    scrape_interval: 30s
-    metrics_path: '/metrics'
-
-  # NATS Messaging Server
-  - job_name: 'nats'
-    static_configs:
-      - targets: ['nats:8222']
-    scrape_interval: 30s
-
-  # Prometheus (self-monitoring)
   - job_name: 'prometheus'
     static_configs:
       - targets: ['localhost:9090']
+
+  - job_name: 'ghostlink-api'
+    static_configs:
+      - targets: ['ghostlink-api-prod:3000']
+    scrape_interval: 5s
+    metrics_path: '/metrics'
+
+  - job_name: 'ghostlink-orchestrator'
+    static_configs:
+      - targets: ['ghostlink-orchestrator-prod:8000']
+    scrape_interval: 10s
+    metrics_path: '/metrics'
+
+  - job_name: 'ghostlink-core'
+    static_configs:
+      - targets: ['ghostlink:9108']
+    scrape_interval: 15s
+
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    scrape_interval: 15s

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "ghostlink.fullname" . }}-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "ghostlink.labels" . | nindent 4 }}
+data:
+  GHOSTLINK_ENV: {{ .Values.env.GHOSTLINK_ENV | quote }}
+  PYTHONPATH: {{ .Values.env.PYTHONPATH | quote }}
+  HOST: {{ .Values.env.HOST | quote }}
+  RUN_CONTROLLER: "1"
+  RUN_PEER: "0"
+  RUN_BRIDGE: "0"
+  RUN_MESH: "0"
+  RUN_RESPONDER: "0"
