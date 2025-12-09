@@ -5,28 +5,33 @@ Human-AI Co-Creation Phase: Seamless human-AI collaboration interfaces
 """
 
 from __future__ import annotations
+
 import asyncio
-import json
-import logging
-import time
-from typing import Dict, List, Any, Optional, Callable
 from dataclasses import dataclass
 from enum import Enum
-import uuid
-import websockets
+import json
+import logging
 import threading
-from concurrent.futures import ThreadPoolExecutor
+import time
+from typing import Any, Callable, Dict, List, Optional
+import uuid
+
+import websockets
 
 logger = logging.getLogger(__name__)
 
+
 class InterfaceMode(Enum):
     """Modes for co-creation interfaces"""
+
     SYNCHRONOUS = "synchronous"  # Real-time collaboration
     ASYNCHRONOUS = "asynchronous"  # Turn-based interaction
     HYBRID = "hybrid"  # Mixed real-time and turn-based
 
+
 class InteractionType(Enum):
     """Types of human-AI interactions"""
+
     TEXT_INPUT = "text_input"
     VOICE_COMMAND = "voice_command"
     GESTURE_INPUT = "gesture_input"
@@ -34,9 +39,11 @@ class InteractionType(Enum):
     EMOTIONAL_SIGNAL = "emotional_signal"
     CREATIVE_INTENTION = "creative_intention"
 
+
 @dataclass
 class CoCreationSession:
     """Session for real-time co-creation"""
+
     session_id: str
     participants: List[str]  # human and AI agent IDs
     interface_mode: InterfaceMode
@@ -46,9 +53,11 @@ class CoCreationSession:
     real_time_enabled: bool
     created_at: float
 
+
 @dataclass
 class InteractionStream:
     """Real-time interaction stream"""
+
     stream_id: str
     participant_id: str
     interaction_type: InteractionType
@@ -56,9 +65,11 @@ class InteractionStream:
     timestamp: float
     sovereignty_assertion: Optional[Dict[str, Any]] = None
 
+
 @dataclass
 class CoCreationEvent:
     """Event in co-creation session"""
+
     event_id: str
     event_type: str
     source_participant: str
@@ -66,6 +77,7 @@ class CoCreationEvent:
     payload: Dict[str, Any]
     timestamp: float
     requires_response: bool
+
 
 class RealTimeCoCreationInterface:
     """Interface for real-time human-AI co-creation"""
@@ -91,17 +103,14 @@ class RealTimeCoCreationInterface:
             InteractionType.GESTURE_INPUT: self._process_gesture_input,
             InteractionType.THOUGHT_PATTERN: self._process_thought_pattern,
             InteractionType.EMOTIONAL_SIGNAL: self._process_emotional_signal,
-            InteractionType.CREATIVE_INTENTION: self._process_creative_intention
+            InteractionType.CREATIVE_INTENTION: self._process_creative_intention,
         }
 
     async def start_interface_server(self, host: str = "localhost", port: int = 8765):
         """Start the WebSocket server for real-time interfaces"""
         logger.info(f"🚀 Starting co-creation interface server on {host}:{port}")
 
-        self.server = await websockets.serve(
-            self._handle_websocket_connection,
-            host, port
-        )
+        self.server = await websockets.serve(self._handle_websocket_connection, host, port)
 
         # Start server in background thread
         self.server_thread = threading.Thread(target=self.server.wait_closed)
@@ -110,7 +119,9 @@ class RealTimeCoCreationInterface:
 
         return {"status": "server_started", "host": host, "port": port}
 
-    async def create_co_creation_session(self, participants: List[str], mode: InterfaceMode = InterfaceMode.SYNCHRONOUS) -> str:
+    async def create_co_creation_session(
+        self, participants: List[str], mode: InterfaceMode = InterfaceMode.SYNCHRONOUS
+    ) -> str:
         """Create a new co-creation session"""
         session_id = str(uuid.uuid4())
 
@@ -123,20 +134,24 @@ class RealTimeCoCreationInterface:
             sovereignty_settings={
                 "human_override_enabled": True,
                 "ai_suggestion_limit": 0.8,
-                "real_time_collaboration": mode == InterfaceMode.SYNCHRONOUS
+                "real_time_collaboration": mode == InterfaceMode.SYNCHRONOUS,
             },
             real_time_enabled=mode in [InterfaceMode.SYNCHRONOUS, InterfaceMode.HYBRID],
-            created_at=time.time()
+            created_at=time.time(),
         )
 
         self.active_sessions[session_id] = session
         self.event_queues[session_id] = asyncio.Queue()
 
-        logger.info(f"📝 Created co-creation session: {session_id} with {len(participants)} participants")
+        logger.info(
+            f"📝 Created co-creation session: {session_id} with {len(participants)} participants"
+        )
 
         return session_id
 
-    async def process_interaction_stream(self, session_id: str, stream: InteractionStream) -> Dict[str, Any]:
+    async def process_interaction_stream(
+        self, session_id: str, stream: InteractionStream
+    ) -> Dict[str, Any]:
         """Process an interaction stream in real-time"""
         if session_id not in self.active_sessions:
             return {"error": "Session not found"}
@@ -157,20 +172,25 @@ class RealTimeCoCreationInterface:
             result = await processor(session, stream)
 
             # Add to interaction history
-            session.interaction_history.append({
-                "stream_id": stream.stream_id,
-                "type": stream.interaction_type.value,
-                "result": result,
-                "timestamp": stream.timestamp
-            })
+            session.interaction_history.append(
+                {
+                    "stream_id": stream.stream_id,
+                    "type": stream.interaction_type.value,
+                    "result": result,
+                    "timestamp": stream.timestamp,
+                }
+            )
 
             # Broadcast to other participants if real-time
             if session.real_time_enabled:
-                await self._broadcast_event(session_id, {
-                    "type": "interaction_processed",
-                    "stream_id": stream.stream_id,
-                    "result": result
-                })
+                await self._broadcast_event(
+                    session_id,
+                    {
+                        "type": "interaction_processed",
+                        "stream_id": stream.stream_id,
+                        "result": result,
+                    },
+                )
 
             return result
 
@@ -214,11 +234,15 @@ class RealTimeCoCreationInterface:
                 if client_id not in session.participants:
                     session.participants.append(client_id)
 
-                await websocket.send(json.dumps({
-                    "type": "session_joined",
-                    "session_id": session_id,
-                    "participants": session.participants
-                }))
+                await websocket.send(
+                    json.dumps(
+                        {
+                            "type": "session_joined",
+                            "session_id": session_id,
+                            "participants": session.participants,
+                        }
+                    )
+                )
             else:
                 await websocket.send(json.dumps({"error": "Session not found"}))
 
@@ -232,16 +256,16 @@ class RealTimeCoCreationInterface:
                 interaction_type=InteractionType(stream_data.get("type")),
                 data=stream_data.get("data", {}),
                 timestamp=time.time(),
-                sovereignty_assertion=stream_data.get("sovereignty")
+                sovereignty_assertion=stream_data.get("sovereignty"),
             )
 
             result = await self.process_interaction_stream(session_id, stream)
 
-            await websocket.send(json.dumps({
-                "type": "interaction_result",
-                "stream_id": stream.stream_id,
-                "result": result
-            }))
+            await websocket.send(
+                json.dumps(
+                    {"type": "interaction_result", "stream_id": stream.stream_id, "result": result}
+                )
+            )
 
         elif message_type == "sovereignty_update":
             session_id = data.get("session_id")
@@ -251,12 +275,15 @@ class RealTimeCoCreationInterface:
                 session = self.active_sessions[session_id]
                 session.sovereignty_settings.update(sovereignty_settings)
 
-                await websocket.send(json.dumps({
-                    "type": "sovereignty_updated",
-                    "settings": session.sovereignty_settings
-                }))
+                await websocket.send(
+                    json.dumps(
+                        {"type": "sovereignty_updated", "settings": session.sovereignty_settings}
+                    )
+                )
 
-    async def _validate_sovereignty(self, session: CoCreationSession, stream: InteractionStream) -> bool:
+    async def _validate_sovereignty(
+        self, session: CoCreationSession, stream: InteractionStream
+    ) -> bool:
         """Validate sovereignty assertions in interactions"""
         if not stream.sovereignty_assertion:
             return True  # No assertion means default behavior
@@ -291,7 +318,9 @@ class RealTimeCoCreationInterface:
                 except Exception as e:
                     logger.warning(f"Failed to send event to {participant_id}: {e}")
 
-    async def _process_text_input(self, session: CoCreationSession, stream: InteractionStream) -> Dict[str, Any]:
+    async def _process_text_input(
+        self, session: CoCreationSession, stream: InteractionStream
+    ) -> Dict[str, Any]:
         """Process text input interactions"""
         text = stream.data.get("text", "")
         intent = stream.data.get("intent", "general")
@@ -303,12 +332,14 @@ class RealTimeCoCreationInterface:
             "sentiment": self._analyze_sentiment(text),
             "key_phrases": self._extract_key_phrases(text),
             "creativity_score": self._assess_creativity(text),
-            "ai_suggestions": self._generate_text_suggestions(text, intent)
+            "ai_suggestions": self._generate_text_suggestions(text, intent),
         }
 
         return processed
 
-    async def _process_voice_command(self, session: CoCreationSession, stream: InteractionStream) -> Dict[str, Any]:
+    async def _process_voice_command(
+        self, session: CoCreationSession, stream: InteractionStream
+    ) -> Dict[str, Any]:
         """Process voice command interactions"""
         audio_data = stream.data.get("audio", "")
         transcription = stream.data.get("transcription", "")
@@ -319,12 +350,14 @@ class RealTimeCoCreationInterface:
             "confidence": stream.data.get("confidence", 0.8),
             "emotional_tone": self._analyze_voice_emotion(audio_data),
             "command_type": self._classify_voice_command(transcription),
-            "ai_interpretation": self._interpret_voice_intent(transcription)
+            "ai_interpretation": self._interpret_voice_intent(transcription),
         }
 
         return processed
 
-    async def _process_gesture_input(self, session: CoCreationSession, stream: InteractionStream) -> Dict[str, Any]:
+    async def _process_gesture_input(
+        self, session: CoCreationSession, stream: InteractionStream
+    ) -> Dict[str, Any]:
         """Process gesture input interactions"""
         gesture_data = stream.data.get("gesture", {})
 
@@ -333,12 +366,14 @@ class RealTimeCoCreationInterface:
             "confidence": gesture_data.get("confidence", 0.8),
             "intensity": gesture_data.get("intensity", 0.5),
             "meaning": self._interpret_gesture(gesture_data),
-            "creative_intent": self._extract_gesture_creativity(gesture_data)
+            "creative_intent": self._extract_gesture_creativity(gesture_data),
         }
 
         return processed
 
-    async def _process_thought_pattern(self, session: CoCreationSession, stream: InteractionStream) -> Dict[str, Any]:
+    async def _process_thought_pattern(
+        self, session: CoCreationSession, stream: InteractionStream
+    ) -> Dict[str, Any]:
         """Process thought pattern interactions (future brain-computer interface)"""
         pattern_data = stream.data.get("pattern", {})
 
@@ -347,12 +382,14 @@ class RealTimeCoCreationInterface:
             "intensity": pattern_data.get("intensity", 0.5),
             "creativity_level": pattern_data.get("creativity", 0.5),
             "emotional_state": pattern_data.get("emotion", {}),
-            "ai_resonance": self._calculate_thought_resonance(pattern_data)
+            "ai_resonance": self._calculate_thought_resonance(pattern_data),
         }
 
         return processed
 
-    async def _process_emotional_signal(self, session: CoCreationSession, stream: InteractionStream) -> Dict[str, Any]:
+    async def _process_emotional_signal(
+        self, session: CoCreationSession, stream: InteractionStream
+    ) -> Dict[str, Any]:
         """Process emotional signal interactions"""
         emotion_data = stream.data.get("emotion", {})
 
@@ -361,12 +398,14 @@ class RealTimeCoCreationInterface:
             "intensity": emotion_data.get("intensity", 0.5),
             "context": emotion_data.get("context", "unknown"),
             "influence_on_creativity": self._assess_emotional_impact(emotion_data),
-            "ai_empathy_response": self._generate_empathy_response(emotion_data)
+            "ai_empathy_response": self._generate_empathy_response(emotion_data),
         }
 
         return processed
 
-    async def _process_creative_intention(self, session: CoCreationSession, stream: InteractionStream) -> Dict[str, Any]:
+    async def _process_creative_intention(
+        self, session: CoCreationSession, stream: InteractionStream
+    ) -> Dict[str, Any]:
         """Process creative intention interactions"""
         intention_data = stream.data.get("intention", {})
 
@@ -375,7 +414,7 @@ class RealTimeCoCreationInterface:
             "clarity": intention_data.get("clarity", 0.5),
             "scope": intention_data.get("scope", "narrow"),
             "ai_alignment": self._calculate_intention_alignment(intention_data),
-            "collaboration_suggestions": self._suggest_collaboration_approach(intention_data)
+            "collaboration_suggestions": self._suggest_collaboration_approach(intention_data),
         }
 
         return processed
@@ -391,10 +430,9 @@ class RealTimeCoCreationInterface:
 
         if positive_count > negative_count:
             return "positive"
-        elif negative_count > positive_count:
+        if negative_count > positive_count:
             return "negative"
-        else:
-            return "neutral"
+        return "neutral"
 
     def _extract_key_phrases(self, text: str) -> List[str]:
         """Extract key phrases from text"""
@@ -433,17 +471,16 @@ class RealTimeCoCreationInterface:
         """Classify voice command type"""
         if "create" in transcription.lower():
             return "creation"
-        elif "modify" in transcription.lower():
+        if "modify" in transcription.lower():
             return "modification"
-        else:
-            return "general"
+        return "general"
 
     def _interpret_voice_intent(self, transcription: str) -> Dict[str, Any]:
         """Interpret intent from voice transcription"""
         return {
             "primary_intent": "collaboration",
             "confidence": 0.8,
-            "suggested_actions": ["acknowledge", "elaborate"]
+            "suggested_actions": ["acknowledge", "elaborate"],
         }
 
     def _interpret_gesture(self, gesture_data: Dict[str, Any]) -> str:
@@ -451,10 +488,9 @@ class RealTimeCoCreationInterface:
         gesture_type = gesture_data.get("type", "unknown")
         if gesture_type == "swipe_right":
             return "approval/agreement"
-        elif gesture_type == "circle":
+        if gesture_type == "circle":
             return "inclusion/completeness"
-        else:
-            return "expression"
+        return "expression"
 
     def _extract_gesture_creativity(self, gesture_data: Dict[str, Any]) -> float:
         """Extract creativity level from gesture"""
@@ -469,20 +505,18 @@ class RealTimeCoCreationInterface:
         emotion = emotion_data.get("primary", "neutral")
         if emotion == "excitement":
             return "high_positive"
-        elif emotion == "frustration":
+        if emotion == "frustration":
             return "negative_blocking"
-        else:
-            return "neutral"
+        return "neutral"
 
     def _generate_empathy_response(self, emotion_data: Dict[str, Any]) -> str:
         """Generate empathetic AI response"""
         emotion = emotion_data.get("primary", "neutral")
         if emotion == "excitement":
             return "I sense your enthusiasm! Let's build on that energy."
-        elif emotion == "confusion":
+        if emotion == "confusion":
             return "I understand this might be complex. Let me help clarify."
-        else:
-            return "I'm here to support your creative process."
+        return "I'm here to support your creative process."
 
     def _calculate_intention_alignment(self, intention_data: Dict[str, Any]) -> float:
         """Calculate alignment between human intention and AI capabilities"""
@@ -493,10 +527,9 @@ class RealTimeCoCreationInterface:
         intention_type = intention_data.get("type", "exploration")
         if intention_type == "innovation":
             return ["brainstorming_session", "prototype_development"]
-        elif intention_type == "refinement":
+        if intention_type == "refinement":
             return ["iterative_improvement", "peer_review"]
-        else:
-            return ["open_discussion", "idea_expansion"]
+        return ["open_discussion", "idea_expansion"]
 
     async def get_session_status(self, session_id: str) -> Dict[str, Any]:
         """Get status of a co-creation session"""
@@ -512,9 +545,9 @@ class RealTimeCoCreationInterface:
             "real_time_enabled": session.real_time_enabled,
             "interaction_count": len(session.interaction_history),
             "sovereignty_settings": session.sovereignty_settings,
-            "active_streams": list(session.active_streams.keys())
+            "active_streams": list(session.active_streams.keys()),
         }
 
+
 # Global instance for integration
-real_time_co_creation_interface = RealTimeCoCreationInterface()</content>
-<parameter name="filePath">/Users/ghost-link-labs/ghostlinklabs/src/real_time_co_creation.py
+real_time_co_creation_interface = RealTimeCoCreationInterface()

@@ -23,10 +23,11 @@ logger = logging.getLogger("GhostLinkBridge")
 
 # Import consciousness components
 try:
-    from .consciousness_merging import consciousness_merging_engine
     from .collaborative_intelligence import collaborative_intelligence_framework
-    from .real_time_co_creation import real_time_co_creation_interface
     from .consciousness_driven_development import consciousness_driven_development_environment
+    from .consciousness_merging import consciousness_merging_engine
+    from .real_time_co_creation import real_time_co_creation_interface
+
     CONSCIOUSNESS_COMPONENTS_AVAILABLE = True
 except ImportError:
     logger.warning("Consciousness components not available - running in legacy mode")

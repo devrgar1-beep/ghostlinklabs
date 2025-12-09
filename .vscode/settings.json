@@ -148,5 +148,13 @@
         "**/node_modules": true,
         "**/.venv": true
     },
-    "cmake.sourceDirectory": "/Users/ghost-link-labs/ghostlinklabs/fpga/nextpnr"
+    "cmake.sourceDirectory": "/Users/ghost-link-labs/ghostlinklabs/fpga/nextpnr",
+    "cmake.configureArgs": [
+        "-DARCH=ice40",
+        "-DBOOST_ROOT=/opt/homebrew",
+        "-DBoost_INCLUDE_DIR=/opt/homebrew/include",
+        "-DBoost_LIBRARY_DIR=/opt/homebrew/lib",
+        "-DEigen3_DIR=/opt/homebrew/Cellar/eigen/5.0.1/share/eigen3/cmake"
+    ],
+    "cmake.buildDirectory": "/Users/ghost-link-labs/ghostlinklabs/fpga/nextpnr/build"
 }

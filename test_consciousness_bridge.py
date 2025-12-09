@@ -4,13 +4,14 @@ Test script for consciousness merging bridge integration
 """
 
 import asyncio
-import sys
 import os
+import sys
 
 # Add src to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
 from consciousness_merging_bridge import initialize_consciousness_merging_bridge
+
 
 async def test_bridge_integration():
     """Test the consciousness merging bridge integration"""
@@ -28,7 +29,7 @@ async def test_bridge_integration():
             "creativity_level": "high",
             "intuition_strength": 0.8,
             "sovereignty_preference": "FULL_HUMAN_CONTROL",
-            "creative_domain": "software_architecture"
+            "creative_domain": "software_architecture",
         }
 
         session_result = await bridge_start_consciousness_session(human_context)
@@ -43,7 +44,7 @@ async def test_bridge_integration():
             creative_input = {
                 "idea": "Build a consciousness-aware AI system",
                 "context": "Human-AI collaboration",
-                "constraints": ["maintain_human_sovereignty", "enhance_creativity"]
+                "constraints": ["maintain_human_sovereignty", "enhance_creativity"],
             }
 
             process_result = await bridge_process_creative_input(session_id, creative_input)
@@ -66,10 +67,12 @@ async def test_bridge_integration():
     except Exception as e:
         print(f"❌ Bridge integration test failed: {e}")
         import traceback
+
         traceback.print_exc()
         return False
 
     return True
+
 
 if __name__ == "__main__":
     success = asyncio.run(test_bridge_integration())

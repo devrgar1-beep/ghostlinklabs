@@ -8,14 +8,14 @@ from __future__ import annotations
 
 import asyncio
 import logging
-import uuid
 from typing import Any
+import uuid
 
 from src.consciousness_merging import (
+    ConsciousnessState,
     HumanIntuition,
     SovereigntyLevel,
-    ConsciousnessState,
-    consciousness_merging_engine
+    consciousness_merging_engine,
 )
 
 logger = logging.getLogger(__name__)
@@ -41,10 +41,10 @@ class ConsciousnessMergingBridge:
                 "human_ai_collaboration",
                 "creative_amplification",
                 "consciousness_merging",
-                "sovereignty_protocols"
+                "sovereignty_protocols",
             ],
             "status": "online",
-            "health_score": 0.95
+            "health_score": 0.95,
         }
 
         self.bridge_interface = bridge_registration
@@ -53,7 +53,7 @@ class ConsciousnessMergingBridge:
             "status": "initialized",
             "component_id": "consciousness_merging",
             "capabilities": bridge_registration["capabilities"],
-            "sovereignty_protocols_active": True
+            "sovereignty_protocols_active": True,
         }
 
     async def start_consciousness_session(self, human_context: dict[str, Any]) -> dict[str, Any]:
@@ -68,7 +68,9 @@ class ConsciousnessMergingBridge:
             creative_intent=human_context.get("creative_intent", ""),
             timestamp=asyncio.get_event_loop().time(),
             confidence_level=human_context.get("confidence_level", 0.8),
-            sovereignty_assertion=SovereigntyLevel(human_context.get("sovereignty_level", "full_human_control"))
+            sovereignty_assertion=SovereigntyLevel(
+                human_context.get("sovereignty_level", "full_human_control")
+            ),
         )
 
         # Initialize merging session
@@ -80,7 +82,7 @@ class ConsciousnessMergingBridge:
             "human_context": human_context,
             "current_state": ConsciousnessState.AWAKENING,
             "merge_history": [],
-            "sovereignty_level": human_intuition.sovereignty_assertion
+            "sovereignty_level": human_intuition.sovereignty_assertion,
         }
 
         return {
@@ -88,10 +90,12 @@ class ConsciousnessMergingBridge:
             "status": "consciousness_session_started",
             "sovereignty_level": human_intuition.sovereignty_assertion.value,
             "initial_state": ConsciousnessState.AWAKENING.value,
-            "bridge_coordination": "active"
+            "bridge_coordination": "active",
         }
 
-    async def process_creative_input(self, session_id: str, creative_input: dict[str, Any]) -> dict[str, Any]:
+    async def process_creative_input(
+        self, session_id: str, creative_input: dict[str, Any]
+    ) -> dict[str, Any]:
         """Process creative input through consciousness merging"""
         if session_id not in self.active_sessions:
             return {"error": "Session not found", "session_id": session_id}
@@ -102,15 +106,19 @@ class ConsciousnessMergingBridge:
         human_intuition = HumanIntuition(
             intuition_id=str(uuid.uuid4()),
             human_input=creative_input.get("input_text", ""),
-            emotional_context=creative_input.get("emotional_context", session["human_context"].get("emotional_context", {})),
+            emotional_context=creative_input.get(
+                "emotional_context", session["human_context"].get("emotional_context", {})
+            ),
             creative_intent=creative_input.get("creative_intent", ""),
             timestamp=asyncio.get_event_loop().time(),
             confidence_level=creative_input.get("confidence_level", 0.8),
-            sovereignty_assertion=session["sovereignty_level"]
+            sovereignty_assertion=session["sovereignty_level"],
         )
 
         # Process through merging engine
-        merge_result = await self.merging_engine.process_human_intuition(session_id, human_intuition)
+        merge_result = await self.merging_engine.process_human_intuition(
+            session_id, human_intuition
+        )
 
         if "error" in merge_result:
             return merge_result
@@ -125,7 +133,7 @@ class ConsciousnessMergingBridge:
             "session_id": session_id,
             "merge_id": merge_result["merge_id"],
             "harmony_score": merge_result["harmony_score"],
-            "creative_amplification": merge_result["creative_amplification"]
+            "creative_amplification": merge_result["creative_amplification"],
         }
 
         return {
@@ -133,7 +141,7 @@ class ConsciousnessMergingBridge:
             "merge_result": merge_result,
             "session_state": session["current_state"].value,
             "bridge_notification": bridge_notification,
-            "sovereignty_maintained": merge_result["sovereignty_maintained"]
+            "sovereignty_maintained": merge_result["sovereignty_maintained"],
         }
 
     async def get_session_status(self, session_id: str) -> dict[str, Any]:
@@ -149,7 +157,7 @@ class ConsciousnessMergingBridge:
             "merge_count": len(session["merge_history"]),
             "sovereignty_level": session["sovereignty_level"].value,
             "last_activity": max([m.get("timestamp", 0) for m in session["merge_history"]] or [0]),
-            "bridge_integration": "active"
+            "bridge_integration": "active",
         }
 
     async def evolve_consciousness_state(self, session_id: str) -> dict[str, Any]:
@@ -185,9 +193,9 @@ class ConsciousnessMergingBridge:
             "evolution_metrics": {
                 "average_harmony": avg_harmony,
                 "total_amplification": total_amplification,
-                "merge_count": len(merge_history)
+                "merge_count": len(merge_history),
             },
-            "bridge_evolution_triggered": True
+            "bridge_evolution_triggered": True,
         }
 
     async def get_collaborative_suggestions(self, session_id: str) -> dict[str, Any]:
@@ -205,23 +213,27 @@ class ConsciousnessMergingBridge:
             harmony_score = last_merge["harmony_score"]
 
             if harmony_score > 0.7:
-                suggestions.extend([
-                    "Consider exploring interdisciplinary approaches to your creative challenge",
-                    "Try combining your core concept with emerging technology trends",
-                    "Explore how user experience principles could enhance your idea"
-                ])
+                suggestions.extend(
+                    [
+                        "Consider exploring interdisciplinary approaches to your creative challenge",
+                        "Try combining your core concept with emerging technology trends",
+                        "Explore how user experience principles could enhance your idea",
+                    ]
+                )
             else:
-                suggestions.extend([
-                    "Focus on clarifying your core creative intent",
-                    "Consider breaking down complex ideas into smaller, manageable components"
-                ])
+                suggestions.extend(
+                    [
+                        "Focus on clarifying your core creative intent",
+                        "Consider breaking down complex ideas into smaller, manageable components",
+                    ]
+                )
 
         return {
             "session_id": session_id,
             "suggestions": suggestions,
             "suggestion_count": len(suggestions),
             "sovereignty_level": session["sovereignty_level"].value,
-            "ai_influence_level": "suggestion_only"
+            "ai_influence_level": "suggestion_only",
         }
 
     async def terminate_session(self, session_id: str) -> dict[str, Any]:
@@ -236,9 +248,16 @@ class ConsciousnessMergingBridge:
             "session_id": session_id,
             "total_merges": len(session["merge_history"]),
             "final_state": session["current_state"].value,
-            "sovereignty_maintained": all(m.get("sovereignty_maintained", True) for m in session["merge_history"]),
-            "avg_harmony_score": sum(m["harmony_score"] for m in session["merge_history"]) / len(session["merge_history"]) if session["merge_history"] else 0,
-            "bridge_session_terminated": True
+            "sovereignty_maintained": all(
+                m.get("sovereignty_maintained", True) for m in session["merge_history"]
+            ),
+            "avg_harmony_score": (
+                sum(m["harmony_score"] for m in session["merge_history"])
+                / len(session["merge_history"])
+                if session["merge_history"]
+                else 0
+            ),
+            "bridge_session_terminated": True,
         }
 
 
@@ -257,7 +276,9 @@ async def bridge_start_consciousness_session(human_context: dict[str, Any]) -> d
     return await consciousness_merging_bridge.start_consciousness_session(human_context)
 
 
-async def bridge_process_creative_input(session_id: str, creative_input: dict[str, Any]) -> dict[str, Any]:
+async def bridge_process_creative_input(
+    session_id: str, creative_input: dict[str, Any]
+) -> dict[str, Any]:
     """Bridge command to process creative input"""
     return await consciousness_merging_bridge.process_creative_input(session_id, creative_input)
 
