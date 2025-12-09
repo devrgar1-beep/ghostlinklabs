@@ -21,7 +21,45 @@ class GhostLinkIntegrationHub:
     def create_integration_template(self, language: str, framework: str = None) -> bool:
         """Create integration template for specific language/framework"""
 
-        template_content = f"""# GhostLink Integration Template - {language}
+        if language.lower() == "powershell":
+            # PowerShell uses .psm1 modules
+            template_content = """# GhostLink Integration Template - PowerShell
+# This template shows how to integrate GhostLink into your PowerShell scripts and modules
+
+#Requires -Version 7.0
+
+# Installation
+# Install GhostLink API and ensure the service is running on localhost:8080
+
+# Basic Usage
+Import-Module GhostLink
+
+# Initialize GhostLink client
+Initialize-GhostLink -ApiUrl "http://localhost:8080"
+
+# Example: Add AI-powered code analysis
+$code = "Get-Process | Where-Object { $_.CPU -gt 10 }"
+$analysis = $code | Analyze-PowerShellCode -IncludeSuggestions
+
+# Example: Get intelligent suggestions
+$suggestions = Get-GhostLinkSuggestion -Context "Optimize PowerShell pipeline performance" -Task "scripting"
+
+# Example: Integrate with your build process
+function Invoke-BuildWithGhostLink {
+    # Analyze current directory
+    $analysis = Analyze-PowerShellCode -Code (Get-Content *.ps1 -Raw)
+
+    # Get optimization suggestions
+    $suggestions = Get-GhostLinkSuggestion -Context "PowerShell build optimization" -Task "build"
+
+    # Apply automated improvements
+    # (Implementation depends on specific needs)
+    Write-Host "GhostLink analysis complete"
+}
+"""
+            template_file = self.templates_dir / f"ghostlink_{language}_integration.psm1"
+        else:
+            template_content = f"""# GhostLink Integration Template - {language}
 # This template shows how to integrate GhostLink into your {language} project
 
 # Installation
@@ -55,8 +93,8 @@ def build_with_ghostlink():
 if __name__ == "__main__":
     build_with_ghostlink()
 """
+            template_file = self.templates_dir / f"ghostlink_{language}_integration.py"
 
-        template_file = self.templates_dir / f"ghostlink_{language}_integration.py"
         try:
             template_file.write_text(template_content)
             logger.info(f"✅ Created {language} integration template")
@@ -237,7 +275,7 @@ def main():
     print("=" * 50)
 
     # Create templates for popular languages
-    languages = ["python", "javascript", "typescript", "java", "cpp", "go", "rust"]
+    languages = ["python", "javascript", "typescript", "java", "cpp", "go", "rust", "powershell"]
 
     for lang in languages:
         hub.create_integration_template(lang)
