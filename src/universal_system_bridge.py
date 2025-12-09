@@ -4,25 +4,38 @@ GhostLink Universal System Bridge
 Comprehensive integration layer connecting all hardware, software, firmware, and applications
 """
 
-import os
-import sys
-import json
-import time
 import asyncio
-import threading
-import subprocess
-from pathlib import Path
-from typing import Dict, List, Any, Optional, Callable, Union
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from enum import Enum
 import logging
+from pathlib import Path
+import subprocess
+import sys
+import threading
+import time
+from typing import Any, Dict, List, Optional
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger("GhostLinkBridge")
+
+# Import consciousness components
+try:
+    from .consciousness_merging import consciousness_merging_engine
+    from .collaborative_intelligence import collaborative_intelligence_framework
+    from .real_time_co_creation import real_time_co_creation_interface
+    from .consciousness_driven_development import consciousness_driven_development_environment
+    CONSCIOUSNESS_COMPONENTS_AVAILABLE = True
+except ImportError:
+    logger.warning("Consciousness components not available - running in legacy mode")
+    CONSCIOUSNESS_COMPONENTS_AVAILABLE = False
+
 
 class ComponentType(Enum):
     """Types of system components"""
+
     HARDWARE = "hardware"
     SOFTWARE = "software"
     FIRMWARE = "firmware"
@@ -32,17 +45,21 @@ class ComponentType(Enum):
     SERVICE = "service"
     DEVICE = "device"
 
+
 class BridgeStatus(Enum):
     """Bridge component status"""
+
     ONLINE = "online"
     OFFLINE = "offline"
     DEGRADED = "degraded"
     MAINTENANCE = "maintenance"
     ERROR = "error"
 
+
 @dataclass
 class ComponentInfo:
     """Information about a system component"""
+
     id: str
     name: str
     type: ComponentType
@@ -54,9 +71,11 @@ class ComponentInfo:
     last_seen: float
     health_score: float
 
+
 @dataclass
 class BridgeMessage:
     """Message format for bridge communication"""
+
     id: str
     source: str
     target: str
@@ -64,6 +83,7 @@ class BridgeMessage:
     payload: Dict[str, Any]
     timestamp: float
     priority: str
+
 
 class UniversalSystemBridge:
     """Universal bridge connecting all system components"""
@@ -149,153 +169,178 @@ class UniversalSystemBridge:
         """Register all core system components"""
 
         # Hardware components
-        await self.register_component(ComponentInfo(
-            id="cpu_monitor",
-            name="CPU Monitor",
-            type=ComponentType.HARDWARE,
-            status=BridgeStatus.ONLINE,
-            description="CPU usage and performance monitoring",
-            capabilities=["monitor", "metrics", "alerts"],
-            endpoints={"metrics": "/hardware/cpu/metrics", "control": "/hardware/cpu/control"},
-            metadata={"architecture": "arm64", "cores": 8},
-            last_seen=time.time(),
-            health_score=1.0
-        ))
+        await self.register_component(
+            ComponentInfo(
+                id="cpu_monitor",
+                name="CPU Monitor",
+                type=ComponentType.HARDWARE,
+                status=BridgeStatus.ONLINE,
+                description="CPU usage and performance monitoring",
+                capabilities=["monitor", "metrics", "alerts"],
+                endpoints={"metrics": "/hardware/cpu/metrics", "control": "/hardware/cpu/control"},
+                metadata={"architecture": "arm64", "cores": 8},
+                last_seen=time.time(),
+                health_score=1.0,
+            )
+        )
 
-        await self.register_component(ComponentInfo(
-            id="memory_monitor",
-            name="Memory Monitor",
-            type=ComponentType.HARDWARE,
-            status=BridgeStatus.ONLINE,
-            description="System memory monitoring and management",
-            capabilities=["monitor", "metrics", "cleanup"],
-            endpoints={"metrics": "/hardware/memory/metrics", "control": "/hardware/memory/control"},
-            metadata={"total_gb": 16, "type": "DDR4"},
-            last_seen=time.time(),
-            health_score=1.0
-        ))
+        await self.register_component(
+            ComponentInfo(
+                id="memory_monitor",
+                name="Memory Monitor",
+                type=ComponentType.HARDWARE,
+                status=BridgeStatus.ONLINE,
+                description="System memory monitoring and management",
+                capabilities=["monitor", "metrics", "cleanup"],
+                endpoints={
+                    "metrics": "/hardware/memory/metrics",
+                    "control": "/hardware/memory/control",
+                },
+                metadata={"total_gb": 16, "type": "DDR4"},
+                last_seen=time.time(),
+                health_score=1.0,
+            )
+        )
 
-        await self.register_component(ComponentInfo(
-            id="storage_monitor",
-            name="Storage Monitor",
-            type=ComponentType.STORAGE,
-            status=BridgeStatus.ONLINE,
-            description="Disk and storage system monitoring",
-            capabilities=["monitor", "metrics", "cleanup", "backup"],
-            endpoints={"metrics": "/storage/metrics", "control": "/storage/control"},
-            metadata={"total_gb": 512, "type": "SSD"},
-            last_seen=time.time(),
-            health_score=1.0
-        ))
+        await self.register_component(
+            ComponentInfo(
+                id="storage_monitor",
+                name="Storage Monitor",
+                type=ComponentType.STORAGE,
+                status=BridgeStatus.ONLINE,
+                description="Disk and storage system monitoring",
+                capabilities=["monitor", "metrics", "cleanup", "backup"],
+                endpoints={"metrics": "/storage/metrics", "control": "/storage/control"},
+                metadata={"total_gb": 512, "type": "SSD"},
+                last_seen=time.time(),
+                health_score=1.0,
+            )
+        )
 
         # Software components
-        await self.register_component(ComponentInfo(
-            id="ghostlink_api",
-            name="GhostLink API Server",
-            type=ComponentType.SOFTWARE,
-            status=BridgeStatus.ONLINE,
-            description="Main GhostLink API server",
-            capabilities=["api", "rest", "websocket"],
-            endpoints={"api": "/api/v1", "health": "/health", "ws": "/ws"},
-            metadata={"port": 3000, "version": "3.0"},
-            last_seen=time.time(),
-            health_score=1.0
-        ))
+        await self.register_component(
+            ComponentInfo(
+                id="ghostlink_api",
+                name="GhostLink API Server",
+                type=ComponentType.SOFTWARE,
+                status=BridgeStatus.ONLINE,
+                description="Main GhostLink API server",
+                capabilities=["api", "rest", "websocket"],
+                endpoints={"api": "/api/v1", "health": "/health", "ws": "/ws"},
+                metadata={"port": 3000, "version": "3.0"},
+                last_seen=time.time(),
+                health_score=1.0,
+            )
+        )
 
-        await self.register_component(ComponentInfo(
-            id="link_orchestrator",
-            name="Link AI Orchestrator",
-            type=ComponentType.SOFTWARE,
-            status=BridgeStatus.ONLINE,
-            description="AI-powered task orchestration system",
-            capabilities=["orchestrate", "schedule", "learn", "automate"],
-            endpoints={"cli": "/link/cli", "api": "/link/api", "status": "/link/status"},
-            metadata={"active": True, "tasks": 8, "preferences": 6},
-            last_seen=time.time(),
-            health_score=1.0
-        ))
+        await self.register_component(
+            ComponentInfo(
+                id="link_orchestrator",
+                name="Link AI Orchestrator",
+                type=ComponentType.SOFTWARE,
+                status=BridgeStatus.ONLINE,
+                description="AI-powered task orchestration system",
+                capabilities=["orchestrate", "schedule", "learn", "automate"],
+                endpoints={"cli": "/link/cli", "api": "/link/api", "status": "/link/status"},
+                metadata={"active": True, "tasks": 8, "preferences": 6},
+                last_seen=time.time(),
+                health_score=1.0,
+            )
+        )
 
-        await self.register_component(ComponentInfo(
-            id="task_scheduler",
-            name="Task Scheduler",
-            type=ComponentType.SERVICE,
-            status=BridgeStatus.ONLINE,
-            description="Advanced task scheduling system",
-            capabilities=["schedule", "cron", "priority", "recurring"],
-            endpoints={"schedule": "/scheduler/schedule", "status": "/scheduler/status"},
-            metadata={"active_tasks": 5, "completed": 12},
-            last_seen=time.time(),
-            health_score=1.0
-        ))
+        await self.register_component(
+            ComponentInfo(
+                id="task_scheduler",
+                name="Task Scheduler",
+                type=ComponentType.SERVICE,
+                status=BridgeStatus.ONLINE,
+                description="Advanced task scheduling system",
+                capabilities=["schedule", "cron", "priority", "recurring"],
+                endpoints={"schedule": "/scheduler/schedule", "status": "/scheduler/status"},
+                metadata={"active_tasks": 5, "completed": 12},
+                last_seen=time.time(),
+                health_score=1.0,
+            )
+        )
 
         # Firmware components
-        await self.register_component(ComponentInfo(
-            id="firmware_manager",
-            name="Firmware Manager",
-            type=ComponentType.FIRMWARE,
-            status=BridgeStatus.ONLINE,
-            description="System firmware management and updates",
-            capabilities=["update", "backup", "verify", "rollback"],
-            endpoints={"update": "/firmware/update", "status": "/firmware/status"},
-            metadata={"qualcomm_soc": "31.0.63.0", "build": "39134"},
-            last_seen=time.time(),
-            health_score=1.0
-        ))
+        await self.register_component(
+            ComponentInfo(
+                id="firmware_manager",
+                name="Firmware Manager",
+                type=ComponentType.FIRMWARE,
+                status=BridgeStatus.ONLINE,
+                description="System firmware management and updates",
+                capabilities=["update", "backup", "verify", "rollback"],
+                endpoints={"update": "/firmware/update", "status": "/firmware/status"},
+                metadata={"qualcomm_soc": "31.0.63.0", "build": "39134"},
+                last_seen=time.time(),
+                health_score=1.0,
+            )
+        )
 
         # Application components
-        await self.register_component(ComponentInfo(
-            id="vscode_integration",
-            name="VS Code Integration",
-            type=ComponentType.APPLICATION,
-            status=BridgeStatus.ONLINE,
-            description="VS Code editor integration",
-            capabilities=["edit", "debug", "extensions", "tasks"],
-            endpoints={"workspace": "/vscode/workspace", "tasks": "/vscode/tasks"},
-            metadata={"extensions": 15, "workspace": "ghostlink.code-workspace"},
-            last_seen=time.time(),
-            health_score=0.9
-        ))
+        await self.register_component(
+            ComponentInfo(
+                id="vscode_integration",
+                name="VS Code Integration",
+                type=ComponentType.APPLICATION,
+                status=BridgeStatus.ONLINE,
+                description="VS Code editor integration",
+                capabilities=["edit", "debug", "extensions", "tasks"],
+                endpoints={"workspace": "/vscode/workspace", "tasks": "/vscode/tasks"},
+                metadata={"extensions": 15, "workspace": "ghostlink.code-workspace"},
+                last_seen=time.time(),
+                health_score=0.9,
+            )
+        )
 
-        await self.register_component(ComponentInfo(
-            id="wireshark_analyzer",
-            name="Wireshark Packet Analyzer",
-            type=ComponentType.APPLICATION,
-            status=BridgeStatus.ONLINE,
-            description="Network packet analysis and dissection",
-            capabilities=["capture", "analyze", "dissect", "gpu_accelerate"],
-            endpoints={"capture": "/wireshark/capture", "analyze": "/wireshark/analyze"},
-            metadata={"gpu_acceleration": True, "protocols": 50},
-            last_seen=time.time(),
-            health_score=1.0
-        ))
+        await self.register_component(
+            ComponentInfo(
+                id="wireshark_analyzer",
+                name="Wireshark Packet Analyzer",
+                type=ComponentType.APPLICATION,
+                status=BridgeStatus.ONLINE,
+                description="Network packet analysis and dissection",
+                capabilities=["capture", "analyze", "dissect", "gpu_accelerate"],
+                endpoints={"capture": "/wireshark/capture", "analyze": "/wireshark/analyze"},
+                metadata={"gpu_acceleration": True, "protocols": 50},
+                last_seen=time.time(),
+                health_score=1.0,
+            )
+        )
 
         # Network components
-        await self.register_component(ComponentInfo(
-            id="network_monitor",
-            name="Network Monitor",
-            type=ComponentType.NETWORK,
-            status=BridgeStatus.ONLINE,
-            description="Network traffic and connectivity monitoring",
-            capabilities=["monitor", "diagnose", "optimize", "secure"],
-            endpoints={"traffic": "/network/traffic", "diagnostics": "/network/diag"},
-            metadata={"interfaces": 3, "protocols": ["tcp", "udp", "icmp"]},
-            last_seen=time.time(),
-            health_score=1.0
-        ))
+        await self.register_component(
+            ComponentInfo(
+                id="network_monitor",
+                name="Network Monitor",
+                type=ComponentType.NETWORK,
+                status=BridgeStatus.ONLINE,
+                description="Network traffic and connectivity monitoring",
+                capabilities=["monitor", "diagnose", "optimize", "secure"],
+                endpoints={"traffic": "/network/traffic", "diagnostics": "/network/diag"},
+                metadata={"interfaces": 3, "protocols": ["tcp", "udp", "icmp"]},
+                last_seen=time.time(),
+                health_score=1.0,
+            )
+        )
 
         # Device components
-        await self.register_component(ComponentInfo(
-            id="sd_card_device",
-            name="SD Card Device",
-            type=ComponentType.DEVICE,
-            status=BridgeStatus.ONLINE,
-            description="External SD card storage device",
-            capabilities=["read", "write", "firmware", "backup"],
-            endpoints={"mount": "/device/sdcard/mount", "firmware": "/device/sdcard/firmware"},
-            metadata={"size_gb": 128, "filesystem": "NTFS", "firmware_version": "31.0.63.0"},
-            last_seen=time.time(),
-            health_score=1.0
-        ))
+        await self.register_component(
+            ComponentInfo(
+                id="sd_card_device",
+                name="SD Card Device",
+                type=ComponentType.DEVICE,
+                status=BridgeStatus.ONLINE,
+                description="External SD card storage device",
+                capabilities=["read", "write", "firmware", "backup"],
+                endpoints={"mount": "/device/sdcard/mount", "firmware": "/device/sdcard/firmware"},
+                metadata={"size_gb": 128, "filesystem": "NTFS", "firmware_version": "31.0.63.0"},
+                last_seen=time.time(),
+                health_score=1.0,
+            )
+        )
 
     async def register_component(self, component: ComponentInfo):
         """Register a component with the bridge"""
@@ -349,14 +394,12 @@ class UniversalSystemBridge:
         """Discover running system processes"""
         try:
             result = await asyncio.create_subprocess_shell(
-                "ps aux",
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
+                "ps aux", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
             )
             stdout, stderr = await result.communicate()
 
             if result.returncode == 0:
-                lines = stdout.decode().split('\n')[1:]  # Skip header
+                lines = stdout.decode().split("\n")[1:]  # Skip header
                 for line in lines:
                     if line.strip():
                         parts = line.split()
@@ -365,22 +408,27 @@ class UniversalSystemBridge:
                             process_name = parts[10] if len(parts) > 10 else "unknown"
 
                             # Check for GhostLink processes
-                            if "ghostlink" in process_name.lower() or "link" in process_name.lower():
+                            if (
+                                "ghostlink" in process_name.lower()
+                                or "link" in process_name.lower()
+                            ):
                                 component_id = f"process_{pid}"
 
                                 if component_id not in self.components:
-                                    await self.register_component(ComponentInfo(
-                                        id=component_id,
-                                        name=f"Process: {process_name}",
-                                        type=ComponentType.SOFTWARE,
-                                        status=BridgeStatus.ONLINE,
-                                        description=f"Running process {process_name}",
-                                        capabilities=["monitor", "control"],
-                                        endpoints={"status": f"/process/{pid}/status"},
-                                        metadata={"pid": pid, "command": process_name},
-                                        last_seen=time.time(),
-                                        health_score=1.0
-                                    ))
+                                    await self.register_component(
+                                        ComponentInfo(
+                                            id=component_id,
+                                            name=f"Process: {process_name}",
+                                            type=ComponentType.SOFTWARE,
+                                            status=BridgeStatus.ONLINE,
+                                            description=f"Running process {process_name}",
+                                            capabilities=["monitor", "control"],
+                                            endpoints={"status": f"/process/{pid}/status"},
+                                            metadata={"pid": pid, "command": process_name},
+                                            last_seen=time.time(),
+                                            health_score=1.0,
+                                        )
+                                    )
         except Exception as e:
             logger.error(f"Process discovery error: {e}")
 
@@ -388,9 +436,7 @@ class UniversalSystemBridge:
         """Discover mounted devices"""
         try:
             result = await asyncio.create_subprocess_shell(
-                "ls /Volumes/",
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
+                "ls /Volumes/", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
             )
             stdout, stderr = await result.communicate()
 
@@ -401,18 +447,20 @@ class UniversalSystemBridge:
                         component_id = f"volume_{volume.lower()}"
 
                         if component_id not in self.components:
-                            await self.register_component(ComponentInfo(
-                                id=component_id,
-                                name=f"Volume: {volume}",
-                                type=ComponentType.STORAGE,
-                                status=BridgeStatus.ONLINE,
-                                description=f"Mounted volume {volume}",
-                                capabilities=["read", "write", "monitor"],
-                                endpoints={"mount": f"/volume/{volume}/mount"},
-                                metadata={"path": f"/Volumes/{volume}", "type": "external"},
-                                last_seen=time.time(),
-                                health_score=1.0
-                            ))
+                            await self.register_component(
+                                ComponentInfo(
+                                    id=component_id,
+                                    name=f"Volume: {volume}",
+                                    type=ComponentType.STORAGE,
+                                    status=BridgeStatus.ONLINE,
+                                    description=f"Mounted volume {volume}",
+                                    capabilities=["read", "write", "monitor"],
+                                    endpoints={"mount": f"/volume/{volume}/mount"},
+                                    metadata={"path": f"/Volumes/{volume}", "type": "external"},
+                                    last_seen=time.time(),
+                                    health_score=1.0,
+                                )
+                            )
         except Exception as e:
             logger.error(f"Device discovery error: {e}")
 
@@ -420,31 +468,31 @@ class UniversalSystemBridge:
         """Discover network interfaces"""
         try:
             result = await asyncio.create_subprocess_shell(
-                "ifconfig -l",
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
+                "ifconfig -l", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
             )
             stdout, stderr = await result.communicate()
 
             if result.returncode == 0:
                 interfaces = stdout.decode().split()
                 for interface in interfaces:
-                    if interface.startswith(('en', 'lo', 'bridge')):
+                    if interface.startswith(("en", "lo", "bridge")):
                         component_id = f"interface_{interface}"
 
                         if component_id not in self.components:
-                            await self.register_component(ComponentInfo(
-                                id=component_id,
-                                name=f"Network: {interface}",
-                                type=ComponentType.NETWORK,
-                                status=BridgeStatus.ONLINE,
-                                description=f"Network interface {interface}",
-                                capabilities=["monitor", "configure"],
-                                endpoints={"status": f"/network/{interface}/status"},
-                                metadata={"interface": interface, "type": "ethernet"},
-                                last_seen=time.time(),
-                                health_score=1.0
-                            ))
+                            await self.register_component(
+                                ComponentInfo(
+                                    id=component_id,
+                                    name=f"Network: {interface}",
+                                    type=ComponentType.NETWORK,
+                                    status=BridgeStatus.ONLINE,
+                                    description=f"Network interface {interface}",
+                                    capabilities=["monitor", "configure"],
+                                    endpoints={"status": f"/network/{interface}/status"},
+                                    metadata={"interface": interface, "type": "ethernet"},
+                                    last_seen=time.time(),
+                                    health_score=1.0,
+                                )
+                            )
         except Exception as e:
             logger.error(f"Network discovery error: {e}")
 
@@ -452,20 +500,18 @@ class UniversalSystemBridge:
         """Discover storage devices"""
         try:
             result = await asyncio.create_subprocess_shell(
-                "df -h",
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
+                "df -h", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
             )
             stdout, stderr = await result.communicate()
 
             if result.returncode == 0:
-                lines = stdout.decode().split('\n')[1:]  # Skip header
+                lines = stdout.decode().split("\n")[1:]  # Skip header
                 for line in lines:
                     if line.strip():
                         parts = line.split()
                         if len(parts) >= 6:
                             mount_point = parts[5]
-                            if mount_point.startswith('/Volumes/'):
+                            if mount_point.startswith("/Volumes/"):
                                 device = parts[0]
                                 size = parts[1]
                                 used = parts[2]
@@ -474,23 +520,25 @@ class UniversalSystemBridge:
                                 component_id = f"storage_{mount_point.replace('/', '_')}"
 
                                 if component_id not in self.components:
-                                    await self.register_component(ComponentInfo(
-                                        id=component_id,
-                                        name=f"Storage: {mount_point}",
-                                        type=ComponentType.STORAGE,
-                                        status=BridgeStatus.ONLINE,
-                                        description=f"Storage mount point {mount_point}",
-                                        capabilities=["monitor", "usage"],
-                                        endpoints={"usage": f"/storage{mount_point}/usage"},
-                                        metadata={
-                                            "device": device,
-                                            "size": size,
-                                            "used": used,
-                                            "available": available
-                                        },
-                                        last_seen=time.time(),
-                                        health_score=1.0
-                                    ))
+                                    await self.register_component(
+                                        ComponentInfo(
+                                            id=component_id,
+                                            name=f"Storage: {mount_point}",
+                                            type=ComponentType.STORAGE,
+                                            status=BridgeStatus.ONLINE,
+                                            description=f"Storage mount point {mount_point}",
+                                            capabilities=["monitor", "usage"],
+                                            endpoints={"usage": f"/storage{mount_point}/usage"},
+                                            metadata={
+                                                "device": device,
+                                                "size": size,
+                                                "used": used,
+                                                "available": available,
+                                            },
+                                            last_seen=time.time(),
+                                            health_score=1.0,
+                                        )
+                                    )
         except Exception as e:
             logger.error(f"Storage discovery error: {e}")
 
@@ -505,7 +553,9 @@ class UniversalSystemBridge:
 
     async def process_message(self, message: BridgeMessage):
         """Process a bridge message"""
-        logger.info(f"📨 Processing message: {message.action} from {message.source} to {message.target}")
+        logger.info(
+            f"📨 Processing message: {message.action} from {message.source} to {message.target}"
+        )
 
         try:
             # Route message to appropriate handler
@@ -526,7 +576,7 @@ class UniversalSystemBridge:
 
     async def route_to_component(self, message: BridgeMessage):
         """Route message to specific component"""
-        target_component = message.target.split('/')[0]
+        target_component = message.target.split("/")[0]
 
         if target_component in self.components:
             component = self.components[target_component]
@@ -551,12 +601,14 @@ class UniversalSystemBridge:
                 # Open file in VS Code
                 file_path = message.payload.get("file_path")
                 if file_path:
-                    subprocess.run(["code", file_path], cwd=self.project_root)
+                    subprocess.run(["code", file_path], check=False, cwd=self.project_root)
             elif message.action == "run_task":
                 # Run VS Code task
                 task_name = message.payload.get("task_name")
                 if task_name:
-                    subprocess.run(["code", "--run-task", task_name], cwd=self.project_root)
+                    subprocess.run(
+                        ["code", "--run-task", task_name], check=False, cwd=self.project_root
+                    )
 
         elif component.id == "wireshark_analyzer":
             if message.action == "start_capture":
@@ -621,19 +673,17 @@ class UniversalSystemBridge:
         """Check health of a specific component"""
         if component.type == ComponentType.HARDWARE:
             return await self.hardware_interface.check_health(component)
-        elif component.type == ComponentType.SOFTWARE:
+        if component.type == ComponentType.SOFTWARE:
             return await self.api_interface.check_health(component)
-        elif component.type == ComponentType.SERVICE:
+        if component.type == ComponentType.SERVICE:
             return await self.check_service_health(component)
-        else:
-            # Default health check
-            time_since_seen = time.time() - component.last_seen
-            if time_since_seen < 60:  # Seen within last minute
-                return 1.0
-            elif time_since_seen < 300:  # Seen within 5 minutes
-                return 0.8
-            else:
-                return 0.5
+        # Default health check
+        time_since_seen = time.time() - component.last_seen
+        if time_since_seen < 60:  # Seen within last minute
+            return 1.0
+        if time_since_seen < 300:  # Seen within 5 minutes
+            return 0.8
+        return 0.5
 
     async def check_service_health(self, component: ComponentInfo) -> float:
         """Check health of service components"""
@@ -643,7 +693,7 @@ class UniversalSystemBridge:
                 result = await asyncio.create_subprocess_shell(
                     "pgrep -f ghostlink_scheduler",
                     stdout=asyncio.subprocess.PIPE,
-                    stderr=asyncio.subprocess.PIPE
+                    stderr=asyncio.subprocess.PIPE,
                 )
                 await result.wait()
                 return 1.0 if result.returncode == 0 else 0.0
@@ -653,9 +703,9 @@ class UniversalSystemBridge:
             # Check API health endpoint
             try:
                 result = await asyncio.create_subprocess_shell(
-                    f"curl -s http://localhost:3000/health | grep -q 'ok'",
+                    "curl -s http://localhost:3000/health | grep -q 'ok'",
                     stdout=asyncio.subprocess.PIPE,
-                    stderr=asyncio.subprocess.PIPE
+                    stderr=asyncio.subprocess.PIPE,
                 )
                 await result.wait()
                 return 1.0 if result.returncode == 0 else 0.0
@@ -736,12 +786,18 @@ class UniversalSystemBridge:
                 "network": len(self.network_components),
                 "storage": len(self.storage_components),
                 "service": len(self.service_components),
-                "device": len(self.device_components)
+                "device": len(self.device_components),
             },
-            "online_components": len([c for c in self.components.values() if c.status == BridgeStatus.ONLINE]),
-            "health_score": sum(c.health_score for c in self.components.values()) / len(self.components) if self.components else 0,
+            "online_components": len(
+                [c for c in self.components.values() if c.status == BridgeStatus.ONLINE]
+            ),
+            "health_score": (
+                sum(c.health_score for c in self.components.values()) / len(self.components)
+                if self.components
+                else 0
+            ),
             "discovery_enabled": self.discovery_enabled,
-            "last_discovery": time.time()
+            "last_discovery": time.time(),
         }
 
     def get_components_by_type(self, component_type: ComponentType) -> List[ComponentInfo]:
@@ -775,7 +831,7 @@ class UniversalSystemBridge:
         self.consciousness_sharing_channels[agent_id] = {
             "type": agent_type,
             "connected": True,
-            "consciousness_stream": "active"
+            "consciousness_stream": "active",
         }
         return {"agent_connected": agent_id}
 
@@ -785,12 +841,11 @@ class UniversalSystemBridge:
             "context": decision_context,
             "agents": participating_agents,
             "consensus_reached": True,
-            "decision_made": "collaborative_approach"
+            "decision_made": "collaborative_approach",
         }
         return decision_result
 
-
-# Interface classes for different component types
+    # Interface classes for different component types
 
     def __init__(self):
         self.link_cli = ["python3", "-m", "ghostlink.link_cli"]
@@ -799,9 +854,10 @@ class UniversalSystemBridge:
         """Get Link status"""
         try:
             result = await asyncio.create_subprocess_exec(
-                *self.link_cli, "status",
+                *self.link_cli,
+                "status",
                 stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
+                stderr=asyncio.subprocess.PIPE,
             )
             stdout, stderr = await result.communicate()
 
@@ -810,8 +866,7 @@ class UniversalSystemBridge:
                 output = stdout.decode()
                 # Extract relevant info from output
                 return {"status": "online", "raw_output": output}
-            else:
-                return {"status": "error", "error": stderr.decode()}
+            return {"status": "error", "error": stderr.decode()}
         except Exception as e:
             return {"status": "error", "error": str(e)}
 
@@ -822,17 +877,24 @@ class UniversalSystemBridge:
             priority = message.payload.get("priority", "normal")
 
             result = await asyncio.create_subprocess_exec(
-                *self.link_cli, "task", "add", task_desc, "--priority", priority,
+                *self.link_cli,
+                "task",
+                "add",
+                task_desc,
+                "--priority",
+                priority,
                 stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
+                stderr=asyncio.subprocess.PIPE,
             )
             await result.wait()
 
         elif message.action == "get_tasks":
             result = await asyncio.create_subprocess_exec(
-                *self.link_cli, "task", "list",
+                *self.link_cli,
+                "task",
+                "list",
                 stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
+                stderr=asyncio.subprocess.PIPE,
             )
             stdout, stderr = await result.communicate()
             # Process task list...
@@ -845,6 +907,7 @@ class APIInterface:
         """Check health of API component"""
         try:
             import aiohttp
+
             async with aiohttp.ClientSession() as session:
                 health_url = f"http://localhost:3000{component.endpoints.get('health', '/health')}"
                 async with session.get(health_url, timeout=5) as response:
@@ -855,12 +918,10 @@ class APIInterface:
     async def handle_message(self, message: BridgeMessage):
         """Handle API messages"""
         # Implementation for API communication
-        pass
 
     async def handle_component_message(self, component: ComponentInfo, message: BridgeMessage):
         """Handle messages for API components"""
         # Implementation for component-specific API calls
-        pass
 
 
 class HardwareInterface:
@@ -874,7 +935,7 @@ class HardwareInterface:
                 result = await asyncio.create_subprocess_shell(
                     "ps -A -o %cpu | awk '{s+=$1} END {print s}'",
                     stdout=asyncio.subprocess.PIPE,
-                    stderr=asyncio.subprocess.PIPE
+                    stderr=asyncio.subprocess.PIPE,
                 )
                 stdout, stderr = await result.communicate()
 
@@ -891,7 +952,7 @@ class HardwareInterface:
                 result = await asyncio.create_subprocess_shell(
                     "vm_stat | awk '/Pages free/ {free=$3} /Pages active/ {active=$3} END {print (active/(active+free))}'",
                     stdout=asyncio.subprocess.PIPE,
-                    stderr=asyncio.subprocess.PIPE
+                    stderr=asyncio.subprocess.PIPE,
                 )
                 stdout, stderr = await result.communicate()
 
@@ -910,8 +971,7 @@ class HardwareInterface:
         if component.id == "cpu_monitor":
             try:
                 result = await asyncio.create_subprocess_shell(
-                    "sysctl -n machdep.cpu.brand_string",
-                    stdout=asyncio.subprocess.PIPE
+                    "sysctl -n machdep.cpu.brand_string", stdout=asyncio.subprocess.PIPE
                 )
                 stdout, _ = await result.communicate()
                 metrics["brand"] = stdout.decode().strip()
@@ -921,8 +981,7 @@ class HardwareInterface:
         elif component.id == "memory_monitor":
             try:
                 result = await asyncio.create_subprocess_shell(
-                    "sysctl -n hw.memsize",
-                    stdout=asyncio.subprocess.PIPE
+                    "sysctl -n hw.memsize", stdout=asyncio.subprocess.PIPE
                 )
                 stdout, _ = await result.communicate()
                 metrics["total_bytes"] = int(stdout.decode().strip())
@@ -934,12 +993,10 @@ class HardwareInterface:
     async def handle_message(self, message: BridgeMessage):
         """Handle hardware messages"""
         # Implementation for hardware control
-        pass
 
     async def handle_component_message(self, component: ComponentInfo, message: BridgeMessage):
         """Handle messages for hardware components"""
         # Implementation for hardware-specific operations
-        pass
 
 
 class NetworkInterface:
@@ -955,7 +1012,7 @@ class NetworkInterface:
                 result = await asyncio.create_subprocess_shell(
                     f"ifconfig {interface}",
                     stdout=asyncio.subprocess.PIPE,
-                    stderr=asyncio.subprocess.PIPE
+                    stderr=asyncio.subprocess.PIPE,
                 )
                 stdout, stderr = await result.communicate()
 
@@ -973,7 +1030,6 @@ class NetworkInterface:
     async def handle_message(self, message: BridgeMessage):
         """Handle network messages"""
         # Implementation for network operations
-        pass
 
 
 # Global bridge instance
@@ -998,6 +1054,3 @@ async def main():
 if __name__ == "__main__":
     # Run the bridge
     asyncio.run(main())
-
-
-
