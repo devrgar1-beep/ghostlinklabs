@@ -1,8 +1,0 @@
----
-- hosts: controllers
-  become: yes
-  roles: [ghostlink]
-
-- hosts: peers
-  become: yes
-  roles: [ghostlink]

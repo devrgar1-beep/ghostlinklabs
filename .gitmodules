@@ -1,9 +1,0 @@
-[submodule "fpga/icestorm"]
-	path = fpga/icestorm
-	url = https://github.com/YosysHQ/icestorm.git
-[submodule "fpga/nextpnr"]
-	path = fpga/nextpnr
-	url = https://github.com/YosysHQ/nextpnr.git
-[submodule "fpga/yosys"]
-	path = fpga/yosys
-	url = https://github.com/YosysHQ/yosys.git
