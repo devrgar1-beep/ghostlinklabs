@@ -1,0 +1,209 @@
+# Default values for GhostLink Helm chart
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Global settings
+global:
+  imageRegistry: ""
+  imagePullSecrets: []
+  storageClass: ""
+
+# GhostLink Core settings
+ghostlinkCore:
+  enabled: true
+  image:
+    repository: ghostlink
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# API Server settings
+apiServer:
+  enabled: true
+  image:
+    repository: ghostlink
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  replicaCount: 2
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  service:
+    type: ClusterIP
+    port: 3000
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# AI Orchestrator settings
+orchestrator:
+  enabled: true
+  image:
+    repository: ghostlink
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 75
+    targetMemoryUtilizationPercentage: 85
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+  service:
+    type: ClusterIP
+    port: 8000
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# Nginx Load Balancer settings
+nginx:
+  enabled: true
+  image:
+    repository: nginx
+    tag: "alpine"
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi
+  service:
+    type: LoadBalancer
+    port: 80
+    httpsPort: 443
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# Prometheus settings
+prometheus:
+  enabled: true
+  image:
+    repository: prom/prometheus
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 2Gi
+    requests:
+      cpu: 100m
+      memory: 512Mi
+  service:
+    type: ClusterIP
+    port: 9090
+  persistence:
+    enabled: true
+    size: 50Gi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# Grafana settings
+grafana:
+  enabled: true
+  image:
+    repository: grafana/grafana
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  adminPassword: "ghostlink2025"  # Change in production
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+  service:
+    type: ClusterIP
+    port: 3000
+  persistence:
+    enabled: true
+    size: 10Gi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# Ingress settings
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  hosts:
+    - host: api.ghostlink.local
+      paths:
+        - path: /
+          pathType: Prefix
+    - host: grafana.ghostlink.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: ghostlink-tls
+      hosts:
+        - api.ghostlink.local
+        - grafana.ghostlink.local
+
+# Storage settings
+storage:
+  logs:
+    enabled: true
+    size: 20Gi
+    accessMode: ReadWriteMany
+  data:
+    enabled: true
+    size: 100Gi
+    accessMode: ReadWriteMany
+
+# Environment variables
+env:
+  GHOSTLINK_ENV: "production"
+  PYTHONPATH: "/app"
+  HOST: "0.0.0.0"
+
+# Secrets (base64 encoded)
+secrets:
+  tls:
+    enabled: false
+    # cert: <base64-encoded-cert>
+    # key: <base64-encoded-key>
+  apiKeys:
+    enabled: false
+    # openai: <base64-encoded-key>
+    # other keys...

@@ -1,0 +1,106 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ghostlink-core
+  namespace: ghostlink
+  labels:
+    app: ghostlink-core
+spec:
+  selector:
+    app: ghostlink-core
+  ports:
+  - name: controller
+    port: 7420
+    targetPort: 7420
+  - name: responder
+    port: 7422
+    targetPort: 7422
+  - name: metrics
+    port: 9108
+    targetPort: 9108
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ghostlink-api-prod
+  namespace: ghostlink
+  labels:
+    app: ghostlink-api
+spec:
+  selector:
+    app: ghostlink-api
+  ports:
+  - name: http
+    port: 3000
+    targetPort: 3000
+  - name: metrics
+    port: 8000
+    targetPort: 8000
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ghostlink-orchestrator-prod
+  namespace: ghostlink
+  labels:
+    app: ghostlink-orchestrator
+spec:
+  selector:
+    app: ghostlink-orchestrator
+  ports:
+  - name: metrics
+    port: 8000
+    targetPort: 8000
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  namespace: ghostlink
+  labels:
+    app: prometheus
+spec:
+  selector:
+    app: prometheus
+  ports:
+  - name: http
+    port: 9090
+    targetPort: 9090
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  namespace: ghostlink
+  labels:
+    app: grafana
+spec:
+  selector:
+    app: grafana
+  ports:
+  - name: http
+    port: 3000
+    targetPort: 3000
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-load-balancer
+  namespace: ghostlink
+  labels:
+    app: nginx-lb
+spec:
+  selector:
+    app: nginx-lb
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  - name: https
+    port: 443
+    targetPort: 443
+  type: LoadBalancer

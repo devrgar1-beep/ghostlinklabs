@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ghostlink-orchestrator-prod
+  namespace: ghostlink
+  labels:
+    app: ghostlink-orchestrator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ghostlink-orchestrator
+  template:
+    metadata:
+      labels:
+        app: ghostlink-orchestrator
+    spec:
+      containers:
+      - name: orchestrator
+        image: ghostlink:latest
+        command: ["python3", "optimized_ai_orchestrator.py"]
+        envFrom:
+        - configMapRef:
+            name: ghostlink-config
+        ports:
+        - containerPort: 8000
+          name: metrics
+        volumeMounts:
+        - name: logs
+          mountPath: /app/logs
+        - name: data
+          mountPath: /app/data
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        resources:
+          limits:
+            cpu: "2"
+            memory: "4Gi"
+          requests:
+            cpu: "1"
+            memory: "2Gi"
+      volumes:
+      - name: logs
+        persistentVolumeClaim:
+          claimName: ghostlink-logs
+      - name: data
+        persistentVolumeClaim:
+          claimName: ghostlink-data

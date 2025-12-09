@@ -1,0 +1,7 @@
+FROM python:3.11-slim
+RUN apt-get update && apt-get install -y curl
+WORKDIR /app
+COPY . .
+RUN pip install -r requirements.txt
+EXPOSE 8080
+CMD ["python", "ghostlink_api_server.py"]

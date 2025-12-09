@@ -1,0 +1,141 @@
+version: '3.8'
+
+services:
+  ghostlink:
+    build: .
+    container_name: ghostlink
+    restart: unless-stopped
+    environment:
+      # Controller bind ip (inside container). Use 127.0.0.1 with host networking; otherwise 0.0.0.0
+      - HOST=127.0.0.1
+      # Toggle processes
+      - RUN_CONTROLLER=1
+      - RUN_PEER=0 # set to 1 to read sensors (mount /sys below)
+      - RUN_BRIDGE=0 # set to 1 and provide OPENAI_API_KEY
+      - RUN_MESH=0 # set to 1 to enable mesh aggregator
+      - RUN_RESPONDER=0 # set to 1 to enable peer responder (7422)
+      # Mesh discovery configuration (choose ONE)
+      # - NEIGHBOR_IPS=192.168.4.22,192.168.4.24
+      # - NEIGHBORS_FILE=/run/ghostlink/neighbors.txt
+      # OpenAI (only if RUN_BRIDGE=1)
+      # - OPENAI_API_KEY=sk-...
+      # TLS (mTLS) optional: mount certs and set env if not using defaults
+      # - GL_TLS_CERT=/run/ghostlink/ctl.crt
+      # - GL_TLS_KEY=/run/ghostlink/ctl.key
+      # - GL_TLS_CA=/run/ghostlink/ca.crt
+      # Use host networking for simplest loopback bindings and metrics access
+    network_mode: host
+    # If not using host networking, comment the above and uncomment ports:
+    # ports:
+    #   - "7420:7420"
+    #   - "7422:7422"
+    #   - "9108:9108"
+    volumes:
+      # Optional: mount sensors from host into container (read-only)
+      - /sys/class/thermal:/sys/class/thermal:ro
+      # Optional: mount TLS creds directory
+      - ./creds:/run/ghostlink:ro
+    # Security: run as the non-root UID created in Dockerfile
+    user: "10001:10001"
+
+  # Production API Server
+  ghostlink-api-prod:
+    build: .
+    container_name: ghostlink-api-prod
+    ports:
+      - "3000:3000"
+    environment:
+      - GHOSTLINK_ENV=production
+      - PYTHONPATH=/app
+    volumes:
+      - ./logs:/app/logs
+      - ./data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - ghostlink-network
+
+  # AI Orchestrator Service
+  ghostlink-orchestrator-prod:
+    build: .
+    container_name: ghostlink-orchestrator-prod
+    command: ["python3", "optimized_ai_orchestrator.py"]
+    environment:
+      - GHOSTLINK_ENV=production
+      - PYTHONPATH=/app
+    volumes:
+      - ./logs:/app/logs
+      - ./data:/app/data
+    restart: unless-stopped
+    depends_on:
+      ghostlink-api-prod:
+        condition: service_healthy
+    networks:
+      - ghostlink-network
+
+  # Production Monitoring Stack
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ghostlink-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+    networks:
+      - ghostlink-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ghostlink-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-ghostlink2025}
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+    networks:
+      - ghostlink-network
+
+  # Production Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: ghostlink-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./logs/nginx:/var/log/nginx
+    restart: unless-stopped
+    depends_on:
+      - ghostlink-api-prod
+      - grafana
+    networks:
+      - ghostlink-network
+
+volumes:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  ghostlink-network:
+    driver: bridge

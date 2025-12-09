@@ -1,0 +1,45 @@
+[Unit]
+Description=GhostLink AI Orchestration Daemon
+Documentation=man:ghostlink(1) https://github.com/devrgar1-beep/ghostlinklabs
+After=network.target
+Wants=ghostlink-socket.socket
+
+[Service]
+Type=notify
+User=%u
+Group=%u
+WorkingDirectory=%h/Library/Mobile\ Documents/com~apple~CloudDocs/ghostlinklabs
+
+# Environment
+Environment="PATH=%h/Library/Mobile Documents/com~apple~CloudDocs/ghostlinklabs/.venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"
+Environment="GHOSTLINK_CONFIG_DIR=%C/ghostlink"
+Environment="GHOSTLINK_DATA_DIR=%h/.local/share/ghostlink"
+Environment="GHOSTLINK_LOG_DIR=%h/.local/share/ghostlink/logs"
+Environment="GHOSTLINK_RUNTIME_DIR=%t/ghostlink"
+
+# Core service config
+ExecStart=%h/Library/Mobile\ Documents/com~apple~CloudDocs/ghostlinklabs/.venv/bin/python -m ghostlink.link_cli start
+
+# Restart policy
+Restart=on-failure
+RestartSec=5s
+StartLimitInterval=60s
+StartLimitBurst=5
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=%h/.config/ghostlink %h/.local/share/ghostlink %h/.cache/ghostlink %t/ghostlink
+
+# Resource limits
+LimitNOFILE=65535
+LimitNPROC=512
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ghostlink
+
+[Install]
+WantedBy=default.target

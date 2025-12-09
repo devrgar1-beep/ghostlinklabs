@@ -1,0 +1,13 @@
+# iDRAC Management Network Inventory
+# Format: hostname,data_ip,idrac_ip,idrac_user,location
+#
+# Example:
+# r630-01,10.10.0.21,10.10.100.21,root,rack1-u10
+# r630-02,10.10.0.22,10.10.100.22,root,rack1-u12
+# r630-03,10.10.0.23,10.10.100.23,root,rack2-u05
+#
+# Notes:
+# - data_ip: OS network interface for GhostLink responder (port 7422)
+# - idrac_ip: Out-of-band management interface (Redfish HTTPS 443)
+# - idrac_user: iDRAC username (password stored in creds/idrac_creds.json)
+# - location: Physical rack/unit identifier

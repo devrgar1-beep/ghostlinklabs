@@ -1,0 +1,90 @@
+# GhostLink Sovereign Computing Container
+# Multi-stage build for optimized container size
+FROM python:3.11-slim as builder
+
+# Build dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    git \
+    curl \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create app directory
+WORKDIR /app
+
+# Copy requirements first for better caching
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Production stage
+FROM python:3.11-slim
+
+# Runtime dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    git \
+    openssh-client \
+    rsync \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create ghostlink user for security
+RUN useradd -m -u 1000 ghostlink && \
+    mkdir -p /opt/ghostlink /data/vault /data/state /data/keys && \
+    chown -R ghostlink:ghostlink /opt/ghostlink /data
+
+# Set working directory
+WORKDIR /opt/ghostlink
+
+# Copy Python dependencies from builder
+COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+
+# Copy GhostLink core files
+COPY --chown=ghostlink:ghostlink . .
+
+# Install GhostLink components
+RUN pip install --no-cache-dir \
+    flask \
+    fastapi \
+    uvicorn \
+    pydantic \
+    cryptography \
+    requests \
+    pyyaml \
+    jsonnet \
+    prometheus-client \
+    psutil
+
+# Create required directories and set permissions
+RUN mkdir -p \
+    /opt/ghostlink/neural \
+    /opt/ghostlink/wired \
+    /opt/ghostlink/configs \
+    /opt/ghostlink/scripts \
+    /opt/ghostlink/logs \
+    /opt/ghostlink/services \
+    /opt/ghostlink/tools \
+    /opt/ghostlink/examples \
+    /opt/ghostlink/tests \
+    && chown -R ghostlink:ghostlink /opt/ghostlink
+
+# Switch to ghostlink user
+USER ghostlink
+
+# Expose ports for various services
+EXPOSE 8080 8443 9090 9443
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8080/health || exit 1
+
+# Environment variables
+ENV GHOSTLINK_HOME=/opt/ghostlink
+ENV GHOSTLINK_DATA=/data
+ENV NEURAL_MODE=offline_local
+ENV SOVEREIGNTY_GATE=closed
+ENV PYTHONPATH=/opt/ghostlink
+
+# Default command
+CMD ["python", "-m", "ghostlink.main"]

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Release.Namespace | default "ghostlink" }}
+  labels:
+    name: {{ .Release.Namespace | default "ghostlink" }}
+    app: ghostlink-system
+    chart: {{ include "ghostlink.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}

@@ -1,0 +1,15 @@
+# ShellCheck Configuration for GhostLink
+# Open source shell script linter
+
+# Disable specific warnings
+# SC1091: Not following: file not included in mock
+disable=SC1091
+
+# SC2034: Variable appears unused
+# disable=SC2034
+
+# Enable optional checks
+enable=all
+
+# Set shell dialect (bash by default)
+shell=bash

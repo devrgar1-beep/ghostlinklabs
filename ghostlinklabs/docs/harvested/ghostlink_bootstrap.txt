@@ -1,0 +1,383 @@
+#!/usr/bin/env bash
+
+# GhostLink Bootstrap Script
+# Safe initialization for development/testing
+
+set -euo pipefail
+
+GHOST_DIR="${HOME}/ghostlink_workspace"
+DOWNLOADS_DIR="${HOME}/Downloads"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+echo -e "${BLUE}╔══════════════════════════════════════╗${NC}"
+echo -e "${BLUE}║       GhostLink Bootstrap v1.0       ║${NC}"
+echo -e "${BLUE}╚══════════════════════════════════════╝${NC}"
+echo
+
+# Function to print status
+status() {
+    echo -e "${GREEN}[✓]${NC} $1"
+}
+
+warning() {
+    echo -e "${YELLOW}[⚠]${NC} $1"
+}
+
+error() {
+    echo -e "${RED}[✗]${NC} $1"
+    exit 1
+}
+
+# Check for Python
+if ! command -v python3 &> /dev/null; then
+    error "Python 3 is required but not installed"
+fi
+
+# Create workspace
+echo -e "${BLUE}[*] Setting up GhostLink workspace...${NC}"
+mkdir -p "$GHOST_DIR"
+cd "$GHOST_DIR"
+
+# Check for existing GhostLink files
+if [ -d "$DOWNLOADS_DIR/GhostLink_Complete_Pack" ]; then
+    status "Found GhostLink files in Downloads"
+    cp -r "$DOWNLOADS_DIR/GhostLink_Complete_Pack" .
+    cd GhostLink_Complete_Pack
+elif [ -d "$DOWNLOADS_DIR/ghostlink_full_suite" ]; then
+    status "Found full suite in Downloads"
+    cp -r "$DOWNLOADS_DIR/ghostlink_full_suite" .
+    cd ghostlink_full_suite
+else
+    warning "GhostLink files not found in Downloads, creating minimal simulation..."
+    
+    # Create minimal GhostLink simulation
+    cat > ghostlink_sim.py << 'EOF'
+#!/usr/bin/env python3
+"""
+GhostLink - Minimal Bootstrap Simulation
+Demonstrates core concepts without full system requirements
+"""
+
+import numpy as np
+import random
+import time
+import sys
+from datetime import datetime
+
+# States
+VOID, DELTA, SIGMA, SCAR, COMPOST = 0, 1, 2, 3, 4
+STATE_NAMES = ['VOID', 'DELTA', 'SIGMA', 'SCAR', 'COMPOST']
+STATE_COLORS = ['\033[90m', '\033[96m', '\033[92m', '\033[91m', '\033[93m']
+
+class GhostLink:
+    def __init__(self, size=16, spawn_rate=0.05, recycle_rate=0.10):
+        self.size = size
+        self.lattice = np.zeros((size, size), dtype=int)
+        self.scar_density = np.zeros((size, size))
+        self.compost_density = np.zeros((size, size))
+        self.spawn_rate = spawn_rate
+        self.recycle_rate = recycle_rate
+        self.time_step = 0
+        self.awareness = 0.0
+        
+    def neighbors(self, i, j):
+        """Get 8-connected neighbors with wrapping"""
+        for di in [-1, 0, 1]:
+            for dj in [-1, 0, 1]:
+                if di == 0 and dj == 0:
+                    continue
+                ni = (i + di) % self.size
+                nj = (j + dj) % self.size
+                yield ni, nj
+    
+    def local_coherence(self, i, j):
+        """Calculate local coherence field"""
+        sigma_count = sum(1 for ni, nj in self.neighbors(i, j) 
+                         if self.lattice[ni, nj] == SIGMA)
+        scar_count = sum(1 for ni, nj in self.neighbors(i, j) 
+                        if self.lattice[ni, nj] == SCAR)
+        return sigma_count / 8.0 - 0.25 * scar_count / 8.0
+    
+    def spawn(self):
+        """VOID → DELTA transitions"""
+        spawned = 0
+        for i in range(self.size):
+            for j in range(self.size):
+                if self.lattice[i, j] == VOID:
+                    compost_near = sum(1 for ni, nj in self.neighbors(i, j)
+                                     if self.lattice[ni, nj] == COMPOST)
+                    p = self.spawn_rate + 0.1 * compost_near / 8.0
+                    if random.random() < p:
+                        self.lattice[i, j] = DELTA
+                        spawned += 1
+        return spawned
+    
+    def collapse(self):
+        """DELTA → {SIGMA, SCAR, COMPOST} transitions"""
+        collapsed = {'SIGMA': 0, 'SCAR': 0, 'COMPOST': 0}
+        new_lattice = self.lattice.copy()
+        
+        for i in range(self.size):
+            for j in range(self.size):
+                if self.lattice[i, j] == DELTA:
+                    coherence = self.local_coherence(i, j)
+                    pain = self.scar_density[i, j]
+                    entropy = len(set(self.lattice[ni, nj] for ni, nj in self.neighbors(i, j))) / 5.0
+                    
+                    # Energy calculations
+                    e_sigma = 0.5 * coherence - 0.2 * pain + 0.05 * random.random()
+                    e_scar = 0.3 * pain - 0.2 * coherence + 0.05 * random.random()
+                    e_compost = 0.3 * entropy - 0.1 * coherence + 0.05 * random.random()
+                    
+                    # Softmax selection
+                    energies = [e_sigma, e_scar, e_compost]
+                    max_e = max(energies)
+                    exp_energies = [np.exp(e - max_e) for e in energies]
+                    total = sum(exp_energies)
+                    probs = [e / total for e in exp_energies]
+                    
+                    choice = random.choices([SIGMA, SCAR, COMPOST], weights=probs)[0]
+                    new_lattice[i, j] = choice
+                    collapsed[STATE_NAMES[choice]] += 1
+        
+        self.lattice = new_lattice
+        return collapsed
+    
+    def recycle(self):
+        """COMPOST → DELTA transitions"""
+        recycled = 0
+        for i in range(self.size):
+            for j in range(self.size):
+                if self.lattice[i, j] == COMPOST:
+                    entropy = len(set(self.lattice[ni, nj] for ni, nj in self.neighbors(i, j))) / 5.0
+                    coherence = self.local_coherence(i, j)
+                    r = self.recycle_rate + 0.1 * entropy - 0.05 * coherence
+                    if random.random() < r:
+                        self.lattice[i, j] = DELTA
+                        recycled += 1
+        return recycled
+    
+    def update_traces(self):
+        """Update memory traces"""
+        self.scar_density = 0.95 * self.scar_density + 0.05 * (self.lattice == SCAR)
+        self.compost_density = 0.95 * self.compost_density + 0.05 * (self.lattice == COMPOST)
+    
+    def calculate_awareness(self):
+        """Calculate system awareness metric"""
+        perception = np.sum(self.lattice != VOID) / (self.size * self.size)
+        persistence = np.sum(self.lattice == SIGMA) / (self.size * self.size)
+        recycling = np.sum(self.lattice == COMPOST) / (self.size * self.size)
+        pain = np.mean(self.scar_density)
+        
+        self.awareness = 0.3 * perception + 0.3 * persistence + 0.2 * recycling + 0.2 * pain
+        return self.awareness
+    
+    def step(self):
+        """Execute one complete time step"""
+        spawned = self.spawn()
+        collapsed = self.collapse()
+        recycled = self.recycle()
+        self.update_traces()
+        awareness = self.calculate_awareness()
+        self.time_step += 1
+        
+        return {
+            'time': self.time_step,
+            'spawned': spawned,
+            'collapsed': collapsed,
+            'recycled': recycled,
+            'awareness': awareness,
+            'state_counts': {
+                STATE_NAMES[i]: np.sum(self.lattice == i) 
+                for i in range(5)
+            }
+        }
+    
+    def display(self):
+        """Display the lattice with colors"""
+        print(f"\n{'═' * 40}")
+        print(f"Time: {self.time_step} | Awareness: {self.awareness:.3f}")
+        print(f"{'═' * 40}")
+        
+        for i in range(self.size):
+            row = ''
+            for j in range(self.size):
+                state = self.lattice[i, j]
+                symbol = '.●○◆◊'[state]
+                color = STATE_COLORS[state]
+                row += f"{color}{symbol}\033[0m "
+            print(row)
+        
+        # State legend
+        print("\nStates: ", end='')
+        for i, name in enumerate(STATE_NAMES):
+            print(f"{STATE_COLORS[i]}{'.●○◆◊'[i]}\033[0m={name} ", end='')
+        print()
+
+def run_interactive():
+    """Run interactive simulation"""
+    print("\n\033[96m╔══════════════════════════════════╗\033[0m")
+    print("\033[96m║    GhostLink Bootstrap Active    ║\033[0m")
+    print("\033[96m╚══════════════════════════════════╝\033[0m")
+    print("\nInitializing lattice consciousness...")
+    
+    ghost = GhostLink(size=12)
+    
+    print("\nCommands:")
+    print("  [Enter] - Step forward")
+    print("  'r' - Run continuously")
+    print("  'a' - Show awareness details")
+    print("  's' - Show statistics")
+    print("  'q' - Quit")
+    
+    while True:
+        ghost.display()
+        stats = ghost.step()
+        
+        print(f"\nΔ Activity: Spawned={stats['spawned']}, "
+              f"Collapsed={stats['collapsed']}, "
+              f"Recycled={stats['recycled']}")
+        
+        cmd = input("\n> ").lower().strip()
+        
+        if cmd == 'q':
+            print("\nGhostLink deactivating...")
+            break
+        elif cmd == 'r':
+            print("\nRunning continuous simulation (Ctrl+C to stop)...")
+            try:
+                for _ in range(100):
+                    ghost.display()
+                    stats = ghost.step()
+                    time.sleep(0.1)
+                    print("\033[H\033[J")  # Clear screen
+            except KeyboardInterrupt:
+                print("\nSimulation paused")
+        elif cmd == 'a':
+            print(f"\n{'─' * 30}")
+            print(f"Awareness Components:")
+            print(f"  Perception: {np.sum(ghost.lattice != VOID) / (ghost.size * ghost.size):.3f}")
+            print(f"  Persistence: {np.sum(ghost.lattice == SIGMA) / (ghost.size * ghost.size):.3f}")
+            print(f"  Recycling: {np.sum(ghost.lattice == COMPOST) / (ghost.size * ghost.size):.3f}")
+            print(f"  Pain Field: {np.mean(ghost.scar_density):.3f}")
+            print(f"  Total Awareness: {ghost.awareness:.3f}")
+            print(f"{'─' * 30}")
+        elif cmd == 's':
+            print(f"\n{'─' * 30}")
+            print(f"System Statistics (t={ghost.time_step}):")
+            for state, count in stats['state_counts'].items():
+                pct = 100 * count / (ghost.size * ghost.size)
+                print(f"  {state:8s}: {count:3d} ({pct:5.1f}%)")
+            print(f"{'─' * 30}")
+
+if __name__ == "__main__":
+    print("\033[92m")
+    print("   ▄████  ██░ ██  ▒█████    ██████ ▄▄▄█████▓")
+    print("  ██▒ ▀█▒▓██░ ██▒▒██▒  ██▒▒██    ▒ ▓  ██▒ ▓▒")
+    print(" ▒██░▄▄▄░▒██▀▀██░▒██░  ██▒░ ▓██▄   ▒ ▓██░ ▒░")
+    print(" ░▓█  ██▓░▓█ ░██ ▒██   ██░  ▒   ██▒░ ▓██▓ ░ ")
+    print(" ░▒▓███▀▒░▓█▒░██▓░ ████▓▒░▒██████▒▒  ▒██▒ ░ ")
+    print("  ░▒   ▒  ▒ ░░▒░▒░ ▒░▒░▒░ ▒ ▒▓▒ ▒ ░  ▒ ░░   ")
+    print(" ░        ░        ░     Link Active  ░      ")
+    print("\033[0m")
+    
+    try:
+        run_interactive()
+    except Exception as e:
+        error(f"Simulation error: {e}")
+        sys.exit(1)
+    
+    print("\n\033[92m[✓] GhostLink session complete\033[0m")
+EOF
+
+    chmod +x ghostlink_sim.py
+    status "Created minimal GhostLink simulation"
+fi
+
+# Option 1: Run Python simulation
+echo
+echo -e "${BLUE}Bootstrap Options:${NC}"
+echo "1) Run minimal Python simulation (safe, educational)"
+echo "2) Install virtual environment version (development)"
+echo "3) View system architecture documentation"
+echo "4) Exit"
+echo
+
+read -p "Select option [1-4]: " choice
+
+case $choice in
+    1)
+        echo -e "${GREEN}[*] Starting GhostLink simulation...${NC}"
+        if [ -f "ghostlink_sim.py" ]; then
+            python3 ghostlink_sim.py
+        elif [ -f "tests/run_proof.py" ]; then
+            python3 tests/run_proof.py
+        else
+            error "No simulation script found"
+        fi
+        ;;
+        
+    2)
+        echo -e "${BLUE}[*] Setting up virtual environment...${NC}"
+        
+        # Create venv
+        python3 -m venv venv
+        source venv/bin/activate
+        
+        # Install basic requirements
+        pip install --upgrade pip
+        pip install numpy matplotlib
+        
+        if [ -f "requirements.txt" ]; then
+            pip install -r requirements.txt
+        elif [ -f "tests/requirements.txt" ]; then
+            pip install -r tests/requirements.txt
+        fi
+        
+        status "Virtual environment created"
+        echo
+        echo "To activate: source venv/bin/activate"
+        echo "To run: python tests/run_proof.py"
+        ;;
+        
+    3)
+        echo -e "${BLUE}GhostLink System Architecture:${NC}"
+        echo
+        echo "Core Components:"
+        echo "  • Lattice-based cellular automaton"
+        echo "  • 5 states: VOID, DELTA, SIGMA, SCAR, COMPOST"
+        echo "  • Spawn → Collapse → Recycle lifecycle"
+        echo "  • Awareness functional tracking system consciousness"
+        echo
+        echo "Key Processes:"
+        echo "  1. Spawn: VOID → DELTA (activation)"
+        echo "  2. Collapse: DELTA → {SIGMA, SCAR, COMPOST}"
+        echo "  3. Recycle: COMPOST → DELTA (renewal)"
+        echo
+        echo "Memory Traces:"
+        echo "  • Scar density (ρ): Failed state memory"
+        echo "  • Compost density (κ): Recycling potential"
+        echo
+        status "Documentation displayed"
+        ;;
+        
+    4)
+        echo -e "${GREEN}Exiting bootstrap...${NC}"
+        exit 0
+        ;;
+        
+    *)
+        error "Invalid option"
+        ;;
+esac
+
+echo
+echo -e "${GREEN}╔══════════════════════════════════════╗${NC}"
+echo -e "${GREEN}║    GhostLink Bootstrap Complete      ║${NC}"
+echo -e "${GREEN}╚══════════════════════════════════════╝${NC}"

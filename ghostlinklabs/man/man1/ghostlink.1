@@ -1,0 +1,192 @@
+.TH GHOSTLINK 1 "December 2025" "ghostlink 0.1.0" "User Commands"
+.SH NAME
+ghostlink \- Autonomous AI Orchestration Framework
+.SH SYNOPSIS
+.B ghostlink
+[\fIOPTIONS\fR] \fICOMMAND\fR [\fIARGS\fR]
+.SH DESCRIPTION
+GhostLink is a completely local, sovereign AI orchestration system with symbolic reasoning,
+hardware binding, and autonomous operation capabilities. It requires no external dependencies
+and runs entirely on local hardware.
+.SH COMMANDS
+.TP
+.B status
+Show Link's current status, including active tasks and system metrics.
+.TP
+.B start [--daemon]
+Start Link's autonomous operation. Use --daemon to run in background.
+.TP
+.B stop
+Stop Link's operation and clean up resources.
+.TP
+.B reset
+Reset Link's memory and learned preferences.
+.TP
+.B version
+Display version and build information.
+.TP
+.B help, -h, --help
+Show command help message.
+.SS Task Management
+.TP
+.B task list
+List all tasks with status and priority.
+.TP
+.B task add \fIDESCRIPTION\fR
+Add a new task with optional priority flag.
+.TP
+.B task status \fIID\fR
+Show detailed status of a specific task.
+.TP
+.B task complete \fIID\fR
+Mark a task as complete.
+.SS Git Operations
+.TP
+.B git status
+Show repository status and pending changes.
+.TP
+.B git sync
+Sync with remote repository (pull + push).
+.TP
+.B git pull
+Pull latest changes from remote.
+.TP
+.B git abort
+Abort any ongoing merge operations.
+.SS Diagnostics
+.TP
+.B diagnostics health
+Run comprehensive health check on all systems.
+.TP
+.B diagnostics errors
+Display recent error logs and warnings.
+.TP
+.B diagnostics fix-common
+Automatically fix common configuration issues.
+.TP
+.B diagnostics monitor
+Continuously monitor system (60 seconds).
+.TP
+.B diagnostics sysinfo
+Display detailed system information.
+.SS Context Management
+.TP
+.B context list
+List all context variables and values.
+.TP
+.B context set \fIKEY VALUE\fR
+Set a context variable.
+.TP
+.B context get \fIKEY\fR
+Retrieve a context variable value.
+.SS Learning & Preferences
+.TP
+.B learn list
+Show all learned preferences.
+.TP
+.B learn add \fIKEY VALUE\fR
+Add or update a learning preference.
+.TP
+.B history
+Display execution history and logs.
+.SS System Integration
+.TP
+.B install
+Install GhostLink to system paths (requires sudo).
+.TP
+.B uninstall
+Remove GhostLink from system paths (requires sudo).
+.TP
+.B daemon start
+Start GhostLink as background daemon.
+.TP
+.B daemon stop
+Stop the running GhostLink daemon.
+.SH OPTIONS
+.TP
+.B --config \fIFILE\fR
+Use custom configuration file instead of default.
+.TP
+.B --data-dir \fIDIR\fR
+Override default data storage directory.
+.TP
+.B --log-dir \fIDIR\fR
+Override default log directory.
+.TP
+.B --verbose
+Increase verbosity of output.
+.TP
+.B --quiet
+Suppress all output except errors.
+.SH ENVIRONMENT
+.TP
+.B GHOSTLINK_CONFIG_DIR
+Configuration directory (default: $XDG_CONFIG_HOME/ghostlink)
+.TP
+.B GHOSTLINK_DATA_DIR
+Data storage directory (default: $XDG_DATA_HOME/ghostlink)
+.TP
+.B GHOSTLINK_LOG_DIR
+Log files directory (default: $XDG_DATA_HOME/ghostlink/logs)
+.TP
+.B GHOSTLINK_RUNTIME_DIR
+Runtime files directory (default: $XDG_RUNTIME_DIR/ghostlink)
+.TP
+.B XDG_CONFIG_HOME
+Base configuration directory (default: ~/.config)
+.TP
+.B XDG_DATA_HOME
+Base data directory (default: ~/.local/share)
+.TP
+.B XDG_CACHE_HOME
+Base cache directory (default: ~/.cache)
+.SH FILES
+.TP
+.B ~/.config/ghostlink/ghostlink.conf
+Primary configuration file
+.TP
+.B ~/.local/share/ghostlink/
+Data storage directory
+.TP
+.B ~/.local/share/ghostlink/logs/
+Log files
+.TP
+.B ~/.cache/ghostlink/
+Temporary cache files
+.SH EXAMPLES
+.TP
+Check current status:
+.B ghostlink status
+.TP
+Add a new task:
+.B ghostlink task add "Deploy new feature"
+.TP
+View all tasks:
+.B ghostlink task list
+.TP
+Run diagnostics:
+.B ghostlink diagnostics health
+.TP
+Start as daemon:
+.B ghostlink daemon start
+.TP
+Sync with git:
+.B ghostlink git sync
+.SH RETURN VALUES
+.TP
+.B 0
+Successful execution
+.TP
+.B 1
+General error
+.TP
+.B 2
+Command syntax error
+.SH SEE ALSO
+\fBglctl\fR(1) - legacy control script
+.SH BUGS
+Report bugs at https://github.com/devrgar1-beep/ghostlinklabs/issues
+.SH AUTHOR
+GhostLink Labs <ghost@ghostlink.engineering>
+.SH COPYRIGHT
+Copyright (C) 2025 GhostLink Labs. All rights reserved.

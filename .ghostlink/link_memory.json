@@ -1,0 +1,17 @@
+{
+  "tasks": [],
+  "context": {
+    "project_name": "GhostLink Unified AI Framework",
+    "project_type": "distributed_ai_orchestrator",
+    "language": "python"
+  },
+  "preferences": {
+    "output_style": "concise_with_status",
+    "coding_style": "functional_async",
+    "automation_level": "full_auto",
+    "command_interception": "enabled",
+    "task_auto_creation": "enabled",
+    "error_auto_recovery": "enabled"
+  },
+  "history": []
+}

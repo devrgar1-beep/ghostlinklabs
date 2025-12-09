@@ -1,0 +1,25 @@
+{
+  "initialized": false,
+  "tools": {},
+  "shortcuts": {},
+  "history": [
+    {
+      "timestamp": "2025-11-23T15:44:58.288052",
+      "action": "groq_status",
+      "status": "success",
+      "details": "20 models available"
+    },
+    {
+      "timestamp": "2025-11-23T15:45:08.421340",
+      "action": "groq_communicate",
+      "status": "success",
+      "details": "Link \u2192 Container"
+    },
+    {
+      "timestamp": "2025-11-26T09:49:59.823088",
+      "action": "clean",
+      "status": "completed",
+      "details": ""
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "name": "GhostLink Python Dev",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "containerEnv": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PIP_DISABLE_PIP_VERSION_CHECK": "1"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-azuretools.vscode-docker",
+        "charliermarsh.ruff"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.analysis.typeCheckingMode": "basic",
+        "python.formatting.provider": "none",
+        "ruff.enable": true,
+        "ruff.lint.enable": true
+      }
+    }
+  },
+  "postCreateCommand": "set -e; python3 -m pip install --upgrade pip; if [ -f backend/requirements.txt ]; then python3 -m pip install -r backend/requirements.txt; fi; if [ -f ai_bots/requirements.txt ]; then python3 -m pip install -r ai_bots/requirements.txt; fi",
+  "remoteUser": "vscode"
+}

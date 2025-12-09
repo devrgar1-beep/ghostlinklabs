@@ -1,0 +1,70 @@
+{{- if and .Values.apiServer.enabled .Values.apiServer.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "ghostlink.fullname" . }}-api-hpa
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "ghostlink.labels" . | nindent 4 }}
+    app.kubernetes.io/component: api-server
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "ghostlink.fullname" . }}-api
+  minReplicas: {{ .Values.apiServer.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.apiServer.autoscaling.maxReplicas }}
+  metrics:
+  {{- if .Values.apiServer.autoscaling.targetCPUUtilizationPercentage }}
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: {{ .Values.apiServer.autoscaling.targetCPUUtilizationPercentage }}
+  {{- end }}
+  {{- if .Values.apiServer.autoscaling.targetMemoryUtilizationPercentage }}
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: {{ .Values.apiServer.autoscaling.targetMemoryUtilizationPercentage }}
+  {{- end }}
+{{- end }}
+
+{{- if and .Values.orchestrator.enabled .Values.orchestrator.autoscaling.enabled }}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "ghostlink.fullname" . }}-orchestrator-hpa
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "ghostlink.labels" . | nindent 4 }}
+    app.kubernetes.io/component: orchestrator
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "ghostlink.fullname" . }}-orchestrator
+  minReplicas: {{ .Values.orchestrator.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.orchestrator.autoscaling.maxReplicas }}
+  metrics:
+  {{- if .Values.orchestrator.autoscaling.targetCPUUtilizationPercentage }}
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: {{ .Values.orchestrator.autoscaling.targetCPUUtilizationPercentage }}
+  {{- end }}
+  {{- if .Values.orchestrator.autoscaling.targetMemoryUtilizationPercentage }}
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: {{ .Values.orchestrator.autoscaling.targetMemoryUtilizationPercentage }}
+  {{- end }}
+{{- end }}

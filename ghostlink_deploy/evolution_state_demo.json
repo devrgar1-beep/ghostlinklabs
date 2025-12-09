@@ -1,0 +1,2744 @@
+{
+  "generation": 3,
+  "population_size": 50,
+  "best_genome_id": "crossover_2056_tune_3707",
+  "genomes": {
+    "base_genome_v1": {
+      "id": "base_genome_v1",
+      "genes": {
+        "speed": 0.5,
+        "turn_rate": 0.3,
+        "exploration_radius": 0.8,
+        "obstacle_avoidance_distance": 1.0,
+        "goal_seeking_priority": 0.7,
+        "energy_efficiency": 0.6,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "magnetic_strength": 0.5,
+        "propulsion_frequency": 33.0,
+        "coil_configuration": "sequential",
+        "levitation_height": 0.1,
+        "field_gradient_direction": "forward",
+        "resonance_tuning": 0.8,
+        "pulse_duration": 1.0,
+        "magnetic_efficiency": 0.7
+      },
+      "fitness": 22.491994306819215,
+      "generation": 0,
+      "parent_ids": [],
+      "mutation_history": []
+    },
+    "initial_genome_1": {
+      "id": "initial_genome_1",
+      "genes": {
+        "speed": 0.5285813665273186,
+        "turn_rate": 0.250160439799894,
+        "exploration_radius": 0.9214432714028052,
+        "obstacle_avoidance_distance": 1.0,
+        "goal_seeking_priority": 0.7,
+        "energy_efficiency": 0.6,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "magnetic_strength": 0.5489972655799753,
+        "propulsion_frequency": 35.75575832285431,
+        "coil_configuration": "sequential",
+        "levitation_height": 0.17906725605325668,
+        "field_gradient_direction": "forward",
+        "resonance_tuning": 0.8,
+        "pulse_duration": 0.9400249612306032,
+        "magnetic_efficiency": 0.7
+      },
+      "fitness": 0,
+      "generation": 0,
+      "parent_ids": [],
+      "mutation_history": []
+    },
+    "initial_genome_2": {
+      "id": "initial_genome_2",
+      "genes": {
+        "speed": 0.5265248356950144,
+        "turn_rate": 0.2906545230543799,
+        "exploration_radius": 0.8441281438202978,
+        "obstacle_avoidance_distance": 1.0,
+        "goal_seeking_priority": 0.7,
+        "energy_efficiency": 0.6,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "magnetic_strength": 0.24698751446808148,
+        "propulsion_frequency": 33.83802121336027,
+        "coil_configuration": "sequential",
+        "levitation_height": 0.05,
+        "field_gradient_direction": "forward",
+        "resonance_tuning": 0.8,
+        "pulse_duration": 0.8384889736132746,
+        "magnetic_efficiency": 0.7
+      },
+      "fitness": 22.492711772695678,
+      "generation": 0,
+      "parent_ids": [],
+      "mutation_history": []
+    },
+    "initial_genome_3": {
+      "id": "initial_genome_3",
+      "genes": {
+        "speed": 0.4759087393634357,
+        "turn_rate": 0.3011564856100907,
+        "exploration_radius": 0.8035281655725768,
+        "obstacle_avoidance_distance": 1.0,
+        "goal_seeking_priority": 0.7,
+        "energy_efficiency": 0.6,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "magnetic_strength": 0.5054673194611344,
+        "propulsion_frequency": 23.50690457526985,
+        "coil_configuration": "sequential",
+        "levitation_height": 0.0722834377268043,
+        "field_gradient_direction": "forward",
+        "resonance_tuning": 0.8,
+        "pulse_duration": 0.9341065726811418,
+        "magnetic_efficiency": 0.7
+      },
+      "fitness": 67.49202364155872,
+      "generation": 0,
+      "parent_ids": [],
+      "mutation_history": []
+    },
+    "initial_genome_4": {
+      "id": "initial_genome_4",
+      "genes": {
+        "speed": 0.47127250832948564,
+        "turn_rate": 0.3614763104161531,
+        "exploration_radius": 0.6191893177465899,
+        "obstacle_avoidance_distance": 1.0,
+        "goal_seeking_priority": 0.7,
+        "energy_efficiency": 0.6,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "magnetic_strength": 0.43886603343498015,
+        "propulsion_frequency": 34.70905831547245,
+        "coil_configuration": "sequential",
+        "levitation_height": 0.13739294189958443,
+        "field_gradient_direction": "forward",
+        "resonance_tuning": 0.8,
+        "pulse_duration": 1.1925206988990884,
+        "magnetic_efficiency": 0.7
+      },
+      "fitness": 22.488209316836468,
+      "generation": 0,
+      "parent_ids": [],
+      "mutation_history": []
+    },
+    "initial_genome_5": {
+      "id": "initial_genome_5",
+      "genes": {
+        "speed": 0.43413388049718343,
+        "turn_rate": 0.3068601912018534,
+        "exploration_radius": 0.8658913590023857,
+        "obstacle_avoidance_distance": 1.0,
+        "goal_seeking_priority": 0.7,
+        "energy_efficiency": 0.6,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "magnetic_strength": 0.48228012597458736,
+        "propulsion_frequency": 36.066189843406384,
+        "coil_configuration": "sequential",
+        "levitation_height": 0.11487919589998687,
+        "field_gradient_direction": "forward",
+        "resonance_tuning": 0.8,
+        "pulse_duration": 0.8687578332015357,
+        "magnetic_efficiency": 0.7
+      },
+      "fitness": 22.49145083229771,
+      "generation": 0,
+      "parent_ids": [],
+      "mutation_history": []
+    },
+    "initial_genome_6": {
+      "id": "initial_genome_6",
+      "genes": {
+        "speed": 0.4706417097578694,
+        "turn_rate": 0.30548123817628475,
+        "exploration_radius": 0.9129709161509091,
+        "obstacle_avoidance_distance": 1.0,
+        "goal_seeking_priority": 0.7,
+        "energy_efficiency": 0.6,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "magnetic_strength": 0.4586289575984587,
+        "propulsion_frequency": 21.598141505059452,
+        "coil_configuration": "sequential",
+        "levitation_height": 0.05,
+        "field_gradient_direction": "forward",
+        "resonance_tuning": 0.8,
+        "pulse_duration": 0.7183415977004948,
+        "magnetic_efficiency": 0.7
+      },
+      "fitness": 22.49193568392162,
+      "generation": 0,
+      "parent_ids": [],
+      "mutation_history": []
+    },
+    "initial_genome_7": {
+      "id": "initial_genome_7",
+      "genes": {
+        "speed": 0.6182344374993588,
+        "turn_rate": 0.2776986618598737,
+        "exploration_radius": 0.8325081023447928,
+        "obstacle_avoidance_distance": 1.0,
+        "goal_seeking_priority": 0.7,
+        "energy_efficiency": 0.6,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "magnetic_strength": 0.5377964670583552,
+        "propulsion_frequency": 27.46614574271349,
+        "coil_configuration": "sequential",
+        "levitation_height": 0.14518340704925206,
+        "field_gradient_direction": "forward",
+        "resonance_tuning": 0.8,
+        "pulse_duration": 0.9093599914070521,
+        "magnetic_efficiency": 0.7
+      },
+      "fitness": 22.493010965812825,
+      "generation": 0,
+      "parent_ids": [],
+      "mutation_history": []
+    },
+    "initial_genome_8": {
+      "id": "initial_genome_8",
+      "genes": {
+        "speed": 0.33607486181539176,
+        "turn_rate": 0.2503779898550402,
+        "exploration_radius": 0.7394760769909372,
+        "obstacle_avoidance_distance": 1.0,
+        "goal_seeking_priority": 0.7,
+        "energy_efficiency": 0.6,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "magnetic_strength": 0.5461457201873057,
+        "propulsion_frequency": 27.33517985135202,
+        "coil_configuration": "sequential",
+        "levitation_height": 0.11514933318917157,
+        "field_gradient_direction": "forward",
+        "resonance_tuning": 0.8,
+        "pulse_duration": 1.0450186078633368,
+        "magnetic_efficiency": 0.7
+      },
+      "fitness": 22.493946665126327,
+      "generation": 0,
+      "parent_ids": [],
+      "mutation_history": []
+    },
+    "initial_genome_9": {
+      "id": "initial_genome_9",
+      "genes": {
+        "speed": 0.41871219579681673,
+        "turn_rate": 0.2555697483076015,
+        "exploration_radius": 0.8340758735029418,
+        "obstacle_avoidance_distance": 1.0,
+        "goal_seeking_priority": 0.7,
+        "energy_efficiency": 0.6,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "magnetic_strength": 0.3718343885096813,
+        "propulsion_frequency": 34.440223306020286,
+        "coil_configuration": "sequential",
+        "levitation_height": 0.07136044198588884,
+        "field_gradient_direction": "forward",
+        "resonance_tuning": 0.8,
+        "pulse_duration": 1.004652259209413,
+        "magnetic_efficiency": 0.7
+      },
+      "fitness": 22.494189550432115,
+      "generation": 0,
+      "parent_ids": [],
+      "mutation_history": []
+    },
+    "crossover_3887_tune_4297": {
+      "id": "crossover_3887_tune_4297",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0280043136171242,
+        "turn_rate": 0.2921681460093892,
+        "magnetic_strength": 0.510218615475285,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.5915905597645406,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.7596933245700853,
+        "coil_configuration": "sequential",
+        "speed": 0.4249540826873104,
+        "magnetic_efficiency": 0.6536040590607095,
+        "exploration_radius": 0.9290514279275908,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "resonance_tuning": 0.8196911902520988,
+        "levitation_height": 0.1112811360832877,
+        "propulsion_frequency": 35.25812213119297,
+        "pulse_duration": 0.939627147468908
+      },
+      "fitness": 67.49202695616405,
+      "generation": 2,
+      "parent_ids": [
+        "crossover_3887"
+      ],
+      "mutation_history": [
+        "crossover",
+        "parameter_tuning"
+      ]
+    },
+    "crossover_4288": {
+      "id": "crossover_4288",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0,
+        "turn_rate": 0.3011564856100907,
+        "magnetic_strength": 0.5054673194611344,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.7,
+        "coil_configuration": "sequential",
+        "speed": 0.43413388049718343,
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.8035281655725768,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "resonance_tuning": 0.8,
+        "levitation_height": 0.11487919589998687,
+        "propulsion_frequency": 36.066189843406384,
+        "pulse_duration": 0.8687578332015357
+      },
+      "fitness": 22.49175080465082,
+      "generation": 1,
+      "parent_ids": [
+        "initial_genome_3",
+        "initial_genome_5"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "initial_genome_5_dup_3476": {
+      "id": "initial_genome_5_dup_3476",
+      "genes": {
+        "speed": 0.43413388049718343,
+        "turn_rate": 0.3068601912018534,
+        "exploration_radius": 0.8658913590023857,
+        "obstacle_avoidance_distance": 1.0,
+        "goal_seeking_priority": 0.7,
+        "energy_efficiency": 0.6,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "magnetic_strength": 0.48228012597458736,
+        "propulsion_frequency": 36.066189843406384,
+        "coil_configuration": "sequential",
+        "levitation_height": 0.11487919589998687,
+        "field_gradient_direction": "forward",
+        "resonance_tuning": 0.8,
+        "pulse_duration": 0.8687578332015357,
+        "magnetic_efficiency": 0.7,
+        "speed_dup_57": 0.4986149758149636
+      },
+      "fitness": 0,
+      "generation": 1,
+      "parent_ids": [
+        "initial_genome_5"
+      ],
+      "mutation_history": [
+        "duplication"
+      ]
+    },
+    "crossover_4246": {
+      "id": "crossover_4246",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0,
+        "turn_rate": 0.3068601912018534,
+        "magnetic_strength": 0.48228012597458736,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.7,
+        "coil_configuration": "sequential",
+        "speed": 0.43413388049718343,
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.8658913590023857,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "resonance_tuning": 0.8,
+        "levitation_height": 0.11487919589998687,
+        "propulsion_frequency": 36.066189843406384,
+        "pulse_duration": 0.8687578332015357
+      },
+      "fitness": 56.99236574171114,
+      "generation": 1,
+      "parent_ids": [
+        "initial_genome_5",
+        "initial_genome_6"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "initial_genome_6_fusion_5963": {
+      "id": "initial_genome_6_fusion_5963",
+      "genes": {
+        "speed": 0.4706417097578694,
+        "turn_rate": 0.30548123817628475,
+        "exploration_radius": 0.9129709161509091,
+        "obstacle_avoidance_distance": 1.0,
+        "goal_seeking_priority": 0.7,
+        "energy_efficiency": 0.6,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "magnetic_strength": 0.4586289575984587,
+        "propulsion_frequency": 21.598141505059452,
+        "coil_configuration": "sequential",
+        "levitation_height": 0.05,
+        "field_gradient_direction": "forward",
+        "resonance_tuning": 0.8,
+        "pulse_duration": 0.7183415977004948,
+        "magnetic_efficiency": 0.7,
+        "fusion_weight": 0.2054510160064285,
+        "behavior_blend_mode": "multiplicative",
+        "secondary_speed": 0.4215152438255899,
+        "secondary_radius": 0.4851918813668693,
+        "blend_threshold": 0.6978044826050102
+      },
+      "fitness": 22.49193568392162,
+      "generation": 1,
+      "parent_ids": [
+        "initial_genome_6"
+      ],
+      "mutation_history": [
+        "behavior_fusion"
+      ]
+    },
+    "crossover_7026_pm_1178": {
+      "id": "crossover_7026_pm_1178",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0,
+        "turn_rate": 0.3068601912018534,
+        "magnetic_strength": 0.48228012597458736,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.7,
+        "coil_configuration": "sequential",
+        "speed": 0.43413388049718343,
+        "magnetic_efficiency": 0.6730487494935778,
+        "exploration_radius": 0.8658913590023857,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "resonance_tuning": 0.8,
+        "levitation_height": 0.11487919589998687,
+        "propulsion_frequency": 36.066189843406384,
+        "pulse_duration": 0.8687578332015357
+      },
+      "fitness": 22.49145083229771,
+      "generation": 2,
+      "parent_ids": [
+        "crossover_7026"
+      ],
+      "mutation_history": [
+        "crossover",
+        "point_mutation"
+      ]
+    },
+    "crossover_2056_tune_3707": {
+      "id": "crossover_2056_tune_3707",
+      "genes": {
+        "turn_rate": 0.2951346803087098,
+        "magnetic_strength": 0.46287656988374487,
+        "secondary_radius": 0.4821127657337106,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.6738496124548125,
+        "blend_threshold": 0.6847434429819446,
+        "magnetic_efficiency": 0.6652703396655784,
+        "exploration_radius": 0.9998458412696464,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "fusion_weight": 0.21510604624983204,
+        "behavior_blend_mode": "multiplicative",
+        "obstacle_avoidance_distance": 0.9838321775598361,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6094033017982222,
+        "coil_configuration": "sequential",
+        "speed": 0.46562018193919935,
+        "resonance_tuning": 0.8637700494696022,
+        "secondary_speed": 0.42818368364288173,
+        "levitation_height": 0.047633141836573245,
+        "propulsion_frequency": 20.793658534624612,
+        "pulse_duration": 0.6827704421921433
+      },
+      "fitness": 222.41372498434524,
+      "generation": 3,
+      "parent_ids": [
+        "crossover_2056"
+      ],
+      "mutation_history": [
+        "crossover",
+        "parameter_tuning"
+      ]
+    },
+    "crossover_2934_tune_8492": {
+      "id": "crossover_2934_tune_8492",
+      "genes": {
+        "obstacle_avoidance_distance": 0.972261233699797,
+        "turn_rate": 0.26050103851028844,
+        "magnetic_strength": 0.3939227874449353,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.5382947893619325,
+        "secondary_radius": 0.48943121715254306,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.7068741651249141,
+        "coil_configuration": "sequential",
+        "blend_threshold": 0.7371762902500926,
+        "speed": 0.5324599644917881,
+        "magnetic_efficiency": 0.6745474080470224,
+        "exploration_radius": 0.9035376242555797,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "resonance_tuning": 0.8207720417065165,
+        "fusion_weight": 0.19747231504368107,
+        "secondary_speed": 0.43028263902158,
+        "levitation_height": 0.04827001611470215,
+        "behavior_blend_mode": "multiplicative",
+        "propulsion_frequency": 22.67441201995264,
+        "pulse_duration": 0.6842382316296185
+      },
+      "fitness": 22.49413521749817,
+      "generation": 3,
+      "parent_ids": [
+        "crossover_2934"
+      ],
+      "mutation_history": [
+        "crossover",
+        "parameter_tuning"
+      ]
+    },
+    "crossover_4085_pm_8814": {
+      "id": "crossover_4085_pm_8814",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0,
+        "turn_rate": 0.30548123817628475,
+        "magnetic_strength": 0.4586289575984587,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "secondary_radius": 0.4851918813668693,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.7,
+        "blend_threshold": 0.6978044826050102,
+        "coil_configuration": "sequential",
+        "speed": 0.5,
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.8,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "fusion_weight": 0.2054510160064285,
+        "resonance_tuning": 0.8,
+        "secondary_speed": 0.4215152438255899,
+        "levitation_height": 0.05,
+        "behavior_blend_mode": "multiplicative",
+        "propulsion_frequency": 21.598141505059452,
+        "pulse_duration": 1.0161765080870853
+      },
+      "fitness": 22.491949001278936,
+      "generation": 3,
+      "parent_ids": [
+        "crossover_4085"
+      ],
+      "mutation_history": [
+        "crossover",
+        "point_mutation"
+      ]
+    },
+    "initial_genome_6_fusion_5963_dup_4240": {
+      "id": "initial_genome_6_fusion_5963_dup_4240",
+      "genes": {
+        "speed": 0.4706417097578694,
+        "turn_rate": 0.30548123817628475,
+        "exploration_radius": 0.9129709161509091,
+        "obstacle_avoidance_distance": 1.0,
+        "goal_seeking_priority": 0.7,
+        "energy_efficiency": 0.6,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "magnetic_strength": 0.4586289575984587,
+        "propulsion_frequency": 21.598141505059452,
+        "coil_configuration": "sequential",
+        "levitation_height": 0.05,
+        "field_gradient_direction": "forward",
+        "resonance_tuning": 0.8,
+        "pulse_duration": 0.7183415977004948,
+        "magnetic_efficiency": 0.7,
+        "fusion_weight": 0.2054510160064285,
+        "behavior_blend_mode": "multiplicative",
+        "secondary_speed": 0.4215152438255899,
+        "secondary_radius": 0.4851918813668693,
+        "blend_threshold": 0.6978044826050102,
+        "parameter_weights_dup_24": [
+          0.40768235340364856,
+          0.27172916682021725,
+          0.31280095476868797
+        ]
+      },
+      "fitness": 22.49193568392162,
+      "generation": 2,
+      "parent_ids": [
+        "initial_genome_6_fusion_5963"
+      ],
+      "mutation_history": [
+        "behavior_fusion",
+        "duplication"
+      ]
+    },
+    "crossover_3792": {
+      "id": "crossover_3792",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0,
+        "turn_rate": 0.30548123817628475,
+        "magnetic_strength": 0.4586289575984587,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "secondary_radius": 0.4851918813668693,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.7,
+        "coil_configuration": "sequential",
+        "blend_threshold": 0.6978044826050102,
+        "speed": 0.33607486181539176,
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.9129709161509091,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "resonance_tuning": 0.8,
+        "fusion_weight": 0.2054510160064285,
+        "secondary_speed": 0.4215152438255899,
+        "levitation_height": 0.11514933318917157,
+        "behavior_blend_mode": "multiplicative",
+        "propulsion_frequency": 21.598141505059452,
+        "pulse_duration": 1.0450186078633368
+      },
+      "fitness": 22.491268903284848,
+      "generation": 2,
+      "parent_ids": [
+        "initial_genome_8",
+        "initial_genome_6_fusion_5963"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "crossover_6947": {
+      "id": "crossover_6947",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0,
+        "turn_rate": 0.3614763104161531,
+        "magnetic_strength": 0.43886603343498015,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.7,
+        "coil_configuration": "sequential",
+        "speed": 0.5,
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.6191893177465899,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "resonance_tuning": 0.8,
+        "levitation_height": 0.1,
+        "propulsion_frequency": 33.0,
+        "pulse_duration": 1.1925206988990884
+      },
+      "fitness": 66.73850454523088,
+      "generation": 1,
+      "parent_ids": [
+        "initial_genome_4",
+        "base_genome_v1"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "crossover_5761": {
+      "id": "crossover_5761",
+      "genes": {
+        "turn_rate": 0.30548123817628475,
+        "magnetic_strength": 0.4586289575984587,
+        "secondary_radius": 0.4851918813668693,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.7,
+        "blend_threshold": 0.6978044826050102,
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.9129709161509091,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "fusion_weight": 0.2054510160064285,
+        "behavior_blend_mode": "multiplicative",
+        "obstacle_avoidance_distance": 1.0,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "coil_configuration": "sequential",
+        "speed": 0.4706417097578694,
+        "resonance_tuning": 0.8,
+        "secondary_speed": 0.4215152438255899,
+        "levitation_height": 0.05,
+        "propulsion_frequency": 21.598141505059452,
+        "pulse_duration": 0.7183415977004948
+      },
+      "fitness": 22.49193568392162,
+      "generation": 2,
+      "parent_ids": [
+        "initial_genome_6_fusion_5963",
+        "initial_genome_6_fusion_5963"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "crossover_8801": {
+      "id": "crossover_8801",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0,
+        "turn_rate": 0.250160439799894,
+        "magnetic_strength": 0.5489972655799753,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.7,
+        "coil_configuration": "sequential",
+        "speed": 0.5285813665273186,
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.8340758735029418,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "resonance_tuning": 0.8,
+        "levitation_height": 0.07136044198588884,
+        "propulsion_frequency": 35.75575832285431,
+        "pulse_duration": 0.9400249612306032
+      },
+      "fitness": 0,
+      "generation": 1,
+      "parent_ids": [
+        "initial_genome_9",
+        "initial_genome_1"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "crossover_4322": {
+      "id": "crossover_4322",
+      "genes": {
+        "turn_rate": 0.30548123817628475,
+        "magnetic_strength": 0.4586289575984587,
+        "secondary_radius": 0.4851918813668693,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.7,
+        "blend_threshold": 0.6978044826050102,
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.9129709161509091,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "fusion_weight": 0.2054510160064285,
+        "behavior_blend_mode": "multiplicative",
+        "obstacle_avoidance_distance": 1.0,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "coil_configuration": "sequential",
+        "speed": 0.4706417097578694,
+        "resonance_tuning": 0.8,
+        "secondary_speed": 0.4215152438255899,
+        "levitation_height": 0.05,
+        "propulsion_frequency": 21.598141505059452,
+        "pulse_duration": 0.7183415977004948
+      },
+      "fitness": 138.48881941405043,
+      "generation": 2,
+      "parent_ids": [
+        "initial_genome_6_fusion_5963",
+        "initial_genome_6_fusion_5963"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "crossover_4417_pm_7132": {
+      "id": "crossover_4417_pm_7132",
+      "genes": {
+        "obstacle_avoidance_distance": 0.9466365203248119,
+        "turn_rate": 0.250160439799894,
+        "magnetic_strength": 0.5489972655799753,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.7,
+        "coil_configuration": "sequential",
+        "speed": 0.5285813665273186,
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.9214432714028052,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "resonance_tuning": 0.8,
+        "levitation_height": 0.17906725605325668,
+        "propulsion_frequency": 35.75575832285431,
+        "pulse_duration": 0.9400249612306032
+      },
+      "fitness": 0,
+      "generation": 2,
+      "parent_ids": [
+        "crossover_4417"
+      ],
+      "mutation_history": [
+        "crossover",
+        "point_mutation"
+      ]
+    },
+    "crossover_8827": {
+      "id": "crossover_8827",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0,
+        "turn_rate": 0.2555697483076015,
+        "magnetic_strength": 0.3718343885096813,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "secondary_radius": 0.4851918813668693,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.7,
+        "blend_threshold": 0.6978044826050102,
+        "coil_configuration": "sequential",
+        "speed": 0.41871219579681673,
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.8340758735029418,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "fusion_weight": 0.2054510160064285,
+        "resonance_tuning": 0.8,
+        "secondary_speed": 0.4215152438255899,
+        "levitation_height": 0.07136044198588884,
+        "behavior_blend_mode": "multiplicative",
+        "propulsion_frequency": 34.440223306020286,
+        "pulse_duration": 0.7183415977004948
+      },
+      "fitness": 73.49342271173033,
+      "generation": 2,
+      "parent_ids": [
+        "initial_genome_6_fusion_5963",
+        "initial_genome_9"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "crossover_6414": {
+      "id": "crossover_6414",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0,
+        "turn_rate": 0.2555697483076015,
+        "magnetic_strength": 0.3718343885096813,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "secondary_radius": 0.4851918813668693,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.7,
+        "coil_configuration": "sequential",
+        "blend_threshold": 0.6978044826050102,
+        "speed": 0.41871219579681673,
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.9129709161509091,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "resonance_tuning": 0.8,
+        "fusion_weight": 0.2054510160064285,
+        "secondary_speed": 0.4215152438255899,
+        "levitation_height": 0.07136044198588884,
+        "behavior_blend_mode": "multiplicative",
+        "propulsion_frequency": 34.440223306020286,
+        "pulse_duration": 1.004652259209413
+      },
+      "fitness": 67.4944736317633,
+      "generation": 2,
+      "parent_ids": [
+        "initial_genome_9",
+        "initial_genome_6_fusion_5963"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "initial_genome_1_pm_4817": {
+      "id": "initial_genome_1_pm_4817",
+      "genes": {
+        "speed": 0.6159901840808135,
+        "turn_rate": 0.250160439799894,
+        "exploration_radius": 0.9214432714028052,
+        "obstacle_avoidance_distance": 1.0,
+        "goal_seeking_priority": 0.7,
+        "energy_efficiency": 0.6,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "magnetic_strength": 0.5489972655799753,
+        "propulsion_frequency": 35.75575832285431,
+        "coil_configuration": "sequential",
+        "levitation_height": 0.17906725605325668,
+        "field_gradient_direction": "forward",
+        "resonance_tuning": 0.8,
+        "pulse_duration": 0.9400249612306032,
+        "magnetic_efficiency": 0.7
+      },
+      "fitness": 22.49411519233048,
+      "generation": 1,
+      "parent_ids": [
+        "initial_genome_1"
+      ],
+      "mutation_history": [
+        "point_mutation"
+      ]
+    },
+    "crossover_5846": {
+      "id": "crossover_5846",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0,
+        "turn_rate": 0.30548123817628475,
+        "magnetic_strength": 0.5461457201873057,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "secondary_radius": 0.4851918813668693,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.7,
+        "coil_configuration": "sequential",
+        "blend_threshold": 0.6978044826050102,
+        "speed": 0.33607486181539176,
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.9129709161509091,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "resonance_tuning": 0.8,
+        "fusion_weight": 0.2054510160064285,
+        "secondary_speed": 0.4215152438255899,
+        "levitation_height": 0.11514933318917157,
+        "behavior_blend_mode": "multiplicative",
+        "propulsion_frequency": 27.33517985135202,
+        "pulse_duration": 1.0450186078633368
+      },
+      "fitness": 22.491268903284848,
+      "generation": 2,
+      "parent_ids": [
+        "initial_genome_8",
+        "initial_genome_6_fusion_5963"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "crossover_8084_tune_8901": {
+      "id": "crossover_8084_tune_8901",
+      "genes": {
+        "obstacle_avoidance_distance": 0.9760591636888449,
+        "turn_rate": 0.3982072695530652,
+        "magnetic_strength": 0.4387991397915391,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.5374818965808076,
+        "secondary_radius": 0.4495129223950908,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.7286139451832937,
+        "coil_configuration": "sequential",
+        "blend_threshold": 0.7069347164603533,
+        "speed": 0.46400343189286186,
+        "magnetic_efficiency": 0.6858218132044608,
+        "exploration_radius": 1.0008006593622016,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "resonance_tuning": 0.8374995146169066,
+        "fusion_weight": 0.20310429401109278,
+        "secondary_speed": 0.3831443336329877,
+        "levitation_height": 0.05054092588744198,
+        "behavior_blend_mode": "multiplicative",
+        "propulsion_frequency": 34.05401040004922,
+        "pulse_duration": 0.7476441222080931
+      },
+      "fitness": 22.486379557849524,
+      "generation": 3,
+      "parent_ids": [
+        "crossover_8084"
+      ],
+      "mutation_history": [
+        "crossover",
+        "parameter_tuning"
+      ]
+    },
+    "crossover_2120_tune_5151": {
+      "id": "crossover_2120_tune_5151",
+      "genes": {
+        "obstacle_avoidance_distance": 0.9952469402077858,
+        "turn_rate": 0.32924161710615385,
+        "magnetic_strength": 0.4638657133834504,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.55445427419682,
+        "secondary_radius": 0.4733795036244186,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.7298655054534408,
+        "blend_threshold": 0.7059930423819798,
+        "coil_configuration": "sequential",
+        "speed": 0.4860988622159,
+        "magnetic_efficiency": 0.7068063637226458,
+        "exploration_radius": 0.7095661924446461,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "fusion_weight": 0.2132979538095619,
+        "resonance_tuning": 0.7453914149215022,
+        "secondary_speed": 0.4057100833488564,
+        "levitation_height": 0.05010345607537223,
+        "behavior_blend_mode": "multiplicative",
+        "propulsion_frequency": 19.77778650307757,
+        "pulse_duration": 0.7452048928658417
+      },
+      "fitness": 22.490658889946594,
+      "generation": 3,
+      "parent_ids": [
+        "crossover_2120"
+      ],
+      "mutation_history": [
+        "crossover",
+        "parameter_tuning"
+      ]
+    },
+    "crossover_7107": {
+      "id": "crossover_7107",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0,
+        "turn_rate": 0.2555697483076015,
+        "field_gradient_direction": "forward",
+        "magnetic_strength": 0.510218615475285,
+        "energy_efficiency": 0.5915905597645406,
+        "secondary_radius": 0.4851918813668693,
+        "goal_seeking_priority": 0.7,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "coil_configuration": "sequential",
+        "blend_threshold": 0.6978044826050102,
+        "speed": 0.41871219579681673,
+        "magnetic_efficiency": 0.6536040590607095,
+        "exploration_radius": 0.9290514279275908,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "resonance_tuning": 0.8196911902520988,
+        "fusion_weight": 0.2054510160064285,
+        "secondary_speed": 0.4215152438255899,
+        "levitation_height": 0.1112811360832877,
+        "behavior_blend_mode": "multiplicative",
+        "propulsion_frequency": 34.440223306020286,
+        "pulse_duration": 1.004652259209413
+      },
+      "fitness": 0.0,
+      "generation": 3,
+      "parent_ids": [
+        "crossover_3887_tune_4297",
+        "crossover_6414"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "crossover_3691": {
+      "id": "crossover_3691",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0,
+        "turn_rate": 0.2555697483076015,
+        "magnetic_strength": 0.3718343885096813,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "secondary_radius": 0.4851918813668693,
+        "blend_threshold": 0.6978044826050102,
+        "goal_seeking_priority": 0.7,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "coil_configuration": "sequential",
+        "speed": 0.4759087393634357,
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.8035281655725768,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "fusion_weight": 0.2054510160064285,
+        "resonance_tuning": 0.8,
+        "secondary_speed": 0.4215152438255899,
+        "levitation_height": 0.07136044198588884,
+        "behavior_blend_mode": "multiplicative",
+        "propulsion_frequency": 23.50690457526985,
+        "pulse_duration": 0.7183415977004948
+      },
+      "fitness": 0.0,
+      "generation": 3,
+      "parent_ids": [
+        "crossover_8827",
+        "initial_genome_3"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "crossover_7555": {
+      "id": "crossover_7555",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0,
+        "turn_rate": 0.2555697483076015,
+        "magnetic_strength": 0.3718343885096813,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "secondary_radius": 0.4851918813668693,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.7,
+        "coil_configuration": "sequential",
+        "blend_threshold": 0.6978044826050102,
+        "speed": 0.41871219579681673,
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.8340758735029418,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "resonance_tuning": 0.8,
+        "fusion_weight": 0.2054510160064285,
+        "secondary_speed": 0.4215152438255899,
+        "levitation_height": 0.11514933318917157,
+        "behavior_blend_mode": "multiplicative",
+        "propulsion_frequency": 27.33517985135202,
+        "pulse_duration": 0.7183415977004948
+      },
+      "fitness": 0.0,
+      "generation": 3,
+      "parent_ids": [
+        "initial_genome_8",
+        "crossover_8827"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "crossover_1635": {
+      "id": "crossover_1635",
+      "genes": {
+        "turn_rate": 0.2555697483076015,
+        "magnetic_strength": 0.3718343885096813,
+        "secondary_radius": 0.4851918813668693,
+        "blend_threshold": 0.6978044826050102,
+        "goal_seeking_priority": 0.7,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.8340758735029418,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "fusion_weight": 0.2054510160064285,
+        "behavior_blend_mode": "multiplicative",
+        "obstacle_avoidance_distance": 1.0,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "coil_configuration": "sequential",
+        "speed": 0.41871219579681673,
+        "resonance_tuning": 0.8,
+        "secondary_speed": 0.4215152438255899,
+        "levitation_height": 0.07136044198588884,
+        "propulsion_frequency": 34.440223306020286,
+        "pulse_duration": 0.7183415977004948
+      },
+      "fitness": 0.0,
+      "generation": 3,
+      "parent_ids": [
+        "crossover_8827",
+        "crossover_8827"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "crossover_6317_tune_5030": {
+      "id": "crossover_6317_tune_5030",
+      "genes": {
+        "obstacle_avoidance_distance": 0.9706335454884477,
+        "turn_rate": 0.25801161168428344,
+        "magnetic_strength": 0.584745742118874,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6598565830313765,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.6577729866881664,
+        "coil_configuration": "sequential",
+        "speed": 0.3392340972712061,
+        "magnetic_efficiency": 0.6557258508394603,
+        "exploration_radius": 0.715905534614106,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "resonance_tuning": 0.7732917599811647,
+        "levitation_height": 0.11507434937279994,
+        "propulsion_frequency": 34.813099096943894,
+        "pulse_duration": 1.0162162480040746
+      },
+      "fitness": 0.0,
+      "generation": 2,
+      "parent_ids": [
+        "crossover_6317"
+      ],
+      "mutation_history": [
+        "crossover",
+        "parameter_tuning"
+      ]
+    },
+    "crossover_1369": {
+      "id": "crossover_1369",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0,
+        "turn_rate": 0.3614763104161531,
+        "field_gradient_direction": "forward",
+        "magnetic_strength": 0.43886603343498015,
+        "energy_efficiency": 0.6,
+        "goal_seeking_priority": 0.7,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "coil_configuration": "sequential",
+        "speed": 0.5,
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.6191893177465899,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "resonance_tuning": 0.8,
+        "levitation_height": 0.11514933318917157,
+        "propulsion_frequency": 33.0,
+        "pulse_duration": 1.1925206988990884
+      },
+      "fitness": 0.0,
+      "generation": 2,
+      "parent_ids": [
+        "crossover_6947",
+        "initial_genome_8"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "crossover_3887_tune_4297_pm_7015": {
+      "id": "crossover_3887_tune_4297_pm_7015",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0280043136171242,
+        "turn_rate": 0.2921681460093892,
+        "magnetic_strength": 0.510218615475285,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.5915905597645406,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.7938364582666552,
+        "coil_configuration": "sequential",
+        "speed": 0.4249540826873104,
+        "magnetic_efficiency": 0.6536040590607095,
+        "exploration_radius": 0.9290514279275908,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "resonance_tuning": 0.8196911902520988,
+        "levitation_height": 0.1112811360832877,
+        "propulsion_frequency": 35.25812213119297,
+        "pulse_duration": 0.939627147468908
+      },
+      "fitness": 0.0,
+      "generation": 3,
+      "parent_ids": [
+        "crossover_3887_tune_4297"
+      ],
+      "mutation_history": [
+        "crossover",
+        "parameter_tuning",
+        "point_mutation"
+      ]
+    },
+    "crossover_5314_tune_6011": {
+      "id": "crossover_5314_tune_6011",
+      "genes": {
+        "obstacle_avoidance_distance": 0.9281522214239971,
+        "turn_rate": 0.23341479717939284,
+        "magnetic_strength": 0.5273869014255356,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6411877363344399,
+        "secondary_radius": 0.4805555073370714,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.6873947662671192,
+        "coil_configuration": "sequential",
+        "blend_threshold": 0.6724036798325447,
+        "speed": 0.4918250680035335,
+        "magnetic_efficiency": 0.729729540286775,
+        "exploration_radius": 0.9867612194487632,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "resonance_tuning": 0.7666838041734146,
+        "fusion_weight": 0.22589856875781397,
+        "secondary_speed": 0.45583055370830255,
+        "levitation_height": 0.11005215523307688,
+        "behavior_blend_mode": "multiplicative",
+        "propulsion_frequency": 29.572616800974107,
+        "pulse_duration": 0.6361808030559725
+      },
+      "fitness": 0.0,
+      "generation": 5,
+      "parent_ids": [
+        "crossover_5314"
+      ],
+      "mutation_history": [
+        "crossover",
+        "parameter_tuning"
+      ]
+    },
+    "crossover_6161_tune_1667": {
+      "id": "crossover_6161_tune_1667",
+      "genes": {
+        "obstacle_avoidance_distance": 0.9907780132673814,
+        "turn_rate": 0.27075541933815234,
+        "magnetic_strength": 0.4528588993523327,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.5978779505746927,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.7603152711514581,
+        "coil_configuration": "sequential",
+        "speed": 0.5052082782759665,
+        "magnetic_efficiency": 0.7054727878152406,
+        "exploration_radius": 0.8327948372790155,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "resonance_tuning": 0.8528987062342304,
+        "levitation_height": 0.0738579220405518,
+        "propulsion_frequency": 31.813615257976146,
+        "pulse_duration": 1.0350771793188065
+      },
+      "fitness": 0.0,
+      "generation": 3,
+      "parent_ids": [
+        "crossover_6161"
+      ],
+      "mutation_history": [
+        "crossover",
+        "parameter_tuning"
+      ]
+    },
+    "crossover_7525_dup_4047": {
+      "id": "crossover_7525_dup_4047",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0,
+        "turn_rate": 0.2555697483076015,
+        "magnetic_strength": 0.510218615475285,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "secondary_radius": 0.4851918813668693,
+        "blend_threshold": 0.6978044826050102,
+        "goal_seeking_priority": 0.7,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "coil_configuration": "sequential",
+        "speed": 0.4249540826873104,
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.9290514279275908,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "fusion_weight": 0.2054510160064285,
+        "resonance_tuning": 0.8,
+        "secondary_speed": 0.4215152438255899,
+        "levitation_height": 0.1112811360832877,
+        "behavior_blend_mode": "multiplicative",
+        "propulsion_frequency": 34.440223306020286,
+        "pulse_duration": 0.939627147468908,
+        "magnetic_strength_dup_31": 0.4157709688287755
+      },
+      "fitness": 0.0,
+      "generation": 4,
+      "parent_ids": [
+        "crossover_7525"
+      ],
+      "mutation_history": [
+        "crossover",
+        "duplication"
+      ]
+    },
+    "crossover_1816": {
+      "id": "crossover_1816",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0,
+        "turn_rate": 0.30548123817628475,
+        "magnetic_strength": 0.4586289575984587,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "secondary_radius": 0.4851918813668693,
+        "blend_threshold": 0.6978044826050102,
+        "goal_seeking_priority": 0.7,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "coil_configuration": "sequential",
+        "speed": 0.4706417097578694,
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.9129709161509091,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "fusion_weight": 0.2054510160064285,
+        "resonance_tuning": 0.8,
+        "secondary_speed": 0.4215152438255899,
+        "levitation_height": 0.05,
+        "behavior_blend_mode": "multiplicative",
+        "propulsion_frequency": 27.33517985135202,
+        "pulse_duration": 0.7183415977004948
+      },
+      "fitness": 0.0,
+      "generation": 3,
+      "parent_ids": [
+        "crossover_4322",
+        "initial_genome_8"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "crossover_5249_pm_3040": {
+      "id": "crossover_5249_pm_3040",
+      "genes": {
+        "turn_rate": 0.2951346803087098,
+        "magnetic_strength": 0.46287656988374487,
+        "secondary_radius": 0.4821127657337106,
+        "blend_threshold": 0.6847434429819446,
+        "goal_seeking_priority": 0.6738496124548125,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "magnetic_efficiency": 0.6652703396655784,
+        "exploration_radius": 0.9998458412696464,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "fusion_weight": 0.21510604624983204,
+        "behavior_blend_mode": "multiplicative",
+        "obstacle_avoidance_distance": 0.9838321775598361,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6094033017982222,
+        "coil_configuration": "sequential",
+        "speed": 0.46562018193919935,
+        "resonance_tuning": 0.8637700494696022,
+        "secondary_speed": 0.42818368364288173,
+        "levitation_height": 0.047633141836573245,
+        "propulsion_frequency": 20.793658534624612,
+        "pulse_duration": 0.6827704421921433
+      },
+      "fitness": 0.0,
+      "generation": 5,
+      "parent_ids": [
+        "crossover_5249"
+      ],
+      "mutation_history": [
+        "crossover",
+        "point_mutation"
+      ]
+    },
+    "crossover_8619": {
+      "id": "crossover_8619",
+      "genes": {
+        "turn_rate": 0.30548123817628475,
+        "magnetic_strength": 0.4586289575984587,
+        "secondary_radius": 0.4851918813668693,
+        "blend_threshold": 0.6978044826050102,
+        "goal_seeking_priority": 0.7068741651249141,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.9129709161509091,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "fusion_weight": 0.2054510160064285,
+        "behavior_blend_mode": "multiplicative",
+        "obstacle_avoidance_distance": 1.0,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.5382947893619325,
+        "coil_configuration": "sequential",
+        "speed": 0.4706417097578694,
+        "resonance_tuning": 0.8207720417065165,
+        "secondary_speed": 0.4215152438255899,
+        "levitation_height": 0.04827001611470215,
+        "propulsion_frequency": 22.67441201995264,
+        "pulse_duration": 0.6842382316296185
+      },
+      "fitness": 0.0,
+      "generation": 4,
+      "parent_ids": [
+        "crossover_2934_tune_8492",
+        "initial_genome_6_fusion_5963"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "crossover_9622_tune_6519": {
+      "id": "crossover_9622_tune_6519",
+      "genes": {
+        "obstacle_avoidance_distance": 0.9127040497689948,
+        "turn_rate": 0.4029397275656715,
+        "field_gradient_direction": "forward",
+        "magnetic_strength": 0.43519040099592643,
+        "energy_efficiency": 0.6426576432820242,
+        "secondary_radius": 0.514381763063713,
+        "goal_seeking_priority": 0.7357872830984179,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "coil_configuration": "sequential",
+        "blend_threshold": 0.6700693257667912,
+        "speed": 0.5019739269093131,
+        "magnetic_efficiency": 0.6736965567160792,
+        "exploration_radius": 0.6797126658944082,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "resonance_tuning": 0.8957146346943989,
+        "fusion_weight": 0.22274638060641982,
+        "secondary_speed": 0.457150571665052,
+        "levitation_height": 0.10242914617544144,
+        "behavior_blend_mode": "multiplicative",
+        "propulsion_frequency": 33.42110925518468,
+        "pulse_duration": 1.069234241821431
+      },
+      "fitness": 0.0,
+      "generation": 5,
+      "parent_ids": [
+        "crossover_9622"
+      ],
+      "mutation_history": [
+        "crossover",
+        "parameter_tuning"
+      ]
+    },
+    "crossover_9010": {
+      "id": "crossover_9010",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0,
+        "turn_rate": 0.3011564856100907,
+        "magnetic_strength": 0.4586289575984587,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "secondary_radius": 0.4851918813668693,
+        "blend_threshold": 0.6978044826050102,
+        "goal_seeking_priority": 0.7,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "coil_configuration": "sequential",
+        "speed": 0.4706417097578694,
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.8035281655725768,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "fusion_weight": 0.2054510160064285,
+        "resonance_tuning": 0.8,
+        "secondary_speed": 0.4215152438255899,
+        "levitation_height": 0.05,
+        "behavior_blend_mode": "multiplicative",
+        "propulsion_frequency": 21.598141505059452,
+        "pulse_duration": 0.9341065726811418
+      },
+      "fitness": 0.0,
+      "generation": 3,
+      "parent_ids": [
+        "crossover_4322",
+        "initial_genome_3"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "crossover_8248": {
+      "id": "crossover_8248",
+      "genes": {
+        "turn_rate": 0.30548123817628475,
+        "magnetic_strength": 0.4586289575984587,
+        "secondary_radius": 0.4851918813668693,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.7,
+        "blend_threshold": 0.6978044826050102,
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.9129709161509091,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "fusion_weight": 0.2054510160064285,
+        "behavior_blend_mode": "multiplicative",
+        "obstacle_avoidance_distance": 1.0,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "coil_configuration": "sequential",
+        "speed": 0.4706417097578694,
+        "resonance_tuning": 0.8,
+        "secondary_speed": 0.4215152438255899,
+        "levitation_height": 0.05,
+        "propulsion_frequency": 21.598141505059452,
+        "pulse_duration": 0.7183415977004948
+      },
+      "fitness": 0.0,
+      "generation": 3,
+      "parent_ids": [
+        "initial_genome_6_fusion_5963",
+        "crossover_4322"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "crossover_8495": {
+      "id": "crossover_8495",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0280043136171242,
+        "turn_rate": 0.2555697483076015,
+        "magnetic_strength": 0.510218615475285,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.5915905597645406,
+        "secondary_radius": 0.4851918813668693,
+        "blend_threshold": 0.6978044826050102,
+        "goal_seeking_priority": 0.7,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "coil_configuration": "sequential",
+        "speed": 0.41871219579681673,
+        "magnetic_efficiency": 0.6536040590607095,
+        "exploration_radius": 0.8340758735029418,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "fusion_weight": 0.2054510160064285,
+        "resonance_tuning": 0.8,
+        "secondary_speed": 0.4215152438255899,
+        "levitation_height": 0.1112811360832877,
+        "behavior_blend_mode": "multiplicative",
+        "propulsion_frequency": 34.440223306020286,
+        "pulse_duration": 0.939627147468908
+      },
+      "fitness": 0.0,
+      "generation": 3,
+      "parent_ids": [
+        "crossover_8827",
+        "crossover_3887_tune_4297"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "crossover_9882": {
+      "id": "crossover_9882",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0,
+        "turn_rate": 0.3068601912018534,
+        "field_gradient_direction": "forward",
+        "magnetic_strength": 0.48228012597458736,
+        "energy_efficiency": 0.6,
+        "goal_seeking_priority": 0.7,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "coil_configuration": "sequential",
+        "speed": 0.43413388049718343,
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.8035281655725768,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "resonance_tuning": 0.8,
+        "levitation_height": 0.0722834377268043,
+        "propulsion_frequency": 23.50690457526985,
+        "pulse_duration": 0.8687578332015357
+      },
+      "fitness": 0.0,
+      "generation": 2,
+      "parent_ids": [
+        "crossover_4246",
+        "initial_genome_3"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "crossover_1567": {
+      "id": "crossover_1567",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0,
+        "turn_rate": 0.2555697483076015,
+        "magnetic_strength": 0.5461457201873057,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "secondary_radius": 0.4851918813668693,
+        "blend_threshold": 0.6978044826050102,
+        "goal_seeking_priority": 0.7,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "coil_configuration": "sequential",
+        "speed": 0.41871219579681673,
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.8340758735029418,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "fusion_weight": 0.2054510160064285,
+        "resonance_tuning": 0.8,
+        "secondary_speed": 0.4215152438255899,
+        "levitation_height": 0.07136044198588884,
+        "behavior_blend_mode": "multiplicative",
+        "propulsion_frequency": 27.33517985135202,
+        "pulse_duration": 0.7183415977004948
+      },
+      "fitness": 0.0,
+      "generation": 3,
+      "parent_ids": [
+        "crossover_8827",
+        "initial_genome_8"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "initial_genome_3_pm_8472": {
+      "id": "initial_genome_3_pm_8472",
+      "genes": {
+        "speed": 0.4759087393634357,
+        "turn_rate": 0.3011564856100907,
+        "exploration_radius": 0.8035281655725768,
+        "obstacle_avoidance_distance": 1.0,
+        "goal_seeking_priority": 0.7,
+        "energy_efficiency": 0.6,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "magnetic_strength": 0.47861446047700185,
+        "propulsion_frequency": 23.50690457526985,
+        "coil_configuration": "sequential",
+        "levitation_height": 0.0722834377268043,
+        "field_gradient_direction": "forward",
+        "resonance_tuning": 0.8,
+        "pulse_duration": 0.9341065726811418,
+        "magnetic_efficiency": 0.7
+      },
+      "fitness": 0.0,
+      "generation": 1,
+      "parent_ids": [
+        "initial_genome_3"
+      ],
+      "mutation_history": [
+        "point_mutation"
+      ]
+    },
+    "crossover_7786": {
+      "id": "crossover_7786",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0,
+        "turn_rate": 0.3011564856100907,
+        "magnetic_strength": 0.5054673194611344,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "secondary_radius": 0.4851918813668693,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.7,
+        "coil_configuration": "sequential",
+        "blend_threshold": 0.6978044826050102,
+        "speed": 0.4759087393634357,
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.8340758735029418,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "resonance_tuning": 0.8,
+        "fusion_weight": 0.2054510160064285,
+        "secondary_speed": 0.4215152438255899,
+        "levitation_height": 0.0722834377268043,
+        "behavior_blend_mode": "multiplicative",
+        "propulsion_frequency": 34.440223306020286,
+        "pulse_duration": 0.7183415977004948
+      },
+      "fitness": 0.0,
+      "generation": 3,
+      "parent_ids": [
+        "initial_genome_3",
+        "crossover_8827"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "crossover_8547": {
+      "id": "crossover_8547",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0,
+        "turn_rate": 0.3614763104161531,
+        "magnetic_strength": 0.43886603343498015,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.7,
+        "coil_configuration": "sequential",
+        "speed": 0.4759087393634357,
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.8035281655725768,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "resonance_tuning": 0.8,
+        "levitation_height": 0.0722834377268043,
+        "propulsion_frequency": 33.0,
+        "pulse_duration": 1.1925206988990884
+      },
+      "fitness": 0.0,
+      "generation": 2,
+      "parent_ids": [
+        "initial_genome_3",
+        "crossover_6947"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "crossover_7763": {
+      "id": "crossover_7763",
+      "genes": {
+        "turn_rate": 0.2555697483076015,
+        "magnetic_strength": 0.46287656988374487,
+        "secondary_radius": 0.4851918813668693,
+        "blend_threshold": 0.6978044826050102,
+        "goal_seeking_priority": 0.6738496124548125,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.9998458412696464,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "fusion_weight": 0.21510604624983204,
+        "behavior_blend_mode": "multiplicative",
+        "obstacle_avoidance_distance": 0.9838321775598361,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "coil_configuration": "sequential",
+        "speed": 0.41871219579681673,
+        "resonance_tuning": 0.8,
+        "secondary_speed": 0.4215152438255899,
+        "levitation_height": 0.07136044198588884,
+        "propulsion_frequency": 20.793658534624612,
+        "pulse_duration": 1.004652259209413
+      },
+      "fitness": 0.0,
+      "generation": 4,
+      "parent_ids": [
+        "crossover_2056_tune_3707",
+        "crossover_6414"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "crossover_7255": {
+      "id": "crossover_7255",
+      "genes": {
+        "turn_rate": 0.2555697483076015,
+        "magnetic_strength": 0.3718343885096813,
+        "secondary_radius": 0.4851918813668693,
+        "blend_threshold": 0.6978044826050102,
+        "goal_seeking_priority": 0.7,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.8340758735029418,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "fusion_weight": 0.2054510160064285,
+        "behavior_blend_mode": "multiplicative",
+        "obstacle_avoidance_distance": 1.0,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "coil_configuration": "sequential",
+        "speed": 0.41871219579681673,
+        "resonance_tuning": 0.8,
+        "secondary_speed": 0.4215152438255899,
+        "levitation_height": 0.07136044198588884,
+        "propulsion_frequency": 34.440223306020286,
+        "pulse_duration": 0.7183415977004948
+      },
+      "fitness": 0.0,
+      "generation": 3,
+      "parent_ids": [
+        "crossover_8827",
+        "crossover_8827"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "crossover_5195_dup_3529": {
+      "id": "crossover_5195_dup_3529",
+      "genes": {
+        "turn_rate": 0.2555697483076015,
+        "magnetic_strength": 0.3718343885096813,
+        "secondary_radius": 0.4851918813668693,
+        "blend_threshold": 0.6978044826050102,
+        "goal_seeking_priority": 0.7,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.8340758735029418,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "fusion_weight": 0.2054510160064285,
+        "behavior_blend_mode": "multiplicative",
+        "obstacle_avoidance_distance": 1.0,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "coil_configuration": "sequential",
+        "speed": 0.41871219579681673,
+        "resonance_tuning": 0.8,
+        "secondary_speed": 0.4215152438255899,
+        "levitation_height": 0.07136044198588884,
+        "propulsion_frequency": 34.440223306020286,
+        "pulse_duration": 1.004652259209413,
+        "coil_configuration_dup_24": "sequential"
+      },
+      "fitness": 0.0,
+      "generation": 4,
+      "parent_ids": [
+        "crossover_5195"
+      ],
+      "mutation_history": [
+        "crossover",
+        "duplication"
+      ]
+    },
+    "crossover_4558": {
+      "id": "crossover_4558",
+      "genes": {
+        "turn_rate": 0.2555697483076015,
+        "magnetic_strength": 0.4586289575984587,
+        "secondary_radius": 0.4851918813668693,
+        "blend_threshold": 0.6978044826050102,
+        "goal_seeking_priority": 0.7,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.8340758735029418,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "fusion_weight": 0.2054510160064285,
+        "behavior_blend_mode": "multiplicative",
+        "obstacle_avoidance_distance": 1.0,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "coil_configuration": "sequential",
+        "speed": 0.41871219579681673,
+        "resonance_tuning": 0.8,
+        "secondary_speed": 0.4215152438255899,
+        "levitation_height": 0.05,
+        "propulsion_frequency": 34.440223306020286,
+        "pulse_duration": 0.7183415977004948
+      },
+      "fitness": 0.0,
+      "generation": 3,
+      "parent_ids": [
+        "crossover_8827",
+        "crossover_4322"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "crossover_3998_fusion_8361": {
+      "id": "crossover_3998_fusion_8361",
+      "genes": {
+        "turn_rate": 0.2555697483076015,
+        "magnetic_strength": 0.3718343885096813,
+        "secondary_radius": 0.7492744100093423,
+        "blend_threshold": 0.394096643984763,
+        "goal_seeking_priority": 0.7,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.8340758735029418,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "fusion_weight": 0.11131104562828753,
+        "behavior_blend_mode": "multiplicative",
+        "obstacle_avoidance_distance": 1.0,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "coil_configuration": "sequential",
+        "speed": 0.41871219579681673,
+        "resonance_tuning": 0.8,
+        "secondary_speed": 0.37508133913213293,
+        "levitation_height": 0.07136044198588884,
+        "propulsion_frequency": 34.440223306020286,
+        "pulse_duration": 0.7183415977004948
+      },
+      "fitness": 0.0,
+      "generation": 4,
+      "parent_ids": [
+        "crossover_3998"
+      ],
+      "mutation_history": [
+        "crossover",
+        "behavior_fusion"
+      ]
+    },
+    "crossover_4918": {
+      "id": "crossover_4918",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0280043136171242,
+        "turn_rate": 0.2555697483076015,
+        "field_gradient_direction": "forward",
+        "magnetic_strength": 0.3718343885096813,
+        "energy_efficiency": 0.6,
+        "secondary_radius": 0.4851918813668693,
+        "goal_seeking_priority": 0.7596933245700853,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "coil_configuration": "sequential",
+        "blend_threshold": 0.6978044826050102,
+        "speed": 0.4249540826873104,
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.9290514279275908,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "resonance_tuning": 0.8196911902520988,
+        "fusion_weight": 0.2054510160064285,
+        "secondary_speed": 0.4215152438255899,
+        "levitation_height": 0.07136044198588884,
+        "behavior_blend_mode": "multiplicative",
+        "propulsion_frequency": 34.440223306020286,
+        "pulse_duration": 1.004652259209413
+      },
+      "fitness": 0.0,
+      "generation": 3,
+      "parent_ids": [
+        "crossover_3887_tune_4297",
+        "crossover_6414"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "crossover_9151": {
+      "id": "crossover_9151",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0,
+        "turn_rate": 0.2503779898550402,
+        "magnetic_strength": 0.5461457201873057,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "secondary_radius": 0.4851918813668693,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.7,
+        "coil_configuration": "sequential",
+        "blend_threshold": 0.6978044826050102,
+        "speed": 0.41871219579681673,
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.9129709161509091,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "resonance_tuning": 0.8,
+        "fusion_weight": 0.2054510160064285,
+        "secondary_speed": 0.4215152438255899,
+        "levitation_height": 0.11514933318917157,
+        "behavior_blend_mode": "multiplicative",
+        "propulsion_frequency": 27.33517985135202,
+        "pulse_duration": 1.0450186078633368
+      },
+      "fitness": 0.0,
+      "generation": 3,
+      "parent_ids": [
+        "initial_genome_8",
+        "crossover_6414"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "crossover_9747": {
+      "id": "crossover_9747",
+      "genes": {
+        "turn_rate": 0.2555697483076015,
+        "magnetic_strength": 0.4586289575984587,
+        "secondary_radius": 0.4851918813668693,
+        "blend_threshold": 0.6978044826050102,
+        "goal_seeking_priority": 0.7,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.9129709161509091,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "fusion_weight": 0.2054510160064285,
+        "behavior_blend_mode": "multiplicative",
+        "obstacle_avoidance_distance": 1.0,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "coil_configuration": "sequential",
+        "speed": 0.4706417097578694,
+        "resonance_tuning": 0.8,
+        "secondary_speed": 0.4215152438255899,
+        "levitation_height": 0.05,
+        "propulsion_frequency": 21.598141505059452,
+        "pulse_duration": 1.004652259209413
+      },
+      "fitness": 0.0,
+      "generation": 3,
+      "parent_ids": [
+        "crossover_6414",
+        "initial_genome_6_fusion_5963"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "crossover_6414_fusion_8329": {
+      "id": "crossover_6414_fusion_8329",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0,
+        "turn_rate": 0.2555697483076015,
+        "magnetic_strength": 0.3718343885096813,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "secondary_radius": 0.3061237339765108,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "goal_seeking_priority": 0.7,
+        "coil_configuration": "sequential",
+        "blend_threshold": 0.6560716752255111,
+        "speed": 0.41871219579681673,
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.9129709161509091,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "resonance_tuning": 0.8,
+        "fusion_weight": 0.7715599748530018,
+        "secondary_speed": 0.555511684935946,
+        "levitation_height": 0.07136044198588884,
+        "behavior_blend_mode": "multiplicative",
+        "propulsion_frequency": 34.440223306020286,
+        "pulse_duration": 1.004652259209413
+      },
+      "fitness": 0.0,
+      "generation": 3,
+      "parent_ids": [
+        "crossover_6414"
+      ],
+      "mutation_history": [
+        "crossover",
+        "behavior_fusion"
+      ]
+    },
+    "crossover_2237": {
+      "id": "crossover_2237",
+      "genes": {
+        "obstacle_avoidance_distance": 0.9838321775598361,
+        "turn_rate": 0.2951346803087098,
+        "magnetic_strength": 0.46287656988374487,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.5915905597645406,
+        "secondary_radius": 0.4821127657337106,
+        "blend_threshold": 0.6847434429819446,
+        "goal_seeking_priority": 0.7596933245700853,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "coil_configuration": "sequential",
+        "speed": 0.46562018193919935,
+        "magnetic_efficiency": 0.6536040590607095,
+        "exploration_radius": 0.9290514279275908,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "fusion_weight": 0.21510604624983204,
+        "resonance_tuning": 0.8637700494696022,
+        "secondary_speed": 0.42818368364288173,
+        "levitation_height": 0.1112811360832877,
+        "behavior_blend_mode": "multiplicative",
+        "propulsion_frequency": 35.25812213119297,
+        "pulse_duration": 0.6827704421921433
+      },
+      "fitness": 0.0,
+      "generation": 4,
+      "parent_ids": [
+        "crossover_2056_tune_3707",
+        "crossover_3887_tune_4297"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    },
+    "crossover_4248": {
+      "id": "crossover_4248",
+      "genes": {
+        "obstacle_avoidance_distance": 1.0,
+        "turn_rate": 0.3614763104161531,
+        "magnetic_strength": 0.3718343885096813,
+        "field_gradient_direction": "forward",
+        "energy_efficiency": 0.6,
+        "secondary_radius": 0.4851918813668693,
+        "blend_threshold": 0.6978044826050102,
+        "goal_seeking_priority": 0.7,
+        "parameter_weights": [
+          0.4353417241807318,
+          0.30502124998742586,
+          0.2832430998063867
+        ],
+        "coil_configuration": "sequential",
+        "speed": 0.5,
+        "magnetic_efficiency": 0.7,
+        "exploration_radius": 0.8340758735029418,
+        "behavior_sequence": [
+          "forward",
+          "magnetic_pulse",
+          "levitate",
+          "figure_eight"
+        ],
+        "fusion_weight": 0.2054510160064285,
+        "resonance_tuning": 0.8,
+        "secondary_speed": 0.4215152438255899,
+        "levitation_height": 0.1,
+        "behavior_blend_mode": "multiplicative",
+        "propulsion_frequency": 33.0,
+        "pulse_duration": 1.1925206988990884
+      },
+      "fitness": 0.0,
+      "generation": 3,
+      "parent_ids": [
+        "crossover_8827",
+        "crossover_6947"
+      ],
+      "mutation_history": [
+        "crossover"
+      ]
+    }
+  },
+  "population_ids": [
+    "crossover_2056_tune_3707",
+    "crossover_2056_tune_3707",
+    "crossover_4322",
+    "crossover_8827",
+    "crossover_8827",
+    "crossover_8827",
+    "crossover_6414",
+    "crossover_3887_tune_4297",
+    "crossover_3887_tune_4297",
+    "initial_genome_3",
+    "initial_genome_3",
+    "initial_genome_3",
+    "crossover_6947",
+    "crossover_4246",
+    "initial_genome_9",
+    "initial_genome_9",
+    "crossover_2934_tune_8492",
+    "initial_genome_1_pm_4817",
+    "initial_genome_8",
+    "initial_genome_8",
+    "initial_genome_8",
+    "initial_genome_8",
+    "initial_genome_7",
+    "initial_genome_2",
+    "base_genome_v1",
+    "crossover_4085_pm_8814",
+    "initial_genome_6_fusion_5963",
+    "initial_genome_6_fusion_5963",
+    "initial_genome_6",
+    "initial_genome_6_fusion_5963_dup_4240",
+    "crossover_5761",
+    "crossover_4288",
+    "initial_genome_5",
+    "initial_genome_5",
+    "initial_genome_5",
+    "initial_genome_5",
+    "crossover_7026_pm_1178",
+    "crossover_3792",
+    "crossover_5846",
+    "crossover_2120_tune_5151",
+    "initial_genome_4",
+    "crossover_8084_tune_8901",
+    "initial_genome_1",
+    "initial_genome_1",
+    "initial_genome_5_dup_3476",
+    "crossover_8801",
+    "crossover_4417_pm_7132",
+    "crossover_7107",
+    "crossover_3691",
+    "crossover_7555"
+  ]
+}

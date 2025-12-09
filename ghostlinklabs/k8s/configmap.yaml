@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ghostlink-config
+  namespace: ghostlink
+data:
+  GHOSTLINK_ENV: "production"
+  PYTHONPATH: "/app"
+  HOST: "0.0.0.0"
+  RUN_CONTROLLER: "1"
+  RUN_PEER: "0"
+  RUN_BRIDGE: "0"
+  RUN_MESH: "0"
+  RUN_RESPONDER: "0"

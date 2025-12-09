@@ -1,0 +1,430 @@
+---
+# ==========================================
+# GhostLink Kubernetes Cluster Topology
+# Doctoral Infrastructure Manifest
+# ==========================================
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ghostlink-system
+  labels:
+    app.kubernetes.io/name: ghostlink
+    app.kubernetes.io/component: system
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ghostlink-config
+  namespace: ghostlink-system
+data:
+  CLUSTER_TOPOLOGY: "k3s-enterprise"
+  RECURSIVE_LOOP_ENABLED: "true"
+  SWARM_GENESIS_ENABLED: "true"
+  FEDERATION_ENABLED: "true"
+  NATS_URL: "nats://nats-server.ghostlink-system.svc.cluster.local:4222"
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ghostlink-secrets
+  namespace: ghostlink-system
+type: Opaque
+data:
+  # Base64 encoded secrets
+  postgres-password: Y2hhbmdlbWU3ODk=  # changeme789
+  nats-password: Y2hhbmdlbWUxMjM=      # changeme123
+  jwt-secret: Z2hvc3RsaW5rLWp3dC1zZWNyZXQ=  # ghostlink-jwt-secret
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: fast-archive-pv
+  labels:
+    type: nfs
+    storage: fast-archive
+spec:
+  capacity:
+    storage: 96Ti  # MD3600i 12x8TB
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: 192.168.1.103
+    path: "/mnt/fast-archive"
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: symbol-library-pv
+  labels:
+    type: nfs
+    storage: symbol-library
+spec:
+  capacity:
+    storage: 32Ti  # Synology 8-bay
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: 192.168.1.104
+    path: "/volume1/symbol-library"
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: backup-storage-pv
+  labels:
+    type: nfs
+    storage: backup
+spec:
+  capacity:
+    storage: 20Ti  # Synology 5-bay
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: 192.168.1.108
+    path: "/volume1/backup"
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: fast-archive-pvc
+  namespace: ghostlink-system
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 96Ti
+  selector:
+    matchLabels:
+      storage: fast-archive
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: symbol-library-pvc
+  namespace: ghostlink-system
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 32Ti
+  selector:
+    matchLabels:
+      storage: symbol-library
+
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ghostlink-fast
+  namespace: ghostlink-system
+provisioner: kubernetes.io/no-provisioner
+parameters:
+  type: nfs
+reclaimPolicy: Retain
+volumeBindingMode: Immediate
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ghostlink-control-plane
+  namespace: ghostlink-system
+  labels:
+    app: ghostlink
+    component: control-plane
+    node-type: r630-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ghostlink
+      component: control-plane
+  template:
+    metadata:
+      labels:
+        app: ghostlink
+        component: control-plane
+        node-type: r630-1
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: r630-1
+      containers:
+      - name: control-plane
+        image: ghostlink:latest
+        ports:
+        - containerPort: 8000
+          name: api
+        - containerPort: 7420
+          name: control
+        env:
+        - name: ROLE
+          value: "control-plane"
+        - name: CLUSTER_TOPOLOGY
+          valueFrom:
+            configMapKeyRef:
+              name: ghostlink-config
+              key: CLUSTER_TOPOLOGY
+        - name: RECURSIVE_LOOP_ENABLED
+          valueFrom:
+            configMapKeyRef:
+              name: ghostlink-config
+              key: RECURSIVE_LOOP_ENABLED
+        - name: NATS_URL
+          valueFrom:
+            configMapKeyRef:
+              name: ghostlink-config
+              key: NATS_URL
+        volumeMounts:
+        - name: fast-archive
+          mountPath: /mnt/fast-archive
+        - name: symbol-library
+          mountPath: /mnt/symbol-library
+        resources:
+          limits:
+            cpu: "6"
+            memory: "32Gi"
+          requests:
+            cpu: "4"
+            memory: "16Gi"
+      volumes:
+      - name: fast-archive
+        persistentVolumeClaim:
+          claimName: fast-archive-pvc
+      - name: symbol-library
+        persistentVolumeClaim:
+          claimName: symbol-library-pvc
+
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: ghostlink-recursive-workers
+  namespace: ghostlink-system
+  labels:
+    app: ghostlink
+    component: recursive-worker
+spec:
+  selector:
+    matchLabels:
+      app: ghostlink
+      component: recursive-worker
+  template:
+    metadata:
+      labels:
+        app: ghostlink
+        component: recursive-worker
+    spec:
+      nodeSelector:
+        node-type: recursive-worker
+      containers:
+      - name: recursive-worker
+        image: ghostlink:training
+        env:
+        - name: ROLE
+          value: "recursive-worker"
+        - name: NATS_URL
+          valueFrom:
+            configMapKeyRef:
+              name: ghostlink-config
+              key: NATS_URL
+        volumeMounts:
+        - name: symbol-library
+          mountPath: /mnt/symbol-library
+        resources:
+          limits:
+            cpu: "12"
+            memory: "128Gi"
+            nvidia.com/gpu: "2"
+          requests:
+            cpu: "8"
+            memory: "64Gi"
+            nvidia.com/gpu: "1"
+      volumes:
+      - name: symbol-library
+        persistentVolumeClaim:
+          claimName: symbol-library-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ghostlink-api
+  namespace: ghostlink-system
+  labels:
+    app: ghostlink
+    component: api
+spec:
+  selector:
+    app: ghostlink
+    component: control-plane
+  ports:
+  - name: api
+    port: 8000
+    targetPort: 8000
+  - name: control
+    port: 7420
+    targetPort: 7420
+  type: LoadBalancer
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ghostlink-ingress
+  namespace: ghostlink-system
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: ghostlink.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: ghostlink-api
+            port:
+              number: 8000
+  - host: monitor.ghostlink.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: grafana
+            port:
+              number: 3000
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: triad-synergy-hub
+  namespace: ghostlink-system
+  labels:
+    app: ghostlink
+    component: triad-synergy-hub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ghostlink
+      component: triad-synergy-hub
+  template:
+    metadata:
+      labels:
+        app: ghostlink
+        component: triad-synergy-hub
+    spec:
+      containers:
+      - name: synergy-hub
+        image: ghostlink/triad-synergy:latest
+        ports:
+        - containerPort: 7422
+          name: synergy
+        env:
+        - name: SYNERGY_HUB_PORT
+          value: "7422"
+        - name: GHOSTLINK_SYNERGY
+          value: "true"
+        volumeMounts:
+        - name: triad-shared
+          mountPath: /triad
+        resources:
+          limits:
+            cpu: "2"
+            memory: "4Gi"
+          requests:
+            cpu: "1"
+            memory: "2Gi"
+      volumes:
+      - name: triad-shared
+        persistentVolumeClaim:
+          claimName: triad-shared-pvc
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: triad-shared-pvc
+  namespace: ghostlink-system
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+  selector:
+    matchLabels:
+      storage: triad-shared
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: triad-shared-pv
+  labels:
+    type: local
+    storage: triad-shared
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/triad-shared"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: triad-synergy-service
+  namespace: ghostlink-system
+  labels:
+    app: ghostlink
+    component: triad-synergy
+spec:
+  selector:
+    app: ghostlink
+    component: triad-synergy-hub
+  ports:
+  - name: synergy
+    port: 7422
+    targetPort: 7422
+  type: ClusterIP
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ghostlink-triad-ingress
+  namespace: ghostlink-system
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: triad.ghostlink.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: triad-synergy-service
+            port:
+              number: 7422

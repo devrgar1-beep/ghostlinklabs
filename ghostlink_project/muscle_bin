@@ -1,0 +1,128 @@
+#!/bin/bash
+# This is a mock binary for testing purposes.
+# In a real scenario, this would be a compiled C or C++ program.
+
+# Seed the random number generator
+RANDOM=$(date +%s)
+
+# Default values
+CYCLE=1
+MEAN=0.5
+STD=0.5
+L1=0
+L2=0
+ENTROPY=0
+ACTIVE=0
+KL=0
+
+# Parse command-line arguments
+if [ "$#" -ge 1 ]; then
+    CYCLE=$1
+fi
+if [ "$#" -ge 2 ]; then
+    MEAN=$2
+fi
+if [ "$#" -ge 3 ]; then
+    STD=$3
+fi
+# ... and so on for other args if needed
+
+# --- CONFIGURATION ---
+GRID_WIDTH=40
+GRID_HEIGHT=12
+PULSE_RATE=0.2 # Chance of a cell becoming active
+DECAY_RATE=0.1 # Chance of an active cell decaying
+PULSE_INTENSITY=4 # Max value for a new pulse
+CENTER_BIAS=0.6 # Bias towards the center
+
+# --- STATE ---
+grid=()
+for ((i=0; i<GRID_HEIGHT * GRID_WIDTH; i++)); do
+    grid[$i]=0
+done
+
+# --- FUNCTIONS ---
+
+# Function to get a cell's value
+get_cell() {
+    local r=$1
+    local c=$2
+    echo ${grid[$((r * GRID_WIDTH + c))]}
+}
+
+# Function to set a cell's value
+set_cell() {
+    local r=$1
+    local c=$2
+    local val=$3
+    grid[$((r * GRID_WIDTH + c))]=$val
+}
+
+# Function to map a value to a character
+val_to_char() {
+    local val=$1
+    if (( val == 0 )); then
+        echo "·"
+    elif (( val == 1 )); then
+        echo "░"
+    elif (( val == 2 )); then
+        echo "▒"
+    elif (( val == 3 )); then
+        echo "▓"
+    else
+        echo "█"
+    fi
+}
+
+# --- MAIN LOGIC ---
+
+# Introduce a pulse based on cycle and metrics
+pulse_row=$(( (CYCLE * 7) % GRID_HEIGHT ))
+pulse_col=$(( (CYCLE * 13) % GRID_WIDTH ))
+set_cell $pulse_row $pulse_col $PULSE_INTENSITY
+
+# Evolve the grid
+for r in $(seq 0 $((GRID_HEIGHT - 1))); do
+    for c in $(seq 0 $((GRID_WIDTH - 1))); do
+        # Decay
+        val=$(get_cell $r $c)
+        if (( val > 0 )); then
+            if (( $(echo "$RANDOM / 32767" | bc -l) < DECAY_RATE )); then
+                set_cell $r $c $((val - 1))
+            fi
+        fi
+
+        # Random pulse
+        if (( $(echo "$RANDOM / 32767" | bc -l) < PULSE_RATE )); then
+            # Add a bias towards the center
+            dist_from_center_r=$(echo "($r - $GRID_HEIGHT / 2)" | bc)
+            dist_from_center_c=$(echo "($c - $GRID_WIDTH / 2)" | bc)
+            dist_from_center=$(echo "sqrt($dist_from_center_r^2 + $dist_from_center_c^2)" | bc -l)
+            max_dist=$(echo "sqrt(($GRID_HEIGHT/2)^2 + ($GRID_WIDTH/2)^2)" | bc -l)
+            
+            if (( $(echo "$dist_from_center / $max_dist < $CENTER_BIAS" | bc -l) )); then
+                 set_cell $r $c $PULSE_INTENSITY
+            fi
+        fi
+    done
+done
+
+
+# --- OUTPUT ---
+echo "MUSCLE_BINARY_OUTPUT"
+echo "CYCLE: $CYCLE"
+echo "INPUT_MEAN: $MEAN"
+echo "INPUT_STD: $STD"
+echo "---"
+
+for r in $(seq 0 $((GRID_HEIGHT - 1))); do
+    line="GRID: "
+    for c in $(seq 0 $((GRID_WIDTH - 1))); do
+        val=$(get_cell $r $c)
+        char=$(val_to_char $val)
+        line+="$char "
+    done
+    line+=":"
+    echo "$line"
+done
+echo "---"

@@ -1,0 +1,11 @@
+
+# GhostLink Shell Integration
+
+alias ghostlink_cmd="/Users/ghost-link-labs/.ghostlink/link_command_wrapper.py"
+function preexec() {
+    if [[ "$1" != ghostlink* ]] && [[ "$1" != link* ]]; then
+        export GHOSTLINK_LAST_CMD="$1"
+        eval "ghostlink_cmd \"$1\""
+        return $?
+    fi
+}

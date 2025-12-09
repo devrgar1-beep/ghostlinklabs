@@ -1,0 +1,30 @@
+[Unit]
+Description=GhostLink Controller Service
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ghostlink
+Group=ghostlink
+WorkingDirectory=/opt/ghostlink
+Environment="PATH=/opt/ghostlink/.venv/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="RUN_CONTROLLER=1"
+Environment="RUN_PEER=0"
+Environment="RUN_BRIDGE=0"
+Environment="HOST=127.0.0.1"
+ExecStart=/opt/ghostlink/.venv/bin/python /opt/ghostlink/gl_controller_metrics.py
+Restart=always
+RestartSec=10
+StandardOutput=append:/var/log/ghostlink/controller.log
+StandardError=append:/var/log/ghostlink/controller.log
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/log/ghostlink
+
+[Install]
+WantedBy=multi-user.target
