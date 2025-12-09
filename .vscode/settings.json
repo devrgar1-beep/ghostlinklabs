@@ -147,5 +147,6 @@
         "**/.ruff_cache": true,
         "**/node_modules": true,
         "**/.venv": true
-    }
+    },
+    "cmake.sourceDirectory": "/Users/ghost-link-labs/ghostlinklabs/fpga/nextpnr"
 }
