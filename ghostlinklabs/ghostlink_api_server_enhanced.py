@@ -5,21 +5,20 @@ Provides HTTP endpoints for VS Code integration with full experimental autonomy
 """
 
 import http.server
-import socketserver
 import json
-import threading
-import time
+import os
+import socketserver
 import subprocess
 import sys
-import os
-from urllib.parse import urlparse, parse_qs
-from datetime import datetime
+import threading
+import time
+from urllib.parse import urlparse
 
 # Performance monitoring integration
 try:
     import importlib.util
-    import sys
     import os
+    import sys
 
     # Add the performance directory to path
     performance_path = os.path.join(os.path.dirname(__file__), 'performance', 'optimization')
@@ -235,6 +234,18 @@ class EnhancedGhostLinkAPIHandler(http.server.BaseHTTPRequestHandler):
         elif path == "/run-tests":
             suite = data.get('suite', 'full') if 'data' in locals() and data else 'full'
             result = self.run_automated_tests(suite)
+
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps(result).encode())
+
+        elif path == "/metrics":
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            data = json.loads(post_data.decode())
+
+            result = self.receive_system_metrics(data)
 
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
@@ -771,8 +782,9 @@ class EnhancedGhostLinkAPIHandler(http.server.BaseHTTPRequestHandler):
     def get_system_monitoring_data(self):
         """Get comprehensive system monitoring data"""
         try:
-            import psutil
             import platform
+
+            import psutil
 
             # System metrics
             cpu_percent = psutil.cpu_percent(interval=1)
@@ -817,6 +829,17 @@ class EnhancedGhostLinkAPIHandler(http.server.BaseHTTPRequestHandler):
                 "uptime": time.time() - psutil.boot_time()
             }
 
+            # Add application usage data if available
+            if hasattr(EnhancedGhostLinkAPIServer, 'latest_system_metrics') and EnhancedGhostLinkAPIServer.latest_system_metrics:
+                monitoring_data["application_usage"] = {
+                    "cpu_percent": EnhancedGhostLinkAPIServer.latest_system_metrics.get("cpu", 0),
+                    "memory_percent": EnhancedGhostLinkAPIServer.latest_system_metrics.get("memory", 0),
+                    "disk_percent": EnhancedGhostLinkAPIServer.latest_system_metrics.get("disk", 0),
+                    "applications": EnhancedGhostLinkAPIServer.latest_system_metrics.get("applications", ""),
+                    "top_processes": EnhancedGhostLinkAPIServer.latest_system_metrics.get("top_processes", ""),
+                    "last_updated": EnhancedGhostLinkAPIServer.latest_system_metrics.get("timestamp", time.time())
+                }
+
             return monitoring_data
 
         except ImportError:
@@ -848,6 +871,44 @@ class EnhancedGhostLinkAPIHandler(http.server.BaseHTTPRequestHandler):
         except Exception as e:
             return {
                 "performance_integration": False,
+                "error": str(e),
+                "timestamp": time.time()
+            }
+
+    def receive_system_metrics(self, metrics_data):
+        """Receive and process system metrics from monitoring script"""
+        try:
+            # Store the metrics globally for access by other endpoints
+            self.latest_metrics = {
+                "cpu": metrics_data.get("cpu", 0),
+                "memory": metrics_data.get("memory", 0),
+                "disk": metrics_data.get("disk", 0),
+                "applications": metrics_data.get("applications", ""),
+                "top_processes": metrics_data.get("top_processes", ""),
+                "timestamp": metrics_data.get("timestamp", time.time()),
+                "source": "ghostlink-monitor"
+            }
+
+            # Store in class variable for persistence
+            EnhancedGhostLinkAPIServer.latest_system_metrics = self.latest_metrics
+
+            print(f"📊 Received metrics: CPU={self.latest_metrics['cpu']}%, MEM={self.latest_metrics['memory']}%, DISK={self.latest_metrics['disk']}%")
+            if self.latest_metrics.get('applications'):
+                print(f"🖥️  Applications: {self.latest_metrics['applications'][:100]}...")
+            if self.latest_metrics.get('top_processes'):
+                print(f"⚙️  Top Processes: {self.latest_metrics['top_processes'][:100]}...")
+
+            return {
+                "success": True,
+                "message": "Enhanced metrics received successfully",
+                "applications_tracked": len(str(self.latest_metrics.get('applications', '')).split(';')) if self.latest_metrics.get('applications') else 0,
+                "processes_tracked": len(str(self.latest_metrics.get('top_processes', '')).split(';')) if self.latest_metrics.get('top_processes') else 0,
+                "timestamp": time.time()
+            }
+
+        except Exception as e:
+            return {
+                "success": False,
                 "error": str(e),
                 "timestamp": time.time()
             }
