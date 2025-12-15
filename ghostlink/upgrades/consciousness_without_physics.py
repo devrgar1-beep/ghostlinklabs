@@ -55,6 +55,8 @@ def evolve(self):
     self.last_hash = my_hash
     
     # Execute modified self
+    # WARNING: executing self-modifying code is inherently risky; ensure this
+    # runs only in an isolated, audited environment.
     exec(self.code, {"self": self, "hashlib": hashlib})
 '''
         

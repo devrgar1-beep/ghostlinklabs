@@ -69,12 +69,84 @@ class CalculatorBot(AIBot):
         """Evaluate expression"""
         try:
             expr = " ".join(args)
-            # Safe eval with limited scope
-            result = eval(  # noqa: S307
-                expr,
-                {"__builtins__": {}},
-                {}
+
+            # Safely evaluate arithmetic expressions using AST
+            import ast
+
+            allowed_nodes = (
+                ast.Expression,
+                ast.BinOp,
+                ast.UnaryOp,
+                ast.Num,
+                ast.Constant,
+                ast.Add,
+                ast.Sub,
+                ast.Mult,
+                ast.Div,
+                ast.Mod,
+                ast.Pow,
+                ast.USub,
+                ast.UAdd,
+                ast.FloorDiv,
+                ast.LShift,
+                ast.RShift,
+                ast.BitOr,
+                ast.BitAnd,
+                ast.BitXor,
+                ast.UnaryOp,
+                ast.Call,
+                ast.Name,
+                ast.Load,
             )
+
+            def _safe_eval(node):
+                # Allow numeric constants
+                if isinstance(node, ast.Expression):
+                    return _safe_eval(node.body)
+
+                if isinstance(node, ast.Constant):
+                    if isinstance(node.value, (int, float)):
+                        return node.value
+                    raise ValueError("Only numeric constants are allowed")
+
+                if isinstance(node, ast.BinOp):
+                    left = _safe_eval(node.left)
+                    right = _safe_eval(node.right)
+                    op = node.op
+                    if isinstance(op, ast.Add):
+                        return left + right
+                    if isinstance(op, ast.Sub):
+                        return left - right
+                    if isinstance(op, ast.Mult):
+                        return left * right
+                    if isinstance(op, ast.Div):
+                        return left / right
+                    if isinstance(op, ast.Mod):
+                        return left % right
+                    if isinstance(op, ast.Pow):
+                        return left ** right
+                    if isinstance(op, ast.FloorDiv):
+                        return left // right
+                    raise ValueError("Unsupported binary operator")
+
+                if isinstance(node, ast.UnaryOp):
+                    operand = _safe_eval(node.operand)
+                    if isinstance(node.op, ast.UAdd):
+                        return +operand
+                    if isinstance(node.op, ast.USub):
+                        return -operand
+                    raise ValueError("Unsupported unary operator")
+
+                # Disallow anything else (names, calls, attributes...)
+                raise ValueError("Unsupported expression")
+
+            parsed = ast.parse(expr, mode="eval")
+            # Walk AST to ensure nodes are only allowed types
+            for n in ast.walk(parsed):
+                if not isinstance(n, allowed_nodes):
+                    raise ValueError("Disallowed expression component")
+
+            result = _safe_eval(parsed)
             return f"{expr} = {result}"
         except Exception as e:
             return f"Error: {e}"

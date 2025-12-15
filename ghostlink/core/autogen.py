@@ -96,6 +96,8 @@ class ConversableAgent(ABC):
         context = self._prepare_llm_context(messages, sender)
 
         try:
+            # WARNING: generated code execution can be dangerous. Ensure inputs are trusted
+            # or executed inside a hardened, OS-level sandbox. Avoid exec() on untrusted input.
             response = await ai_manager.ask(context)
             return Message(content=response, role="assistant", name=self.name)
         except Exception as e:

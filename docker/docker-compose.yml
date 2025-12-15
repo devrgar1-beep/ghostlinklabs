@@ -1,0 +1,186 @@
+version: '3.8'
+
+# ══════════════════════════════════════════════════════════════════════════════
+# GHOSTLINK v8 DOCKER INFRASTRUCTURE
+# Complete service orchestration for PostgreSQL, Redis, and Grafana
+# ══════════════════════════════════════════════════════════════════════════════
+
+services:
+  # ──── PostgreSQL Database ─────────────────────────────────────────────────
+  postgres:
+    image: postgres:15-alpine
+    container_name: ghostlink-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ghostlink
+      POSTGRES_USER: ghostlink
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/01-init-db.sql:ro
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ghostlink -d ghostlink" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - ghostlink-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ──── Redis Cache & Stigmergy ─────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: ghostlink-redis
+    restart: unless-stopped
+    command: >
+      redis-server --appendonly yes --appendfsync everysec --maxmemory 512mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - ghostlink-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ──── Grafana Monitoring ──────────────────────────────────────────────────
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ghostlink-grafana
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
+      GF_INSTALL_PLUGINS: redis-datasource,postgres-datasource
+      GF_SERVER_ROOT_URL: http://localhost:3001
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana-provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - ghostlink-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ──── Prometheus Metrics (Optional) ───────────────────────────────────────
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ghostlink-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - prometheus-data:/prometheus
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'
+    networks:
+      - ghostlink-network
+    profiles:
+      - monitoring
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ──── Evolution API ────────────────────────────────────────────────────────
+  evolution-api:
+    build:
+      context: ..
+      dockerfile: docker/evolution-api/Dockerfile
+    container_name: ghostlink-evolution-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../src:/app/src:ro
+      - ../evolution_data:/app/evolution_data:rw
+    environment:
+      - WORKSPACE_PATH=/app
+    networks:
+      - ghostlink-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  dashboard:
+    build:
+      context: ..
+      dockerfile: docker/dashboard/Dockerfile
+    container_name: ghostlink-dashboard
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../ui/dashboard:/usr/share/nginx/html:ro
+    networks:
+      - ghostlink-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# ══════════════════════════════════════════════════════════════════════════════
+# VOLUMES
+# ══════════════════════════════════════════════════════════════════════════════
+
+volumes:
+  postgres-data:
+    driver: local
+    name: ghostlink-postgres-data
+  redis-data:
+    driver: local
+    name: ghostlink-redis-data
+  grafana-data:
+    driver: local
+    name: ghostlink-grafana-data
+  prometheus-data:
+    driver: local
+    name: ghostlink-prometheus-data
+
+# ══════════════════════════════════════════════════════════════════════════════
+# NETWORKS
+# ══════════════════════════════════════════════════════════════════════════════
+
+networks:
+  ghostlink-network:
+    name: ghostlink-network
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
