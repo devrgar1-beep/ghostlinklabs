@@ -1,0 +1,29 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{pgfplotstable}
+\usepackage{siunitx}
+\pgfplotsset{compat=1.18}
+\title{GhostLink: Executive Summary (CSV-wired)}
+\author{Ghost}
+\date{November 2025}
+\begin{document}
+\maketitle
+\noindent\textbf{Positioning:} GhostLink frames distributed intelligence as computational protein folding. Performance, latency, and cost gains are reported below and loaded from CSV.
+\section*{Metrics at a Glance}
+\pgfplotstableset{col sep=comma}
+\pgfplotstabletypeset[columns/Metric/.style={string type},
+columns/SingleModel/.style={column name=Single},
+columns/GhostLink/.style={column name=GhostLink},
+columns/Delta/.style={column name=Delta},
+every head row/.style={before row=\toprule, after row=\midrule},
+every last row/.style={after row=\bottomrule}
+]{ghostlink_metrics_v1.csv}
+\vspace{0.5em}
+\noindent Data source: \texttt{ghostlink\_metrics\_v1.csv}. For details see Methods Supplement.
+\end{document}

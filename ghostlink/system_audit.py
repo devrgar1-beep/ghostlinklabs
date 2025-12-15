@@ -4,19 +4,24 @@ GhostLink System Audit & Reporting
 Complete system audit and comprehensive reporting
 """
 
-import json
-import sys
-import platform
-import psutil
-from pathlib import Path
 from dataclasses import dataclass, field
-from typing import Dict, List, Any, Optional
 from datetime import datetime
 from enum import Enum
+import json
+import os
+from pathlib import Path
+import platform
+import sys
+from typing import Any, Dict, List
+
+# Add the ghostlink module to the path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+from ghostlink.sovereign_deps import SystemMonitor
 
 
 class AuditLevel(Enum):
     """Audit severity levels"""
+
     INFO = "info"
     WARNING = "warning"
     ERROR = "error"
@@ -26,6 +31,7 @@ class AuditLevel(Enum):
 @dataclass
 class AuditFinding:
     """An audit finding"""
+
     level: AuditLevel
     category: str
     title: str
@@ -41,7 +47,7 @@ class AuditFinding:
             "title": self.title,
             "description": self.description,
             "evidence": self.evidence,
-            "recommendation": self.recommendation
+            "recommendation": self.recommendation,
         }
 
 
@@ -75,14 +81,16 @@ class SystemAuditor:
         version_str = f"{py_version.major}.{py_version.minor}.{py_version.micro}"
 
         if py_version.major < 3 or (py_version.major == 3 and py_version.minor < 8):
-            self.findings.append(AuditFinding(
-                level=AuditLevel.ERROR,
-                category="environment",
-                title="Python version outdated",
-                description=f"Python {version_str} detected, but 3.8+ required",
-                evidence=[version_str],
-                recommendation="Upgrade Python to 3.8 or later"
-            ))
+            self.findings.append(
+                AuditFinding(
+                    level=AuditLevel.ERROR,
+                    category="environment",
+                    title="Python version outdated",
+                    description=f"Python {version_str} detected, but 3.8+ required",
+                    evidence=[version_str],
+                    recommendation="Upgrade Python to 3.8 or later",
+                )
+            )
         else:
             print(f"  ✓ Python {version_str}")
 
@@ -101,14 +109,16 @@ class SystemAuditor:
                 missing.append(package)
 
         if missing:
-            self.findings.append(AuditFinding(
-                level=AuditLevel.ERROR,
-                category="dependencies",
-                title="Missing dependencies",
-                description=f"Not installed: {', '.join(missing)}",
-                evidence=missing,
-                recommendation=f"Install with: pip install {' '.join(missing)}"
-            ))
+            self.findings.append(
+                AuditFinding(
+                    level=AuditLevel.ERROR,
+                    category="dependencies",
+                    title="Missing dependencies",
+                    description=f"Not installed: {', '.join(missing)}",
+                    evidence=missing,
+                    recommendation=f"Install with: pip install {' '.join(missing)}",
+                )
+            )
 
     def _check_file_structure(self):
         """Check project file structure"""
@@ -118,7 +128,7 @@ class SystemAuditor:
             Path("bin/ghostlink"),
             Path("man/man1/ghostlink.1"),
             Path("UNIX_INTEGRATION.md"),
-            Path("ghostlink/link_cli.py")
+            Path("ghostlink/link_cli.py"),
         ]
 
         missing = []
@@ -129,14 +139,16 @@ class SystemAuditor:
                 print(f"  ✓ {file_path}")
 
         if missing:
-            self.findings.append(AuditFinding(
-                level=AuditLevel.WARNING,
-                category="files",
-                title="Missing files",
-                description="Some expected files are missing",
-                evidence=missing,
-                recommendation="Verify installation is complete"
-            ))
+            self.findings.append(
+                AuditFinding(
+                    level=AuditLevel.WARNING,
+                    category="files",
+                    title="Missing files",
+                    description="Some expected files are missing",
+                    evidence=missing,
+                    recommendation="Verify installation is complete",
+                )
+            )
 
     def _check_configuration(self):
         """Check configuration"""
@@ -146,66 +158,77 @@ class SystemAuditor:
         config_file = config_dir / "ghostlink.conf"
 
         if config_file.exists():
-            print(f"  ✓ Configuration file exists")
+            print("  ✓ Configuration file exists")
         else:
-            print(f"  ℹ Configuration will be created on first use")
+            print("  ℹ Configuration will be created on first use")
 
         # Check directory permissions
         if config_dir.exists():
             stat = config_dir.stat()
             mode = oct(stat.st_mode)[-3:]
             if mode not in ("700", "755"):
-                self.findings.append(AuditFinding(
-                    level=AuditLevel.WARNING,
-                    category="security",
-                    title="Config directory permissions",
-                    description=f"Directory permissions: {mode}",
-                    evidence=[str(config_dir)],
-                    recommendation="Set permissions to 700 or 755"
-                ))
+                self.findings.append(
+                    AuditFinding(
+                        level=AuditLevel.WARNING,
+                        category="security",
+                        title="Config directory permissions",
+                        description=f"Directory permissions: {mode}",
+                        evidence=[str(config_dir)],
+                        recommendation="Set permissions to 700 or 755",
+                    )
+                )
 
     def _check_resources(self):
         """Check system resources"""
         print("[5/7] Checking resources...")
 
-        cpu_count = psutil.cpu_count()
-        cpu_percent = psutil.cpu_percent(interval=1)
-        memory = psutil.virtual_memory()
-        disk = psutil.disk_usage('/')
+        monitor = SystemMonitor()
+        cpu_count = monitor.get_cpu_count()
+        cpu_percent = monitor.get_cpu_percent()
+        memory = monitor.get_memory_info()
+        disk = monitor.get_disk_usage("/")
 
         print(f"  CPU: {cpu_count} cores, {cpu_percent}% used")
-        print(f"  Memory: {memory.percent}% used ({memory.available / (1024**3):.1f}GB free)")
-        print(f"  Disk: {disk.percent}% used")
+        print(
+            f"  Memory: {memory['percent']}% used ({memory['available'] / (1024**3):.1f}GB free)"
+        )
+        print(f"  Disk: {disk['percent']}% used")
 
         if cpu_percent > 80:
-            self.findings.append(AuditFinding(
-                level=AuditLevel.WARNING,
-                category="resources",
-                title="High CPU usage",
-                description=f"CPU usage at {cpu_percent}%",
-                evidence=[f"{cpu_percent}%"],
-                recommendation="Check for resource-intensive processes"
-            ))
+            self.findings.append(
+                AuditFinding(
+                    level=AuditLevel.WARNING,
+                    category="resources",
+                    title="High CPU usage",
+                    description=f"CPU usage at {cpu_percent}%",
+                    evidence=[f"{cpu_percent}%"],
+                    recommendation="Check for resource-intensive processes",
+                )
+            )
 
-        if memory.percent > 85:
-            self.findings.append(AuditFinding(
-                level=AuditLevel.WARNING,
-                category="resources",
-                title="High memory usage",
-                description=f"Memory usage at {memory.percent}%",
-                evidence=[f"{memory.percent}%"],
-                recommendation="Free up memory or increase RAM"
-            ))
+        if memory["percent"] > 85:
+            self.findings.append(
+                AuditFinding(
+                    level=AuditLevel.WARNING,
+                    category="resources",
+                    title="High memory usage",
+                    description=f"Memory usage at {memory['percent']}%",
+                    evidence=[f"{memory['percent']}%"],
+                    recommendation="Free up memory or increase RAM",
+                )
+            )
 
-        if disk.percent > 90:
-            self.findings.append(AuditFinding(
-                level=AuditLevel.WARNING,
-                category="resources",
-                title="Low disk space",
-                description=f"Disk usage at {disk.percent}%",
-                evidence=[f"{disk.percent}%"],
-                recommendation="Free up disk space"
-            ))
+        if disk["percent"] > 90:
+            self.findings.append(
+                AuditFinding(
+                    level=AuditLevel.WARNING,
+                    category="resources",
+                    title="Low disk space",
+                    description=f"Disk usage at {disk['percent']}%",
+                    evidence=[f"{disk['percent']}%"],
+                    recommendation="Free up disk space",
+                )
+            )
 
     def _check_security(self):
         """Check security settings"""
@@ -219,7 +242,7 @@ class SystemAuditor:
         print(f"  Home directory permissions: {mode}")
 
         # Check for required security features
-        print(f"  ✓ Basic security checks passed")
+        print("  ✓ Basic security checks passed")
 
     def _check_network(self):
         """Check network configuration"""
@@ -227,15 +250,12 @@ class SystemAuditor:
 
         try:
             import socket
+
             hostname = socket.gethostname()
             print(f"  ✓ Hostname: {hostname}")
 
             # Check common ports
-            ports = {
-                8000: "ghostlink",
-                7420: "controller",
-                7422: "peer"
-            }
+            ports = {8000: "ghostlink", 7420: "controller", 7422: "peer"}
 
             for port, service in ports.items():
                 try:
@@ -281,17 +301,17 @@ class SystemAuditor:
                     "total": total,
                     "critical": critical,
                     "errors": errors,
-                    "warnings": warnings
-                }
+                    "warnings": warnings,
+                },
             },
             "system": {
                 "platform": platform.system(),
                 "python_version": platform.python_version(),
                 "hostname": platform.node(),
                 "processor": platform.processor(),
-                "cpu_count": psutil.cpu_count()
+                "cpu_count": SystemMonitor().get_cpu_count(),
             },
-            "findings": [f.to_dict() for f in self.findings]
+            "findings": [f.to_dict() for f in self.findings],
         }
 
         return report
@@ -303,9 +323,9 @@ def run_audit():
     report = auditor.audit()
 
     # Print summary
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("AUDIT SUMMARY")
-    print("="*70)
+    print("=" * 70)
     print(f"\nStatus: {report['audit']['status']}")
     print(f"Findings: {report['audit']['findings_summary']['total']}")
     print(f"  Critical: {report['audit']['findings_summary']['critical']}")
@@ -314,28 +334,28 @@ def run_audit():
     print(f"\nDuration: {report['audit']['duration_seconds']:.2f}s")
 
     # Print findings if any
-    if report['findings']:
-        print("\n" + "-"*70)
+    if report["findings"]:
+        print("\n" + "-" * 70)
         print("FINDINGS:")
-        print("-"*70)
-        for i, finding in enumerate(report['findings'], 1):
+        print("-" * 70)
+        for i, finding in enumerate(report["findings"], 1):
             print(f"\n{i}. [{finding['level'].upper()}] {finding['title']}")
             print(f"   Category: {finding['category']}")
             print(f"   Description: {finding['description']}")
             print(f"   Recommendation: {finding['recommendation']}")
 
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
 
     # Save report
     report_file = Path.home() / ".local" / "share" / "ghostlink" / "audit_report.json"
     report_file.parent.mkdir(parents=True, exist_ok=True)
 
-    with open(report_file, 'w') as f:
+    with open(report_file, "w") as f:
         json.dump(report, f, indent=2)
 
     print(f"\nReport saved: {report_file}\n")
 
-    return 0 if report['audit']['status'] == 'HEALTHY' else 1
+    return 0 if report["audit"]["status"] == "HEALTHY" else 1
 
 
 if __name__ == "__main__":

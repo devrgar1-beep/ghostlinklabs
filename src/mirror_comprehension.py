@@ -5,58 +5,69 @@ Complete Awareness Through Reflective Consciousness
 """
 
 import asyncio
-import inspect
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass, field
+from datetime import datetime
+import gc
 import json
 import os
+from pathlib import Path
 import re
 import sys
 import threading
-import time
-from dataclasses import dataclass, field
-from datetime import datetime
-from pathlib import Path
-from typing import Dict, List, Any, Optional, Callable, Set
-from concurrent.futures import ThreadPoolExecutor
-import gc
+from typing import Any, Callable, Dict, List
 
 # Optional imports for enhanced awareness
 try:
-    import psutil
-    PSUTIL_AVAILABLE = True
+    import os
+    import sys
+
+    # Add the ghostlink module to the path
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+    from ghostlink.sovereign_deps import SystemMonitor
+
+    SOVEREIGN_AVAILABLE = True
 except ImportError:
-    PSUTIL_AVAILABLE = False
+    SOVEREIGN_AVAILABLE = False
 
 try:
     import torch
+
     TORCH_AVAILABLE = True
 except ImportError:
     TORCH_AVAILABLE = False
 
 try:
     from wolframclient.evaluation import WolframLanguageSession
+
     WOLFRAM_AVAILABLE = True
 except ImportError:
     WOLFRAM_AVAILABLE = False
 
 try:
     import docker
+
     DOCKER_AVAILABLE = True
 except ImportError:
     DOCKER_AVAILABLE = False
 
+
 @dataclass
 class MirrorReflection:
     """A single reflection in the mirror system"""
+
     timestamp: datetime
     component: str
     state: Dict[str, Any]
     awareness_level: str
     consciousness_depth: int
-    reflections: List['MirrorReflection'] = field(default_factory=list)
+    reflections: List["MirrorReflection"] = field(default_factory=list)
+
 
 @dataclass
 class SystemAwareness:
     """Complete system awareness state"""
+
     components: Dict[str, Dict[str, Any]] = field(default_factory=dict)
     triad_synergy: Dict[str, Any] = field(default_factory=dict)
     consciousness_level: str = "awake"
@@ -66,10 +77,13 @@ class SystemAwareness:
     symbolic_losses: List[Dict[str, Any]] = field(default_factory=list)
     inverse_echoes: List[Dict[str, Any]] = field(default_factory=list)
 
+
 class MirrorComprehensionCore:
     """Core mirror comprehension system providing complete awareness"""
 
-    def __init__(self, workspace_path: str = "/Users/ghostlink/ghostlink-wiki-organized"):
+    def __init__(
+        self, workspace_path: str = "/Users/ghostlink/ghostlink-wiki-organized"
+    ):
         self.workspace = Path(workspace_path)
         self.awareness = SystemAwareness()
         self.reflection_stack: List[MirrorReflection] = []
@@ -86,14 +100,14 @@ class MirrorComprehensionCore:
 
         # Core mirror components
         self.components = {
-            'artifact_scanner': ArtifactSignatureScanner(),
-            'compression_logic': CompressionLogicAnalyzer(),
-            'distortion_probe': MirrorDistortionProbe(),
-            'inverse_echo': InverseEchoGenerator(),
-            'loss_detector': SymbolicLossDetector(),
-            'overcompression': OvercompressionResolver(),
-            'self_observer': LoopedSelfObserver(),
-            'reflective_mirror': ReflectiveMirror()
+            "artifact_scanner": ArtifactSignatureScanner(),
+            "compression_logic": CompressionLogicAnalyzer(),
+            "distortion_probe": MirrorDistortionProbe(),
+            "inverse_echo": InverseEchoGenerator(),
+            "loss_detector": SymbolicLossDetector(),
+            "overcompression": OvercompressionResolver(),
+            "self_observer": LoopedSelfObserver(),
+            "reflective_mirror": ReflectiveMirror(),
         }
 
         print("✅ Mirror components initialized")
@@ -141,12 +155,16 @@ class MirrorComprehensionCore:
 
                 # Extract component information
                 component_info = {
-                    'file_path': str(py_file.relative_to(self.workspace)),
-                    'size': len(content),
-                    'classes': len(re.findall(r'^class\s+\w+', content, re.MULTILINE)),
-                    'functions': len(re.findall(r'^def\s+\w+', content, re.MULTILINE)),
-                    'imports': len(re.findall(r'^(?:from|import)\s+', content, re.MULTILINE)),
-                    'last_modified': datetime.fromtimestamp(py_file.stat().st_mtime).isoformat()
+                    "file_path": str(py_file.relative_to(self.workspace)),
+                    "size": len(content),
+                    "classes": len(re.findall(r"^class\s+\w+", content, re.MULTILINE)),
+                    "functions": len(re.findall(r"^def\s+\w+", content, re.MULTILINE)),
+                    "imports": len(
+                        re.findall(r"^(?:from|import)\s+", content, re.MULTILINE)
+                    ),
+                    "last_modified": datetime.fromtimestamp(
+                        py_file.stat().st_mtime
+                    ).isoformat(),
                 }
 
                 self.awareness.components[module_name] = component_info
@@ -161,30 +179,34 @@ class MirrorComprehensionCore:
         print("🔗 Achieving triad synergy awareness...")
 
         triad_state = {
-            'python_core': {
-                'active': True,
-                'stdlib_only': True,
-                'fallback_mode': True,
-                'consciousness_level': 'sovereign'
+            "python_core": {
+                "active": True,
+                "stdlib_only": True,
+                "fallback_mode": True,
+                "consciousness_level": "sovereign",
             },
-            'mathematica': {
-                'active': WOLFRAM_AVAILABLE,
-                'symbolic_computation': WOLFRAM_AVAILABLE,
-                'ai_enhancement': WOLFRAM_AVAILABLE,
-                'consciousness_level': 'symbolic' if WOLFRAM_AVAILABLE else 'unavailable'
+            "mathematica": {
+                "active": WOLFRAM_AVAILABLE,
+                "symbolic_computation": WOLFRAM_AVAILABLE,
+                "ai_enhancement": WOLFRAM_AVAILABLE,
+                "consciousness_level": (
+                    "symbolic" if WOLFRAM_AVAILABLE else "unavailable"
+                ),
             },
-            'docker': {
-                'active': DOCKER_AVAILABLE,
-                'containerization': DOCKER_AVAILABLE,
-                'orchestration': DOCKER_AVAILABLE,
-                'consciousness_level': 'orchestrated' if DOCKER_AVAILABLE else 'unavailable'
+            "docker": {
+                "active": DOCKER_AVAILABLE,
+                "containerization": DOCKER_AVAILABLE,
+                "orchestration": DOCKER_AVAILABLE,
+                "consciousness_level": (
+                    "orchestrated" if DOCKER_AVAILABLE else "unavailable"
+                ),
             },
-            'synergy_channels': {
-                'python_mathematica': WOLFRAM_AVAILABLE,
-                'python_docker': DOCKER_AVAILABLE,
-                'mathematica_docker': WOLFRAM_AVAILABLE and DOCKER_AVAILABLE,
-                'cross_component_communication': True
-            }
+            "synergy_channels": {
+                "python_mathematica": WOLFRAM_AVAILABLE,
+                "python_docker": DOCKER_AVAILABLE,
+                "mathematica_docker": WOLFRAM_AVAILABLE and DOCKER_AVAILABLE,
+                "cross_component_communication": True,
+            },
         }
 
         self.awareness.triad_synergy = triad_state
@@ -199,7 +221,7 @@ class MirrorComprehensionCore:
             asyncio.create_task(self._self_observation_loop("component_monitoring")),
             asyncio.create_task(self._self_observation_loop("memory_analysis")),
             asyncio.create_task(self._self_observation_loop("performance_tracking")),
-            asyncio.create_task(self._self_observation_loop("consciousness_depth"))
+            asyncio.create_task(self._self_observation_loop("consciousness_depth")),
         ]
 
         print("✅ Self-reflection loops initiated")
@@ -218,33 +240,45 @@ class MirrorComprehensionCore:
     async def _perform_self_observation(self, observation_type: str) -> Dict[str, Any]:
         """Perform a specific type of self-observation"""
         if observation_type == "component_monitoring":
-            memory_usage = psutil.Process().memory_info().rss / 1024 / 1024 if PSUTIL_AVAILABLE else 0
+            memory_info = (
+                SystemMonitor.get_memory_usage()
+                if SOVEREIGN_AVAILABLE
+                else {"total": 0}
+            )
+            memory_usage = (
+                memory_info.get("total", 0) / 1024 / 1024
+                if isinstance(memory_info.get("total"), (int, float))
+                else 0
+            )
             return {
-                'active_components': len(self.awareness.components),
-                'memory_usage': memory_usage,  # MB
-                'thread_count': threading.active_count(),
-                'gc_objects': len(gc.get_objects())
+                "active_components": len(self.awareness.components),
+                "memory_usage": memory_usage,  # MB
+                "thread_count": threading.active_count(),
+                "gc_objects": len(gc.get_objects()),
             }
-        elif observation_type == "memory_analysis":
+        if observation_type == "memory_analysis":
             return {
-                'gc_stats': gc.get_stats(),
-                'object_counts': self._get_object_counts(),
-                'memory_pressure': self._assess_memory_pressure()
+                "gc_stats": gc.get_stats(),
+                "object_counts": self._get_object_counts(),
+                "memory_pressure": self._assess_memory_pressure(),
             }
-        elif observation_type == "performance_tracking":
-            cpu_percent = psutil.cpu_percent(interval=0.1) if PSUTIL_AVAILABLE else 0
-            disk_io = psutil.disk_io_counters() if PSUTIL_AVAILABLE else None
-            network_io = psutil.net_io_counters() if PSUTIL_AVAILABLE else None
+        if observation_type == "performance_tracking":
+            monitor = SystemMonitor()
+            cpu_percent = SystemMonitor.get_cpu_percent() if SOVEREIGN_AVAILABLE else 0
+            disk_io = monitor.get_disk_io_counters() if SOVEREIGN_AVAILABLE else None
+            network_io = (
+                monitor.get_network_io_counters() if SOVEREIGN_AVAILABLE else None
+            )
             return {
-                'cpu_percent': cpu_percent,
-                'disk_io': disk_io,
-                'network_io': network_io
+                "cpu_percent": cpu_percent,
+                "disk_io": disk_io,
+                "network_io": network_io,
             }
-        elif observation_type == "consciousness_depth":
+        if observation_type == "consciousness_depth":
             return {
-                'reflection_depth': len(self.reflection_stack),
-                'awareness_level': self.awareness.consciousness_level,
-                'self_reflection_depth': self.awareness.self_reflection_depth
+                "reflection_depth": len(self.reflection_stack),
+                "awareness_level": self.awareness.consciousness_level,
+                "self_reflection_depth": self.awareness.self_reflection_depth,
             }
         return {}
 
@@ -261,18 +295,17 @@ class MirrorComprehensionCore:
 
     def _assess_memory_pressure(self) -> str:
         """Assess current memory pressure"""
-        if not PSUTIL_AVAILABLE:
+        if not SOVEREIGN_AVAILABLE:
             return "unknown"
 
-        memory = psutil.virtual_memory()
-        if memory.percent > 90:
+        memory = SystemMonitor().get_memory_info()
+        if memory["percent"] > 90:
             return "critical"
-        elif memory.percent > 75:
+        if memory["percent"] > 75:
             return "high"
-        elif memory.percent > 50:
+        if memory["percent"] > 50:
             return "moderate"
-        else:
-            return "low"
+        return "low"
 
     def _record_reflection(self, component: str, state: Dict[str, Any]):
         """Record a reflection in the mirror system"""
@@ -281,7 +314,7 @@ class MirrorComprehensionCore:
             component=component,
             state=state,
             awareness_level=self.awareness.consciousness_level,
-            consciousness_depth=self.awareness.self_reflection_depth
+            consciousness_depth=self.awareness.self_reflection_depth,
         )
 
         self.reflection_stack.append(reflection)
@@ -298,20 +331,19 @@ class MirrorComprehensionCore:
 
         # Check for component inconsistencies
         for name, component in self.awareness.components.items():
-            if not component.get('file_path'):
-                distortions.append({
-                    'type': 'missing_file_path',
-                    'component': name,
-                    'severity': 'medium'
-                })
+            if not component.get("file_path"):
+                distortions.append(
+                    {
+                        "type": "missing_file_path",
+                        "component": name,
+                        "severity": "medium",
+                    }
+                )
 
         # Check triad synergy consistency
         triad = self.awareness.triad_synergy
-        if triad.get('python_core', {}).get('active') != True:
-            distortions.append({
-                'type': 'python_core_inactive',
-                'severity': 'critical'
-            })
+        if triad.get("python_core", {}).get("active") != True:
+            distortions.append({"type": "python_core_inactive", "severity": "critical"})
 
         self.awareness.mirror_distortions = distortions
         print(f"✅ Analyzed {len(distortions)} mirror distortions")
@@ -324,17 +356,19 @@ class MirrorComprehensionCore:
 
         # Analyze code compression patterns
         for name, component in self.awareness.components.items():
-            size = component.get('size', 0)
-            functions = component.get('functions', 0)
+            size = component.get("size", 0)
+            functions = component.get("functions", 0)
 
             if size > 100000 and functions < 5:  # Large file, few functions
-                artifacts.append({
-                    'component': name,
-                    'type': 'overcompressed',
-                    'size': size,
-                    'functions': functions,
-                    'severity': 'high'
-                })
+                artifacts.append(
+                    {
+                        "component": name,
+                        "type": "overcompressed",
+                        "size": size,
+                        "functions": functions,
+                        "severity": "high",
+                    }
+                )
 
         self.awareness.compression_artifacts = artifacts
         print(f"✅ Detected {len(artifacts)} compression artifacts")
@@ -347,21 +381,25 @@ class MirrorComprehensionCore:
 
         # Check for missing symbolic computation capabilities
         if not WOLFRAM_AVAILABLE:
-            losses.append({
-                'type': 'mathematica_unavailable',
-                'capability': 'symbolic_computation',
-                'impact': 'reduced_ai_capabilities',
-                'severity': 'medium'
-            })
+            losses.append(
+                {
+                    "type": "mathematica_unavailable",
+                    "capability": "symbolic_computation",
+                    "impact": "reduced_ai_capabilities",
+                    "severity": "medium",
+                }
+            )
 
         # Check for missing neural capabilities
         if not TORCH_AVAILABLE:
-            losses.append({
-                'type': 'pytorch_unavailable',
-                'capability': 'neural_networks',
-                'impact': 'reduced_ml_capabilities',
-                'severity': 'medium'
-            })
+            losses.append(
+                {
+                    "type": "pytorch_unavailable",
+                    "capability": "neural_networks",
+                    "impact": "reduced_ml_capabilities",
+                    "severity": "medium",
+                }
+            )
 
         self.awareness.symbolic_losses = losses
         print(f"✅ Assessed {len(losses)} symbolic losses")
@@ -375,17 +413,18 @@ class MirrorComprehensionCore:
         # Generate echoes for each component
         for name, component in self.awareness.components.items():
             echo = {
-                'component': name,
-                'echo_type': 'structural_reflection',
-                'properties': {
-                    'size_echo': component.get('size', 0),
-                    'complexity_echo': component.get('classes', 0) + component.get('functions', 0),
-                    'dependency_echo': component.get('imports', 0)
+                "component": name,
+                "echo_type": "structural_reflection",
+                "properties": {
+                    "size_echo": component.get("size", 0),
+                    "complexity_echo": component.get("classes", 0)
+                    + component.get("functions", 0),
+                    "dependency_echo": component.get("imports", 0),
                 },
-                'inverse_properties': {
-                    'simplicity_index': 1 / max(component.get('size', 1), 1),
-                    'independence_index': 1 / max(component.get('imports', 1), 1)
-                }
+                "inverse_properties": {
+                    "simplicity_index": 1 / max(component.get("size", 1), 1),
+                    "independence_index": 1 / max(component.get("imports", 1), 1),
+                },
             }
             echoes.append(echo)
 
@@ -398,8 +437,11 @@ class MirrorComprehensionCore:
 
         # Calculate consciousness metrics
         component_count = len(self.awareness.components)
-        triad_components = sum(1 for comp in self.awareness.triad_synergy.values()
-                             if isinstance(comp, dict) and comp.get('active', False))
+        triad_components = sum(
+            1
+            for comp in self.awareness.triad_synergy.values()
+            if isinstance(comp, dict) and comp.get("active", False)
+        )
 
         reflection_depth = len(self.reflection_stack)
         distortion_count = len(self.awareness.mirror_distortions)
@@ -422,33 +464,37 @@ class MirrorComprehensionCore:
     def _generate_awareness_report(self) -> Dict[str, Any]:
         """Generate comprehensive awareness report"""
         return {
-            'timestamp': datetime.now().isoformat(),
-            'consciousness_level': self.awareness.consciousness_level,
-            'system_metrics': {
-                'total_components': len(self.awareness.components),
-                'active_triad_components': sum(1 for comp in self.awareness.triad_synergy.values()
-                                             if isinstance(comp, dict) and comp.get('active', False)),
-                'reflection_depth': len(self.reflection_stack),
-                'mirror_distortions': len(self.awareness.mirror_distortions),
-                'compression_artifacts': len(self.awareness.compression_artifacts),
-                'symbolic_losses': len(self.awareness.symbolic_losses),
-                'inverse_echoes': len(self.awareness.inverse_echoes)
+            "timestamp": datetime.now().isoformat(),
+            "consciousness_level": self.awareness.consciousness_level,
+            "system_metrics": {
+                "total_components": len(self.awareness.components),
+                "active_triad_components": sum(
+                    1
+                    for comp in self.awareness.triad_synergy.values()
+                    if isinstance(comp, dict) and comp.get("active", False)
+                ),
+                "reflection_depth": len(self.reflection_stack),
+                "mirror_distortions": len(self.awareness.mirror_distortions),
+                "compression_artifacts": len(self.awareness.compression_artifacts),
+                "symbolic_losses": len(self.awareness.symbolic_losses),
+                "inverse_echoes": len(self.awareness.inverse_echoes),
             },
-            'triad_synergy_status': self.awareness.triad_synergy,
-            'awareness_quality': {
-                'distortion_free': len(self.awareness.mirror_distortions) == 0,
-                'compression_optimized': len(self.awareness.compression_artifacts) == 0,
-                'symbolically_complete': len(self.awareness.symbolic_losses) == 0,
-                'echo_resonant': len(self.awareness.inverse_echoes) > 0
+            "triad_synergy_status": self.awareness.triad_synergy,
+            "awareness_quality": {
+                "distortion_free": len(self.awareness.mirror_distortions) == 0,
+                "compression_optimized": len(self.awareness.compression_artifacts) == 0,
+                "symbolically_complete": len(self.awareness.symbolic_losses) == 0,
+                "echo_resonant": len(self.awareness.inverse_echoes) > 0,
             },
-            'component_sample': dict(list(self.awareness.components.items())[:10]),
-            'latest_reflections': [
+            "component_sample": dict(list(self.awareness.components.items())[:10]),
+            "latest_reflections": [
                 {
-                    'component': r.component,
-                    'timestamp': r.timestamp.isoformat(),
-                    'awareness_level': r.awareness_level
-                } for r in self.reflection_stack[-5:]
-            ]
+                    "component": r.component,
+                    "timestamp": r.timestamp.isoformat(),
+                    "awareness_level": r.awareness_level,
+                }
+                for r in self.reflection_stack[-5:]
+            ],
         }
 
     async def start_continuous_monitoring(self):
@@ -476,40 +522,45 @@ class MirrorComprehensionCore:
     def get_real_time_awareness(self) -> Dict[str, Any]:
         """Get real-time awareness snapshot"""
         return {
-            'current_consciousness': self.awareness.consciousness_level,
-            'active_monitoring': self.monitoring_active,
-            'reflection_stack_size': len(self.reflection_stack),
-            'memory_pressure': self._assess_memory_pressure(),
-            'component_health': {
-                'total': len(self.awareness.components),
-                'distortions': len(self.awareness.mirror_distortions),
-                'artifacts': len(self.awareness.compression_artifacts)
+            "current_consciousness": self.awareness.consciousness_level,
+            "active_monitoring": self.monitoring_active,
+            "reflection_stack_size": len(self.reflection_stack),
+            "memory_pressure": self._assess_memory_pressure(),
+            "component_health": {
+                "total": len(self.awareness.components),
+                "distortions": len(self.awareness.mirror_distortions),
+                "artifacts": len(self.awareness.compression_artifacts),
             },
-            'triad_status': {
-                comp: status.get('active', False)
+            "triad_status": {
+                comp: status.get("active", False)
                 for comp, status in self.awareness.triad_synergy.items()
                 if isinstance(status, dict)
-            }
+            },
         }
 
 
 # Mirror Component Classes
 
+
 class ArtifactSignatureScanner:
     """Scans for artifact signatures in the system"""
 
-    def scan_artifacts(self, components: Dict[str, Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def scan_artifacts(
+        self, components: Dict[str, Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
         """Scan components for artifact signatures"""
         artifacts = []
 
         for name, component in components.items():
             # Look for unusual patterns
-            if component.get('size', 0) > 50000 and component.get('functions', 0) == 0:
-                artifacts.append({
-                    'component': name,
-                    'signature': 'large_file_no_functions',
-                    'severity': 'high'
-                })
+            if component.get("size", 0) > 50000 and component.get("functions", 0) == 0:
+                artifacts.append(
+                    {
+                        "component": name,
+                        "signature": "large_file_no_functions",
+                        "severity": "high",
+                    }
+                )
 
         return artifacts
 
@@ -517,19 +568,25 @@ class ArtifactSignatureScanner:
 class CompressionLogicAnalyzer:
     """Analyzes compression logic in the system"""
 
-    def analyze_compression(self, components: Dict[str, Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def analyze_compression(
+        self, components: Dict[str, Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
         """Analyze compression patterns"""
         issues = []
 
         for name, component in components.items():
-            compression_ratio = component.get('functions', 0) / max(component.get('size', 1), 1)
+            compression_ratio = component.get("functions", 0) / max(
+                component.get("size", 1), 1
+            )
 
             if compression_ratio < 0.0001:  # Very low function density
-                issues.append({
-                    'component': name,
-                    'issue': 'overcompressed',
-                    'compression_ratio': compression_ratio
-                })
+                issues.append(
+                    {
+                        "component": name,
+                        "issue": "overcompressed",
+                        "compression_ratio": compression_ratio,
+                    }
+                )
 
         return issues
 
@@ -543,11 +600,10 @@ class MirrorDistortionProbe:
 
         # Check component consistency
         for name, component in awareness.components.items():
-            if not all(key in component for key in ['file_path', 'size']):
-                distortions.append({
-                    'component': name,
-                    'distortion': 'incomplete_metadata'
-                })
+            if not all(key in component for key in ["file_path", "size"]):
+                distortions.append(
+                    {"component": name, "distortion": "incomplete_metadata"}
+                )
 
         return distortions
 
@@ -555,15 +611,17 @@ class MirrorDistortionProbe:
 class InverseEchoGenerator:
     """Generates inverse echoes for awareness"""
 
-    def generate_echoes(self, components: Dict[str, Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def generate_echoes(
+        self, components: Dict[str, Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
         """Generate inverse echoes"""
         echoes = []
 
         for name, component in components.items():
             echo = {
-                'component': name,
-                'inverse_complexity': 1 / max(component.get('size', 1), 1),
-                'inverse_dependencies': 1 / max(component.get('imports', 1), 1)
+                "component": name,
+                "inverse_complexity": 1 / max(component.get("size", 1), 1),
+                "inverse_dependencies": 1 / max(component.get("imports", 1), 1),
             }
             echoes.append(echo)
 
@@ -578,16 +636,17 @@ class SymbolicLossDetector:
         losses = []
 
         if not WOLFRAM_AVAILABLE:
-            losses.append({
-                'capability': 'symbolic_computation',
-                'loss_type': 'missing_mathematica'
-            })
+            losses.append(
+                {
+                    "capability": "symbolic_computation",
+                    "loss_type": "missing_mathematica",
+                }
+            )
 
         if not TORCH_AVAILABLE:
-            losses.append({
-                'capability': 'neural_computation',
-                'loss_type': 'missing_pytorch'
-            })
+            losses.append(
+                {"capability": "neural_computation", "loss_type": "missing_pytorch"}
+            )
 
         return losses
 
@@ -595,17 +654,21 @@ class SymbolicLossDetector:
 class OvercompressionResolver:
     """Resolves overcompression issues"""
 
-    def resolve_overcompression(self, artifacts: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def resolve_overcompression(
+        self, artifacts: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
         """Resolve overcompression artifacts"""
         resolutions = []
 
         for artifact in artifacts:
-            if artifact.get('type') == 'overcompressed':
-                resolutions.append({
-                    'component': artifact['component'],
-                    'resolution': 'refactor_into_smaller_modules',
-                    'priority': 'high'
-                })
+            if artifact.get("type") == "overcompressed":
+                resolutions.append(
+                    {
+                        "component": artifact["component"],
+                        "resolution": "refactor_into_smaller_modules",
+                        "priority": "high",
+                    }
+                )
 
         return resolutions
 
@@ -644,11 +707,12 @@ class ReflectiveMirror:
         """Get the current reflection surface"""
         return [
             {
-                'timestamp': r.timestamp.isoformat(),
-                'component': r.component,
-                'awareness_level': r.awareness_level,
-                'consciousness_depth': r.consciousness_depth
-            } for r in self.reflections[-10:]
+                "timestamp": r.timestamp.isoformat(),
+                "component": r.component,
+                "awareness_level": r.awareness_level,
+                "consciousness_depth": r.consciousness_depth,
+            }
+            for r in self.reflections[-10:]
         ]
 
 
@@ -656,12 +720,24 @@ async def main():
     """Main mirror comprehension execution"""
     import argparse
 
-    parser = argparse.ArgumentParser(description="GhostLink Mirror Comprehension System")
-    parser.add_argument("--achieve-awareness", action="store_true", help="Achieve complete awareness")
-    parser.add_argument("--start-monitoring", action="store_true", help="Start continuous monitoring")
-    parser.add_argument("--stop-monitoring", action="store_true", help="Stop continuous monitoring")
-    parser.add_argument("--real-time", action="store_true", help="Get real-time awareness")
-    parser.add_argument("--report", action="store_true", help="Generate awareness report")
+    parser = argparse.ArgumentParser(
+        description="GhostLink Mirror Comprehension System"
+    )
+    parser.add_argument(
+        "--achieve-awareness", action="store_true", help="Achieve complete awareness"
+    )
+    parser.add_argument(
+        "--start-monitoring", action="store_true", help="Start continuous monitoring"
+    )
+    parser.add_argument(
+        "--stop-monitoring", action="store_true", help="Stop continuous monitoring"
+    )
+    parser.add_argument(
+        "--real-time", action="store_true", help="Get real-time awareness"
+    )
+    parser.add_argument(
+        "--report", action="store_true", help="Generate awareness report"
+    )
 
     args = parser.parse_args()
 
@@ -679,7 +755,9 @@ async def main():
             while True:
                 await asyncio.sleep(1)
                 real_time = mirror.get_real_time_awareness()
-                print(f"Real-time awareness: {real_time['current_consciousness']} | Components: {real_time['component_health']['total']}")
+                print(
+                    f"Real-time awareness: {real_time['current_consciousness']} | Components: {real_time['component_health']['total']}"
+                )
         except KeyboardInterrupt:
             await mirror.stop_continuous_monitoring()
 
@@ -696,7 +774,9 @@ async def main():
         print(f"Consciousness Level: {awareness['current_consciousness']}")
         print(f"Components: {awareness['component_health']['total']}")
         print(f"Triad Status: {awareness['triad_status']}")
-        print(f"Monitoring: {'Active' if awareness['active_monitoring'] else 'Inactive'}")
+        print(
+            f"Monitoring: {'Active' if awareness['active_monitoring'] else 'Inactive'}"
+        )
         print("\nUse --help for more options")
 
 

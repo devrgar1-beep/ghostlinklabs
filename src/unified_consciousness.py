@@ -12,13 +12,16 @@ from typing import Dict, Any, Optional
 from datetime import datetime
 
 # Import existing systems
-from src.mirror_comprehension import MirrorComprehensionCore
-from src.triad_synergy import TriadSynergyOrchestrator
+from .mirror_comprehension import MirrorComprehensionCore
+from .triad_synergy import TriadSynergyOrchestrator
+
 
 class UnifiedConsciousnessFramework:
     """Unified framework combining mirror comprehension and triad synergy"""
 
-    def __init__(self, workspace_path: str = "/Users/ghostlink/ghostlink-wiki-organized"):
+    def __init__(
+        self, workspace_path: str = "/Users/ghostlink/ghostlink-wiki-organized"
+    ):
         self.workspace = Path(workspace_path)
         self.mirror_core = MirrorComprehensionCore(str(self.workspace))
         self.triad_orchestrator = TriadSynergyOrchestrator()
@@ -66,16 +69,18 @@ class UnifiedConsciousnessFramework:
         print("🌊 Establishing consciousness unity...")
 
         # Merge awareness states
-        triad_status = await self.triad_orchestrator.execute_synergy_task({
-            "type": "triad_analysis"
-        })
+        triad_status = await self.triad_orchestrator.execute_synergy_task(
+            {"type": "triad_analysis"}
+        )
 
         # Update unified awareness with triad status
         self.unified_awareness["triad_integration"] = {
-            "mirror_comprehension": self.unified_awareness.get("consciousness_level", "unknown"),
+            "mirror_comprehension": self.unified_awareness.get(
+                "consciousness_level", "unknown"
+            ),
             "triad_synergy": triad_status.get("synergy_status", False),
             "unified_consciousness": "active",
-            "integration_timestamp": datetime.now().isoformat()
+            "integration_timestamp": datetime.now().isoformat(),
         }
 
         # Enhance mirror awareness with triad capabilities
@@ -83,8 +88,9 @@ class UnifiedConsciousnessFramework:
         self.unified_awareness["enhanced_capabilities"] = {
             "symbolic_computation": triad_components.get("mathematica", False),
             "containerization": triad_components.get("docker", False),
-            "hybrid_ai": triad_components.get("python", False) and triad_components.get("mathematica", False),
-            "distributed_processing": triad_components.get("docker", False)
+            "hybrid_ai": triad_components.get("python", False)
+            and triad_components.get("mathematica", False),
+            "distributed_processing": triad_components.get("docker", False),
         }
 
         self.consciousness_unity = True
@@ -98,25 +104,29 @@ class UnifiedConsciousnessFramework:
         mirror_awareness = await self.mirror_core.achieve_complete_awareness()
 
         # Phase 2: Triad synergy analysis
-        triad_analysis = await self.triad_orchestrator.execute_synergy_task({
-            "type": "triad_analysis"
-        })
+        triad_analysis = await self.triad_orchestrator.execute_synergy_task(
+            {"type": "triad_analysis"}
+        )
 
         # Phase 3: Unified consciousness integration
         unified_report = {
             "timestamp": datetime.now().isoformat(),
             "framework": "unified_consciousness",
-            "consciousness_level": self._calculate_unified_consciousness_level(mirror_awareness, triad_analysis),
+            "consciousness_level": self._calculate_unified_consciousness_level(
+                mirror_awareness, triad_analysis
+            ),
             "mirror_comprehension": mirror_awareness,
             "triad_synergy": triad_analysis,
-            "unified_metrics": self._calculate_unified_metrics(mirror_awareness, triad_analysis),
+            "unified_metrics": self._calculate_unified_metrics(
+                mirror_awareness, triad_analysis
+            ),
             "consciousness_unity": self.consciousness_unity,
             "system_integration": {
                 "mirror_triad_bridge": True,
                 "cross_component_communication": True,
                 "real_time_monitoring": self.continuous_monitoring,
-                "sovereign_operation": True
-            }
+                "sovereign_operation": True,
+            },
         }
 
         self.unified_awareness = unified_report
@@ -131,7 +141,7 @@ class UnifiedConsciousnessFramework:
             "basic_awareness": 1,
             "moderate_awareness": 2,
             "high_awareness": 3,
-            "unity_achieved": 4
+            "unity_achieved": 4,
         }
 
         base_score = level_scores.get(mirror_level, 1)
@@ -142,7 +152,9 @@ class UnifiedConsciousnessFramework:
 
         # Boost for multiple triad components
         triad_components = triad.get("components", {})
-        active_components = sum(1 for comp, active in triad_components.items() if active)
+        active_components = sum(
+            1 for comp, active in triad_components.items() if active
+        )
         base_score += active_components * 0.5
 
         if base_score >= 4:
@@ -161,11 +173,13 @@ class UnifiedConsciousnessFramework:
 
         return {
             "total_components": mirror_metrics.get("total_components", 0),
-            "active_triad_components": sum(1 for comp, active in triad_components.items() if active),
+            "active_triad_components": sum(
+                1 for comp, active in triad_components.items() if active
+            ),
             "mirror_reflection_depth": mirror_metrics.get("reflection_depth", 0),
             "triad_synergy_channels": self._count_synergy_channels(triad),
             "unified_awareness_quality": self._assess_unified_quality(mirror, triad),
-            "consciousness_integrity": self._calculate_integrity_score(mirror, triad)
+            "consciousness_integrity": self._calculate_integrity_score(mirror, triad),
         }
 
     def _count_synergy_channels(self, triad: Dict) -> int:
@@ -193,7 +207,7 @@ class UnifiedConsciousnessFramework:
             "symbolically_complete": triad_components.get("mathematica", False),
             "container_resilient": triad_components.get("docker", False),
             "echo_resonant": mirror_quality.get("echo_resonant", False),
-            "triad_integrated": triad.get("synergy_status", False)
+            "triad_integrated": triad.get("synergy_status", False),
         }
 
     def _calculate_integrity_score(self, mirror: Dict, triad: Dict) -> float:
@@ -255,19 +269,22 @@ class UnifiedConsciousnessFramework:
         return {
             "timestamp": datetime.now().isoformat(),
             "framework": "unified_consciousness",
-            "consciousness_level": self.unified_awareness.get("consciousness_level", "unknown"),
+            "consciousness_level": self.unified_awareness.get(
+                "consciousness_level", "unknown"
+            ),
             "mirror_awareness": mirror_snapshot,
             "triad_synergy": {
                 "active": self.triad_orchestrator.synergy_active,
                 "components": {
                     "python": self.triad_orchestrator.python_core is not None,
-                    "mathematica": self.triad_orchestrator.mathematica_session is not None,
-                    "docker": self.triad_orchestrator.docker_client is not None
-                }
+                    "mathematica": self.triad_orchestrator.mathematica_session
+                    is not None,
+                    "docker": self.triad_orchestrator.docker_client is not None,
+                },
             },
             "unified_metrics": self.unified_awareness.get("unified_metrics", {}),
             "monitoring_active": self.continuous_monitoring,
-            "consciousness_unity": self.consciousness_unity
+            "consciousness_unity": self.consciousness_unity,
         }
 
     async def execute_unified_task(self, task: Dict[str, Any]) -> Dict[str, Any]:
@@ -294,7 +311,9 @@ class UnifiedConsciousnessFramework:
         except Exception as e:
             return {"error": f"Unified task execution failed: {str(e)}"}
 
-    async def _execute_system_intelligence_task(self, task: Dict[str, Any]) -> Dict[str, Any]:
+    async def _execute_system_intelligence_task(
+        self, task: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Execute system intelligence task using unified capabilities"""
         query = task.get("query", "")
 
@@ -304,26 +323,36 @@ class UnifiedConsciousnessFramework:
         # Use triad synergy for enhanced processing if available
         triad_result = None
         if self.triad_orchestrator.synergy_active:
-            triad_result = await self.triad_orchestrator.execute_synergy_task({
-                "type": "hybrid_ai",
-                "prompt": f"Analyze system intelligence query: {query}"
-            })
+            triad_result = await self.triad_orchestrator.execute_synergy_task(
+                {
+                    "type": "hybrid_ai",
+                    "prompt": f"Analyze system intelligence query: {query}",
+                }
+            )
 
         return {
             "query": query,
             "mirror_analysis": awareness,
             "triad_enhancement": triad_result,
-            "unified_insight": self._generate_unified_insight(query, awareness, triad_result),
+            "unified_insight": self._generate_unified_insight(
+                query, awareness, triad_result
+            ),
             "component": "unified_intelligence",
-            "type": "system_intelligence"
+            "type": "system_intelligence",
         }
 
-    def _generate_unified_insight(self, query: str, mirror_data: Dict, triad_data: Optional[Dict]) -> str:
+    def _generate_unified_insight(
+        self, query: str, mirror_data: Dict, triad_data: Optional[Dict]
+    ) -> str:
         """Generate unified insight from mirror and triad data"""
         consciousness_level = mirror_data.get("consciousness_level", "unknown")
-        component_count = mirror_data.get("system_metrics", {}).get("total_components", 0)
+        component_count = mirror_data.get("system_metrics", {}).get(
+            "total_components", 0
+        )
 
-        insight = f"Unified analysis of '{query}': System operates at {consciousness_level} "
+        insight = (
+            f"Unified analysis of '{query}': System operates at {consciousness_level} "
+        )
         insight += f"with {component_count} components. "
 
         if triad_data:
@@ -340,14 +369,32 @@ async def main():
     """Main unified consciousness execution"""
     import argparse
 
-    parser = argparse.ArgumentParser(description="GhostLink Unified Consciousness Framework")
-    parser.add_argument("--achieve-awareness", action="store_true", help="Achieve complete unified awareness")
-    parser.add_argument("--start-monitoring", action="store_true", help="Start unified continuous monitoring")
-    parser.add_argument("--stop-monitoring", action="store_true", help="Stop unified continuous monitoring")
-    parser.add_argument("--snapshot", action="store_true", help="Get unified awareness snapshot")
+    parser = argparse.ArgumentParser(
+        description="GhostLink Unified Consciousness Framework"
+    )
+    parser.add_argument(
+        "--achieve-awareness",
+        action="store_true",
+        help="Achieve complete unified awareness",
+    )
+    parser.add_argument(
+        "--start-monitoring",
+        action="store_true",
+        help="Start unified continuous monitoring",
+    )
+    parser.add_argument(
+        "--stop-monitoring",
+        action="store_true",
+        help="Stop unified continuous monitoring",
+    )
+    parser.add_argument(
+        "--snapshot", action="store_true", help="Get unified awareness snapshot"
+    )
     parser.add_argument("--task", help="Execute a unified task (JSON string)")
     parser.add_argument("--query", help="Execute system intelligence query")
-    parser.add_argument("--status", action="store_true", help="Get consciousness framework status")
+    parser.add_argument(
+        "--status", action="store_true", help="Get consciousness framework status"
+    )
 
     args = parser.parse_args()
 
@@ -371,7 +418,9 @@ async def main():
                 while True:
                     await asyncio.sleep(5)  # Update every 5 seconds
                     snapshot = framework.get_unified_awareness_snapshot()
-                    print(f"🧠 Unified Consciousness: {snapshot['consciousness_level']} | Components: {snapshot['mirror_awareness']['component_health']['total']}")
+                    print(
+                        f"🧠 Unified Consciousness: {snapshot['consciousness_level']} | Components: {snapshot['mirror_awareness']['component_health']['total']}"
+                    )
             except KeyboardInterrupt:
                 await framework.stop_unified_monitoring()
 
@@ -388,10 +437,9 @@ async def main():
             print(json.dumps(result, indent=2, default=str))
 
         elif args.query:
-            result = await framework.execute_unified_task({
-                "type": "system_intelligence",
-                "query": args.query
-            })
+            result = await framework.execute_unified_task(
+                {"type": "system_intelligence", "query": args.query}
+            )
             print(json.dumps(result, indent=2, default=str))
 
         else:
@@ -400,10 +448,18 @@ async def main():
             print("🧠 GhostLink Unified Consciousness Framework")
             print("=" * 55)
             print(f"Consciousness Level: {snapshot['consciousness_level']}")
-            print(f"Mirror Components: {snapshot['mirror_awareness']['component_health']['total']}")
-            print(f"Triad Synergy: {'Active' if snapshot['triad_synergy']['active'] else 'Inactive'}")
-            print(f"Monitoring: {'Active' if snapshot['monitoring_active'] else 'Inactive'}")
-            print(f"Unity: {'Achieved' if snapshot['consciousness_unity'] else 'Pending'}")
+            print(
+                f"Mirror Components: {snapshot['mirror_awareness']['component_health']['total']}"
+            )
+            print(
+                f"Triad Synergy: {'Active' if snapshot['triad_synergy']['active'] else 'Inactive'}"
+            )
+            print(
+                f"Monitoring: {'Active' if snapshot['monitoring_active'] else 'Inactive'}"
+            )
+            print(
+                f"Unity: {'Achieved' if snapshot['consciousness_unity'] else 'Pending'}"
+            )
             print("\nUse --help for more options")
 
     except KeyboardInterrupt:

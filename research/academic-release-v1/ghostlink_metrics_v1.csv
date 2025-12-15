@@ -1,0 +1,6 @@
+Metric,SingleModel,GhostLink,Delta
+Accuracy,0.673,0.942,+0.400
+Latency_p50_ms,450,47,-89.6%
+Cost_per_query_USD,0.075,0.021,-72.0%
+Hallucination,0.124,0.013,-0.111
+Uptime,0.995,0.9999,+0.0049

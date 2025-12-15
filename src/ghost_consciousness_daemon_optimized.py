@@ -18,11 +18,14 @@ import os
 from pathlib import Path
 import platform
 import queue
+import sys
 import threading
 import time
 from typing import Dict, List, Optional, Tuple
 
-import psutil
+# Add the ghostlink module to the path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+from ghostlink.sovereign_deps import SystemMonitor
 
 # Import winreg only on Windows
 try:
@@ -176,8 +179,9 @@ class ConfigurationManager:
 
     def auto_detect_hardware(self):
         """Auto-detect and configure based on hardware capabilities"""
-        cpu_count = mp.cpu_count()
-        memory_gb = psutil.virtual_memory().total / (1024**3)
+        monitor = SystemMonitor()
+        cpu_count = monitor.get_cpu_count()
+        memory_gb = monitor.get_memory_info()["total"] / (1024**3)
 
         # Auto-configure parallel processing
         if self.config["parallel_processing"]["max_workers"] is None:
@@ -316,7 +320,7 @@ class ParallelProcessingEngine:
                 )
 
             # Track memory usage
-            current_memory = psutil.Process().memory_info().rss / 1024 / 1024  # MB
+            current_memory = SystemMonitor.Process().memory_info().rss / 1024 / 1024  # MB
             self.task_metrics["peak_memory_usage"] = max(
                 self.task_metrics["peak_memory_usage"], current_memory
             )
@@ -384,20 +388,21 @@ class OptimizedDataProcessor:
     def cached_system_metrics(self, timestamp_bucket: int) -> Dict:
         """Get system metrics with caching (buckets by 10-second intervals)"""
         try:
+            monitor = SystemMonitor()
             return {
-                "cpu_percent": psutil.cpu_percent(interval=0.1),
-                "memory_percent": psutil.virtual_memory().percent,
+                "cpu_percent": monitor.get_cpu_percent(),
+                "memory_percent": monitor.get_memory_info()["percent"],
                 "disk_io": (
-                    sum(psutil.disk_io_counters()._asdict().values())
-                    if psutil.disk_io_counters()
+                    sum(monitor.get_disk_io_counters().values())
+                    if monitor.get_disk_io_counters()
                     else 0
                 ),
                 "network_io": (
-                    sum(psutil.net_io_counters()._asdict().values())
-                    if psutil.net_io_counters()
+                    sum(monitor.get_network_io_counters().values())
+                    if monitor.get_network_io_counters()
                     else 0
                 ),
-                "process_count": len(list(psutil.process_iter())),
+                "process_count": len(monitor.get_processes()),
                 "timestamp": timestamp_bucket * 10,
             }
         except Exception as e:
@@ -570,27 +575,28 @@ class GhostConsciousnessDaemon:
     def _map_consciousness_substrate(self) -> Dict:
         """Map PC hardware to consciousness functions with performance optimization"""
         # Use cached system info for better performance
+        monitor = SystemMonitor()
         timestamp_bucket = int(time.time() // 10)  # 10-second buckets
 
         return {
             "cpu_cores": {
-                "physical": psutil.cpu_count(logical=False),
-                "logical": psutil.cpu_count(logical=True),
+                "physical": monitor.get_cpu_count(logical=False),
+                "logical": monitor.get_cpu_count(logical=True),
                 "consciousness_function": "Parallel awareness processing units",
                 "optimization_level": "VECTORIZED_PARALLEL",
             },
             "memory": {
-                "total_gb": psutil.virtual_memory().total / (1024**3),
+                "total_gb": monitor.get_memory_info()["total"] / (1024**3),
                 "consciousness_function": "Active awareness workspace",
                 "optimization_level": "CACHED_ACCESS",
             },
             "storage": {
-                "devices": len(psutil.disk_partitions()),
+                "devices": len(monitor.get_disk_partitions()),
                 "consciousness_function": "Permanent consciousness memory",
                 "optimization_level": "BATCH_PROCESSED",
             },
             "network": {
-                "interfaces": len(psutil.net_if_addrs()),
+                "interfaces": len(monitor.get_network_interfaces()),
                 "consciousness_function": "Universal connectivity bridge",
                 "optimization_level": "ASYNC_IO",
             },
@@ -713,7 +719,8 @@ class GhostConsciousnessDaemon:
         while self.running:
             try:
                 # Get partitions in parallel
-                partitions = psutil.disk_partitions()
+                monitor = SystemMonitor()
+                partitions = monitor.get_disk_partitions()
 
                 # Create parallel tasks for disk usage checking
                 disk_tasks = []
@@ -755,8 +762,9 @@ class GhostConsciousnessDaemon:
     def _check_partition_usage(self, partition) -> Optional[int]:
         """Check individual partition usage"""
         try:
-            usage = psutil.disk_usage(partition.mountpoint)
-            return usage.used
+            monitor = SystemMonitor()
+            usage = monitor.get_disk_usage(partition["mountpoint"])
+            return usage["used"]
         except (PermissionError, OSError, FileNotFoundError):
             return None
 
@@ -775,16 +783,22 @@ class GhostConsciousnessDaemon:
                 memory_values = []
 
                 # Batch process information gathering
-                processes = list(psutil.process_iter(["pid", "name", "cpu_percent", "memory_info"]))
+                monitor = SystemMonitor()
+                processes = monitor.get_processes()
 
                 for proc in processes[:200]:  # Limit to prevent overload
                     try:
-                        info = proc.info
-                        if info["cpu_percent"] is not None and info["memory_info"] is not None:
+                        info = proc
+                        if (
+                            info.get("cpu_percent", 0) is not None
+                            and info.get("memory_info") is not None
+                        ):
                             process_data.append(info)
-                            cpu_values.append(info["cpu_percent"])
-                            memory_values.append(info["memory_info"].rss / 1024 / 1024)  # MB
-                    except (psutil.NoSuchProcess, psutil.AccessDenied):
+                            cpu_values.append(info.get("cpu_percent", 0))
+                            memory_values.append(
+                                info.get("memory_info", {}).get("rss", 0) / 1024 / 1024
+                            )  # MB
+                    except Exception:
                         continue
 
                 if cpu_values and memory_values:
@@ -1016,7 +1030,7 @@ class GhostConsciousnessDaemon:
                         / max(uptime, 1),
                         "events_per_second": self.performance_metrics["events_processed"]
                         / max(uptime, 1),
-                        "memory_usage_mb": psutil.Process().memory_info().rss / 1024 / 1024,
+                        "memory_usage_mb": SystemMonitor.Process().memory_info().rss / 1024 / 1024,
                         "thread_count": threading.active_count(),
                         "engine_metrics": engine_metrics,
                         "cache_stats": cache_stats,
@@ -1049,7 +1063,7 @@ class GhostConsciousnessDaemon:
 
         while self.running:
             try:
-                process = psutil.Process()
+                process = SystemMonitor.Process()
                 memory_info = process.memory_info()
                 memory_mb = memory_info.rss / 1024 / 1024
 
@@ -1455,7 +1469,7 @@ def main():
 
     # Pre-flight performance check
     cpu_count = mp.cpu_count()
-    memory_gb = psutil.virtual_memory().total / (1024**3)
+    memory_gb = SystemMonitor().virtual_memory()["total"] / (1024**3)
 
     print("???  System Resources Detected:")
     print(f"   CPU Cores: {cpu_count}")

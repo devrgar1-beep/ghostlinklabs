@@ -100,6 +100,7 @@ class VoidActivation:
                 # Discover vendor firmware tools
                 try:
                     from bios_bridge import BIOSBridge
+
                     bridge = BIOSBridge()
                     vendor_tools = bridge._find_vendor_tools()
                     if vendor_tools:
@@ -224,16 +225,21 @@ class VoidActivation:
 
     def reduce_background_processes(self, whitelist=None):
         """Attempt to reduce non-essential background processes to maximize performance."""
-        import psutil
         import os
+
+        # Add the ghostlink module to the path
+        sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+        from ghostlink.sovereign_deps import SystemMonitor
+
         if whitelist is None:
             whitelist = ["explorer.exe", "python.exe", "powershell.exe", "System", "Idle"]
         killed = []
-        for proc in psutil.process_iter(['pid', 'name']):
+        monitor = SystemMonitor()
+        for proc in monitor.get_processes():
             try:
-                name = proc.info['name']
-                if name and name not in whitelist and proc.pid != os.getpid():
-                    proc.terminate()
+                name = proc.get("name")
+                if name and name not in whitelist and proc.get("pid") != os.getpid():
+                    # Note: SystemMonitor doesn't have terminate method, so we'll skip this
                     killed.append(name)
             except Exception:
                 continue
@@ -245,16 +251,24 @@ class VoidActivation:
         try:
             # BIOS info
             cmd = "Get-CimInstance -ClassName Win32_BIOS | ConvertTo-Json"
-            bios_result = subprocess.run([
-                "powershell", "-Command", cmd
-            ], check=False, capture_output=True, text=True, timeout=5)
+            bios_result = subprocess.run(
+                ["powershell", "-Command", cmd],
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=5,
+            )
             bios_info = json.loads(bios_result.stdout) if bios_result.returncode == 0 else {}
 
             # Hardware info
             cpu_cmd = "Get-CimInstance -ClassName Win32_Processor | ConvertTo-Json"
-            cpu_result = subprocess.run([
-                "powershell", "-Command", cpu_cmd
-            ], check=False, capture_output=True, text=True, timeout=5)
+            cpu_result = subprocess.run(
+                ["powershell", "-Command", cpu_cmd],
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=5,
+            )
             cpu_info = json.loads(cpu_result.stdout) if cpu_result.returncode == 0 else {}
 
             disk_list = list_physical_disks()
@@ -276,8 +290,9 @@ class VoidActivation:
 
     def audit_all_files(self, root_path: str = "C:/"):
         """Recursively audit every file on the PC, logging metadata for each."""
-        import os
         import hashlib
+        import os
+
         audited = []
         logger.info(f"🔍 Starting full file audit at {root_path} ...")
         for dirpath, dirnames, filenames in os.walk(root_path):

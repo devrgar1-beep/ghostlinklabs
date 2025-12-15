@@ -1,0 +1,143 @@
+{
+  "generation": 175,
+  "genome": [
+    {
+      "trait": "resource_optimization",
+      "expression": {
+        "evolved_9934": 0.11249906063340846,
+        "evolved_6624": 0.18150176043479854,
+        "evolved_5694": 1.002362743501719,
+        "evolved_2135": 0.9209075126608445,
+        "evolved_6389": 0.9987044409704483,
+        "evolved_2112": 0.42841642876069275,
+        "evolved_4784": 0.6882071284678803,
+        "evolved_1294": 0.07426355581137656
+      },
+      "fitness": 4.0,
+      "mutations": [
+        "added_evolved_1294"
+      ]
+    },
+    {
+      "trait": "resource_optimization",
+      "expression": {
+        "evolved_9934": 0.11249906063340846,
+        "evolved_6624": 0.18150176043479854,
+        "evolved_5694": 1.002362743501719,
+        "evolved_2135": 0.9209075126608445,
+        "evolved_6389": 0.9987044409704483,
+        "evolved_2112": 0.42841642876069275,
+        "evolved_4784": 0.6882071284678803,
+        "evolved_1294": 0.07426355581137656
+      },
+      "fitness": 4.0,
+      "mutations": [
+        "added_evolved_1294"
+      ]
+    },
+    {
+      "trait": "resource_optimization",
+      "expression": {
+        "evolved_9934": 0.11249906063340846,
+        "evolved_6624": 0.18150176043479854,
+        "evolved_5694": 1.002362743501719,
+        "evolved_2135": 0.9209075126608445,
+        "evolved_6389": 0.9987044409704483,
+        "evolved_2112": 0.42841642876069275,
+        "evolved_4784": 0.6882071284678803,
+        "evolved_1294": 0.07426355581137656
+      },
+      "fitness": 4.0,
+      "mutations": [
+        "added_evolved_1294"
+      ]
+    },
+    {
+      "trait": "resource_optimization",
+      "expression": {
+        "evolved_9934": 0.11249906063340846,
+        "evolved_6624": 0.18150176043479854,
+        "evolved_5694": 1.002362743501719,
+        "evolved_2135": 0.9209075126608445,
+        "evolved_6389": 0.9987044409704483,
+        "evolved_2112": 0.42841642876069275,
+        "evolved_4784": 0.6882071284678803,
+        "evolved_1294": 0.07426355581137656
+      },
+      "fitness": 4.0,
+      "mutations": [
+        "added_evolved_1294"
+      ]
+    },
+    {
+      "trait": "resource_optimization",
+      "expression": {
+        "evolved_9934": 0.11249906063340846,
+        "evolved_6624": 0.18150176043479854,
+        "evolved_5694": 1.002362743501719,
+        "evolved_2135": 0.9209075126608445,
+        "evolved_6389": 0.9987044409704483,
+        "evolved_2112": 0.42841642876069275,
+        "evolved_4784": 0.6882071284678803,
+        "evolved_1294": 0.07426355581137656
+      },
+      "fitness": 0.0,
+      "mutations": []
+    },
+    {
+      "trait": "resource_optimization",
+      "expression": {
+        "evolved_9934": 0.11249906063340846,
+        "evolved_6624": 0.18150176043479854,
+        "evolved_5694": 1.002362743501719,
+        "evolved_2135": 0.9209075126608445,
+        "evolved_6389": 0.9987044409704483,
+        "evolved_2112": 0.42841642876069275,
+        "evolved_4784": 0.6882071284678803,
+        "evolved_1294": 0.07426355581137656
+      },
+      "fitness": 0.0,
+      "mutations": []
+    },
+    {
+      "trait": "resource_optimization",
+      "expression": {
+        "evolved_9934": 0.11249906063340846,
+        "evolved_6624": 0.18150176043479854,
+        "evolved_5694": 1.002362743501719,
+        "evolved_2135": 0.9209075126608445,
+        "evolved_6389": 0.9987044409704483,
+        "evolved_2112": 0.42841642876069275,
+        "evolved_4784": 0.6882071284678803,
+        "evolved_1294": 0.07426355581137656
+      },
+      "fitness": 0.0,
+      "mutations": []
+    },
+    {
+      "trait": "resource_optimization",
+      "expression": {
+        "evolved_9934": 0.11249906063340846,
+        "evolved_6624": 0.18150176043479854,
+        "evolved_5694": 1.002362743501719,
+        "evolved_2135": 0.9209075126608445,
+        "evolved_6389": 0.9987044409704483,
+        "evolved_2112": 0.42841642876069275,
+        "evolved_4784": 0.6882071284678803,
+        "evolved_1294": 0.07426355581137656
+      },
+      "fitness": 0.0,
+      "mutations": []
+    }
+  ],
+  "parameters": {
+    "mutation_rate": 0.285,
+    "crossover_rate": 0.7,
+    "selection_pressure": 2.0,
+    "population_size": 50,
+    "elite_size": 5,
+    "exploration_vs_exploitation": 0.6
+  },
+  "emergent_patterns": [],
+  "timestamp": 1765479493.652975
+}

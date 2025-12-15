@@ -1,0 +1,105 @@
+{
+  "generated_at": "2025-11-10T21:55:13.998440Z",
+  "artifacts": [
+    {
+      "file": "ghostlink_whitepaper_v1.tex",
+      "size_bytes": 16021,
+      "sha256": "ab96f919bc4fcee002685cbfb0fad9a1fbcb071ad7561fc2c82a7eb54293a469"
+    },
+    {
+      "file": "ghostlink_whitepaper_v1_figs.tex",
+      "size_bytes": 17035,
+      "sha256": "d6818c69941bbd7e757b6a55724191ab558714d27064b995fb35d25686c8ccc0"
+    },
+    {
+      "file": "ghostlink_methods_supplement_v1.tex",
+      "size_bytes": 1496,
+      "sha256": "89ea7b360a1a0296850e57df0151792c14dd2c71446001a6204ba7f8b58bd866"
+    },
+    {
+      "file": "ghostlink_executive_summary_onepager.tex",
+      "size_bytes": 3706,
+      "sha256": "608a3a9056ffb8345945a76e759d73ef8ab1070e1ca0de19ec4c0f60a1915fee"
+    },
+    {
+      "file": "ghostlink_executive_summary_onepager_csv.tex",
+      "size_bytes": 1105,
+      "sha256": "e17fcdb0d458d02e85b1007b91ecedc78f14c161e0c61565ab5d05a00cc22d23"
+    },
+    {
+      "file": "ghostlink_conference_two_column.tex",
+      "size_bytes": 2464,
+      "sha256": "10b5a4affc298fbef9dc29f9b669b26046418e42305e38aa9dfb0a3ee7e80496"
+    },
+    {
+      "file": "ghostlink_artifacts_checklist_v1.md",
+      "size_bytes": 514,
+      "sha256": "c0df0cc7a34f3461e053ef690ffd5c91779ae88c3f8c060a31c1b6b0ae3bd7c8"
+    },
+    {
+      "file": "ghostlink_metrics_v1.csv",
+      "size_bytes": 197,
+      "sha256": "cb640a17be86679b937203f47cbfc903a5f3b4ce54e0ec967cd7b38ea75e3b30"
+    },
+    {
+      "file": "ghostlink_refs.bib",
+      "size_bytes": 1040,
+      "sha256": "63b5542ed3c9a41db550f03d27761e7c4f219182bc919d5379112aa20d8edc7c"
+    },
+    {
+      "file": "ghostlink_pitch_deck_v1.pdf",
+      "size_bytes": 438337,
+      "sha256": "926f290f27640e998b3f66dfecad531487d16a127c7d61c39c99e02900b7ef98"
+    },
+    {
+      "file": "fig_funnel.png",
+      "size_bytes": 432694,
+      "sha256": "abcf895810b31a7d47eab7c8334539eb7dde2fae6a656cbea07f25fe2de37723"
+    },
+    {
+      "file": "fig_motifs.png",
+      "size_bytes": 55862,
+      "sha256": "da6164280a613dff1b498e195cf47f2774743f800192c3b317b043189c7ee562"
+    },
+    {
+      "file": "fig_active_site.png",
+      "size_bytes": 59599,
+      "sha256": "2d1a6a88b0079143fc6e824859a2d13e6eac778ec1923ba8b906f8bf870de7d4"
+    },
+    {
+      "file": "fig_ablations.png",
+      "size_bytes": 109373,
+      "sha256": "4df439eeb83757f8361676144b9f1534acaf53d1d86d6e9e30ab116dacea13e4"
+    },
+    {
+      "file": "fig_pbft_timing.png",
+      "size_bytes": 62777,
+      "sha256": "b2331ff25a5cdf02c39f7515a1f06c5d57280fd5f06805d65ff2a37fee8bdc48"
+    },
+    {
+      "file": "fig_metrics_glance.png",
+      "size_bytes": 63288,
+      "sha256": "e963d5e4fa0fc6c8eed186d7cd71bc051ee8827517c246aad5b6820c0b1235f0"
+    },
+    {
+      "file": "README_compile.txt",
+      "size_bytes": 582,
+      "sha256": "51b3a537f6666d11ec21df4c7071cecaff64d4aa1ab03cd132f214a2ce7e3e13"
+    },
+    {
+      "file": "Makefile",
+      "size_bytes": 1899,
+      "sha256": "b2049a74e8ea419c2030b2ff94d1730aa5eb89c67ac0b374852c3328ef24f0dc"
+    },
+    {
+      "file": "reviewer_pack.tex",
+      "size_bytes": 444,
+      "sha256": "0ed021dfc3a6831e706d6f960e6dda4cba153f33047ac4f58500f1904cc16602"
+    },
+    {
+      "file": "compile_all.sh",
+      "size_bytes": 1393,
+      "sha256": "f9bc58bda8ba08c1219ab11f9482c82abe99a7087d7ed271013356c8a000b52c"
+    }
+  ]
+}

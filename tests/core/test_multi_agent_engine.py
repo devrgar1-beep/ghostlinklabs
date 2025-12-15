@@ -6,7 +6,8 @@ Demonstrates full model optimization workflow
 
 import asyncio
 import json
-from multi_agent_engine import MultiAgentExpansionCompressionEngine, ModelSize
+from src.multi_agent_engine import MultiAgentExpansionCompressionEngine, ModelSize
+
 
 async def test_multi_agent_engine():
     """Comprehensive test of the multi-agent engine"""
@@ -20,9 +21,9 @@ async def test_multi_agent_engine():
     # Test 1: Register multiple models
     print("\n📝 Test 1: Registering Models")
     models = [
-        ("tiny_model", "/path/to/tiny", 50_000_000),      # 50M params -> tiny
-        ("small_model", "/path/to/small", 300_000_000),   # 300M params -> small
-        ("medium_model", "/path/to/medium", 3_000_000_000), # 3B params -> medium
+        ("tiny_model", "/path/to/tiny", 50_000_000),  # 50M params -> tiny
+        ("small_model", "/path/to/small", 300_000_000),  # 300M params -> small
+        ("medium_model", "/path/to/medium", 3_000_000_000),  # 3B params -> medium
         ("large_model", "/path/to/large", 30_000_000_000),  # 30B params -> large
     ]
 
@@ -35,7 +36,7 @@ async def test_multi_agent_engine():
             "accuracy_score": 0.8,
             "perplexity_score": 20.0,
             "compression_ratio": 1.0,
-            "efficiency_score": 1.0
+            "efficiency_score": 1.0,
         }
 
         model_state = engine.register_model(model_id, path, initial_metrics)
@@ -67,7 +68,9 @@ async def test_multi_agent_engine():
     result = await engine.refine_model("medium_model", "efficiency_focused")
     if "error" not in result:
         print("  ✅ Refinement successful")
-        print(f"  Efficiency improvement: {result.get('efficiency_improvement', 0):.1%}")
+        print(
+            f"  Efficiency improvement: {result.get('efficiency_improvement', 0):.1%}"
+        )
     else:
         print(f"  ❌ Refinement failed: {result['error']}")
 
@@ -76,7 +79,9 @@ async def test_multi_agent_engine():
     for model_id in ["tiny_model", "small_model", "medium_model", "large_model"]:
         status = engine.get_model_status(model_id)
         if "error" not in status:
-            print(f"  {model_id}: {status['size_category']} | {status['current_metrics']['parameter_count']:,} params | {status['compression_history']} compressions | {status['expansion_history']} expansions | {status['refinement_history']} refinements")
+            print(
+                f"  {model_id}: {status['size_category']} | {status['current_metrics']['parameter_count']:,} params | {status['compression_history']} compressions | {status['expansion_history']} expansions | {status['refinement_history']} refinements"
+            )
         else:
             print(f"  {model_id}: Error - {status['error']}")
 
@@ -86,6 +91,7 @@ async def test_multi_agent_engine():
     print(json.dumps(final_status, indent=2))
 
     print("\n✅ Multi-Agent Engine Test Complete!")
+
 
 if __name__ == "__main__":
     asyncio.run(test_multi_agent_engine())

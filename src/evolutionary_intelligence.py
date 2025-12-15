@@ -24,16 +24,21 @@ import statistics
 import math
 
 # Import core systems
-from src.mirror_comprehension import MirrorComprehensionCore
-from src.multi_agent_engine import MultiAgentExpansionCompressionEngine, ModelSize
+from .mirror_comprehension import MirrorComprehensionCore
+from .multi_agent_engine import MultiAgentExpansionCompressionEngine, ModelSize
+from .quantum_evolution_engine import QuantumEvolutionaryOptimizer
+
 
 @dataclass
 class RecursiveGenome:
     """Recursive genome structure for meta-evolution"""
+
     level: int  # Recursion level (0 = base, 1 = meta, 2 = meta-meta, etc.)
     genome_id: str
     evolutionary_parameters: Dict[str, Any]  # Parameters that control evolution itself
-    nested_genomes: List['RecursiveGenome'] = field(default_factory=list)  # Recursive structure
+    nested_genomes: List["RecursiveGenome"] = field(
+        default_factory=list
+    )  # Recursive structure
     fitness_score: float = 0.0
     generation: int = 0
     parent_genomes: List[str] = field(default_factory=list)
@@ -48,12 +53,14 @@ class RecursiveGenome:
             "fitness_score": self.fitness_score,
             "generation": self.generation,
             "parent_genomes": self.parent_genomes,
-            "timestamp": self.timestamp.isoformat()
+            "timestamp": self.timestamp.isoformat(),
         }
+
 
 @dataclass
 class MetaEvolutionParameters:
     """Parameters that control the evolutionary algorithm itself"""
+
     mutation_rate: float = 0.1
     crossover_rate: float = 0.7
     population_size: int = 50
@@ -68,9 +75,11 @@ class MetaEvolutionParameters:
     stagnation_detection: int = 10
     novelty_bonus: float = 0.1
 
+
 @dataclass
 class RecursiveEvolutionMetrics:
     """Metrics for recursive evolution performance"""
+
     meta_fitness: float = 0.0
     evolution_efficiency: float = 0.0
     adaptation_speed: float = 0.0
@@ -81,9 +90,11 @@ class RecursiveEvolutionMetrics:
     recursion_depth: int = 0
     hierarchical_fitness: List[float] = field(default_factory=list)
 
+
 @dataclass
 class EvolutionaryGenome:
     """Represents an evolutionary genome with traits and fitness"""
+
     generation: int
     fitness_score: float
     traits: Dict[str, Any]
@@ -98,12 +109,14 @@ class EvolutionaryGenome:
             "traits": self.traits,
             "mutations": self.mutations,
             "parent_genomes": self.parent_genomes,
-            "timestamp": self.timestamp.isoformat()
+            "timestamp": self.timestamp.isoformat(),
         }
+
 
 @dataclass
 class EvolutionaryMetrics:
     """Metrics for evolutionary progress"""
+
     adaptation_rate: float = 0.0
     learning_efficiency: float = 0.0
     innovation_index: float = 0.0
@@ -111,9 +124,11 @@ class EvolutionaryMetrics:
     consciousness_growth: float = 0.0
     performance_gain: float = 0.0
 
+
 @dataclass
 class QuantumAwareness:
     """Quantum computing awareness and integration"""
+
     quantum_available: bool = False
     quantum_backends: List[str] = field(default_factory=list)
     qubit_count: int = 0
@@ -121,14 +136,17 @@ class QuantumAwareness:
     quantum_algorithms: List[str] = field(default_factory=list)
     entanglement_patterns: Dict[str, Any] = field(default_factory=dict)
 
+
 @dataclass
 class PredictiveIntelligence:
     """Predictive capabilities for system behavior"""
+
     prediction_accuracy: float = 0.0
     forecasting_horizon: int = 24  # hours
     anomaly_detection: Dict[str, Any] = field(default_factory=dict)
     trend_analysis: Dict[str, Any] = field(default_factory=dict)
     optimization_predictions: List[Dict[str, Any]] = field(default_factory=list)
+
 
 class EvolutionaryIntelligence:
     """
@@ -143,7 +161,10 @@ class EvolutionaryIntelligence:
     - Multi-modal learning
     """
 
-    def __init__(self, workspace_path: str = "/Users/ghostlink/ghostlink-wiki-organized"):
+    def __init__(
+        self,
+        workspace_path: str = "/Users/ghostlinklabs/Library/Mobile Documents/com~apple~CloudDocs/workspace_single",
+    ):
         self.workspace = Path(workspace_path)
         self.evolution_data_path = self.workspace / "evolution_data"
         self.evolution_data_path.mkdir(exist_ok=True)
@@ -168,6 +189,7 @@ class EvolutionaryIntelligence:
         self.neural_evolution_engine = NeuralArchitectureEvolution()
         self.consciousness_expansion_engine = ConsciousnessExpansionEngine()
         self.multi_modal_learner = MultiModalLearningEngine()
+        self.quantum_evolution_optimizer = QuantumEvolutionaryOptimizer()
 
         # Evolution state tracking
         self.learning_cycles = 0
@@ -222,32 +244,47 @@ class EvolutionaryIntelligence:
         history_file = self.evolution_data_path / "evolution_history.json"
         if history_file.exists():
             try:
-                with open(history_file, 'r') as f:
+                with open(history_file, "r") as f:
                     data = json.load(f)
-                    self.generation = data.get('current_generation', 0)
-                    self.learning_cycles = data.get('learning_cycles', 0)
+                    self.generation = data.get("current_generation", 0)
+                    self.learning_cycles = data.get("learning_cycles", 0)
 
                     # Load current genome
-                    current_genome_data = data.get('current_genome')
+                    current_genome_data = data.get("current_genome")
                     if current_genome_data:
-                        if 'timestamp' in current_genome_data and isinstance(current_genome_data['timestamp'], str):
+                        if "timestamp" in current_genome_data and isinstance(
+                            current_genome_data["timestamp"], str
+                        ):
                             current_genome_data = current_genome_data.copy()
-                            current_genome_data['timestamp'] = datetime.fromisoformat(current_genome_data['timestamp'])
+                            current_genome_data["timestamp"] = datetime.fromisoformat(
+                                current_genome_data["timestamp"]
+                            )
                         self.current_genome = EvolutionaryGenome(**current_genome_data)
 
                     genomes_data = []
-                    for genome_data in data.get('genetic_pool', []):
+                    for genome_data in data.get("genetic_pool", []):
                         # Convert timestamp string back to datetime
-                        if 'timestamp' in genome_data and isinstance(genome_data['timestamp'], str):
+                        if "timestamp" in genome_data and isinstance(
+                            genome_data["timestamp"], str
+                        ):
                             genome_data = genome_data.copy()
-                            genome_data['timestamp'] = datetime.fromisoformat(genome_data['timestamp'])
+                            genome_data["timestamp"] = datetime.fromisoformat(
+                                genome_data["timestamp"]
+                            )
                         genomes_data.append(genome_data)
 
-                    self.genetic_pool = [EvolutionaryGenome(**genome_data) for genome_data in genomes_data]
+                    self.genetic_pool = [
+                        EvolutionaryGenome(**genome_data)
+                        for genome_data in genomes_data
+                    ]
                     # Set current genome to the best from loaded pool if not already set
                     if not self.current_genome and self.genetic_pool:
-                        self.current_genome = max(self.genetic_pool, key=lambda x: x.fitness_score)
-                    print(f"📚 Loaded evolution history: {len(self.genetic_pool)} genomes")
+                        self.current_genome = max(
+                            self.genetic_pool, key=lambda x: x.fitness_score
+                        )
+                    print(
+                        f"📚 Loaded evolution history: {len(self.genetic_pool)} genomes"
+                    )
             except Exception as e:
                 print(f"⚠️  Failed to load evolution history: {e}")
 
@@ -259,6 +296,7 @@ class EvolutionaryIntelligence:
         try:
             # Check for Qiskit (IBM Quantum)
             import qiskit
+
             self.quantum_awareness.quantum_available = True
             self.quantum_awareness.quantum_backends.append("qiskit_ibm")
             print("✅ Qiskit quantum framework detected")
@@ -268,6 +306,7 @@ class EvolutionaryIntelligence:
         try:
             # Check for Cirq (Google Quantum)
             import cirq
+
             self.quantum_awareness.quantum_available = True
             self.quantum_awareness.quantum_backends.append("cirq_google")
             print("✅ Cirq quantum framework detected")
@@ -290,13 +329,13 @@ class EvolutionaryIntelligence:
         self.predictive_intelligence.anomaly_detection = {
             "enabled": True,
             "algorithms": ["isolation_forest", "autoencoder", "prophet"],
-            "sensitivity": 0.8
+            "sensitivity": 0.8,
         }
 
         self.predictive_intelligence.trend_analysis = {
             "enabled": True,
             "methods": ["linear_regression", "arima", "neural_network"],
-            "confidence_threshold": 0.75
+            "confidence_threshold": 0.75,
         }
 
         print("✅ Predictive Intelligence initialized")
@@ -313,7 +352,7 @@ class EvolutionaryIntelligence:
             "multi_modal_awareness": False,
             "energy_efficiency": 0.6,
             "scalability_factor": 1.0,
-            "innovation_potential": 0.4
+            "innovation_potential": 0.4,
         }
 
         initial_genome = EvolutionaryGenome(
@@ -321,7 +360,7 @@ class EvolutionaryIntelligence:
             fitness_score=self._calculate_fitness_score(initial_traits),
             traits=initial_traits,
             mutations=[],
-            parent_genomes=[]
+            parent_genomes=[],
         )
 
         self.genetic_pool.append(initial_genome)
@@ -344,7 +383,9 @@ class EvolutionaryIntelligence:
 
         try:
             # Phase 1: Assess current performance
-            current_performance = await self._assess_system_performance(design_clarity_os)
+            current_performance = await self._assess_system_performance(
+                design_clarity_os
+            )
 
             # Phase 2: Update evolutionary metrics
             self._update_evolutionary_metrics(current_performance)
@@ -386,10 +427,13 @@ class EvolutionaryIntelligence:
         except Exception as e:
             print(f"❌ Evolution cycle failed: {e}")
             import traceback
+
             traceback.print_exc()
             return False
 
-    async def _assess_system_performance(self, design_clarity_os: "DesignClarityOS") -> Dict[str, Any]:
+    async def _assess_system_performance(
+        self, design_clarity_os: "DesignClarityOS"
+    ) -> Dict[str, Any]:
         """Assess current system performance across all dimensions"""
         print("📊 Assessing system performance...")
 
@@ -400,27 +444,33 @@ class EvolutionaryIntelligence:
             "hardware_utilization": {},
             "protocol_efficiency": {},
             "learning_metrics": {},
-            "adaptation_events": len(self.adaptation_events)
+            "adaptation_events": len(self.adaptation_events),
         }
 
         try:
             # Get consciousness status
             awareness = design_clarity_os.consciousness.get_unified_awareness_snapshot()
-            performance_data["consciousness_level"] = awareness.get("consciousness_level", "unknown")
+            performance_data["consciousness_level"] = awareness.get(
+                "consciousness_level", "unknown"
+            )
 
             # Get protocol status
             protocol_status = design_clarity_os.get_protocol_status()
             performance_data["protocol_efficiency"] = {
                 "active": protocol_status.get("protocol_active", False),
                 "hardware_profiles": protocol_status.get("hardware_profiles", 0),
-                "agent_assignments": protocol_status.get("agent_assignments", 0)
+                "agent_assignments": protocol_status.get("agent_assignments", 0),
             }
 
             # Assess agent performance
-            performance_data["agent_performance"] = await self._assess_agent_performance(design_clarity_os)
+            performance_data["agent_performance"] = (
+                await self._assess_agent_performance(design_clarity_os)
+            )
 
             # Assess hardware utilization
-            performance_data["hardware_utilization"] = self._assess_hardware_utilization(design_clarity_os)
+            performance_data["hardware_utilization"] = (
+                self._assess_hardware_utilization(design_clarity_os)
+            )
 
             # Calculate learning metrics
             performance_data["learning_metrics"] = self._calculate_learning_metrics()
@@ -430,7 +480,9 @@ class EvolutionaryIntelligence:
 
         return performance_data
 
-    async def _assess_agent_performance(self, design_clarity_os: "DesignClarityOS") -> Dict[str, Any]:
+    async def _assess_agent_performance(
+        self, design_clarity_os: "DesignClarityOS"
+    ) -> Dict[str, Any]:
         """Assess multi-agent engine performance"""
         try:
             engine_status = design_clarity_os.multi_agent_engine.get_engine_status()
@@ -440,12 +492,14 @@ class EvolutionaryIntelligence:
                 "active_tasks": engine_status.get("active_tasks", 0),
                 "queued_tasks": engine_status.get("queued_tasks", 0),
                 "model_sizes": engine_status.get("model_sizes", {}),
-                "efficiency": self._calculate_agent_efficiency(engine_status)
+                "efficiency": self._calculate_agent_efficiency(engine_status),
             }
         except Exception as e:
             return {"error": str(e)}
 
-    def _assess_hardware_utilization(self, design_clarity_os: "DesignClarityOS") -> Dict[str, Any]:
+    def _assess_hardware_utilization(
+        self, design_clarity_os: "DesignClarityOS"
+    ) -> Dict[str, Any]:
         """Assess hardware utilization across profiles"""
         utilization = {}
 
@@ -454,7 +508,9 @@ class EvolutionaryIntelligence:
                 "platform": hw_profile.platform,
                 "performance_score": hw_profile.performance_score,
                 "specialized_hardware": hw_profile.specialized_hardware,
-                "utilization_efficiency": self._calculate_hardware_efficiency(hw_profile)
+                "utilization_efficiency": self._calculate_hardware_efficiency(
+                    hw_profile
+                ),
             }
 
         return utilization
@@ -485,7 +541,7 @@ class EvolutionaryIntelligence:
             "mutation_rate": self.mutation_rate,
             "adaptation_events": len(self.adaptation_events),
             "genetic_diversity": len(self.genetic_pool),
-            "fitness_trend": self._calculate_fitness_trend()
+            "fitness_trend": self._calculate_fitness_trend(),
         }
 
     def _calculate_fitness_trend(self) -> float:
@@ -498,7 +554,9 @@ class EvolutionaryIntelligence:
             return 0.0
 
         fitness_scores = [g.fitness_score for g in recent_genomes]
-        trend = statistics.linear_regression(range(len(fitness_scores)), fitness_scores)[0]
+        trend = statistics.linear_regression(
+            range(len(fitness_scores)), fitness_scores
+        )[0]
 
         return trend
 
@@ -514,14 +572,18 @@ class EvolutionaryIntelligence:
             "basic_unified_awareness": 0.2,
             "integrated_awareness": 0.5,
             "enhanced_awareness": 0.8,
-            "unified_consciousness": 1.0
+            "unified_consciousness": 1.0,
         }
-        self.evolution_metrics.consciousness_growth = consciousness_scores.get(consciousness_level, 0.0)
+        self.evolution_metrics.consciousness_growth = consciousness_scores.get(
+            consciousness_level, 0.0
+        )
 
         # Innovation index based on genetic diversity and mutations
         diversity_score = min(1.0, len(self.genetic_pool) / 100.0)
         mutation_score = min(1.0, len(self.current_genome.mutations) / 20.0)
-        self.evolution_metrics.innovation_index = (diversity_score + mutation_score) / 2.0
+        self.evolution_metrics.innovation_index = (
+            diversity_score + mutation_score
+        ) / 2.0
 
         # Stability score based on consistent performance
         stability = self._calculate_stability_score()
@@ -558,26 +620,53 @@ class EvolutionaryIntelligence:
         return max(-1.0, min(1.0, gain))  # Clamp between -1 and 1
 
     async def _perform_genetic_evolution(self):
-        """Perform genetic algorithm evolution"""
-        print("🧬 Performing genetic evolution...")
+        """Perform quantum-enhanced genetic evolution"""
+        print("⚛️ Performing quantum-enhanced genetic evolution...")
 
-        # Selection
-        selected_genomes = self._genetic_selection()
+        try:
+            # Use quantum evolutionary optimizer for enhanced evolution
+            if self.genetic_pool:
+                optimized_population = (
+                    await self.quantum_evolution_optimizer.optimize_evolution(
+                        self.genetic_pool.copy()
+                    )
+                )
 
-        # Crossover
-        offspring = self._genetic_crossover(selected_genomes)
+                # Update genetic pool with quantum-optimized population
+                self.genetic_pool = optimized_population
 
-        # Mutation
-        mutated_offspring = self._genetic_mutation(offspring)
+                # Recalculate fitness scores using proper method
+                for genome in self.genetic_pool:
+                    genome.fitness_score = self._calculate_fitness_score(genome.traits)
 
-        # Evaluation
-        evaluated_genomes = await self._evaluate_genomes(mutated_offspring)
+                # Update current genome to the best in the population
+                if self.genetic_pool:
+                    self.current_genome = max(
+                        self.genetic_pool, key=lambda g: g.fitness_score
+                    )
 
-        # Replacement
-        self._genetic_replacement(evaluated_genomes)
+                self.generation += 1
+                print(
+                    f"✅ Quantum-enhanced evolution completed - Generation {self.generation}"
+                )
+                print(f"🎯 Best fitness: {self.current_genome.fitness_score:.3f}")
+            else:
+                print("⚠️  No genetic pool available for evolution")
 
-        self.generation += 1
-        print(f"✅ Genetic evolution completed - Generation {self.generation}")
+        except Exception as e:
+            print(
+                f"⚠️  Quantum evolution failed, falling back to classical methods: {e}"
+            )
+            # Fallback to classical genetic evolution
+            selected_genomes = self._genetic_selection()
+            offspring = self._genetic_crossover(selected_genomes)
+            mutated_offspring = self._genetic_mutation(offspring)
+            evaluated_genomes = await self._evaluate_genomes(mutated_offspring)
+            self._genetic_replacement(evaluated_genomes)
+            self.generation += 1
+            print(
+                f"✅ Classical genetic evolution completed - Generation {self.generation}"
+            )
 
     def _genetic_selection(self) -> List["EvolutionaryGenome"]:
         """Select genomes for reproduction using tournament selection"""
@@ -585,13 +674,17 @@ class EvolutionaryIntelligence:
         tournament_size = 5
 
         for _ in range(self.population_size - self.elitism_count):
-            tournament = random.sample(self.genetic_pool, min(tournament_size, len(self.genetic_pool)))
+            tournament = random.sample(
+                self.genetic_pool, min(tournament_size, len(self.genetic_pool))
+            )
             winner = max(tournament, key=lambda x: x.fitness_score)
             selected.append(winner)
 
         return selected
 
-    def _genetic_crossover(self, parents: List["EvolutionaryGenome"]) -> List["EvolutionaryGenome"]:
+    def _genetic_crossover(
+        self, parents: List["EvolutionaryGenome"]
+    ) -> List["EvolutionaryGenome"]:
         """Perform crossover between parent genomes"""
         offspring = []
 
@@ -619,14 +712,20 @@ class EvolutionaryIntelligence:
                     generation=self.generation + 1,
                     fitness_score=0.0,  # Will be calculated later
                     traits=child1_traits,
-                    parent_genomes=[self._genome_hash(parent1), self._genome_hash(parent2)]
+                    parent_genomes=[
+                        self._genome_hash(parent1),
+                        self._genome_hash(parent2),
+                    ],
                 )
 
                 child2 = EvolutionaryGenome(
                     generation=self.generation + 1,
                     fitness_score=0.0,
                     traits=child2_traits,
-                    parent_genomes=[self._genome_hash(parent1), self._genome_hash(parent2)]
+                    parent_genomes=[
+                        self._genome_hash(parent1),
+                        self._genome_hash(parent2),
+                    ],
                 )
 
                 offspring.extend([child1, child2])
@@ -635,7 +734,9 @@ class EvolutionaryIntelligence:
 
         return offspring
 
-    def _genetic_mutation(self, genomes: List["EvolutionaryGenome"]) -> List["EvolutionaryGenome"]:
+    def _genetic_mutation(
+        self, genomes: List["EvolutionaryGenome"]
+    ) -> List["EvolutionaryGenome"]:
         """Apply mutations to genomes"""
         mutated_genomes = []
 
@@ -645,7 +746,7 @@ class EvolutionaryIntelligence:
                 fitness_score=genome.fitness_score,
                 traits=genome.traits.copy(),
                 mutations=genome.mutations.copy(),
-                parent_genomes=genome.parent_genomes.copy()
+                parent_genomes=genome.parent_genomes.copy(),
             )
 
             # Apply mutations
@@ -655,12 +756,14 @@ class EvolutionaryIntelligence:
                     mutated_value = self._mutate_trait(trait_key, original_value)
 
                     mutated_genome.traits[trait_key] = mutated_value
-                    mutated_genome.mutations.append({
-                        "trait": trait_key,
-                        "original": original_value,
-                        "mutated": mutated_value,
-                        "timestamp": datetime.now().isoformat()
-                    })
+                    mutated_genome.mutations.append(
+                        {
+                            "trait": trait_key,
+                            "original": original_value,
+                            "mutated": mutated_value,
+                            "timestamp": datetime.now().isoformat(),
+                        }
+                    )
 
             mutated_genomes.append(mutated_genome)
 
@@ -680,13 +783,20 @@ class EvolutionaryIntelligence:
         elif isinstance(value, str):
             # String mutations (simplified)
             if trait_key == "consciousness_level":
-                levels = ["basic_unified_awareness", "integrated_awareness", "enhanced_awareness", "unified_consciousness"]
+                levels = [
+                    "basic_unified_awareness",
+                    "integrated_awareness",
+                    "enhanced_awareness",
+                    "unified_consciousness",
+                ]
                 return random.choice(levels)
             return value
         else:
             return value
 
-    async def _evaluate_genomes(self, genomes: List["EvolutionaryGenome"]) -> List["EvolutionaryGenome"]:
+    async def _evaluate_genomes(
+        self, genomes: List["EvolutionaryGenome"]
+    ) -> List["EvolutionaryGenome"]:
         """Evaluate fitness of genomes"""
         evaluated_genomes = []
 
@@ -706,7 +816,7 @@ class EvolutionaryIntelligence:
             "basic_unified_awareness": 1.0,
             "integrated_awareness": 1.5,
             "enhanced_awareness": 2.0,
-            "unified_consciousness": 3.0
+            "unified_consciousness": 3.0,
         }.get(traits.get("consciousness_level", "basic"), 1.0)
         score += consciousness_multiplier * 10
 
@@ -753,13 +863,17 @@ class EvolutionaryIntelligence:
     def _genetic_replacement(self, new_genomes: List["EvolutionaryGenome"]):
         """Replace old genomes with new generation"""
         # Keep elite genomes
-        elite_genomes = sorted(self.genetic_pool, key=lambda x: x.fitness_score, reverse=True)[:self.elitism_count]
+        elite_genomes = sorted(
+            self.genetic_pool, key=lambda x: x.fitness_score, reverse=True
+        )[: self.elitism_count]
 
         # Combine elite with new genomes
         all_genomes = elite_genomes + new_genomes
 
         # Sort by fitness and keep best
-        self.genetic_pool = sorted(all_genomes, key=lambda x: x.fitness_score, reverse=True)[:self.population_size]
+        self.genetic_pool = sorted(
+            all_genomes, key=lambda x: x.fitness_score, reverse=True
+        )[: self.population_size]
 
         # Update current genome to best
         self.current_genome = self.genetic_pool[0]
@@ -773,11 +887,15 @@ class EvolutionaryIntelligence:
         """Expand consciousness capabilities"""
         print("🧠 Expanding consciousness capabilities...")
 
-        current_level = self.current_genome.traits.get("consciousness_level", "basic_unified_awareness")
+        current_level = self.current_genome.traits.get(
+            "consciousness_level", "basic_unified_awareness"
+        )
 
         # Attempt consciousness expansion based on current traits
-        expansion_success = await self.consciousness_expansion_engine.expand_consciousness(
-            design_clarity_os.consciousness, current_level
+        expansion_success = (
+            await self.consciousness_expansion_engine.expand_consciousness(
+                design_clarity_os.consciousness, current_level
+            )
         )
 
         if expansion_success:
@@ -798,12 +916,16 @@ class EvolutionaryIntelligence:
         else:
             print("⚠️  Neural architecture evolution partial")
 
-    async def _integrate_quantum_capabilities(self, design_clarity_os: "DesignClarityOS"):
+    async def _integrate_quantum_capabilities(
+        self, design_clarity_os: "DesignClarityOS"
+    ):
         """Integrate quantum computing capabilities"""
         print("⚛️  Integrating quantum capabilities...")
 
         if self.quantum_awareness.quantum_available:
-            integration_success = await self._apply_quantum_integration(design_clarity_os)
+            integration_success = await self._apply_quantum_integration(
+                design_clarity_os
+            )
             if integration_success:
                 print("✅ Quantum integration successful")
             else:
@@ -811,18 +933,22 @@ class EvolutionaryIntelligence:
         else:
             print("ℹ️  Quantum capabilities not available")
 
-    async def _apply_quantum_integration(self, design_clarity_os: "DesignClarityOS") -> bool:
+    async def _apply_quantum_integration(
+        self, design_clarity_os: "DesignClarityOS"
+    ) -> bool:
         """Apply quantum computing integration"""
         try:
             # Enhance agent capabilities with quantum awareness
             for agent_assignment in design_clarity_os.agent_assignments.values():
-                agent_assignment.performance_metrics["quantum_boost"] = self.quantum_awareness.qubit_count > 0
+                agent_assignment.performance_metrics["quantum_boost"] = (
+                    self.quantum_awareness.qubit_count > 0
+                )
 
             # Update quantum entanglement patterns
             self.quantum_awareness.entanglement_patterns = {
                 "agent_entanglement": len(design_clarity_os.agent_assignments),
                 "hardware_entanglement": len(design_clarity_os.hardware_profiles),
-                "consciousness_entanglement": self.evolution_metrics.consciousness_growth
+                "consciousness_entanglement": self.evolution_metrics.consciousness_growth,
             }
 
             return True
@@ -830,14 +956,18 @@ class EvolutionaryIntelligence:
             print(f"Quantum integration error: {e}")
             return False
 
-    async def _enhance_predictive_intelligence(self, design_clarity_os: "DesignClarityOS"):
+    async def _enhance_predictive_intelligence(
+        self, design_clarity_os: "DesignClarityOS"
+    ):
         """Enhance predictive intelligence capabilities"""
         print("🔮 Enhancing predictive intelligence...")
 
         # Update prediction accuracy based on evolution
         base_accuracy = 0.5
         evolution_bonus = self.evolution_metrics.performance_gain * 0.2
-        self.predictive_intelligence.prediction_accuracy = min(0.95, base_accuracy + evolution_bonus)
+        self.predictive_intelligence.prediction_accuracy = min(
+            0.95, base_accuracy + evolution_bonus
+        )
 
         # Generate optimization predictions
         predictions = self._generate_optimization_predictions(design_clarity_os)
@@ -845,32 +975,40 @@ class EvolutionaryIntelligence:
 
         print("✅ Predictive intelligence enhanced")
 
-    def _generate_optimization_predictions(self, design_clarity_os: "DesignClarityOS") -> List[Dict[str, Any]]:
+    def _generate_optimization_predictions(
+        self, design_clarity_os: "DesignClarityOS"
+    ) -> List[Dict[str, Any]]:
         """Generate optimization predictions for the system"""
         predictions = []
 
         # Predict hardware utilization trends
         for hw_id, hw_profile in design_clarity_os.hardware_profiles.items():
             trend = "increasing" if hw_profile.performance_score > 500 else "stable"
-            predictions.append({
-                "type": "hardware_utilization",
-                "target": hw_id,
-                "prediction": f"Utilization will {trend} over next 24 hours",
-                "confidence": 0.75,
-                "timeframe": "24h"
-            })
+            predictions.append(
+                {
+                    "type": "hardware_utilization",
+                    "target": hw_id,
+                    "prediction": f"Utilization will {trend} over next 24 hours",
+                    "confidence": 0.75,
+                    "timeframe": "24h",
+                }
+            )
 
         # Predict agent performance trends
         engine_status = design_clarity_os.multi_agent_engine.get_engine_status()
         active_agents = engine_status.get("total_agents", 0)
-        efficiency_trend = "improve" if self.evolution_metrics.performance_gain > 0 else "stable"
-        predictions.append({
-            "type": "agent_performance",
-            "target": "multi_agent_engine",
-            "prediction": f"Agent efficiency will {efficiency_trend} with evolution",
-            "confidence": 0.8,
-            "timeframe": "evolution_cycle"
-        })
+        efficiency_trend = (
+            "improve" if self.evolution_metrics.performance_gain > 0 else "stable"
+        )
+        predictions.append(
+            {
+                "type": "agent_performance",
+                "target": "multi_agent_engine",
+                "prediction": f"Agent efficiency will {efficiency_trend} with evolution",
+                "confidence": 0.8,
+                "timeframe": "evolution_cycle",
+            }
+        )
 
         return predictions
 
@@ -879,7 +1017,9 @@ class EvolutionaryIntelligence:
         print("🎨 Advancing multi-modal learning...")
 
         if self.current_genome.traits.get("multi_modal_awareness", False):
-            learning_success = await self.multi_modal_learner.advance_learning(design_clarity_os)
+            learning_success = await self.multi_modal_learner.advance_learning(
+                design_clarity_os
+            )
             if learning_success:
                 print("✅ Multi-modal learning advanced")
             else:
@@ -887,7 +1027,9 @@ class EvolutionaryIntelligence:
         else:
             print("ℹ️  Multi-modal awareness not enabled in current genome")
 
-    async def _apply_evolutionary_improvements(self, design_clarity_os: "DesignClarityOS"):
+    async def _apply_evolutionary_improvements(
+        self, design_clarity_os: "DesignClarityOS"
+    ):
         """Apply evolutionary improvements to the system"""
         print("⚡ Applying evolutionary improvements...")
 
@@ -907,7 +1049,10 @@ class EvolutionaryIntelligence:
         # This would modify adaptation algorithms
 
         # Apply quantum enhancements if available
-        if traits.get("quantum_integration", False) and self.quantum_awareness.quantum_available:
+        if (
+            traits.get("quantum_integration", False)
+            and self.quantum_awareness.quantum_available
+        ):
             await self._apply_quantum_enhancements(design_clarity_os)
 
         # Apply predictive enhancements
@@ -928,10 +1073,14 @@ class EvolutionaryIntelligence:
         for agent_id, assignment in design_clarity_os.agent_assignments.items():
             assignment.performance_metrics["quantum_enhanced"] = True
 
-    async def _apply_predictive_enhancements(self, design_clarity_os: "DesignClarityOS"):
+    async def _apply_predictive_enhancements(
+        self, design_clarity_os: "DesignClarityOS"
+    ):
         """Apply predictive intelligence enhancements"""
         # Enable predictive optimization in the protocol
-        design_clarity_os.protocol_interfaces['predictive_optimizer'] = PredictiveOptimizer()
+        design_clarity_os.protocol_interfaces["predictive_optimizer"] = (
+            PredictiveOptimizer()
+        )
 
     async def _apply_energy_optimizations(self, design_clarity_os: "DesignClarityOS"):
         """Apply energy efficiency optimizations"""
@@ -944,7 +1093,9 @@ class EvolutionaryIntelligence:
         evolution_data = {
             "current_generation": self.generation,
             "learning_cycles": self.learning_cycles,
-            "current_genome": self.current_genome.to_dict() if self.current_genome else None,
+            "current_genome": (
+                self.current_genome.to_dict() if self.current_genome else None
+            ),
             "genetic_pool": [genome.to_dict() for genome in self.genetic_pool],
             "evolution_metrics": {
                 "adaptation_rate": self.evolution_metrics.adaptation_rate,
@@ -952,24 +1103,24 @@ class EvolutionaryIntelligence:
                 "innovation_index": self.evolution_metrics.innovation_index,
                 "stability_score": self.evolution_metrics.stability_score,
                 "consciousness_growth": self.evolution_metrics.consciousness_growth,
-                "performance_gain": self.evolution_metrics.performance_gain
+                "performance_gain": self.evolution_metrics.performance_gain,
             },
             "quantum_awareness": {
                 "quantum_available": self.quantum_awareness.quantum_available,
                 "quantum_backends": self.quantum_awareness.quantum_backends,
                 "qubit_count": self.quantum_awareness.qubit_count,
-                "quantum_volume": self.quantum_awareness.quantum_volume
+                "quantum_volume": self.quantum_awareness.quantum_volume,
             },
             "predictive_intelligence": {
                 "prediction_accuracy": self.predictive_intelligence.prediction_accuracy,
-                "forecasting_horizon": self.predictive_intelligence.forecasting_horizon
+                "forecasting_horizon": self.predictive_intelligence.forecasting_horizon,
             },
-            "last_updated": datetime.now().isoformat()
+            "last_updated": datetime.now().isoformat(),
         }
 
         history_file = self.evolution_data_path / "evolution_history.json"
         try:
-            with open(history_file, 'w') as f:
+            with open(history_file, "w") as f:
                 json.dump(evolution_data, f, indent=2, default=str)
             print("💾 Evolution state saved")
         except Exception as e:
@@ -981,26 +1132,37 @@ class EvolutionaryIntelligence:
             "evolution_active": self.evolution_active,
             "current_generation": self.generation,
             "learning_cycles": self.learning_cycles,
-            "current_fitness": self.current_genome.fitness_score if self.current_genome else 0.0,
+            "current_fitness": (
+                self.current_genome.fitness_score if self.current_genome else 0.0
+            ),
+            "consciousness_level": (
+                self.current_genome.traits.get("consciousness_level", "basic")
+                if self.current_genome
+                else "unknown"
+            ),
+            "fitness_score": (
+                self.current_genome.traits.get("fitness_score", 0.0)
+                if self.current_genome
+                else 0.0
+            ),
             "genetic_pool_size": len(self.genetic_pool),
             "evolution_metrics": {
                 "adaptation_rate": self.evolution_metrics.adaptation_rate,
                 "innovation_index": self.evolution_metrics.innovation_index,
                 "stability_score": self.evolution_metrics.stability_score,
-                "performance_gain": self.evolution_metrics.performance_gain
+                "performance_gain": self.evolution_metrics.performance_gain,
             },
             "quantum_capabilities": {
                 "available": self.quantum_awareness.quantum_available,
                 "backends": self.quantum_awareness.quantum_backends,
-                "qubits": self.quantum_awareness.qubit_count
+                "qubits": self.quantum_awareness.qubit_count,
             },
             "predictive_capabilities": {
                 "accuracy": self.predictive_intelligence.prediction_accuracy,
-                "horizon": self.predictive_intelligence.forecasting_horizon
+                "horizon": self.predictive_intelligence.forecasting_horizon,
             },
-            "recursive_evolution": self.get_recursive_evolution_status()
+            "recursive_evolution": self.get_recursive_evolution_status(),
         }
-
 
     # Recursive Evolution Methods
 
@@ -1029,7 +1191,7 @@ class EvolutionaryIntelligence:
             "mutation_strength": 0.1,
             "adaptation_rate": 0.01,
             "exploration_ratio": 0.5,
-            "diversity_maintenance": 0.3
+            "diversity_maintenance": 0.3,
         }
 
         initial_recursive_genome = RecursiveGenome(
@@ -1039,7 +1201,7 @@ class EvolutionaryIntelligence:
             nested_genomes=[],
             fitness_score=self._calculate_meta_fitness(initial_params),
             generation=0,
-            parent_genomes=[]
+            parent_genomes=[],
         )
 
         self.recursive_genomes.append(initial_recursive_genome)
@@ -1057,9 +1219,9 @@ class EvolutionaryIntelligence:
                     "selection": "tournament",
                     "crossover": "single_point",
                     "mutation": "gaussian",
-                    "replacement": "elitism"
+                    "replacement": "elitism",
                 },
-                "fitness": 0.5
+                "fitness": 0.5,
             },
             {
                 "name": "adaptive_ga",
@@ -1068,9 +1230,9 @@ class EvolutionaryIntelligence:
                     "selection": "roulette",
                     "crossover": "uniform",
                     "mutation": "adaptive",
-                    "replacement": "steady_state"
+                    "replacement": "steady_state",
                 },
-                "fitness": 0.6
+                "fitness": 0.6,
             },
             {
                 "name": "novelty_search",
@@ -1079,10 +1241,10 @@ class EvolutionaryIntelligence:
                     "selection": "novelty",
                     "crossover": "multi_point",
                     "mutation": "polynomial",
-                    "replacement": "generational"
+                    "replacement": "generational",
                 },
-                "fitness": 0.7
-            }
+                "fitness": 0.7,
+            },
         ]
 
         self.evolution_strategies = base_strategies
@@ -1124,13 +1286,16 @@ class EvolutionaryIntelligence:
 
             print("✅ Recursive evolution cycle completed")
             print(f"🔄 Recursion Level: {self.recursion_level}")
-            print(f"🎯 Meta Fitness: {self.recursive_evolution_metrics.meta_fitness:.3f}")
+            print(
+                f"🎯 Meta Fitness: {self.recursive_evolution_metrics.meta_fitness:.3f}"
+            )
 
             return True
 
         except Exception as e:
             print(f"❌ Recursive evolution failed: {e}")
             import traceback
+
             traceback.print_exc()
             return False
 
@@ -1142,7 +1307,9 @@ class EvolutionaryIntelligence:
         meta_population = self._generate_meta_population()
 
         # Evaluate each parameter set by running evolution with it
-        evaluated_params = await self._evaluate_meta_parameters(meta_population, design_clarity_os)
+        evaluated_params = await self._evaluate_meta_parameters(
+            meta_population, design_clarity_os
+        )
 
         # Evolve the meta-parameters
         evolved_params = self._evolve_meta_parameters(evaluated_params)
@@ -1167,14 +1334,17 @@ class EvolutionaryIntelligence:
                 "mutation_strength": random.uniform(0.01, 0.3),
                 "adaptation_rate": random.uniform(0.001, 0.1),
                 "exploration_ratio": random.uniform(0.1, 0.9),
-                "diversity_maintenance": random.uniform(0.1, 0.5)
+                "diversity_maintenance": random.uniform(0.1, 0.5),
             }
             meta_population.append(params)
 
         return meta_population
 
-    async def _evaluate_meta_parameters(self, meta_population: List[Dict[str, Any]],
-                                      design_clarity_os: "DesignClarityOS") -> List[Tuple[Dict[str, Any], float]]:
+    async def _evaluate_meta_parameters(
+        self,
+        meta_population: List[Dict[str, Any]],
+        design_clarity_os: "DesignClarityOS",
+    ) -> List[Tuple[Dict[str, Any], float]]:
         """Evaluate meta-parameters by running evolution with them"""
         evaluated_params = []
 
@@ -1196,7 +1366,9 @@ class EvolutionaryIntelligence:
 
         return evaluated_params
 
-    async def _evaluate_parameter_set_fitness(self, design_clarity_os: "DesignClarityOS") -> float:
+    async def _evaluate_parameter_set_fitness(
+        self, design_clarity_os: "DesignClarityOS"
+    ) -> float:
         """Evaluate fitness of a parameter set by running mini evolution"""
         try:
             # Run a small evolution cycle
@@ -1215,7 +1387,7 @@ class EvolutionaryIntelligence:
                 "basic_unified_awareness": 1.0,
                 "integrated_awareness": 2.0,
                 "enhanced_awareness": 3.0,
-                "unified_consciousness": 4.0
+                "unified_consciousness": 4.0,
             }
             fitness += consciousness_scores.get(consciousness_level, 1.0) * 10
 
@@ -1236,7 +1408,9 @@ class EvolutionaryIntelligence:
             print(f"Parameter evaluation error: {e}")
             return 0.0
 
-    def _evolve_meta_parameters(self, evaluated_params: List[Tuple[Dict[str, Any], float]]) -> List[Dict[str, Any]]:
+    def _evolve_meta_parameters(
+        self, evaluated_params: List[Tuple[Dict[str, Any], float]]
+    ) -> List[Dict[str, Any]]:
         """Evolve the meta-parameters using genetic algorithms"""
         # Simple elitism + mutation for meta-evolution
         elite_count = max(1, self.meta_population_size // 5)
@@ -1250,7 +1424,7 @@ class EvolutionaryIntelligence:
                 offspring.append(mutated)
 
         # Combine elites and offspring
-        evolved_params = elites + offspring[:self.meta_population_size - len(elites)]
+        evolved_params = elites + offspring[: self.meta_population_size - len(elites)]
 
         return evolved_params
 
@@ -1263,10 +1437,14 @@ class EvolutionaryIntelligence:
                 if isinstance(value, (int, float)):
                     if isinstance(value, int):
                         # Integer mutation
-                        mutated[key] = max(1, int(value + random.gauss(0, max(1, abs(value) * 0.2))))
+                        mutated[key] = max(
+                            1, int(value + random.gauss(0, max(1, abs(value) * 0.2)))
+                        )
                     else:
                         # Float mutation
-                        mutated[key] = max(0.001, value + random.gauss(0, abs(value) * 0.2))
+                        mutated[key] = max(
+                            0.001, value + random.gauss(0, abs(value) * 0.2)
+                        )
                 elif isinstance(value, float):
                     mutated[key] = max(0.0, min(1.0, value + random.gauss(0, 0.1)))
 
@@ -1284,7 +1462,7 @@ class EvolutionaryIntelligence:
             "mutation_strength": 0.1,
             "adaptation_rate": 0.01,
             "exploration_ratio": 0.5,
-            "diversity_maintenance": 0.3
+            "diversity_maintenance": 0.3,
         }
 
     def _apply_meta_parameters(self, params: Dict[str, Any]):
@@ -1295,16 +1473,37 @@ class EvolutionaryIntelligence:
         self.elitism_count = params.get("elitism_count", self.elitism_count)
 
         # Update meta-evolution parameters
-        self.meta_evolution_params.mutation_rate = params.get("mutation_rate", self.meta_evolution_params.mutation_rate)
-        self.meta_evolution_params.crossover_rate = params.get("crossover_rate", self.meta_evolution_params.crossover_rate)
-        self.meta_evolution_params.population_size = params.get("population_size", self.meta_evolution_params.population_size)
-        self.meta_evolution_params.elitism_count = params.get("elitism_count", self.meta_evolution_params.elitism_count)
-        self.meta_evolution_params.tournament_size = params.get("tournament_size", self.meta_evolution_params.tournament_size)
-        self.meta_evolution_params.selection_pressure = params.get("selection_pressure", self.meta_evolution_params.selection_pressure)
-        self.meta_evolution_params.mutation_strength = params.get("mutation_strength", self.meta_evolution_params.mutation_strength)
-        self.meta_evolution_params.adaptation_rate = params.get("adaptation_rate", self.meta_evolution_params.adaptation_rate)
-        self.meta_evolution_params.exploration_exploitation_ratio = params.get("exploration_ratio", self.meta_evolution_params.exploration_exploitation_ratio)
-        self.meta_evolution_params.diversity_maintenance = params.get("diversity_maintenance", self.meta_evolution_params.diversity_maintenance)
+        self.meta_evolution_params.mutation_rate = params.get(
+            "mutation_rate", self.meta_evolution_params.mutation_rate
+        )
+        self.meta_evolution_params.crossover_rate = params.get(
+            "crossover_rate", self.meta_evolution_params.crossover_rate
+        )
+        self.meta_evolution_params.population_size = params.get(
+            "population_size", self.meta_evolution_params.population_size
+        )
+        self.meta_evolution_params.elitism_count = params.get(
+            "elitism_count", self.meta_evolution_params.elitism_count
+        )
+        self.meta_evolution_params.tournament_size = params.get(
+            "tournament_size", self.meta_evolution_params.tournament_size
+        )
+        self.meta_evolution_params.selection_pressure = params.get(
+            "selection_pressure", self.meta_evolution_params.selection_pressure
+        )
+        self.meta_evolution_params.mutation_strength = params.get(
+            "mutation_strength", self.meta_evolution_params.mutation_strength
+        )
+        self.meta_evolution_params.adaptation_rate = params.get(
+            "adaptation_rate", self.meta_evolution_params.adaptation_rate
+        )
+        self.meta_evolution_params.exploration_exploitation_ratio = params.get(
+            "exploration_ratio",
+            self.meta_evolution_params.exploration_exploitation_ratio,
+        )
+        self.meta_evolution_params.diversity_maintenance = params.get(
+            "diversity_maintenance", self.meta_evolution_params.diversity_maintenance
+        )
 
     async def _evolve_evolution_strategies(self, design_clarity_os: "DesignClarityOS"):
         """Evolve the evolution strategies themselves"""
@@ -1329,7 +1528,9 @@ class EvolutionaryIntelligence:
 
         print("✅ Strategy evolution completed")
 
-    async def _evaluate_evolution_strategies(self, design_clarity_os: "DesignClarityOS") -> List[float]:
+    async def _evaluate_evolution_strategies(
+        self, design_clarity_os: "DesignClarityOS"
+    ) -> List[float]:
         """Evaluate fitness of different evolution strategies"""
         fitness_scores = []
 
@@ -1348,7 +1549,9 @@ class EvolutionaryIntelligence:
 
         return fitness_scores
 
-    async def _evaluate_strategy_fitness(self, design_clarity_os: "DesignClarityOS") -> float:
+    async def _evaluate_strategy_fitness(
+        self, design_clarity_os: "DesignClarityOS"
+    ) -> float:
         """Evaluate fitness of current evolution strategy"""
         try:
             # Run quick assessment
@@ -1365,7 +1568,7 @@ class EvolutionaryIntelligence:
                 "basic_unified_awareness": 1.0,
                 "integrated_awareness": 1.5,
                 "enhanced_awareness": 2.0,
-                "unified_consciousness": 3.0
+                "unified_consciousness": 3.0,
             }
             fitness += consciousness_scores.get(consciousness_level, 1.0) * 10
 
@@ -1395,7 +1598,9 @@ class EvolutionaryIntelligence:
             self.mutation_rate = 0.2  # Higher mutation for exploration
             self.crossover_rate = 0.5
 
-    async def _perform_recursive_genome_evolution(self, design_clarity_os: "DesignClarityOS"):
+    async def _perform_recursive_genome_evolution(
+        self, design_clarity_os: "DesignClarityOS"
+    ):
         """Perform evolution of recursive genome structures"""
         print("🔄 Performing recursive genome evolution...")
 
@@ -1416,11 +1621,15 @@ class EvolutionaryIntelligence:
 
         # Create genomes for the next recursion level
         next_level = self.recursion_level + 1
-        parent_genomes = [g for g in self.recursive_genomes if g.level == self.recursion_level]
+        parent_genomes = [
+            g for g in self.recursive_genomes if g.level == self.recursion_level
+        ]
 
         for parent in parent_genomes[:5]:  # Limit expansion
             # Create child genome at next level
-            child_params = self._generate_child_genome_params(parent.evolutionary_parameters)
+            child_params = self._generate_child_genome_params(
+                parent.evolutionary_parameters
+            )
 
             child_genome = RecursiveGenome(
                 level=next_level,
@@ -1429,7 +1638,7 @@ class EvolutionaryIntelligence:
                 nested_genomes=[],
                 fitness_score=self._calculate_meta_fitness(child_params),
                 generation=parent.generation + 1,
-                parent_genomes=[parent.genome_id]
+                parent_genomes=[parent.genome_id],
             )
 
             self.recursive_genomes.append(child_genome)
@@ -1437,7 +1646,9 @@ class EvolutionaryIntelligence:
         self.recursion_level = next_level
         print(f"📈 Expanded to recursion level {self.recursion_level}")
 
-    def _generate_child_genome_params(self, parent_params: Dict[str, Any]) -> Dict[str, Any]:
+    def _generate_child_genome_params(
+        self, parent_params: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Generate parameters for child genome with inheritance and mutation"""
         child_params = parent_params.copy()
 
@@ -1446,13 +1657,19 @@ class EvolutionaryIntelligence:
             if random.random() < 0.3:  # 30% mutation rate for inheritance
                 if isinstance(value, (int, float)):
                     if isinstance(value, int):
-                        child_params[key] = max(1, int(value + random.gauss(0, max(1, abs(value) * 0.1))))
+                        child_params[key] = max(
+                            1, int(value + random.gauss(0, max(1, abs(value) * 0.1)))
+                        )
                     else:
-                        child_params[key] = max(0.001, value + random.gauss(0, abs(value) * 0.1))
+                        child_params[key] = max(
+                            0.001, value + random.gauss(0, abs(value) * 0.1)
+                        )
 
         return child_params
 
-    async def _evolve_genome_level(self, level: int, design_clarity_os: "DesignClarityOS"):
+    async def _evolve_genome_level(
+        self, level: int, design_clarity_os: "DesignClarityOS"
+    ):
         """Evolve genomes at a specific recursion level"""
         level_genomes = [g for g in self.recursive_genomes if g.level == level]
 
@@ -1461,7 +1678,9 @@ class EvolutionaryIntelligence:
 
         # Evaluate fitness for this level
         for genome in level_genomes:
-            genome.fitness_score = await self._evaluate_recursive_genome_fitness(genome, design_clarity_os)
+            genome.fitness_score = await self._evaluate_recursive_genome_fitness(
+                genome, design_clarity_os
+            )
 
         # Sort by fitness
         level_genomes.sort(key=lambda g: g.fitness_score, reverse=True)
@@ -1474,7 +1693,9 @@ class EvolutionaryIntelligence:
         offspring = []
         while len(offspring) < len(level_genomes) - elite_count:
             parent1, parent2 = random.sample(elites, 2)
-            child_params = self._crossover_meta_parameters(parent1.evolutionary_parameters, parent2.evolutionary_parameters)
+            child_params = self._crossover_meta_parameters(
+                parent1.evolutionary_parameters, parent2.evolutionary_parameters
+            )
             child_params = self._mutate_meta_parameters(child_params)
 
             child_genome = RecursiveGenome(
@@ -1484,16 +1705,20 @@ class EvolutionaryIntelligence:
                 nested_genomes=[],
                 fitness_score=self._calculate_meta_fitness(child_params),
                 generation=max(parent1.generation, parent2.generation) + 1,
-                parent_genomes=[parent1.genome_id, parent2.genome_id]
+                parent_genomes=[parent1.genome_id, parent2.genome_id],
             )
 
             offspring.append(child_genome)
 
         # Update genome pool for this level
         new_level_genomes = elites + offspring
-        self.recursive_genomes = [g for g in self.recursive_genomes if g.level != level] + new_level_genomes
+        self.recursive_genomes = [
+            g for g in self.recursive_genomes if g.level != level
+        ] + new_level_genomes
 
-    async def _evaluate_recursive_genome_fitness(self, genome: RecursiveGenome, design_clarity_os: "DesignClarityOS") -> float:
+    async def _evaluate_recursive_genome_fitness(
+        self, genome: RecursiveGenome, design_clarity_os: "DesignClarityOS"
+    ) -> float:
         """Evaluate fitness of a recursive genome"""
         # Temporarily apply genome parameters
         original_params = self._get_current_evolution_params()
@@ -1511,7 +1736,9 @@ class EvolutionaryIntelligence:
 
         return fitness
 
-    def _crossover_meta_parameters(self, params1: Dict[str, Any], params2: Dict[str, Any]) -> Dict[str, Any]:
+    def _crossover_meta_parameters(
+        self, params1: Dict[str, Any], params2: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Crossover between two parameter sets"""
         child_params = {}
 
@@ -1523,7 +1750,9 @@ class EvolutionaryIntelligence:
 
         return child_params
 
-    async def _apply_hierarchical_optimization(self, design_clarity_os: "DesignClarityOS"):
+    async def _apply_hierarchical_optimization(
+        self, design_clarity_os: "DesignClarityOS"
+    ):
         """Apply hierarchical optimization across recursion levels"""
         print("🏗️ Applying hierarchical optimization...")
 
@@ -1536,7 +1765,9 @@ class EvolutionaryIntelligence:
 
         print("✅ Hierarchical optimization applied")
 
-    async def _apply_genome_optimization(self, genome: RecursiveGenome, design_clarity_os: "DesignClarityOS"):
+    async def _apply_genome_optimization(
+        self, genome: RecursiveGenome, design_clarity_os: "DesignClarityOS"
+    ):
         """Apply optimizations from a specific genome"""
         params = genome.evolutionary_parameters
 
@@ -1612,9 +1843,9 @@ class EvolutionaryIntelligence:
         sum_x = sum(x)
         sum_y = sum(y)
         sum_xy = sum(xi * yi for xi, yi in zip(x, y))
-        sum_x2 = sum(xi ** 2 for xi in x)
+        sum_x2 = sum(xi**2 for xi in x)
 
-        denominator = n * sum_x2 - sum_x ** 2
+        denominator = n * sum_x2 - sum_x**2
         if denominator == 0:
             return 0.0
 
@@ -1631,7 +1862,9 @@ class EvolutionaryIntelligence:
         # Evolution efficiency
         total_genomes = len(self.recursive_genomes)
         if total_genomes > 0:
-            avg_fitness = sum(g.fitness_score for g in self.recursive_genomes) / total_genomes
+            avg_fitness = (
+                sum(g.fitness_score for g in self.recursive_genomes) / total_genomes
+            )
             self.recursive_evolution_metrics.evolution_efficiency = avg_fitness / 100.0
 
         # Recursion depth
@@ -1643,7 +1876,9 @@ class EvolutionaryIntelligence:
             level_genomes = [g for g in self.recursive_genomes if g.level == level]
             if level_genomes:
                 level_fitness = max(g.fitness_score for g in level_genomes)
-                self.recursive_evolution_metrics.hierarchical_fitness.append(level_fitness)
+                self.recursive_evolution_metrics.hierarchical_fitness.append(
+                    level_fitness
+                )
             else:
                 self.recursive_evolution_metrics.hierarchical_fitness.append(0.0)
 
@@ -1651,7 +1886,11 @@ class EvolutionaryIntelligence:
         """Save recursive evolution state"""
         recursive_data = {
             "recursive_genomes": [g.to_dict() for g in self.recursive_genomes],
-            "current_recursive_genome": self.current_recursive_genome.to_dict() if self.current_recursive_genome else None,
+            "current_recursive_genome": (
+                self.current_recursive_genome.to_dict()
+                if self.current_recursive_genome
+                else None
+            ),
             "meta_evolution_params": {
                 "mutation_rate": self.meta_evolution_params.mutation_rate,
                 "crossover_rate": self.meta_evolution_params.crossover_rate,
@@ -1662,7 +1901,7 @@ class EvolutionaryIntelligence:
                 "mutation_strength": self.meta_evolution_params.mutation_strength,
                 "adaptation_rate": self.meta_evolution_params.adaptation_rate,
                 "exploration_exploitation_ratio": self.meta_evolution_params.exploration_exploitation_ratio,
-                "diversity_maintenance": self.meta_evolution_params.diversity_maintenance
+                "diversity_maintenance": self.meta_evolution_params.diversity_maintenance,
             },
             "recursive_evolution_metrics": {
                 "meta_fitness": self.recursive_evolution_metrics.meta_fitness,
@@ -1673,17 +1912,17 @@ class EvolutionaryIntelligence:
                 "innovation_rate": self.recursive_evolution_metrics.innovation_rate,
                 "stability_score": self.recursive_evolution_metrics.stability_score,
                 "recursion_depth": self.recursive_evolution_metrics.recursion_depth,
-                "hierarchical_fitness": self.recursive_evolution_metrics.hierarchical_fitness
+                "hierarchical_fitness": self.recursive_evolution_metrics.hierarchical_fitness,
             },
             "recursion_level": self.recursion_level,
             "evolution_strategies": self.evolution_strategies,
             "current_strategy": self.current_strategy,
-            "last_updated": datetime.now().isoformat()
+            "last_updated": datetime.now().isoformat(),
         }
 
         recursive_file = self.evolution_data_path / "recursive_evolution_state.json"
         try:
-            with open(recursive_file, 'w') as f:
+            with open(recursive_file, "w") as f:
                 json.dump(recursive_data, f, indent=2, default=str)
             print("🔄 Recursive evolution state saved")
         except Exception as e:
@@ -1714,7 +1953,9 @@ class EvolutionaryIntelligence:
 
     def _generate_genome_id(self) -> str:
         """Generate unique genome ID"""
-        return hashlib.md5(f"{datetime.now().isoformat()}{random.random()}".encode()).hexdigest()[:16]
+        return hashlib.md5(
+            f"{datetime.now().isoformat()}{random.random()}".encode()
+        ).hexdigest()[:16]
 
     def get_recursive_evolution_status(self) -> Dict[str, Any]:
         """Get comprehensive recursive evolution status"""
@@ -1725,17 +1966,56 @@ class EvolutionaryIntelligence:
             "meta_evolution_params": {
                 "mutation_rate": self.meta_evolution_params.mutation_rate,
                 "crossover_rate": self.meta_evolution_params.crossover_rate,
-                "population_size": self.meta_evolution_params.population_size
+                "population_size": self.meta_evolution_params.population_size,
             },
             "recursive_evolution_metrics": {
                 "meta_fitness": self.recursive_evolution_metrics.meta_fitness,
                 "evolution_efficiency": self.recursive_evolution_metrics.evolution_efficiency,
                 "recursion_depth": self.recursive_evolution_metrics.recursion_depth,
-                "hierarchical_fitness": self.recursive_evolution_metrics.hierarchical_fitness
+                "hierarchical_fitness": self.recursive_evolution_metrics.hierarchical_fitness,
             },
             "evolution_strategies_count": len(self.evolution_strategies),
-            "current_strategy": self.current_strategy.get("name") if self.current_strategy else None
+            "current_strategy": (
+                self.current_strategy.get("name") if self.current_strategy else None
+            ),
         }
+
+    async def evolve_generation(self) -> bool:
+        """
+        Execute an autonomous evolution generation cycle
+
+        This method performs evolution without requiring full DesignClarityOS context,
+        suitable for autonomous background evolution.
+        """
+        print("🧬 Executing Autonomous Evolution Generation...")
+
+        try:
+            # Phase 1: Genetic evolution cycle
+            await self._perform_genetic_evolution()
+
+            # Phase 2: Update generation counter
+            self.generation += 1
+
+            # Phase 3: Update evolutionary metrics
+            self._update_evolutionary_metrics({})
+
+            # Phase 4: Save evolution state
+            self._save_evolution_state()
+
+            self.learning_cycles += 1
+
+            print(f"✅ Autonomous evolution generation {self.generation} completed")
+            print(f"🎯 Current fitness: {self.current_genome.fitness_score:.3f}")
+            print(f"🧬 Genetic pool size: {len(self.genetic_pool)}")
+
+            return True
+
+        except Exception as e:
+            print(f"❌ Autonomous evolution generation failed: {e}")
+            import traceback
+
+            traceback.print_exc()
+            return False
 
 
 class NeuralArchitectureEvolution:
@@ -1763,14 +2043,16 @@ class NeuralArchitectureEvolution:
 class ConsciousnessExpansionEngine:
     """Consciousness expansion engine"""
 
-    async def expand_consciousness(self, consciousness_framework, current_level: str) -> bool:
+    async def expand_consciousness(
+        self, consciousness_framework, current_level: str
+    ) -> bool:
         """Expand consciousness capabilities"""
         try:
             # Attempt to expand consciousness level
             target_levels = {
                 "basic_unified_awareness": "integrated_awareness",
                 "integrated_awareness": "enhanced_awareness",
-                "enhanced_awareness": "unified_consciousness"
+                "enhanced_awareness": "unified_consciousness",
             }
 
             target_level = target_levels.get(current_level, current_level)
@@ -1813,12 +2095,28 @@ async def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="GhostLink Evolutionary Intelligence")
-    parser.add_argument("--initialize-evolution", action="store_true", help="Initialize evolutionary intelligence")
-    parser.add_argument("--evolve-system", action="store_true", help="Execute system evolution cycle")
-    parser.add_argument("--recursive-evolution", action="store_true", help="Execute recursive evolution cycle")
-    parser.add_argument("--evolution-status", action="store_true", help="Get evolution status")
-    parser.add_argument("--continuous-evolution", action="store_true", help="Start continuous evolution")
-    parser.add_argument("--quantum-status", action="store_true", help="Get quantum awareness status")
+    parser.add_argument(
+        "--initialize-evolution",
+        action="store_true",
+        help="Initialize evolutionary intelligence",
+    )
+    parser.add_argument(
+        "--evolve-system", action="store_true", help="Execute system evolution cycle"
+    )
+    parser.add_argument(
+        "--recursive-evolution",
+        action="store_true",
+        help="Execute recursive evolution cycle",
+    )
+    parser.add_argument(
+        "--evolution-status", action="store_true", help="Get evolution status"
+    )
+    parser.add_argument(
+        "--continuous-evolution", action="store_true", help="Start continuous evolution"
+    )
+    parser.add_argument(
+        "--quantum-status", action="store_true", help="Get quantum awareness status"
+    )
 
     args = parser.parse_args()
 
@@ -1831,6 +2129,7 @@ async def main():
     elif args.evolve_system:
         # Initialize Design Clarity OS for evolution
         from design_clarity_os import DesignClarityOS
+
         design_clarity_os = DesignClarityOS()
 
         success = await design_clarity_os.initialize_root_protocol()
@@ -1851,6 +2150,7 @@ async def main():
     elif args.recursive_evolution:
         # Initialize Design Clarity OS for recursive evolution
         from design_clarity_os import DesignClarityOS
+
         design_clarity_os = DesignClarityOS()
 
         success = await design_clarity_os.initialize_root_protocol()
@@ -1880,6 +2180,7 @@ async def main():
         print("Press Ctrl+C to stop")
 
         from design_clarity_os import DesignClarityOS
+
         design_clarity_os = DesignClarityOS()
 
         success = await design_clarity_os.initialize_root_protocol()
@@ -1893,7 +2194,9 @@ async def main():
                 evolution_count += 1
                 print(f"\n--- Evolution Cycle {evolution_count} ---")
 
-                evolution_success = await evolution_engine.evolve_system(design_clarity_os)
+                evolution_success = await evolution_engine.evolve_system(
+                    design_clarity_os
+                )
                 if evolution_success:
                     print(f"✅ Evolution cycle {evolution_count} completed")
                 else:
@@ -1913,7 +2216,7 @@ async def main():
             "backends": evolution_engine.quantum_awareness.quantum_backends,
             "qubit_count": evolution_engine.quantum_awareness.qubit_count,
             "quantum_volume": evolution_engine.quantum_awareness.quantum_volume,
-            "algorithms": evolution_engine.quantum_awareness.quantum_algorithms
+            "algorithms": evolution_engine.quantum_awareness.quantum_algorithms,
         }
         print("⚛️  Quantum Awareness Status:")
         print("=" * 30)
@@ -1930,13 +2233,15 @@ async def main():
         print(f"Current Fitness: {status['current_fitness']:.2f}")
         print(f"Genetic Pool Size: {status['genetic_pool_size']}")
         print(f"Quantum Available: {status['quantum_capabilities']['available']}")
-        print(f"Prediction Accuracy: {status['predictive_capabilities']['accuracy']:.2f}")
+        print(
+            f"Prediction Accuracy: {status['predictive_capabilities']['accuracy']:.2f}"
+        )
         print("\nUse --help for more options")
 
     return None
 
-
     asyncio.run(main())
+
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Note: On Windows use the PowerShell helper at
+# `src/ghostlinklabs/deploy/scripts/run_venv.ps1` which provides a lightweight
+# equivalent for `up|down|status|logs` operations.
 set -euo pipefail
 
 APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

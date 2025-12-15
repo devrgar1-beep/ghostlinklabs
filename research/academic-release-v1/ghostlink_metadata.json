@@ -1,0 +1,27 @@
+{
+  "name": "GhostLink",
+  "version": "1.0",
+  "date": "2025-11-10",
+  "authors": [
+    "Ghost"
+  ],
+  "artifacts": [
+    "ghostlink_whitepaper_v1_figs.tex",
+    "ghostlink_methods_supplement_v1.tex",
+    "ghostlink_conference_two_column.tex",
+    "ghostlink_executive_summary_onepager.tex",
+    "ghostlink_executive_summary_onepager_csv.tex",
+    "ghostlink_pitch_deck_v1.pdf",
+    "fig_*.png",
+    "ghostlink_metrics_v1.csv",
+    "ghostlink_refs.bib",
+    "Makefile",
+    "compile_all.sh",
+    "prep_arxiv_source.sh",
+    "ghostlink_arxiv.tex",
+    ".github/workflows/latex.yml",
+    "README.md",
+    "LICENSE",
+    "CITATION.cff"
+  ]
+}

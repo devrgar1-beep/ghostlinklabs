@@ -11,10 +11,10 @@ from ai_bots.core import AIBot, AccessLevel, BotContext
 
 class CalculatorBot(AIBot):
     """Simple calculator bot"""
-    
+
     def __init__(self):
         super().__init__("calc", AccessLevel.READ)
-        
+
     async def initialize(self):
         """Register calculator commands"""
         self.register_command(
@@ -24,7 +24,7 @@ class CalculatorBot(AIBot):
             AccessLevel.READ,
             aliases=["sum", "+"]
         )
-        
+
         self.register_command(
             "multiply",
             self.cmd_multiply,
@@ -32,7 +32,7 @@ class CalculatorBot(AIBot):
             AccessLevel.READ,
             aliases=["mul", "*"]
         )
-        
+
         self.register_command(
             "eval",
             self.cmd_eval,
@@ -40,7 +40,7 @@ class CalculatorBot(AIBot):
             AccessLevel.READ,
             aliases=["="]
         )
-        
+
     async def cmd_add(self, args: List[str], ctx: BotContext) -> str:
         """Add numbers"""
         try:
@@ -49,7 +49,7 @@ class CalculatorBot(AIBot):
             return f"{' + '.join(args)} = {result}"
         except ValueError:
             return "Error: Invalid numbers"
-            
+
     async def cmd_multiply(
         self,
         args: List[str],
@@ -64,7 +64,7 @@ class CalculatorBot(AIBot):
             return f"{' × '.join(args)} = {result}"
         except ValueError:
             return "Error: Invalid numbers"
-            
+
     async def cmd_eval(self, args: List[str], ctx: BotContext) -> str:
         """Evaluate expression"""
         try:
@@ -156,25 +156,25 @@ if __name__ == "__main__":
     async def test():
         bot = CalculatorBot()
         await bot.initialize()
-        
+
         ctx = BotContext(
             user_id="test",
             session_id="demo",
             access_level=AccessLevel.ROOT
         )
-        
+
         print("Calculator Bot Demo")
         print("=" * 50)
-        
+
         tests = [
             ("add", ["1", "2", "3"]),
             ("multiply", ["2", "3", "4"]),
             ("eval", ["2", "+", "3", "*", "4"]),
         ]
-        
+
         for cmd, args in tests:
             result = await bot.execute(cmd, args, ctx)
             print(f"{cmd} {' '.join(args)}")
             print(f"  -> {result.get('result', result.get('error'))}")
-            
+
     asyncio.run(test())

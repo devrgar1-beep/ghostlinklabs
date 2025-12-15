@@ -8,7 +8,7 @@ import os
 import time
 from pathlib import Path
 
-from debloat import DeBloater
+from src.debloat import DeBloater
 
 
 def create_test_data():
@@ -42,11 +42,23 @@ def create_test_data():
     vault_data = {
         "memories": [
             {"content": "duplicate content 1", "type": "test", "tags": ["tag1"]},
-            {"content": "duplicate content 1", "type": "test", "tags": ["tag1"]},  # duplicate
-            {"content": "duplicate content 1", "type": "test", "tags": ["tag1"]},  # duplicate
+            {
+                "content": "duplicate content 1",
+                "type": "test",
+                "tags": ["tag1"],
+            },  # duplicate
+            {
+                "content": "duplicate content 1",
+                "type": "test",
+                "tags": ["tag1"],
+            },  # duplicate
             {"content": "unique content", "type": "test", "tags": ["tag2"]},
             {"content": "another duplicate", "type": "test", "tags": ["tag3"]},
-            {"content": "another duplicate", "type": "test", "tags": ["tag3"]},  # duplicate
+            {
+                "content": "another duplicate",
+                "type": "test",
+                "tags": ["tag3"],
+            },  # duplicate
         ]
     }
 
@@ -90,7 +102,11 @@ def test_debloat():
     print("\n📊 VERIFICATION:")
 
     # Check compression
-    gz_files = list(Path("./logs/archive").glob("*.gz")) if Path("./logs/archive").exists() else []
+    gz_files = (
+        list(Path("./logs/archive").glob("*.gz"))
+        if Path("./logs/archive").exists()
+        else []
+    )
     print(f"Compressed files: {len(gz_files)} (expected: 1)")
 
     # Check deduplication

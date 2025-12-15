@@ -1,0 +1,125 @@
+# ══════════════════════════════════════════════════════════════════════════════
+# GHOSTLINK v8 PYTHON DEPENDENCIES
+# Production-grade requirements for 64-agent orchestrator
+# ══════════════════════════════════════════════════════════════════════════════
+
+# ──── Core Web Framework ──────────────────────────────────────────────────────
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.2
+
+# ──── Database Drivers ────────────────────────────────────────────────────────
+psycopg2-binary==2.9.9          # PostgreSQL driver
+redis==5.0.1                     # Redis sync client
+hiredis==2.2.3                   # Redis performance optimization
+
+# ──── Async Libraries ─────────────────────────────────────────────────────────
+aioredis==2.0.1                  # Async Redis client
+asyncpg==0.29.0                  # Alternative async PostgreSQL driver
+
+# ──── Scientific Computing ────────────────────────────────────────────────────
+numpy==1.26.2                    # FCC lattice calculations
+scipy==1.11.4                    # Advanced mathematical operations
+
+# ──── AI Provider SDKs ────────────────────────────────────────────────────────
+openai==1.3.7                    # OpenAI API
+anthropic==0.7.7                 # Anthropic Claude API
+google-generativeai==0.3.1       # Google Gemini API
+cohere==4.37                     # Cohere API
+mistralai==0.0.11                # Mistral API
+together==0.2.8                  # Together AI API
+
+# ──── HTTP & Networking ───────────────────────────────────────────────────────
+httpx==0.25.2                    # Async HTTP client
+aiohttp==3.9.1                   # Alternative async HTTP
+requests==2.31.0                 # Sync HTTP fallback
+websockets==12.0                 # WebSocket support
+
+# ──── Data Validation & Serialization ─────────────────────────────────────────
+pydantic==2.5.2                  # Data validation
+pydantic-settings==2.1.0         # Settings management
+marshmallow==3.20.1              # Alternative serialization
+
+# ──── Configuration Management ────────────────────────────────────────────────
+python-dotenv==1.0.0             # .env file support
+pyyaml==6.0.1                    # YAML configuration
+toml==0.10.2                     # TOML support
+
+# ──── Logging & Monitoring ────────────────────────────────────────────────────
+structlog==23.2.0                # Structured logging
+loguru==0.7.2                    # Enhanced logging
+prometheus-client==0.19.0        # Metrics export
+sentry-sdk==1.39.1               # Error tracking
+
+# ──── Task Queue & Job Management ─────────────────────────────────────────────
+celery==5.3.4                    # Distributed task queue
+flower==2.0.1                    # Celery monitoring
+
+# ──── Data Processing ─────────────────────────────────────────────────────────
+pandas==2.1.4                    # Data analysis
+polars==0.19.19                  # High-performance DataFrames
+
+# ──── Date & Time ─────────────────────────────────────────────────────────────
+python-dateutil==2.8.2           # Date utilities
+pytz==2023.3                     # Timezone support
+arrow==1.3.0                     # Better datetime API
+
+# ──── Cryptography & Security ─────────────────────────────────────────────────
+cryptography==41.0.7             # Cryptographic operations
+pyjwt==2.8.0                     # JWT token handling
+bcrypt==4.1.1                    # Password hashing
+
+# ──── Testing & Development ───────────────────────────────────────────────────
+pytest==7.4.3                    # Testing framework
+pytest-asyncio==0.21.1           # Async testing
+pytest-cov==4.1.0                # Coverage reporting
+black==23.12.0                   # Code formatting
+flake8==6.1.0                    # Linting
+mypy==1.7.1                      # Type checking
+isort==5.13.2                    # Import sorting
+
+# ──── CLI & Terminal ──────────────────────────────────────────────────────────
+click==8.1.7                     # CLI framework
+rich==13.7.0                     # Rich terminal output
+typer==0.9.0                     # Modern CLI building
+
+# ──── Data Storage & Caching ──────────────────────────────────────────────────
+diskcache==5.6.3                 # Disk-based caching
+cachetools==5.3.2                # In-memory caching utilities
+
+# ──── Utilities ───────────────────────────────────────────────────────────────
+tenacity==8.2.3                  # Retry logic
+backoff==2.2.1                   # Exponential backoff
+more-itertools==10.1.0           # Iterator utilities
+toolz==0.12.0                    # Functional programming utilities
+
+# ──── Development Tools ───────────────────────────────────────────────────────
+ipython==8.18.1                  # Enhanced Python shell
+ipdb==0.13.13                    # IPython debugger
+watchdog==3.0.0                  # File system monitoring
+
+# ──── Documentation ───────────────────────────────────────────────────────────
+sphinx==7.2.6                    # Documentation generation
+sphinx-rtd-theme==2.0.0          # Read the Docs theme
+
+# ──── Performance & Profiling ─────────────────────────────────────────────────
+py-spy==0.3.14                   # Sampling profiler
+memory-profiler==0.61.0          # Memory profiling
+line-profiler==4.1.1             # Line-by-line profiling
+
+# ══════════════════════════════════════════════════════════════════════════════
+# INSTALLATION NOTES
+# ══════════════════════════════════════════════════════════════════════════════
+#
+# Install all dependencies:
+#   pip install -r requirements.txt
+#
+# Install with development tools:
+#   pip install -r requirements.txt -r requirements-dev.txt
+#
+# Create virtual environment:
+#   python3 -m venv .venv
+#   source .venv/bin/activate  # Linux/Mac
+#   .venv\Scripts\activate     # Windows
+#
+# ══════════════════════════════════════════════════════════════════════════════

@@ -5,13 +5,17 @@ Monitors the sovereign Eero 7 network and AI infrastructure health
 """
 
 import asyncio
-import json
-import time
 from datetime import datetime
+import json
+import os
 from pathlib import Path
+import sys
+import time
 from typing import Dict
 
-import aiohttp
+# Add the ghostlink module to the path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+from ghostlink.sovereign_deps import SovereignAsyncSession
 
 
 class GhostLinkNetworkMonitor:
@@ -61,7 +65,7 @@ class GhostLinkNetworkMonitor:
             url = f"http://{endpoint}/health"
             start_time = time.time()
 
-            async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=5)) as session:
+            async with SovereignAsyncSession(timeout=5) as session:
                 async with session.get(url) as response:
                     response_time = time.time() - start_time
                     status = "healthy" if response.status == 200 else "unhealthy"
@@ -105,9 +109,7 @@ class GhostLinkNetworkMonitor:
 
             # Check internet connectivity
             try:
-                async with aiohttp.ClientSession(
-                    timeout=aiohttp.ClientTimeout(total=10)
-                ) as session:
+                async with SovereignAsyncSession(timeout=10) as session:
                     async with session.get("https://httpbin.org/ip") as response:
                         network_info["internet_connected"] = response.status == 200
             except:

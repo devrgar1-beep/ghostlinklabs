@@ -1,2 +1,0 @@
-# No external dependencies for basic MCP server
-# Uses only Python stdlib

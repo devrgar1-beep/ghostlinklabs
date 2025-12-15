@@ -5,19 +5,25 @@ Real-time system health tracking and metrics collection
 """
 
 import asyncio
-import json
-import time
-from dataclasses import dataclass, asdict, field
-from typing import Dict, List, Optional, Any
+from dataclasses import dataclass, field
 from datetime import datetime
+import json
+import os
 from pathlib import Path
-import psutil
 import platform
+
+# Add the ghostlink module to the path
+import sys
+from typing import Any, Dict, List, Optional
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+from ghostlink.sovereign_deps import SystemMonitor
 
 
 @dataclass
 class HealthMetric:
     """Single health metric"""
+
     name: str
     value: float
     unit: str
@@ -43,13 +49,14 @@ class HealthMetric:
             "status": self.status,
             "threshold_warning": self.threshold_warning,
             "threshold_critical": self.threshold_critical,
-            "timestamp": self.timestamp
+            "timestamp": self.timestamp,
         }
 
 
 @dataclass
 class SystemHealth:
     """System health snapshot"""
+
     timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
     cpu_percent: float = 0.0
     memory_percent: float = 0.0
@@ -76,7 +83,7 @@ class SystemHealth:
             "disk_percent": self.disk_percent,
             "process_count": self.process_count,
             "overall_status": self.overall_status,
-            "metrics": [m.to_dict() for m in self.metrics]
+            "metrics": [m.to_dict() for m in self.metrics],
         }
 
 
@@ -93,16 +100,17 @@ class HealthMonitor:
 
     def collect_metrics(self) -> SystemHealth:
         """Collect current health metrics"""
-        cpu_percent = psutil.cpu_percent(interval=1)
-        memory = psutil.virtual_memory()
-        disk = psutil.disk_usage('/')
-        process_count = len(psutil.pids())
+        monitor = SystemMonitor()
+        cpu_percent = monitor.get_cpu_percent()
+        memory = monitor.get_memory_info()
+        disk = monitor.get_disk_usage("/")
+        process_count = len(monitor.get_processes())
 
         health = SystemHealth(
             cpu_percent=cpu_percent,
-            memory_percent=memory.percent,
-            disk_percent=disk.percent,
-            process_count=process_count
+            memory_percent=memory["percent"],
+            disk_percent=disk["percent"],
+            process_count=process_count,
         )
 
         # Create detailed metrics
@@ -112,29 +120,29 @@ class HealthMonitor:
                 value=cpu_percent,
                 unit="%",
                 threshold_warning=75,
-                threshold_critical=90
+                threshold_critical=90,
             ),
             HealthMetric(
                 name="Memory Usage",
-                value=memory.percent,
+                value=memory["percent"],
                 unit="%",
                 threshold_warning=80,
-                threshold_critical=95
+                threshold_critical=95,
             ),
             HealthMetric(
                 name="Disk Usage",
-                value=disk.percent,
+                value=disk["percent"],
                 unit="%",
                 threshold_warning=80,
-                threshold_critical=95
+                threshold_critical=95,
             ),
             HealthMetric(
                 name="Process Count",
                 value=float(process_count),
                 unit="count",
                 threshold_warning=300,
-                threshold_critical=500
-            )
+                threshold_critical=500,
+            ),
         ]
 
         return health
@@ -145,11 +153,13 @@ class HealthMonitor:
 
         # Trim history if needed
         if len(self.history) > self.max_history:
-            self.history = self.history[-self.max_history:]
+            self.history = self.history[-self.max_history :]
 
         # Check for alerts
         if health.overall_status != "healthy":
-            self.alerts.append(f"[{health.timestamp}] {health.overall_status.upper()}: System health degraded")
+            self.alerts.append(
+                f"[{health.timestamp}] {health.overall_status.upper()}: System health degraded"
+            )
 
     async def monitor_loop(self):
         """Monitoring loop"""
@@ -199,12 +209,12 @@ class HealthMonitor:
             "update_interval": self.update_interval,
             "history_count": len(self.history),
             "history": [h.to_dict() for h in self.history],
-            "alerts": self.alerts[-100:] if self.alerts else []  # Last 100 alerts
+            "alerts": self.alerts[-100:] if self.alerts else [],  # Last 100 alerts
         }
 
         filepath.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(filepath, 'w') as f:
+        with open(filepath, "w") as f:
             json.dump(data, f, indent=2)
 
     def get_report(self) -> Dict[str, Any]:
@@ -217,13 +227,13 @@ class HealthMonitor:
             "system_info": {
                 "platform": platform.system(),
                 "processor": platform.processor(),
-                "cores": psutil.cpu_count()
+                "cores": SystemMonitor().get_cpu_count(),
             },
             "current": latest.to_dict() if latest else None,
             "averages": averages,
             "history_size": len(self.history),
             "alerts": self.alerts[-10:] if self.alerts else [],
-            "overall_status": latest.overall_status if latest else "unknown"
+            "overall_status": latest.overall_status if latest else "unknown",
         }
 
 
@@ -239,30 +249,37 @@ class HealthCheckService:
 
     def perform_check(self) -> Dict[str, Any]:
         """Perform health check"""
-        result = {
-            "timestamp": datetime.now().isoformat(),
-            "checks": {}
-        }
+        result = {"timestamp": datetime.now().isoformat(), "checks": {}}
+
+        monitor = SystemMonitor()
 
         # CPU check
-        cpu = psutil.cpu_percent(interval=1)
+        cpu = monitor.get_cpu_percent()
         result["checks"]["cpu"] = {
             "value": cpu,
-            "status": "critical" if cpu > 90 else "warning" if cpu > 75 else "healthy"
+            "status": "critical" if cpu > 90 else "warning" if cpu > 75 else "healthy",
         }
 
         # Memory check
-        mem = psutil.virtual_memory()
+        mem = monitor.get_memory_info()
         result["checks"]["memory"] = {
-            "value": mem.percent,
-            "status": "critical" if mem.percent > 95 else "warning" if mem.percent > 80 else "healthy"
+            "value": mem["percent"],
+            "status": (
+                "critical"
+                if mem["percent"] > 95
+                else "warning" if mem["percent"] > 80 else "healthy"
+            ),
         }
 
         # Disk check
-        disk = psutil.disk_usage('/')
+        disk = monitor.get_disk_usage("/")
         result["checks"]["disk"] = {
-            "value": disk.percent,
-            "status": "critical" if disk.percent > 95 else "warning" if disk.percent > 80 else "healthy"
+            "value": disk["percent"],
+            "status": (
+                "critical"
+                if disk["percent"] > 95
+                else "warning" if disk["percent"] > 80 else "healthy"
+            ),
         }
 
         # Determine overall status
@@ -279,7 +296,7 @@ class HealthCheckService:
 
         # Trim results if needed
         if len(self.check_results) > self.max_results:
-            self.check_results = self.check_results[-self.max_results:]
+            self.check_results = self.check_results[-self.max_results :]
 
         return result
 
@@ -289,12 +306,12 @@ class HealthCheckService:
             "service": "health_check",
             "interval_seconds": self.check_interval,
             "total_checks": len(self.check_results),
-            "results": self.check_results
+            "results": self.check_results,
         }
 
         filepath.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(filepath, 'w') as f:
+        with open(filepath, "w") as f:
             json.dump(data, f, indent=2)
 
 

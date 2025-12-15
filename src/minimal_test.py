@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
-"""Minimal test for FastAPI"""
+"""Minimal test for SovereignApp"""
 
-from fastapi import FastAPI
+import os
+import sys
 
-app = FastAPI(title="Test")
+# Add the ghostlink module to the path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+from ghostlink.sovereign_deps import SovereignApp
+
+app = SovereignApp(title="Test")
 
 
 @app.get("/")

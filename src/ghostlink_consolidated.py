@@ -430,7 +430,7 @@ import winreg
 import subprocess
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Union
 import psutil
 
 # Maximum sovereignty logging
@@ -917,7 +917,7 @@ import multiprocessing as mp
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple
+from typing import Dict, List, Any, Union, Optional, Tuple
 import psutil
 import queue
 import weakref
@@ -2493,7 +2493,7 @@ __all__ = [
 ]
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class AuditIssue:
     """Represents an issue discovered while auditing component factories."""
 
@@ -2503,7 +2503,7 @@ class AuditIssue:
     severity: Literal["error", "warning"] = "error"
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class ComponentRecord:
     """Holds a validated component together with its origin."""
 
@@ -2523,7 +2523,7 @@ def _callable_without_arguments(func: Callable[..., object]) -> bool:
 def iter_component_factories(
     root_package: str = "ghostlink",
     *,
-    on_error: Callable[[str, Exception], None] | None = None,
+    on_error: Optional[Callable[[str, Exception], None]] = None,
 ) -> Iterator[tuple[str, str, Callable[[], ComponentDict]]]:
     """Yield candidate component factories located under ``root_package``."""
 
@@ -2549,7 +2549,7 @@ def iter_component_factories(
             yield module_info.name, name, member  # type: ignore[misc]
 
 
-def _expected_layer(module_name: str) -> str | None:
+def _expected_layer(module_name: str) -> Optional[str]:
     parts = module_name.split(".")
     if len(parts) < 3:
         return None
@@ -2860,12 +2860,12 @@ class ComponentDict(TypedDict):
 ComponentFactory = Callable[[], "ComponentDict"]
 
 
-@dataclass(slots=True)
+@dataclass
 class ComponentValidationError(ValueError):
     """Raised when a component dictionary fails validation."""
 
     message: str
-    field: str | None = None
+    field: Optional[str] = None
 
     def __post_init__(self) -> None:
         super().__init__(self.message)
@@ -2876,7 +2876,7 @@ class ComponentValidationError(ValueError):
         return f"{self.field}: {self.message}"
 
 
-def _coerce_signal_list(values: Iterable[str] | None, *, field: str) -> list[str]:
+def _coerce_signal_list(values: Optional[Iterable[str]], *, field: str) -> list[str]:
     result: list[str] = []
     if values is None:
         return result
@@ -2895,7 +2895,7 @@ def _coerce_signal_list(values: Iterable[str] | None, *, field: str) -> list[str
     return result
 
 
-def _coerce_metadata(metadata: Mapping[str, Any] | None) -> dict[str, Any]:
+def _coerce_metadata(metadata: Optional[Mapping[str, Any]]) -> dict[str, Any]:
     result: dict[str, Any] = {}
     if metadata is None:
         return result
@@ -2919,9 +2919,9 @@ def define_component(
     layer: str,
     purpose: str,
     *,
-    inputs: Iterable[str] | None = None,
-    outputs: Iterable[str] | None = None,
-    metadata: Mapping[str, Any] | None = None,
+    inputs: Optional[Iterable[str]] = None,
+    outputs: Optional[Iterable[str]] = None,
+    metadata: Optional[Mapping[str, Any]] = None,
 ) -> ComponentDict:
     """Create a component description dictionary with defensive copying."""
 
@@ -2949,10 +2949,10 @@ def create_component(
     name: str,
     layer: str,
     *,
-    purpose: str | None = None,
-    inputs: Iterable[str] | None = None,
-    outputs: Iterable[str] | None = None,
-    metadata: Mapping[str, Any] | None = None,
+    purpose: Optional[str] = None,
+    inputs: Optional[Iterable[str]] = None,
+    outputs: Optional[Iterable[str]] = None,
+    metadata: Optional[Mapping[str, Any]] = None,
 ) -> ComponentDict:
     """Return a fully populated component dictionary."""
 
@@ -2970,11 +2970,11 @@ def component_factory(
     name: str,
     layer: str,
     *,
-    purpose: str | None = None,
-    inputs: Iterable[str] | None = None,
-    outputs: Iterable[str] | None = None,
-    metadata: Mapping[str, Any] | None = None,
-    module: str | None = None,
+    purpose: Optional[str] = None,
+    inputs: Optional[Iterable[str]] = None,
+    outputs: Optional[Iterable[str]] = None,
+    metadata: Optional[Mapping[str, Any]] = None,
+    module: Optional[str] = None,
 ) -> ComponentFactory:
     """Return a lazily-evaluated component factory."""
 
@@ -3005,7 +3005,7 @@ def _require(component: Mapping[str, Any], key: str) -> Any:
 def validate_component_structure(
     component: Mapping[str, Any],
     *,
-    expect_layer: str | None = None,
+    expect_layer: Optional[str] = None,
 ) -> ComponentDict:
     """Validate and normalize an arbitrary component mapping.
 
@@ -3883,7 +3883,7 @@ class ApiKey(Base):
 class Database:
     """Database manager for GhostLink."""
     
-    def __init__(self, database_url: str | None = None):
+    def __init__(self, database_url: Optional[str] = None):
         if database_url is None:
             database_url = config.DATABASE_URL
 
@@ -5213,7 +5213,7 @@ def gather_rebuild(kernel: dict[str, Any]) -> list[str]:
     return list(kernel["rebuild"].get("steps", []))
 
 
-def ghostlink_protocol(kernel: dict[str, Any] | None = None) -> dict[str, Any]:
+def ghostlink_protocol(kernel: Optional[dict[str, Any]] = None) -> dict[str, Any]:
     payload = kernel if kernel is not None else load_kernel()
     return {
         "summary": summarize_kernel(payload),
@@ -5372,7 +5372,7 @@ def _render_section(section: str, data: Any) -> str:
     raise ValueError(f"Unsupported section: {section}")
 
 
-def main(argv: Iterable[str] | None = None) -> None:
+def main(argv: Optional[Iterable[str]] = None) -> None:
     parser = argparse.ArgumentParser(description="Inspect the GhostLink MAX kernel artifact")
     parser.add_argument(
         "section",
@@ -5646,7 +5646,7 @@ class MockIPFS:
         self.storage[digest] = data
         return digest
 
-    def retrieve(self, data_hash: str) -> str | None:
+    def retrieve(self, data_hash: str) -> Optional[str]:
         """Retrieve data by its hash."""
         return self.storage.get(data_hash)
 
@@ -6258,7 +6258,7 @@ import winreg
 import subprocess
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Union
 import psutil
 
 # Maximum sovereignty logging
@@ -6745,7 +6745,7 @@ import multiprocessing as mp
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple
+from typing import Dict, List, Any, Union, Optional, Tuple
 import psutil
 import queue
 import weakref
@@ -8321,7 +8321,7 @@ __all__ = [
 ]
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class AuditIssue:
     """Represents an issue discovered while auditing component factories."""
 
@@ -8331,7 +8331,7 @@ class AuditIssue:
     severity: Literal["error", "warning"] = "error"
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class ComponentRecord:
     """Holds a validated component together with its origin."""
 
@@ -8351,7 +8351,7 @@ def _callable_without_arguments(func: Callable[..., object]) -> bool:
 def iter_component_factories(
     root_package: str = "ghostlink",
     *,
-    on_error: Callable[[str, Exception], None] | None = None,
+    on_error: Optional[Callable[[str, Exception], None]] = None,
 ) -> Iterator[tuple[str, str, Callable[[], ComponentDict]]]:
     """Yield candidate component factories located under ``root_package``."""
 
@@ -8377,7 +8377,7 @@ def iter_component_factories(
             yield module_info.name, name, member  # type: ignore[misc]
 
 
-def _expected_layer(module_name: str) -> str | None:
+def _expected_layer(module_name: str) -> Optional[str]:
     parts = module_name.split(".")
     if len(parts) < 3:
         return None
@@ -8688,12 +8688,12 @@ class ComponentDict(TypedDict):
 ComponentFactory = Callable[[], "ComponentDict"]
 
 
-@dataclass(slots=True)
+@dataclass
 class ComponentValidationError(ValueError):
     """Raised when a component dictionary fails validation."""
 
     message: str
-    field: str | None = None
+    field: Optional[str] = None
 
     def __post_init__(self) -> None:
         super().__init__(self.message)
@@ -8704,7 +8704,7 @@ class ComponentValidationError(ValueError):
         return f"{self.field}: {self.message}"
 
 
-def _coerce_signal_list(values: Iterable[str] | None, *, field: str) -> list[str]:
+def _coerce_signal_list(values: Optional[Iterable[str]], *, field: str) -> list[str]:
     result: list[str] = []
     if values is None:
         return result
@@ -8723,7 +8723,7 @@ def _coerce_signal_list(values: Iterable[str] | None, *, field: str) -> list[str
     return result
 
 
-def _coerce_metadata(metadata: Mapping[str, Any] | None) -> dict[str, Any]:
+def _coerce_metadata(metadata: Optional[Mapping[str, Any]]) -> dict[str, Any]:
     result: dict[str, Any] = {}
     if metadata is None:
         return result
@@ -8747,9 +8747,9 @@ def define_component(
     layer: str,
     purpose: str,
     *,
-    inputs: Iterable[str] | None = None,
-    outputs: Iterable[str] | None = None,
-    metadata: Mapping[str, Any] | None = None,
+    inputs: Optional[Iterable[str]] = None,
+    outputs: Optional[Iterable[str]] = None,
+    metadata: Optional[Mapping[str, Any]] = None,
 ) -> ComponentDict:
     """Create a component description dictionary with defensive copying."""
 
@@ -8777,10 +8777,10 @@ def create_component(
     name: str,
     layer: str,
     *,
-    purpose: str | None = None,
-    inputs: Iterable[str] | None = None,
-    outputs: Iterable[str] | None = None,
-    metadata: Mapping[str, Any] | None = None,
+    purpose: Optional[str] = None,
+    inputs: Optional[Iterable[str]] = None,
+    outputs: Optional[Iterable[str]] = None,
+    metadata: Optional[Mapping[str, Any]] = None,
 ) -> ComponentDict:
     """Return a fully populated component dictionary."""
 
@@ -8798,11 +8798,11 @@ def component_factory(
     name: str,
     layer: str,
     *,
-    purpose: str | None = None,
-    inputs: Iterable[str] | None = None,
-    outputs: Iterable[str] | None = None,
-    metadata: Mapping[str, Any] | None = None,
-    module: str | None = None,
+    purpose: Optional[str] = None,
+    inputs: Optional[Iterable[str]] = None,
+    outputs: Optional[Iterable[str]] = None,
+    metadata: Optional[Mapping[str, Any]] = None,
+    module: Optional[str] = None,
 ) -> ComponentFactory:
     """Return a lazily-evaluated component factory."""
 
@@ -8833,7 +8833,7 @@ def _require(component: Mapping[str, Any], key: str) -> Any:
 def validate_component_structure(
     component: Mapping[str, Any],
     *,
-    expect_layer: str | None = None,
+    expect_layer: Optional[str] = None,
 ) -> ComponentDict:
     """Validate and normalize an arbitrary component mapping.
 
@@ -9711,7 +9711,7 @@ class ApiKey(Base):
 class Database:
     """Database manager for GhostLink."""
     
-    def __init__(self, database_url: str | None = None):
+    def __init__(self, database_url: Optional[str] = None):
         if database_url is None:
             database_url = config.DATABASE_URL
 
@@ -11041,7 +11041,7 @@ def gather_rebuild(kernel: dict[str, Any]) -> list[str]:
     return list(kernel["rebuild"].get("steps", []))
 
 
-def ghostlink_protocol(kernel: dict[str, Any] | None = None) -> dict[str, Any]:
+def ghostlink_protocol(kernel: Optional[dict[str, Any]] = None) -> dict[str, Any]:
     payload = kernel if kernel is not None else load_kernel()
     return {
         "summary": summarize_kernel(payload),
@@ -11200,7 +11200,7 @@ def _render_section(section: str, data: Any) -> str:
     raise ValueError(f"Unsupported section: {section}")
 
 
-def main(argv: Iterable[str] | None = None) -> None:
+def main(argv: Optional[Iterable[str]] = None) -> None:
     parser = argparse.ArgumentParser(description="Inspect the GhostLink MAX kernel artifact")
     parser.add_argument(
         "section",

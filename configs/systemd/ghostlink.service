@@ -1,0 +1,51 @@
+[Unit]
+Description=GhostLink v8 - Distributed AI Coordination System
+Documentation=https://github.com/devrgar-cyber/ghostlinklabs
+After=network-online.target docker.service
+Wants=network-online.target
+Requires=docker.service
+
+[Service]
+Type=forking
+User=ghostlink
+Group=ghostlink
+WorkingDirectory=/opt/ghostlink
+
+# Environment
+Environment="GHOSTLINK_ENV=production"
+Environment="GHOSTLINK_ROOT=/opt/ghostlink"
+EnvironmentFile=/opt/ghostlink/.env
+
+# Start command
+ExecStart=/opt/ghostlink/ghostlink-boot.sh start
+
+# Stop command
+ExecStop=/opt/ghostlink/ghostlink-boot.sh stop
+
+# Reload command
+ExecReload=/opt/ghostlink/ghostlink-boot.sh restart
+
+# Restart policy
+Restart=on-failure
+RestartSec=10s
+StartLimitBurst=3
+StartLimitIntervalSec=60s
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/ghostlink/logs /opt/ghostlink/data /opt/ghostlink/var
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ghostlink
+
+[Install]
+WantedBy=multi-user.target

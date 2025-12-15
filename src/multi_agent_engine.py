@@ -5,66 +5,78 @@ Intelligent Model Refinement for Small and Big Model Optimization
 """
 
 import asyncio
-import json
-import os
-import sys
-import threading
-import time
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from datetime import datetime
-from pathlib import Path
-from typing import Dict, List, Any, Optional, Callable, Set, Tuple
-from concurrent.futures import ThreadPoolExecutor
 from enum import Enum
-import gc
+import json
+import os
+from pathlib import Path
+import sys
+import time
+from typing import Any, Dict, List, Optional, Set
 
 # Optional imports for enhanced capabilities
 try:
     import torch
-    import torch.nn as nn
+    from torch import nn
+
     TORCH_AVAILABLE = True
 except ImportError:
     TORCH_AVAILABLE = False
 
 try:
     import psutil
+
     PSUTIL_AVAILABLE = True
 except ImportError:
     PSUTIL_AVAILABLE = False
 
 try:
     from transformers import AutoModelForCausalLM, AutoTokenizer
+
     TRANSFORMERS_AVAILABLE = True
 except ImportError:
     TRANSFORMERS_AVAILABLE = False
 
+# Add the ghostlink module to the path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+
+
 class ModelSize(Enum):
     """Model size categories"""
-    TINY = "tiny"          # < 100M parameters
-    SMALL = "small"        # 100M - 1B parameters
-    MEDIUM = "medium"      # 1B - 10B parameters
-    LARGE = "large"        # 10B - 100B parameters
-    HUGE = "huge"          # > 100B parameters
+
+    TINY = "tiny"  # < 100M parameters
+    SMALL = "small"  # 100M - 1B parameters
+    MEDIUM = "medium"  # 1B - 10B parameters
+    LARGE = "large"  # 10B - 100B parameters
+    HUGE = "huge"  # > 100B parameters
+
 
 class CompressionType(Enum):
     """Types of model compression"""
+
     PRUNING = "pruning"
     QUANTIZATION = "quantization"
     DISTILLATION = "distillation"
     SPARSIFICATION = "sparsification"
     ARCHITECTURE_OPTIMIZATION = "architecture_optimization"
 
+
 class ExpansionType(Enum):
     """Types of model expansion"""
+
     LAYER_EXPANSION = "layer_expansion"
     WIDTH_EXPANSION = "width_expansion"
     DEPTH_EXPANSION = "depth_expansion"
     CAPACITY_EXPANSION = "capacity_expansion"
     MULTI_HEAD_EXPANSION = "multi_head_expansion"
 
+
 @dataclass
 class ModelMetrics:
     """Model performance and resource metrics"""
+
     parameter_count: int = 0
     model_size_mb: float = 0.0
     inference_time_ms: float = 0.0
@@ -74,9 +86,11 @@ class ModelMetrics:
     compression_ratio: float = 1.0
     efficiency_score: float = 0.0
 
+
 @dataclass
 class ModelState:
     """Complete model state representation"""
+
     model_id: str
     model_path: str
     size_category: ModelSize
@@ -87,9 +101,11 @@ class ModelState:
     last_modified: datetime = field(default_factory=datetime.now)
     active_agents: Set[str] = field(default_factory=set)
 
+
 @dataclass
 class AgentTask:
     """Task for compression/expansion agents"""
+
     task_id: str
     agent_type: str
     model_id: str
@@ -102,6 +118,7 @@ class AgentTask:
     result: Optional[Dict[str, Any]] = None
     error: Optional[str] = None
 
+
 class CompressionAgent:
     """Agent specialized in model compression techniques"""
 
@@ -112,13 +129,16 @@ class CompressionAgent:
             CompressionType.QUANTIZATION: self._quantize_model,
             CompressionType.DISTILLATION: self._distill_model,
             CompressionType.SPARSIFICATION: self._sparsify_model,
-            CompressionType.ARCHITECTURE_OPTIMIZATION: self._optimize_architecture
+            CompressionType.ARCHITECTURE_OPTIMIZATION: self._optimize_architecture,
         }
 
-    async def compress_model(self, model_state: ModelState, compression_type: CompressionType,
-                           target_ratio: float = 0.5) -> Dict[str, Any]:
+    async def compress_model(
+        self, model_state: ModelState, compression_type: CompressionType, target_ratio: float = 0.5
+    ) -> Dict[str, Any]:
         """Compress a model using specified technique"""
-        print(f"🗜️ Agent {self.agent_id} compressing model {model_state.model_id} via {compression_type.value}")
+        print(
+            f"🗜️ Agent {self.agent_id} compressing model {model_state.model_id} via {compression_type.value}"
+        )
 
         if compression_type not in self.specializations:
             return {"error": f"Unsupported compression type: {compression_type.value}"}
@@ -133,14 +153,14 @@ class CompressionAgent:
                 "agent": self.agent_id,
                 "type": compression_type.value,
                 "target_ratio": target_ratio,
-                "result": result
+                "result": result,
             }
             model_state.compression_history.append(compression_record)
 
             return result
 
         except Exception as e:
-            error_msg = f"Compression failed: {str(e)}"
+            error_msg = f"Compression failed: {e!s}"
             print(f"❌ {error_msg}")
             return {"error": error_msg}
 
@@ -159,7 +179,7 @@ class CompressionAgent:
             accuracy_score=model_state.current_metrics.accuracy_score * 0.95,  # Small accuracy loss
             perplexity_score=model_state.current_metrics.perplexity_score * 1.1,  # Slight increase
             compression_ratio=target_ratio,
-            efficiency_score=1.0 / target_ratio
+            efficiency_score=1.0 / target_ratio,
         )
 
         return {
@@ -170,7 +190,7 @@ class CompressionAgent:
             "compression_ratio": target_ratio,
             "new_metrics": new_metrics.__dict__,
             "quality_preserved": 0.95,
-            "simulation_mode": not TORCH_AVAILABLE
+            "simulation_mode": not TORCH_AVAILABLE,
         }
 
     async def _quantize_model(self, model_state: ModelState, target_ratio: float) -> Dict[str, Any]:
@@ -182,12 +202,14 @@ class CompressionAgent:
         new_metrics = ModelMetrics(
             parameter_count=model_state.current_metrics.parameter_count,
             model_size_mb=model_state.current_metrics.model_size_mb * actual_ratio,
-            inference_time_ms=model_state.current_metrics.inference_time_ms * 0.7,  # Faster inference
+            inference_time_ms=model_state.current_metrics.inference_time_ms
+            * 0.7,  # Faster inference
             memory_usage_mb=model_state.current_metrics.memory_usage_mb * actual_ratio,
-            accuracy_score=model_state.current_metrics.accuracy_score * 0.98,  # Minimal accuracy loss
+            accuracy_score=model_state.current_metrics.accuracy_score
+            * 0.98,  # Minimal accuracy loss
             perplexity_score=model_state.current_metrics.perplexity_score * 1.02,
             compression_ratio=actual_ratio,
-            efficiency_score=1.0 / actual_ratio
+            efficiency_score=1.0 / actual_ratio,
         )
 
         return {
@@ -197,7 +219,7 @@ class CompressionAgent:
             "compression_ratio": actual_ratio,
             "new_metrics": new_metrics.__dict__,
             "quality_preserved": 0.98,
-            "simulation_mode": not TORCH_AVAILABLE
+            "simulation_mode": not TORCH_AVAILABLE,
         }
 
     async def _distill_model(self, model_state: ModelState, target_ratio: float) -> Dict[str, Any]:
@@ -208,10 +230,11 @@ class CompressionAgent:
             model_size_mb=model_state.current_metrics.model_size_mb * target_ratio,
             inference_time_ms=model_state.current_metrics.inference_time_ms * 0.8,
             memory_usage_mb=model_state.current_metrics.memory_usage_mb * target_ratio,
-            accuracy_score=model_state.current_metrics.accuracy_score * 0.9,  # Some knowledge transfer loss
+            accuracy_score=model_state.current_metrics.accuracy_score
+            * 0.9,  # Some knowledge transfer loss
             perplexity_score=model_state.current_metrics.perplexity_score * 1.15,
             compression_ratio=target_ratio,
-            efficiency_score=1.0 / target_ratio
+            efficiency_score=1.0 / target_ratio,
         )
 
         return {
@@ -221,7 +244,7 @@ class CompressionAgent:
             "compression_ratio": target_ratio,
             "new_metrics": new_metrics.__dict__,
             "quality_preserved": 0.9,
-            "simulation_mode": not TORCH_AVAILABLE
+            "simulation_mode": not TORCH_AVAILABLE,
         }
 
     async def _sparsify_model(self, model_state: ModelState, target_ratio: float) -> Dict[str, Any]:
@@ -235,7 +258,7 @@ class CompressionAgent:
             accuracy_score=model_state.current_metrics.accuracy_score * 0.97,
             perplexity_score=model_state.current_metrics.perplexity_score * 1.05,
             compression_ratio=target_ratio,
-            efficiency_score=1.0 / target_ratio
+            efficiency_score=1.0 / target_ratio,
         )
 
         return {
@@ -245,32 +268,40 @@ class CompressionAgent:
             "compression_ratio": target_ratio,
             "new_metrics": new_metrics.__dict__,
             "quality_preserved": 0.97,
-            "simulation_mode": not TORCH_AVAILABLE
+            "simulation_mode": not TORCH_AVAILABLE,
         }
 
-    async def _optimize_architecture(self, model_state: ModelState, target_ratio: float) -> Dict[str, Any]:
+    async def _optimize_architecture(
+        self, model_state: ModelState, target_ratio: float
+    ) -> Dict[str, Any]:
         """Optimize model architecture"""
         # Simulate architecture optimization even without PyTorch
         new_metrics = ModelMetrics(
             parameter_count=int(model_state.current_metrics.parameter_count * target_ratio),
             model_size_mb=model_state.current_metrics.model_size_mb * target_ratio,
-            inference_time_ms=model_state.current_metrics.inference_time_ms * 0.75,  # Significant speedup
+            inference_time_ms=model_state.current_metrics.inference_time_ms
+            * 0.75,  # Significant speedup
             memory_usage_mb=model_state.current_metrics.memory_usage_mb * target_ratio,
             accuracy_score=model_state.current_metrics.accuracy_score * 0.93,
             perplexity_score=model_state.current_metrics.perplexity_score * 1.08,
             compression_ratio=target_ratio,
-            efficiency_score=1.0 / target_ratio
+            efficiency_score=1.0 / target_ratio,
         )
 
         return {
             "success": True,
             "compression_type": "architecture_optimization",
-            "optimization_techniques": ["depth_pruning", "width_reduction", "attention_optimization"],
+            "optimization_techniques": [
+                "depth_pruning",
+                "width_reduction",
+                "attention_optimization",
+            ],
             "compression_ratio": target_ratio,
             "new_metrics": new_metrics.__dict__,
             "quality_preserved": 0.93,
-            "simulation_mode": not TORCH_AVAILABLE
+            "simulation_mode": not TORCH_AVAILABLE,
         }
+
 
 class ExpansionAgent:
     """Agent specialized in model expansion techniques"""
@@ -282,13 +313,16 @@ class ExpansionAgent:
             ExpansionType.WIDTH_EXPANSION: self._expand_width,
             ExpansionType.DEPTH_EXPANSION: self._expand_depth,
             ExpansionType.CAPACITY_EXPANSION: self._expand_capacity,
-            ExpansionType.MULTI_HEAD_EXPANSION: self._expand_multi_head
+            ExpansionType.MULTI_HEAD_EXPANSION: self._expand_multi_head,
         }
 
-    async def expand_model(self, model_state: ModelState, expansion_type: ExpansionType,
-                          expansion_factor: float = 2.0) -> Dict[str, Any]:
+    async def expand_model(
+        self, model_state: ModelState, expansion_type: ExpansionType, expansion_factor: float = 2.0
+    ) -> Dict[str, Any]:
         """Expand a model using specified technique"""
-        print(f"📈 Agent {self.agent_id} expanding model {model_state.model_id} via {expansion_type.value}")
+        print(
+            f"📈 Agent {self.agent_id} expanding model {model_state.model_id} via {expansion_type.value}"
+        )
 
         if expansion_type not in self.specializations:
             return {"error": f"Unsupported expansion type: {expansion_type.value}"}
@@ -303,18 +337,20 @@ class ExpansionAgent:
                 "agent": self.agent_id,
                 "type": expansion_type.value,
                 "expansion_factor": expansion_factor,
-                "result": result
+                "result": result,
             }
             model_state.expansion_history.append(expansion_record)
 
             return result
 
         except Exception as e:
-            error_msg = f"Expansion failed: {str(e)}"
+            error_msg = f"Expansion failed: {e!s}"
             print(f"❌ {error_msg}")
             return {"error": error_msg}
 
-    async def _expand_layers(self, model_state: ModelState, expansion_factor: float) -> Dict[str, Any]:
+    async def _expand_layers(
+        self, model_state: ModelState, expansion_factor: float
+    ) -> Dict[str, Any]:
         """Expand model by adding layers"""
         # Simulate layer expansion even without PyTorch
         original_layers = 12  # Assume transformer-like model
@@ -325,10 +361,12 @@ class ExpansionAgent:
             model_size_mb=model_state.current_metrics.model_size_mb * expansion_factor,
             inference_time_ms=model_state.current_metrics.inference_time_ms * expansion_factor,
             memory_usage_mb=model_state.current_metrics.memory_usage_mb * expansion_factor,
-            accuracy_score=min(1.0, model_state.current_metrics.accuracy_score * 1.1),  # Potential improvement
+            accuracy_score=min(
+                1.0, model_state.current_metrics.accuracy_score * 1.1
+            ),  # Potential improvement
             perplexity_score=max(1.0, model_state.current_metrics.perplexity_score * 0.9),
             compression_ratio=1.0 / expansion_factor,
-            efficiency_score=expansion_factor
+            efficiency_score=expansion_factor,
         )
 
         return {
@@ -339,24 +377,29 @@ class ExpansionAgent:
             "expansion_factor": expansion_factor,
             "new_metrics": new_metrics.__dict__,
             "capability_gain": 0.1,
-            "simulation_mode": not TORCH_AVAILABLE
+            "simulation_mode": not TORCH_AVAILABLE,
         }
 
-    async def _expand_width(self, model_state: ModelState, expansion_factor: float) -> Dict[str, Any]:
+    async def _expand_width(
+        self, model_state: ModelState, expansion_factor: float
+    ) -> Dict[str, Any]:
         """Expand model width (hidden dimensions)"""
         # Simulate width expansion even without PyTorch
         original_width = 768  # Assume standard transformer dimension
         new_width = int(original_width * expansion_factor)
 
         new_metrics = ModelMetrics(
-            parameter_count=int(model_state.current_metrics.parameter_count * (expansion_factor ** 2)),  # Quadratic growth
-            model_size_mb=model_state.current_metrics.model_size_mb * (expansion_factor ** 2),
-            inference_time_ms=model_state.current_metrics.inference_time_ms * (expansion_factor ** 1.5),
-            memory_usage_mb=model_state.current_metrics.memory_usage_mb * (expansion_factor ** 2),
+            parameter_count=int(
+                model_state.current_metrics.parameter_count * (expansion_factor**2)
+            ),  # Quadratic growth
+            model_size_mb=model_state.current_metrics.model_size_mb * (expansion_factor**2),
+            inference_time_ms=model_state.current_metrics.inference_time_ms
+            * (expansion_factor**1.5),
+            memory_usage_mb=model_state.current_metrics.memory_usage_mb * (expansion_factor**2),
             accuracy_score=min(1.0, model_state.current_metrics.accuracy_score * 1.15),
             perplexity_score=max(1.0, model_state.current_metrics.perplexity_score * 0.85),
-            compression_ratio=1.0 / (expansion_factor ** 2),
-            efficiency_score=expansion_factor ** 2
+            compression_ratio=1.0 / (expansion_factor**2),
+            efficiency_score=expansion_factor**2,
         )
 
         return {
@@ -367,14 +410,18 @@ class ExpansionAgent:
             "expansion_factor": expansion_factor,
             "new_metrics": new_metrics.__dict__,
             "capability_gain": 0.15,
-            "simulation_mode": not TORCH_AVAILABLE
+            "simulation_mode": not TORCH_AVAILABLE,
         }
 
-    async def _expand_depth(self, model_state: ModelState, expansion_factor: float) -> Dict[str, Any]:
+    async def _expand_depth(
+        self, model_state: ModelState, expansion_factor: float
+    ) -> Dict[str, Any]:
         """Expand model depth (more layers)"""
         return await self._expand_layers(model_state, expansion_factor)  # Same as layer expansion
 
-    async def _expand_capacity(self, model_state: ModelState, expansion_factor: float) -> Dict[str, Any]:
+    async def _expand_capacity(
+        self, model_state: ModelState, expansion_factor: float
+    ) -> Dict[str, Any]:
         """Expand model capacity through multiple dimensions"""
         # Simulate capacity expansion even without PyTorch
         new_metrics = ModelMetrics(
@@ -385,7 +432,7 @@ class ExpansionAgent:
             accuracy_score=min(1.0, model_state.current_metrics.accuracy_score * 1.2),
             perplexity_score=max(1.0, model_state.current_metrics.perplexity_score * 0.8),
             compression_ratio=1.0 / expansion_factor,
-            efficiency_score=expansion_factor
+            efficiency_score=expansion_factor,
         )
 
         return {
@@ -395,10 +442,12 @@ class ExpansionAgent:
             "expansion_factor": expansion_factor,
             "new_metrics": new_metrics.__dict__,
             "capability_gain": 0.2,
-            "simulation_mode": not TORCH_AVAILABLE
+            "simulation_mode": not TORCH_AVAILABLE,
         }
 
-    async def _expand_multi_head(self, model_state: ModelState, expansion_factor: float) -> Dict[str, Any]:
+    async def _expand_multi_head(
+        self, model_state: ModelState, expansion_factor: float
+    ) -> Dict[str, Any]:
         """Expand multi-head attention"""
         # Simulate multi-head expansion even without PyTorch
         original_heads = 12  # Standard transformer
@@ -412,7 +461,7 @@ class ExpansionAgent:
             accuracy_score=min(1.0, model_state.current_metrics.accuracy_score * 1.05),
             perplexity_score=max(1.0, model_state.current_metrics.perplexity_score * 0.95),
             compression_ratio=1.0 / expansion_factor,
-            efficiency_score=expansion_factor
+            efficiency_score=expansion_factor,
         )
 
         return {
@@ -423,8 +472,9 @@ class ExpansionAgent:
             "expansion_factor": expansion_factor,
             "new_metrics": new_metrics.__dict__,
             "capability_gain": 0.05,
-            "simulation_mode": not TORCH_AVAILABLE
+            "simulation_mode": not TORCH_AVAILABLE,
         }
+
 
 class RefinementAgent:
     """Agent specialized in model refinement and optimization"""
@@ -432,7 +482,9 @@ class RefinementAgent:
     def __init__(self, agent_id: str):
         self.agent_id = agent_id
 
-    async def refine_model(self, model_state: ModelState, refinement_type: str = "general") -> Dict[str, Any]:
+    async def refine_model(
+        self, model_state: ModelState, refinement_type: str = "general"
+    ) -> Dict[str, Any]:
         """Refine model performance and efficiency"""
         print(f"🔧 Agent {self.agent_id} refining model {model_state.model_id}")
 
@@ -451,14 +503,14 @@ class RefinementAgent:
                 "timestamp": datetime.now().isoformat(),
                 "agent": self.agent_id,
                 "type": refinement_type,
-                "result": result
+                "result": result,
             }
             model_state.refinement_history.append(refinement_record)
 
             return result
 
         except Exception as e:
-            error_msg = f"Refinement failed: {str(e)}"
+            error_msg = f"Refinement failed: {e!s}"
             print(f"❌ {error_msg}")
             return {"error": error_msg}
 
@@ -469,12 +521,15 @@ class RefinementAgent:
         new_metrics = ModelMetrics(
             parameter_count=model_state.current_metrics.parameter_count,
             model_size_mb=model_state.current_metrics.model_size_mb * 1.05,  # Slight size increase
-            inference_time_ms=model_state.current_metrics.inference_time_ms * 1.1,  # Slight slowdown
+            inference_time_ms=model_state.current_metrics.inference_time_ms
+            * 1.1,  # Slight slowdown
             memory_usage_mb=model_state.current_metrics.memory_usage_mb * 1.05,
-            accuracy_score=min(1.0, model_state.current_metrics.accuracy_score + accuracy_improvement),
+            accuracy_score=min(
+                1.0, model_state.current_metrics.accuracy_score + accuracy_improvement
+            ),
             perplexity_score=max(1.0, model_state.current_metrics.perplexity_score * 0.98),
             compression_ratio=model_state.current_metrics.compression_ratio,
-            efficiency_score=model_state.current_metrics.efficiency_score * 0.95
+            efficiency_score=model_state.current_metrics.efficiency_score * 0.95,
         )
 
         return {
@@ -482,7 +537,7 @@ class RefinementAgent:
             "refinement_type": "accuracy_focused",
             "accuracy_improvement": accuracy_improvement,
             "new_metrics": new_metrics.__dict__,
-            "techniques_used": ["fine_tuning", "data_augmentation", "hyperparameter_optimization"]
+            "techniques_used": ["fine_tuning", "data_augmentation", "hyperparameter_optimization"],
         }
 
     async def _refine_for_efficiency(self, model_state: ModelState) -> Dict[str, Any]:
@@ -494,10 +549,11 @@ class RefinementAgent:
             model_size_mb=model_state.current_metrics.model_size_mb * 0.95,  # Slight size reduction
             inference_time_ms=model_state.current_metrics.inference_time_ms * 0.9,
             memory_usage_mb=model_state.current_metrics.memory_usage_mb * 0.95,
-            accuracy_score=model_state.current_metrics.accuracy_score * 0.98,  # Slight accuracy loss
+            accuracy_score=model_state.current_metrics.accuracy_score
+            * 0.98,  # Slight accuracy loss
             perplexity_score=model_state.current_metrics.perplexity_score * 1.02,
             compression_ratio=model_state.current_metrics.compression_ratio,
-            efficiency_score=model_state.current_metrics.efficiency_score * 1.05
+            efficiency_score=model_state.current_metrics.efficiency_score * 1.05,
         )
 
         return {
@@ -505,7 +561,11 @@ class RefinementAgent:
             "refinement_type": "efficiency_focused",
             "efficiency_improvement": efficiency_improvement,
             "new_metrics": new_metrics.__dict__,
-            "techniques_used": ["kernel_optimization", "memory_layout", "computation_graph_optimization"]
+            "techniques_used": [
+                "kernel_optimization",
+                "memory_layout",
+                "computation_graph_optimization",
+            ],
         }
 
     async def _refine_balanced(self, model_state: ModelState) -> Dict[str, Any]:
@@ -518,19 +578,24 @@ class RefinementAgent:
             accuracy_score=min(1.0, model_state.current_metrics.accuracy_score * 1.01),
             perplexity_score=max(1.0, model_state.current_metrics.perplexity_score * 0.99),
             compression_ratio=model_state.current_metrics.compression_ratio,
-            efficiency_score=model_state.current_metrics.efficiency_score * 1.02
+            efficiency_score=model_state.current_metrics.efficiency_score * 1.02,
         )
 
         return {
             "success": True,
             "refinement_type": "balanced",
             "new_metrics": new_metrics.__dict__,
-            "techniques_used": ["mixed_precision", "gradient_checkpointing", "adaptive_computation"]
+            "techniques_used": [
+                "mixed_precision",
+                "gradient_checkpointing",
+                "adaptive_computation",
+            ],
         }
 
     async def _refine_general(self, model_state: ModelState) -> Dict[str, Any]:
         """General model refinement"""
         return await self._refine_balanced(model_state)
+
 
 class MultiAgentExpansionCompressionEngine:
     """Main engine coordinating multiple agents for model optimization"""
@@ -565,7 +630,9 @@ class MultiAgentExpansionCompressionEngine:
 
         print(f"✅ Initialized {len(self.agents)} agents")
 
-    def register_model(self, model_id: str, model_path: str, initial_metrics: Dict[str, Any]) -> ModelState:
+    def register_model(
+        self, model_id: str, model_path: str, initial_metrics: Dict[str, Any]
+    ) -> ModelState:
         """Register a new model for optimization"""
         size_category = self._determine_model_size(initial_metrics.get("parameter_count", 0))
 
@@ -574,7 +641,7 @@ class MultiAgentExpansionCompressionEngine:
             model_id=model_id,
             model_path=model_path,
             size_category=size_category,
-            current_metrics=metrics
+            current_metrics=metrics,
         )
 
         self.models[model_id] = model_state
@@ -585,17 +652,18 @@ class MultiAgentExpansionCompressionEngine:
         """Determine model size category based on parameter count"""
         if parameter_count < 100_000_000:  # < 100M
             return ModelSize.TINY
-        elif parameter_count < 1_000_000_000:  # < 1B
+        if parameter_count < 1_000_000_000:  # < 1B
             return ModelSize.SMALL
-        elif parameter_count < 10_000_000_000:  # < 10B
+        if parameter_count < 10_000_000_000:  # < 10B
             return ModelSize.MEDIUM
-        elif parameter_count < 100_000_000_000:  # < 100B
+        if parameter_count < 100_000_000_000:  # < 100B
             return ModelSize.LARGE
-        else:  # > 100B
-            return ModelSize.HUGE
+        # > 100B
+        return ModelSize.HUGE
 
-    async def optimize_model(self, model_id: str, target_size: ModelSize,
-                           constraints: Dict[str, Any] = None) -> Dict[str, Any]:
+    async def optimize_model(
+        self, model_id: str, target_size: ModelSize, constraints: Dict[str, Any] = None
+    ) -> Dict[str, Any]:
         """Optimize a model to target size with given constraints"""
         if model_id not in self.models:
             return {"error": f"Model {model_id} not registered"}
@@ -606,22 +674,35 @@ class MultiAgentExpansionCompressionEngine:
         print(f"🎯 Optimizing model {model_id} from {current_size.value} to {target_size.value}")
 
         # Determine optimization strategy
-        size_hierarchy = [ModelSize.TINY, ModelSize.SMALL, ModelSize.MEDIUM, ModelSize.LARGE, ModelSize.HUGE]
+        size_hierarchy = [
+            ModelSize.TINY,
+            ModelSize.SMALL,
+            ModelSize.MEDIUM,
+            ModelSize.LARGE,
+            ModelSize.HUGE,
+        ]
         current_idx = size_hierarchy.index(current_size)
         target_idx = size_hierarchy.index(target_size)
 
         if current_idx < target_idx:  # Need expansion
             return await self._expand_model_strategy(model_state, target_size, constraints)
-        else:  # Need compression
-            return await self._compress_model_strategy(model_state, target_size, constraints)
+        # Need compression
+        return await self._compress_model_strategy(model_state, target_size, constraints)
 
-    async def _expand_model_strategy(self, model_state: ModelState, target_size: ModelSize,
-                                   constraints: Dict[str, Any] = None) -> Dict[str, Any]:
+    async def _expand_model_strategy(
+        self, model_state: ModelState, target_size: ModelSize, constraints: Dict[str, Any] = None
+    ) -> Dict[str, Any]:
         """Strategy for expanding a model"""
         expansion_tasks = []
 
         # Determine expansion factor based on target size
-        size_hierarchy = [ModelSize.TINY, ModelSize.SMALL, ModelSize.MEDIUM, ModelSize.LARGE, ModelSize.HUGE]
+        size_hierarchy = [
+            ModelSize.TINY,
+            ModelSize.SMALL,
+            ModelSize.MEDIUM,
+            ModelSize.LARGE,
+            ModelSize.HUGE,
+        ]
         current_idx = size_hierarchy.index(model_state.size_category)
         target_idx = size_hierarchy.index(target_size)
         expansion_steps = target_idx - current_idx
@@ -638,9 +719,9 @@ class MultiAgentExpansionCompressionEngine:
                 operation="expand_capacity",
                 parameters={
                     "expansion_type": ExpansionType.CAPACITY_EXPANSION,
-                    "expansion_factor": 1.5  # Moderate expansion per step
+                    "expansion_factor": 1.5,  # Moderate expansion per step
                 },
-                priority=2
+                priority=2,
             )
             expansion_tasks.append(task)
 
@@ -663,7 +744,7 @@ class MultiAgentExpansionCompressionEngine:
             model_id=model_state.model_id,
             operation="refine_balanced",
             parameters={"refinement_type": "balanced"},
-            priority=1
+            priority=1,
         )
 
         refinement_result = await self._execute_agent_task(refinement_task)
@@ -680,16 +761,23 @@ class MultiAgentExpansionCompressionEngine:
             "expansion_steps": len(expansion_tasks),
             "results": results,
             "final_refinement": refinement_result,
-            "final_metrics": model_state.current_metrics.__dict__
+            "final_metrics": model_state.current_metrics.__dict__,
         }
 
-    async def _compress_model_strategy(self, model_state: ModelState, target_size: ModelSize,
-                                     constraints: Dict[str, Any] = None) -> Dict[str, Any]:
+    async def _compress_model_strategy(
+        self, model_state: ModelState, target_size: ModelSize, constraints: Dict[str, Any] = None
+    ) -> Dict[str, Any]:
         """Strategy for compressing a model"""
         compression_tasks = []
 
         # Determine compression ratio based on target size
-        size_hierarchy = [ModelSize.TINY, ModelSize.SMALL, ModelSize.MEDIUM, ModelSize.LARGE, ModelSize.HUGE]
+        size_hierarchy = [
+            ModelSize.TINY,
+            ModelSize.SMALL,
+            ModelSize.MEDIUM,
+            ModelSize.LARGE,
+            ModelSize.HUGE,
+        ]
         current_idx = size_hierarchy.index(model_state.size_category)
         target_idx = size_hierarchy.index(target_size)
         compression_steps = current_idx - target_idx
@@ -698,13 +786,13 @@ class MultiAgentExpansionCompressionEngine:
             return {"error": "Invalid compression target"}
 
         # Calculate target compression ratio
-        target_ratio = 0.5 ** compression_steps  # Halve size per step
+        target_ratio = 0.5**compression_steps  # Halve size per step
 
         # Create compression tasks
         compression_types = [
             CompressionType.PRUNING,
             CompressionType.QUANTIZATION,
-            CompressionType.SPARSIFICATION
+            CompressionType.SPARSIFICATION,
         ]
 
         for i, comp_type in enumerate(compression_types[:compression_steps]):
@@ -715,9 +803,9 @@ class MultiAgentExpansionCompressionEngine:
                 operation="compress",
                 parameters={
                     "compression_type": comp_type,
-                    "target_ratio": target_ratio ** (1.0 / compression_steps)
+                    "target_ratio": target_ratio ** (1.0 / compression_steps),
                 },
-                priority=2
+                priority=2,
             )
             compression_tasks.append(task)
 
@@ -740,7 +828,7 @@ class MultiAgentExpansionCompressionEngine:
             model_id=model_state.model_id,
             operation="refine_efficiency_focused",
             parameters={"refinement_type": "efficiency_focused"},
-            priority=1
+            priority=1,
         )
 
         refinement_result = await self._execute_agent_task(refinement_task)
@@ -757,7 +845,7 @@ class MultiAgentExpansionCompressionEngine:
             "compression_steps": len(compression_tasks),
             "results": results,
             "final_refinement": refinement_result,
-            "final_metrics": model_state.current_metrics.__dict__
+            "final_metrics": model_state.current_metrics.__dict__,
         }
 
     async def _execute_agent_task(self, task: AgentTask) -> Dict[str, Any]:
@@ -782,36 +870,38 @@ class MultiAgentExpansionCompressionEngine:
                 result = await agent.compress_model(
                     self.models[task.model_id],
                     task.parameters["compression_type"],
-                    task.parameters["target_ratio"]
+                    task.parameters["target_ratio"],
                 )
                 # Update model metrics after compression
                 if "new_metrics" in result:
-                    self.models[task.model_id].current_metrics = ModelMetrics(**result["new_metrics"])
+                    self.models[task.model_id].current_metrics = ModelMetrics(
+                        **result["new_metrics"]
+                    )
             elif task.operation == "expand_capacity":
                 result = await agent.expand_model(
                     self.models[task.model_id],
                     task.parameters["expansion_type"],
-                    task.parameters["expansion_factor"]
+                    task.parameters["expansion_factor"],
                 )
                 # Update model metrics after expansion
                 if "new_metrics" in result:
-                    self.models[task.model_id].current_metrics = ModelMetrics(**result["new_metrics"])
+                    self.models[task.model_id].current_metrics = ModelMetrics(
+                        **result["new_metrics"]
+                    )
             elif task.operation == "refine_balanced":
-                result = await agent.refine_model(
-                    self.models[task.model_id],
-                    "balanced"
-                )
+                result = await agent.refine_model(self.models[task.model_id], "balanced")
                 # Update model metrics after refinement
                 if "new_metrics" in result:
-                    self.models[task.model_id].current_metrics = ModelMetrics(**result["new_metrics"])
+                    self.models[task.model_id].current_metrics = ModelMetrics(
+                        **result["new_metrics"]
+                    )
             elif task.operation == "refine_efficiency_focused":
-                result = await agent.refine_model(
-                    self.models[task.model_id],
-                    "efficiency_focused"
-                )
+                result = await agent.refine_model(self.models[task.model_id], "efficiency_focused")
                 # Update model metrics after refinement
                 if "new_metrics" in result:
-                    self.models[task.model_id].current_metrics = ModelMetrics(**result["new_metrics"])
+                    self.models[task.model_id].current_metrics = ModelMetrics(
+                        **result["new_metrics"]
+                    )
             else:
                 result = {"error": f"Unknown operation: {task.operation}"}
 
@@ -827,7 +917,9 @@ class MultiAgentExpansionCompressionEngine:
             if task.task_id in self.active_tasks:
                 del self.active_tasks[task.task_id]
 
-    async def refine_model(self, model_id: str, refinement_focus: str = "balanced") -> Dict[str, Any]:
+    async def refine_model(
+        self, model_id: str, refinement_focus: str = "balanced"
+    ) -> Dict[str, Any]:
         """Refine a registered model"""
         if model_id not in self.models:
             return {"error": f"Model {model_id} not registered"}
@@ -838,7 +930,7 @@ class MultiAgentExpansionCompressionEngine:
             model_id=model_id,
             operation=f"refine_{refinement_focus}",
             parameters={"refinement_type": refinement_focus},
-            priority=1
+            priority=1,
         )
 
         return await self._execute_agent_task(task)
@@ -858,7 +950,7 @@ class MultiAgentExpansionCompressionEngine:
             "expansion_history": len(model_state.expansion_history),
             "refinement_history": len(model_state.refinement_history),
             "last_modified": model_state.last_modified.isoformat(),
-            "active_agents": list(model_state.active_agents)
+            "active_agents": list(model_state.active_agents),
         }
 
     def get_engine_status(self) -> Dict[str, Any]:
@@ -872,12 +964,12 @@ class MultiAgentExpansionCompressionEngine:
             "agent_types": {
                 "compression": len([a for a in self.agents.keys() if "compression" in a]),
                 "expansion": len([a for a in self.agents.keys() if "expansion" in a]),
-                "refinement": len([a for a in self.agents.keys() if "refinement" in a])
+                "refinement": len([a for a in self.agents.keys() if "refinement" in a]),
             },
             "model_sizes": {
                 size.value: len([m for m in self.models.values() if m.size_category == size])
                 for size in ModelSize
-            }
+            },
         }
 
 
@@ -885,7 +977,9 @@ async def main():
     """Main multi-agent engine execution"""
     import argparse
 
-    parser = argparse.ArgumentParser(description="GhostLink Multi-Agent Expansion Compression Engine")
+    parser = argparse.ArgumentParser(
+        description="GhostLink Multi-Agent Expansion Compression Engine"
+    )
     parser.add_argument("--register-model", help="Register a model (model_id:path:param_count)")
     parser.add_argument("--optimize", help="Optimize model to target size (model_id:target_size)")
     parser.add_argument("--refine", help="Refine model (model_id:focus)")
@@ -906,13 +1000,15 @@ async def main():
         model_id, model_path, param_count = parts
         initial_metrics = {
             "parameter_count": int(param_count),
-            "model_size_mb": int(param_count) * 4 / (1024 * 1024),  # Rough estimate: 4 bytes per param
+            "model_size_mb": int(param_count)
+            * 4
+            / (1024 * 1024),  # Rough estimate: 4 bytes per param
             "inference_time_ms": 100.0,  # Default
             "memory_usage_mb": int(param_count) * 4 / (1024 * 1024),
             "accuracy_score": 0.8,  # Default
             "perplexity_score": 20.0,  # Default
             "compression_ratio": 1.0,
-            "efficiency_score": 1.0
+            "efficiency_score": 1.0,
         }
 
         model_state = engine.register_model(model_id, model_path, initial_metrics)

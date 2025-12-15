@@ -1,0 +1,17 @@
+{
+  "site_metadata": {
+    "site_name": "GhostLinkLabs",
+    "version": "GHOSTCORE v0.9.0+",
+    "convergence_rate": "99.97%"
+  },
+  "governance_laws": {
+    "L-01": {
+      "name": "Sovereignty",
+      "description": "Independent operations"
+    },
+    "L-02": {
+      "name": "Determinism",
+      "description": "Identical inputs produce identical outputs"
+    }
+  }
+}

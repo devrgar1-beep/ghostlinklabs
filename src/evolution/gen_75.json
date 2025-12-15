@@ -1,0 +1,120 @@
+{
+  "generation": 75,
+  "genome": [
+    {
+      "trait": "resource_optimization",
+      "expression": {
+        "evolved_4760": 0.8172971632156812,
+        "evolved_2290": 0.4744216734531781
+      },
+      "fitness": 1.0,
+      "mutations": []
+    },
+    {
+      "trait": "resource_optimization",
+      "expression": {
+        "evolved_2290": 0.4744216734531781
+      },
+      "fitness": 53.0,
+      "mutations": [
+        "added_evolved_4760",
+        "shifted_evolved_4760",
+        "deleted_memory_limit",
+        "shifted_cpu_limit",
+        "added_evolved_2290",
+        "deleted_cpu_limit",
+        "shifted_evolved_4760",
+        "deleted_evolved_4760"
+      ]
+    },
+    {
+      "trait": "resource_optimization",
+      "expression": {
+        "evolved_2290": 0.4744216734531781
+      },
+      "fitness": 53.0,
+      "mutations": [
+        "added_evolved_4760",
+        "shifted_evolved_4760",
+        "deleted_memory_limit",
+        "shifted_cpu_limit",
+        "added_evolved_2290",
+        "deleted_cpu_limit",
+        "shifted_evolved_4760",
+        "deleted_evolved_4760"
+      ]
+    },
+    {
+      "trait": "resource_optimization",
+      "expression": {
+        "evolved_2290": 0.4744216734531781
+      },
+      "fitness": 53.0,
+      "mutations": [
+        "added_evolved_4760",
+        "shifted_evolved_4760",
+        "deleted_memory_limit",
+        "shifted_cpu_limit",
+        "added_evolved_2290",
+        "deleted_cpu_limit",
+        "shifted_evolved_4760",
+        "deleted_evolved_4760"
+      ]
+    },
+    {
+      "trait": "resource_optimization",
+      "expression": {
+        "evolved_4760": 0.8172971632156812,
+        "evolved_2290": 0.4744216734531781
+      },
+      "fitness": 1.0,
+      "mutations": []
+    },
+    {
+      "trait": "resource_optimization",
+      "expression": {
+        "evolved_2290": 0.4744216734531781
+      },
+      "fitness": 53.0,
+      "mutations": [
+        "added_evolved_4760",
+        "shifted_evolved_4760",
+        "deleted_memory_limit",
+        "shifted_cpu_limit",
+        "added_evolved_2290",
+        "deleted_cpu_limit",
+        "shifted_evolved_4760",
+        "deleted_evolved_4760"
+      ]
+    },
+    {
+      "trait": "resource_optimization",
+      "expression": {
+        "evolved_2290": 0.4744216734531781,
+        "evolved_1902": 0.6777444890755675
+      },
+      "fitness": 2.0,
+      "mutations": [
+        "added_evolved_1902"
+      ]
+    },
+    {
+      "trait": "resource_optimization",
+      "expression": {
+        "evolved_2290": 0.4744216734531781
+      },
+      "fitness": 0.0,
+      "mutations": []
+    }
+  ],
+  "parameters": {
+    "mutation_rate": 0.16713668249999994,
+    "crossover_rate": 0.7,
+    "selection_pressure": 2.0,
+    "population_size": 50,
+    "elite_size": 5,
+    "exploration_vs_exploitation": 0.36300000000000004
+  },
+  "emergent_patterns": [],
+  "timestamp": 1765478993.56144
+}

@@ -6,11 +6,16 @@ thermal data to the mesh network.
 
 Optional iDRAC integration: set IDRAC_HOST to query out-of-band thermal sensors.
 """
+import glob
 import json
 import os
 import socket
+import sys
 import time
-import glob
+
+# Add the ghostlink module to the path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+from ghostlink.sovereign_deps import SystemMonitor
 
 HOST = os.getenv("HOST", "0.0.0.0")
 PORT = int(os.getenv("PORT", "7422"))
@@ -22,11 +27,12 @@ IDRAC_PASS = os.getenv("IDRAC_PASS", "")
 def read_temp_c() -> float | None:
     """Read system temperature from OS sensors."""
     try:
-        import psutil
-        temps = getattr(psutil, "sensors_temperatures", lambda **k: None)(fahrenheit=False) or {}
-        for arr in temps.values():
-            vals = [getattr(t, "current", None) for t in arr]
-            vals = [v for v in vals if v is not None]
+        monitor = SystemMonitor()
+        temps = SystemMonitor.get_temperatures(fahrenheit=False)
+        if temps:
+            vals = [
+                t["current"] for t in temps.values() if t.get("current") is not None
+            ]
             if vals:
                 return float(sum(vals) / len(vals))
     except Exception:
@@ -36,7 +42,7 @@ def read_temp_c() -> float | None:
     vals = []
     for path in glob.glob("/sys/class/thermal/thermal_zone*/temp"):
         try:
-            with open(path, "r") as f:
+            with open(path) as f:
                 val = int(f.read().strip())
                 vals.append(val / 1000.0)
         except Exception:
@@ -51,17 +57,19 @@ def read_idrac_temp_c() -> float | None:
     """Read temperature from iDRAC via Redfish if IDRAC_HOST is set."""
     if not IDRAC_HOST or not IDRAC_PASS:
         return None
-    
+
     try:
-        import sys
         import importlib.util
+
         # Import gl_idrac from parent directory
-        spec = importlib.util.spec_from_file_location("gl_idrac", os.path.join(os.path.dirname(__file__), "gl_idrac.py"))
+        spec = importlib.util.spec_from_file_location(
+            "gl_idrac", os.path.join(os.path.dirname(__file__), "gl_idrac.py")
+        )
         if not spec or not spec.loader:
             return None
         gl_idrac = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(gl_idrac)
-        
+
         client = gl_idrac.IDRACClient(IDRAC_HOST, IDRAC_USER, IDRAC_PASS)
         temps = client.get_temperatures()
         if temps:
@@ -70,7 +78,7 @@ def read_idrac_temp_c() -> float | None:
                 return float(sum(readings) / len(readings))
     except Exception as e:
         print(f"[responder] iDRAC query failed: {e}")
-    
+
     return None
 
 
@@ -99,7 +107,7 @@ def handle_client(conn: socket.socket, addr: tuple):
             temp = read_idrac_temp_c()
             if temp is None:
                 temp = read_temp_c()
-            
+
             response = {
                 "type": "data",
                 "proto": "glp/0",
@@ -135,12 +143,12 @@ def main():
         server.bind((HOST, PORT))
         server.listen(5)
 
-        print(f"[responder] GhostLink Peer Responder")
+        print("[responder] GhostLink Peer Responder")
         print(f"[responder] Hostname: {hostname}")
         print(f"[responder] Listening on {HOST}:{PORT}")
         if IDRAC_HOST:
             print(f"[responder] iDRAC integration: {IDRAC_HOST} (user: {IDRAC_USER})")
-        print(f"[responder] Ready to respond to mesh queries")
+        print("[responder] Ready to respond to mesh queries")
 
         try:
             while True:

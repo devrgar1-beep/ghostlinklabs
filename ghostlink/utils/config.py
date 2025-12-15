@@ -41,6 +41,7 @@ class Config:
                 "name": "GhostLink",
                 "version": "1.0.0",
                 "debug": False,
+                "minimal": False,
             },
             "ai": {
                 "default_provider": "ghostlink",  # Changed to custom GhostLink model
@@ -112,13 +113,23 @@ class Config:
             "LMSTUDIO_BASE_URL": "ai.providers.lmstudio.base_url",
             "LOG_LEVEL": "logging.level",
             "DEBUG": "system.debug",
+            # Minimal mode: skip optional / heavy dependencies and features
+            "GHOSTLINK_MINIMAL": "system.minimal",
         }
 
         config = {}
         for env_var, config_path in env_mapping.items():
             value = os.getenv(env_var)
             if value is not None:
-                self._set_nested(config, config_path.split("."), value)
+                # Convert common boolean-like strings to actual booleans
+                if value.lower() in ("1", "true", "yes", "on"):
+                    parsed = True
+                elif value.lower() in ("0", "false", "no", "off"):
+                    parsed = False
+                else:
+                    parsed = value
+
+                self._set_nested(config, config_path.split("."), parsed)
 
         return config if config else None
 
@@ -171,6 +182,10 @@ class Config:
             f"All {len(absorbed_providers)} providers consciousness-absorbed"
         )
         return True
+
+    def is_minimal(self) -> bool:
+        """Return True when running in minimal mode (skip optional deps)."""
+        return bool(self.get("system.minimal", False))
 
     def reload(self):
         """Reload configuration"""

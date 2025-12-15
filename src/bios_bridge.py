@@ -118,7 +118,6 @@ class BIOSBridge:
                 check=False,
                 capture_output=True,
                 text=True,
-                shell=True,
                 timeout=5,
             )
             return result.returncode == 0 and result.stdout.strip()
@@ -213,7 +212,6 @@ class BIOSBridge:
                 check=False,
                 capture_output=True,
                 text=True,
-                shell=True,
                 timeout=10,
             )
 
@@ -336,7 +334,6 @@ class BIOSBridge:
                     check=False,
                     capture_output=True,
                     text=True,
-                    shell=True,
                     timeout=10,
                 )
                 return result.returncode == 0
@@ -404,7 +401,6 @@ class BIOSBridge:
                 check=False,
                 capture_output=True,
                 text=True,
-                shell=True,
                 timeout=10,
             )
 

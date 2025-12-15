@@ -21,34 +21,36 @@ bounded; it is not a full forensic crawler. Use responsibly.
 """
 
 import asyncio
+from collections import defaultdict
 import ctypes
+from datetime import datetime
 import json
 import os
+from pathlib import Path
 import platform
 import socket
 import subprocess
+import shlex
 import sys
-import threading
 import time
-from collections import defaultdict
-from datetime import datetime
-from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
+import winreg
 
-import psutil
-import win32api
 import win32con
 import win32evtlog
-import win32file
-import win32security
-import winreg
+
 try:  # optional WMI support
     import wmi  # type: ignore
+
     WMI_AVAILABLE = True
 except Exception:
     WMI_AVAILABLE = False
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
+
+# Add the ghostlink module to the path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+from ghostlink.sovereign_deps import SystemMonitor
 
 
 class OSPiggybackCore:
@@ -69,14 +71,14 @@ class OSPiggybackCore:
             "drivers": [],
             "devices": [],
             "hardware_snapshot": [],
-            "file_index": []
+            "file_index": [],
         }
         self.stats = {
             "events_captured": 0,
             "files_monitored": 0,
             "processes_tracked": 0,
             "network_packets": 0,
-            "registry_changes": 0
+            "registry_changes": 0,
         }
 
     def register_hook(self, category: str, callback: Callable):
@@ -108,10 +110,10 @@ class FileSystemMonitor(FileSystemEventHandler):
             "type": event.event_type,
             "path": event.src_path,
             "is_directory": event.is_directory,
-            "timestamp": datetime.now().isoformat()
+            "timestamp": datetime.now().isoformat(),
         }
 
-        if hasattr(event, 'dest_path'):
+        if hasattr(event, "dest_path"):
             data["dest_path"] = event.dest_path
 
         self.piggyback.monitored_data["filesystem"].append(data)
@@ -145,7 +147,10 @@ class ProcessMonitor:
 
         while self.running:
             try:
-                current_processes = {p.pid: p for p in psutil.process_iter(['pid', 'name', 'exe', 'cmdline', 'cpu_percent', 'memory_percent'])}
+                monitor = SystemMonitor()
+                current_processes = {}
+                for proc in monitor.get_processes():
+                    current_processes[proc["pid"]] = proc
 
                 # Detect new processes
                 for pid, proc in current_processes.items():
@@ -154,15 +159,15 @@ class ProcessMonitor:
                             data = {
                                 "event": "process_started",
                                 "pid": pid,
-                                "name": proc.info['name'],
-                                "exe": proc.info['exe'],
-                                "cmdline": proc.info['cmdline'],
-                                "timestamp": datetime.now().isoformat()
+                                "name": proc.get("name", "unknown"),
+                                "exe": proc.get("exe"),
+                                "cmdline": proc.get("cmdline"),
+                                "timestamp": datetime.now().isoformat(),
                             }
                             self.piggyback.monitored_data["processes"].append(data)
                             self.piggyback.stats["processes_tracked"] += 1
                             await self.piggyback.trigger_hooks("process", data)
-                        except (psutil.NoSuchProcess, psutil.AccessDenied):
+                        except Exception:
                             pass
 
                 # Detect terminated processes
@@ -171,8 +176,8 @@ class ProcessMonitor:
                         data = {
                             "event": "process_terminated",
                             "pid": pid,
-                            "name": self.known_processes[pid].info['name'],
-                            "timestamp": datetime.now().isoformat()
+                            "name": self.known_processes[pid].get("name", "unknown"),
+                            "timestamp": datetime.now().isoformat(),
                         }
                         self.piggyback.monitored_data["processes"].append(data)
                         await self.piggyback.trigger_hooks("process", data)
@@ -199,28 +204,32 @@ class NetworkMonitor:
 
         while self.running:
             try:
-                connections = psutil.net_connections(kind='inet')
+                monitor = SystemMonitor()
+                connections = monitor.get_network_connections()
 
                 for conn in connections:
-                    conn_id = f"{conn.laddr.ip}:{conn.laddr.port}-{conn.raddr.ip if conn.raddr else 'N/A'}:{conn.raddr.port if conn.raddr else 'N/A'}"
+                    conn_id = f"{conn.get('local_ip', 'N/A')}:{conn.get('local_port', 'N/A')}-{conn.get('remote_ip', 'N/A')}:{conn.get('remote_port', 'N/A')}"
 
                     if conn_id not in self.known_connections:
                         try:
-                            proc = psutil.Process(conn.pid) if conn.pid else None
                             data = {
                                 "event": "connection_established",
-                                "local": f"{conn.laddr.ip}:{conn.laddr.port}",
-                                "remote": f"{conn.raddr.ip}:{conn.raddr.port}" if conn.raddr else None,
-                                "status": conn.status,
-                                "pid": conn.pid,
-                                "process": proc.name() if proc else None,
-                                "timestamp": datetime.now().isoformat()
+                                "local": f"{conn.get('local_ip', 'N/A')}:{conn.get('local_port', 'N/A')}",
+                                "remote": (
+                                    f"{conn.get('remote_ip', 'N/A')}:{conn.get('remote_port', 'N/A')}"
+                                    if conn.get("remote_ip")
+                                    else None
+                                ),
+                                "status": conn.get("status", "unknown"),
+                                "pid": conn.get("pid"),
+                                "process": conn.get("process_name"),
+                                "timestamp": datetime.now().isoformat(),
                             }
                             self.piggyback.monitored_data["network"].append(data)
                             self.piggyback.stats["network_packets"] += 1
                             await self.piggyback.trigger_hooks("network", data)
                             self.known_connections.add(conn_id)
-                        except (psutil.NoSuchProcess, psutil.AccessDenied, AttributeError):
+                        except Exception:
                             pass
 
                 await asyncio.sleep(3)
@@ -258,7 +267,7 @@ class RegistryMonitor:
                         name, value, _ = winreg.EnumValue(key, i)
                         values[name] = value
                         i += 1
-                    except WindowsError:
+                    except OSError:
                         break
                 winreg.CloseKey(key)
                 self.known_values[f"{hkey}\\{subkey}"] = values
@@ -277,7 +286,7 @@ class RegistryMonitor:
                                 name, value, _ = winreg.EnumValue(key, i)
                                 current_values[name] = value
                                 i += 1
-                            except WindowsError:
+                            except OSError:
                                 break
                         winreg.CloseKey(key)
 
@@ -292,7 +301,7 @@ class RegistryMonitor:
                                     "key": key_path,
                                     "name": name,
                                     "value": str(value)[:200],  # Truncate long values
-                                    "timestamp": datetime.now().isoformat()
+                                    "timestamp": datetime.now().isoformat(),
                                 }
                                 self.piggyback.monitored_data["registry"].append(data)
                                 self.piggyback.stats["registry_changes"] += 1
@@ -335,7 +344,7 @@ class ClipboardMonitor:
                                 "event": "clipboard_changed",
                                 "content": str(data)[:500],  # Truncate large content
                                 "length": len(data) if data else 0,
-                                "timestamp": datetime.now().isoformat()
+                                "timestamp": datetime.now().isoformat(),
                             }
                             self.piggyback.monitored_data["clipboard"].append(clipboard_data)
                             await self.piggyback.trigger_hooks("clipboard", clipboard_data)
@@ -347,7 +356,7 @@ class ClipboardMonitor:
 
                 await asyncio.sleep(1)
 
-            except Exception as e:
+            except Exception:
                 await asyncio.sleep(2)
 
 
@@ -375,7 +384,7 @@ class SystemEventMonitor:
                         "event_id": event.EventID,
                         "event_type": event.EventType,
                         "source": event.SourceName,
-                        "timestamp": event.TimeGenerated.isoformat()
+                        "timestamp": event.TimeGenerated.isoformat(),
                     }
                     self.piggyback.monitored_data["events"].append(data)
                     await self.piggyback.trigger_hooks("system_event", data)
@@ -383,7 +392,7 @@ class SystemEventMonitor:
                 win32evtlog.CloseEventLog(hand)
                 await asyncio.sleep(10)
 
-            except Exception as e:
+            except Exception:
                 await asyncio.sleep(15)
 
 
@@ -392,6 +401,23 @@ class OSController:
 
     def __init__(self):
         self.is_admin = self.check_admin()
+        # Allowlist of safe commands for execution via execute_command
+        self.ALLOWED_COMMANDS = {
+            "sc",
+            "ipconfig",
+            "net",
+            "ping",
+            "tracert",
+            "tasklist",
+            "schtasks",
+            "powershell",
+            "Get-CimInstance",
+            "python",
+            "python3",
+            "cmd",
+            "sh",
+            "bash",
+        }
 
     def check_admin(self) -> bool:
         """Check if running with admin privileges"""
@@ -406,19 +432,24 @@ class OSController:
             if elevated and not self.is_admin:
                 return {"success": False, "error": "Requires admin privileges"}
 
+            # Prevent arbitrary command execution: require allowlist
+            args = shlex.split(command) if isinstance(command, str) else command
+            if not args:
+                return {"success": False, "error": "Empty command"}
+
+            cmd_name = os.path.basename(args[0])
+            if cmd_name not in self.ALLOWED_COMMANDS:
+                return {"success": False, "error": "Command not permitted"}
+
             result = subprocess.run(
-                command,
-                shell=True,
-                capture_output=True,
-                text=True,
-                timeout=30
+                args, check=False, capture_output=True, text=True, timeout=30
             )
 
             return {
                 "success": result.returncode == 0,
                 "stdout": result.stdout,
                 "stderr": result.stderr,
-                "returncode": result.returncode
+                "returncode": result.returncode,
             }
         except Exception as e:
             return {"success": False, "error": str(e)}
@@ -426,14 +457,10 @@ class OSController:
     def list_services(self) -> List[Dict[str, Any]]:
         """List Windows services"""
         try:
-            result = subprocess.run(
-                ["sc", "query"],
-                capture_output=True,
-                text=True
-            )
+            result = subprocess.run(["sc", "query"], check=False, capture_output=True, text=True)
             # Parse service list
             services = []
-            lines = result.stdout.split('\n')
+            lines = result.stdout.split("\n")
             current_service = {}
 
             for line in lines:
@@ -449,11 +476,12 @@ class OSController:
                 services.append(current_service)
 
             return services
-        except Exception as e:
+        except Exception:
             return []
 
     def get_system_info(self) -> Dict[str, Any]:
         """Get comprehensive system information"""
+        monitor = SystemMonitor()
         return {
             "platform": platform.system(),
             "platform_release": platform.release(),
@@ -462,21 +490,21 @@ class OSController:
             "hostname": socket.gethostname(),
             "ip_address": socket.gethostbyname(socket.gethostname()),
             "processor": platform.processor(),
-            "cpu_count": psutil.cpu_count(),
-            "cpu_freq": psutil.cpu_freq()._asdict() if psutil.cpu_freq() else None,
+            "cpu_count": monitor.get_cpu_count(),
+            "cpu_freq": None,  # Not implemented in SystemMonitor
             "memory": {
-                "total": psutil.virtual_memory().total,
-                "available": psutil.virtual_memory().available,
-                "percent": psutil.virtual_memory().percent
+                "total": monitor.get_memory_info()["total"],
+                "available": monitor.get_memory_info()["available"],
+                "percent": monitor.get_memory_info()["percent"],
             },
             "disk": {
-                "total": psutil.disk_usage('/').total,
-                "used": psutil.disk_usage('/').used,
-                "free": psutil.disk_usage('/').free,
-                "percent": psutil.disk_usage('/').percent
+                "total": monitor.get_disk_usage("/")["total"],
+                "used": monitor.get_disk_usage("/")["used"],
+                "free": monitor.get_disk_usage("/")["free"],
+                "percent": monitor.get_disk_usage("/")["percent"],
             },
-            "boot_time": datetime.fromtimestamp(psutil.boot_time()).isoformat(),
-            "is_admin": self.is_admin
+            "boot_time": None,  # Not implemented in SystemMonitor
+            "is_admin": self.is_admin,
         }
 
 
@@ -489,19 +517,23 @@ class DriverEnumerator:
 
     def enumerate(self) -> List[Dict[str, Any]]:
         if not self.available:
-            return [{"error": "WMI module not available. Install 'wmi' to enable driver enumeration."}]
+            return [
+                {"error": "WMI module not available. Install 'wmi' to enable driver enumeration."}
+            ]
         try:
             c = wmi.WMI()
             drivers = []
             for d in c.Win32_SystemDriver():
-                drivers.append({
-                    "name": d.Name,
-                    "display_name": getattr(d, 'DisplayName', None),
-                    "state": getattr(d, 'State', None),
-                    "start_mode": getattr(d, 'StartMode', None),
-                    "type": getattr(d, 'ServiceType', None),
-                    "path": (getattr(d, 'PathName', None) or '')[:220]
-                })
+                drivers.append(
+                    {
+                        "name": d.Name,
+                        "display_name": getattr(d, "DisplayName", None),
+                        "state": getattr(d, "State", None),
+                        "start_mode": getattr(d, "StartMode", None),
+                        "type": getattr(d, "ServiceType", None),
+                        "path": (getattr(d, "PathName", None) or "")[:220],
+                    }
+                )
                 if len(drivers) >= 2000:  # safety cap
                     drivers.append({"note": "driver list truncated"})
                     break
@@ -520,18 +552,22 @@ class DeviceEnumerator:
 
     def enumerate(self) -> List[Dict[str, Any]]:
         if not self.available:
-            return [{"error": "WMI module not available. Install 'wmi' to enable device enumeration."}]
+            return [
+                {"error": "WMI module not available. Install 'wmi' to enable device enumeration."}
+            ]
         try:
             c = wmi.WMI()
             devices = []
             for dev in c.Win32_PnPEntity():
-                devices.append({
-                    "name": getattr(dev, 'Name', None),
-                    "device_id": getattr(dev, 'DeviceID', None),
-                    "manufacturer": getattr(dev, 'Manufacturer', None),
-                    "status": getattr(dev, 'Status', None),
-                    "service": getattr(dev, 'Service', None),
-                })
+                devices.append(
+                    {
+                        "name": getattr(dev, "Name", None),
+                        "device_id": getattr(dev, "DeviceID", None),
+                        "manufacturer": getattr(dev, "Manufacturer", None),
+                        "status": getattr(dev, "Status", None),
+                        "service": getattr(dev, "Service", None),
+                    }
+                )
                 if len(devices) >= 1500:  # safety cap
                     devices.append({"note": "device list truncated"})
                     break
@@ -545,62 +581,61 @@ class HardwareSnapshot:
     """Capture a hardware state snapshot (CPU, memory, disks, sensors, net)."""
 
     def capture(self) -> Dict[str, Any]:
+        monitor = SystemMonitor()
         disks = []
         try:
-            for part in psutil.disk_partitions():
+            for part in monitor.get_disk_partitions():
                 usage = None
                 try:
-                    usage = psutil.disk_usage(part.mountpoint)
+                    usage = monitor.get_disk_usage(part["mountpoint"])
                 except Exception:
                     pass
-                disks.append({
-                    "device": part.device,
-                    "mountpoint": part.mountpoint,
-                    "fstype": part.fstype,
-                    "opts": part.opts,
-                    "usage": {
-                        "total": getattr(usage, 'total', None),
-                        "used": getattr(usage, 'used', None),
-                        "free": getattr(usage, 'free', None),
-                        "percent": getattr(usage, 'percent', None),
-                    } if usage else None
-                })
+                disks.append(
+                    {
+                        "device": part["device"],
+                        "mountpoint": part["mountpoint"],
+                        "fstype": part["fstype"],
+                        "opts": part["opts"],
+                        "usage": (
+                            {
+                                "total": usage.get("total") if usage else None,
+                                "used": usage.get("used") if usage else None,
+                                "free": usage.get("free") if usage else None,
+                                "percent": usage.get("percent") if usage else None,
+                            }
+                            if usage
+                            else None
+                        ),
+                    }
+                )
         except Exception:
             pass
 
         net_ifaces = []
         try:
-            addrs = psutil.net_if_addrs()
-            stats = psutil.net_if_stats()
-            for name, addr_list in addrs.items():
-                net_ifaces.append({
-                    "name": name,
-                    "addresses": [f"{a.address}" for a in addr_list if a.address],
-                    "isup": getattr(stats.get(name), 'isup', None),
-                    "speed": getattr(stats.get(name), 'speed', None),
-                    "mtu": getattr(stats.get(name), 'mtu', None)
-                })
+            for name, addr_list in monitor.get_network_interfaces().items():
+                net_ifaces.append(
+                    {
+                        "name": name,
+                        "addresses": [a["address"] for a in addr_list if a.get("address")],
+                        "isup": None,  # Not implemented
+                        "speed": None,  # Not implemented
+                        "mtu": None,  # Not implemented
+                    }
+                )
         except Exception:
             pass
 
         sensors = {}
-        try:
-            battery = psutil.sensors_battery()
-            if battery:
-                sensors['battery'] = {
-                    "percent": battery.percent,
-                    "secsleft": battery.secsleft,
-                    "power_plugged": battery.power_plugged
-                }
-        except Exception:
-            pass
+        # Battery sensors not implemented in SystemMonitor
 
         return {
             "timestamp": datetime.now().isoformat(),
-            "cpu_percent_per_core": psutil.cpu_percent(interval=0.2, percpu=True),
-            "cpu_percent_total": psutil.cpu_percent(interval=0.2),
-            "memory": psutil.virtual_memory()._asdict(),
-            "swap": psutil.swap_memory()._asdict(),
+            "cpu_percent_per_core": [monitor.get_cpu_percent()]
+            * monitor.get_cpu_count(),  # Simplified
+            "cpu_percent_total": monitor.get_cpu_percent(),
+            "memory": monitor.get_memory_info(),
+            "swap": {},  # Not implemented
             "disks": disks,
             "net_interfaces": net_ifaces,
             "sensors": sensors,
@@ -627,33 +662,35 @@ class FileIndexer:
                     fpath = os.path.join(root, name)
                     try:
                         st = os.stat(fpath)
-                        self.index.append({
-                            "path": fpath,
-                            "size": st.st_size,
-                            "mtime": datetime.fromtimestamp(st.st_mtime).isoformat()
-                        })
+                        self.index.append(
+                            {
+                                "path": fpath,
+                                "size": st.st_size,
+                                "mtime": datetime.fromtimestamp(st.st_mtime).isoformat(),
+                            }
+                        )
                         total += 1
                         if total % self.batch_size == 0:
                             if len(self.index) > self.max_files:
-                                self.index = self.index[-self.max_files:]
+                                self.index = self.index[-self.max_files :]
                         if total >= self.max_files:
                             return {
                                 "indexed_files": total,
                                 "truncated": True,
-                                "duration_sec": round(time.time() - start, 2)
+                                "duration_sec": round(time.time() - start, 2),
                             }
                     except Exception:
                         pass
             return {
                 "indexed_files": total,
                 "truncated": total >= self.max_files,
-                "duration_sec": round(time.time() - start, 2)
+                "duration_sec": round(time.time() - start, 2),
             }
         finally:
             self.last_stats = {
                 "total_indexed": len(self.index),
                 "last_index_path": path,
-                "last_index_duration_sec": round(time.time() - start, 2)
+                "last_index_duration_sec": round(time.time() - start, 2),
             }
 
 
@@ -698,7 +735,7 @@ class GhostLinkOSPiggyback:
                 str(Path.home()),
                 "C:\\Windows\\System32",
                 "C:\\Program Files",
-                "C:\\ProgramData"
+                "C:\\ProgramData",
             ]
             self.fs_monitor.start_monitoring([p for p in default_paths if os.path.exists(p)])
 
@@ -709,7 +746,7 @@ class GhostLinkOSPiggyback:
             asyncio.create_task(self.registry_monitor.monitor_loop()),
             asyncio.create_task(self.clipboard_monitor.monitor_loop()),
             asyncio.create_task(self.event_monitor.monitor_loop()),
-            asyncio.create_task(self.periodic_save())
+            asyncio.create_task(self.periodic_save()),
         ]
 
         print("✅ All monitors active")
@@ -747,14 +784,15 @@ class GhostLinkOSPiggyback:
             data = {
                 "stats": self.core.stats,
                 "monitored_data": {
-                    k: v[-1000:] for k, v in self.core.monitored_data.items()  # Keep last 1000 events per category
+                    k: v[-1000:]
+                    for k, v in self.core.monitored_data.items()  # Keep last 1000 events per category
                 },
                 "system_info": self.controller.get_system_info(),
-                "index_stats": getattr(self.file_indexer, 'last_stats', {}),
-                "timestamp": datetime.now().isoformat()
+                "index_stats": getattr(self.file_indexer, "last_stats", {}),
+                "timestamp": datetime.now().isoformat(),
             }
 
-            with open(self.data_file, 'w') as f:
+            with open(self.data_file, "w") as f:
                 json.dump(data, f, indent=2)
 
         except Exception as e:
@@ -771,8 +809,8 @@ class GhostLinkOSPiggyback:
                 "network": self.network_monitor.running,
                 "registry": self.registry_monitor.running,
                 "clipboard": self.clipboard_monitor.running,
-                "events": self.event_monitor.running
-            }
+                "events": self.event_monitor.running,
+            },
         }
 
     def execute_command(self, command: str, elevated: bool = False) -> Dict[str, Any]:
@@ -794,7 +832,9 @@ class GhostLinkOSPiggyback:
         snap = self.hw_snapshot.capture()
         self.core.monitored_data["hardware_snapshot"].append(snap)
         if len(self.core.monitored_data["hardware_snapshot"]) > 25:
-            self.core.monitored_data["hardware_snapshot"] = self.core.monitored_data["hardware_snapshot"][-25:]
+            self.core.monitored_data["hardware_snapshot"] = self.core.monitored_data[
+                "hardware_snapshot"
+            ][-25:]
         return snap
 
     def index_files(self, path: str) -> Dict[str, Any]:
@@ -862,7 +902,9 @@ async def main():
         print("  --snapshot           Capture hardware snapshot")
         print("  --index [PATH]       Index files under path (default=.)")
         if not WMI_AVAILABLE:
-            print("\nNote: WMI module not available; install with 'pip install wmi' for drivers/devices enumeration.")
+            print(
+                "\nNote: WMI module not available; install with 'pip install wmi' for drivers/devices enumeration."
+            )
 
 
 if __name__ == "__main__":

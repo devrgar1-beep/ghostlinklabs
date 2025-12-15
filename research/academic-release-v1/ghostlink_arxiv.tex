@@ -1,0 +1,46 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\title{The GhostLink Protocol: Computational Proteins for Distributed Intelligence}
+\author{Ghost}
+\date{November 2025}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+GhostLink treats AI models as composable ``computational amino acids'' that fold into task-specific configurations. We define a folding energy over agent configurations, demonstrate reusable motifs analogous to $\alpha$-helices and $\beta$-sheets, and report gains over single-model baselines across mixed workloads. Safety mechanisms include audit traces and consensus-backed recovery.
+\end{abstract}
+
+\section{Overview}
+We minimize an energy $\mathcal{E}(C)$ combining mutual-information coupling, redundancy penalties, latency pressure, and complexity regularization. Motif-preserving moves with annealing under load yield fast convergence.
+
+\section{Architecture}
+64 specialized agents arranged on an FCC lattice, with recursive ($\alpha$) and parallel ($\beta$) motifs, chaperone directors, stigmergic traces, and PBFT-style consensus. Edge-first deployment with content-addressed storage.
+
+\section{Results}
+Representative improvements in accuracy, latency, and cost, with ablations removing motifs/chaperones/consensus and topology swaps. See main paper for full protocols.
+
+\section{Safety \& Governance}
+Staged evolution with gatekeeping and kill-switch, immutable signed traces, least-privilege scopes, and incident playbooks.
+
+\section*{References}
+{\small
+[1] C.~B. Anfinsen, Principles that govern the folding of protein chains, \emph{Science}, 1973.\\
+[2] C. Levinthal, How to fold graciously, \emph{M{\"o}ssbauer Spectroscopy}, 1969.\\
+[3] G. Tononi et al., Consciousness as Integrated Information, 2014.\\
+[4] ISME Journal, Mycelial network memory and decision-making, 2019.\\
+[5] OpenAI, Weak-to-strong generalization in LLMs, 2023.\\
+[6] Tohoku University, Primitive intelligence in fungal networks, 2024.\\
+[7] W3C, PROV-Overview: The PROV Family of Documents, 2013.
+}
+
+\end{document}

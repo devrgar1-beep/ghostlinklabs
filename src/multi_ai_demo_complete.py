@@ -31,8 +31,7 @@ async def demonstrate_multi_ai():
     print("-" * 21)
     try:
         result = subprocess.run(
-            f'python claude_cli.py --provider anthropic --message "{test_query}"',
-            shell=True,
+            ["python", "claude_cli.py", "--provider", "anthropic", "--message", test_query],
             capture_output=True,
             text=True,
             timeout=20,
@@ -51,8 +50,7 @@ async def demonstrate_multi_ai():
     print("-" * 19)
     try:
         result = subprocess.run(
-            f'python claude_cli.py --provider openai --message "{test_query}"',
-            shell=True,
+            ["python", "claude_cli.py", "--provider", "openai", "--message", test_query],
             capture_output=True,
             text=True,
             timeout=20,
@@ -71,8 +69,7 @@ async def demonstrate_multi_ai():
     print("-" * 14)
     try:
         result = subprocess.run(
-            f'python claude_cli.py --provider grok --message "{test_query}"',
-            shell=True,
+            ["python", "claude_cli.py", "--provider", "grok", "--message", test_query],
             capture_output=True,
             text=True,
             timeout=20,

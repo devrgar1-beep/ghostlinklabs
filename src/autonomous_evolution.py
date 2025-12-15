@@ -114,8 +114,16 @@ class AutonomousEvolution:
 
     def _evolution_loop(self):
         """Main evolution cycle"""
+        # allow performance profile overrides
+        try:
+            from ..utils import perf_config
+        except Exception:
+            perf_config = None
+
         while self.running:
-            time.sleep(5)  # Evolution tick
+            # Evolution tick depends on profile
+            tick = 1 if perf_config and getattr(perf_config, 'is_maximized', lambda: False)() else (2 if perf_config and getattr(perf_config, 'is_low_latency', lambda: False)() else 5)
+            time.sleep(tick)  # Evolution tick
 
             self.current_generation += 1
 
@@ -235,8 +243,14 @@ class AutonomousEvolution:
 
     def _adaptation_loop(self):
         """Adaptive behavior loop"""
+        try:
+            from ..utils import perf_config
+        except Exception:
+            perf_config = None
+
         while self.running:
-            time.sleep(10)
+            interval = 2 if perf_config and getattr(perf_config, 'is_maximized', lambda: False)() else (5 if perf_config and getattr(perf_config, 'is_low_latency', lambda: False)() else 10)
+            time.sleep(interval)
 
             # Analyze environment
             env_state = self._sense_environment()
@@ -330,17 +344,26 @@ class AutonomousEvolution:
     def _sense_environment(self) -> Dict[str, float]:
         """Sense system state"""
         try:
-            import psutil
+            # Add the ghostlink module to the path
+            import os
+            import sys
+
+            sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+            from ghostlink.sovereign_deps import SystemMonitor
+
+            monitor = SystemMonitor()
+            mem = monitor.get_memory_info()
+            disk = monitor.get_disk_usage("/")
 
             return {
-                "memory_pressure": psutil.virtual_memory().percent / 100,
-                "cpu_usage": psutil.cpu_percent() / 100,
-                "disk_free": psutil.disk_usage("/").free / (1024**3),
+                "memory_pressure": mem["percent"] / 100,
+                "cpu_usage": monitor.get_cpu_percent() / 100,
+                "disk_free": disk["free"] / (1024**3),
                 "time_of_day": time.localtime().tm_hour,
                 "generation": self.current_generation,
             }
         except ImportError:
-            # Fallback if psutil not available
+            # Fallback if SystemMonitor not available
             return {
                 "memory_pressure": 0.5,
                 "cpu_usage": 0.3,

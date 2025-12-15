@@ -1,0 +1,27 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\title{GhostLink Methods Supplement (v1.0)}
+\date{November 2025}
+\begin{document}
+\maketitle
+\section*{Evaluation Protocol}
+\begin{itemize}
+\item \textbf{Tasks:} Math, coding, knowledge QA, planning; disjoint checks via n-gram and URL hashing.
+\item \textbf{Baselines:} Strong single-model per task; version-locked; fixed decoding.
+\item \textbf{Hardware/Edge:} Cloudflare Workers regions; report p50/p95 by region; client RTT separated.
+\item \textbf{Metrics:} Accuracy/pass@k, decomposed latency, cost, hallucination rate (rubric + human spot-checks, $\kappa$), uptime.
+\item \textbf{Statistics:} 5 runs per task; mean $\pm$95\% CI; paired tests; Holm--Bonferroni.
+\item \textbf{Ablations:} Remove $\alpha$/$\beta$ motifs, chaperones, PBFT; swap topology; shuffle sequence.
+\item \textbf{Reproducibility:} Seeds, prompts, versions; artifact manifest with hashes.
+\end{itemize}
+\section*{Energy Function Details}
+We minimize $\mathcal{E}(C)$ via motif-preserving moves and simulated annealing where temperature follows load. Mutual information is estimated from trace embeddings with compression-based proxies.
+\section*{IIT-inspired Integration Proxy}
+Graph partitioning uses a minimum-information cut over agent-trace predictors; value is a proxy and not canonical $\Phi$.
+\end{document}

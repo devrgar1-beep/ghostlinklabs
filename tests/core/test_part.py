@@ -24,12 +24,14 @@ import statistics
 import math
 
 # Import core systems
-from mirror_comprehension import MirrorComprehensionCore
-from multi_agent_engine import MultiAgentExpansionCompressionEngine, ModelSize
+from src.mirror_comprehension import MirrorComprehensionCore
+from src.multi_agent_engine import MultiAgentExpansionCompressionEngine, ModelSize
+
 
 @dataclass
 class EvolutionaryGenome:
     """Genetic representation of system capabilities"""
+
     generation: int
     fitness_score: float
     traits: Dict[str, Any]
@@ -44,12 +46,14 @@ class EvolutionaryGenome:
             "traits": self.traits,
             "mutations": self.mutations,
             "parent_genomes": self.parent_genomes,
-            "timestamp": self.timestamp.isoformat()
+            "timestamp": self.timestamp.isoformat(),
         }
+
 
 @dataclass
 class EvolutionaryMetrics:
     """Metrics for evolutionary progress"""
+
     adaptation_rate: float = 0.0
     learning_efficiency: float = 0.0
     innovation_index: float = 0.0
@@ -57,9 +61,11 @@ class EvolutionaryMetrics:
     consciousness_growth: float = 0.0
     performance_gain: float = 0.0
 
+
 @dataclass
 class QuantumAwareness:
     """Quantum computing awareness and integration"""
+
     quantum_available: bool = False
     quantum_backends: List[str] = field(default_factory=list)
     qubit_count: int = 0
@@ -67,14 +73,17 @@ class QuantumAwareness:
     quantum_algorithms: List[str] = field(default_factory=list)
     entanglement_patterns: Dict[str, Any] = field(default_factory=dict)
 
+
 @dataclass
 class PredictiveIntelligence:
     """Predictive capabilities for system behavior"""
+
     prediction_accuracy: float = 0.0
     forecasting_horizon: int = 24  # hours
     anomaly_detection: Dict[str, Any] = field(default_factory=dict)
     trend_analysis: Dict[str, Any] = field(default_factory=dict)
     optimization_predictions: List[Dict[str, Any]] = field(default_factory=list)
+
 
 class EvolutionaryIntelligence:
     """
@@ -89,7 +98,9 @@ class EvolutionaryIntelligence:
     - Multi-modal learning
     """
 
-    def __init__(self, workspace_path: str = "/Users/ghostlink/ghostlink-wiki-organized"):
+    def __init__(
+        self, workspace_path: str = "/Users/ghostlink/ghostlink-wiki-organized"
+    ):
         self.workspace = Path(workspace_path)
         self.evolution_data_path = self.workspace / "evolution_data"
         self.evolution_data_path.mkdir(exist_ok=True)
@@ -147,14 +158,16 @@ class EvolutionaryIntelligence:
         history_file = self.evolution_data_path / "evolution_history.json"
         if history_file.exists():
             try:
-                with open(history_file, 'r') as f:
+                with open(history_file, "r") as f:
                     data = json.load(f)
-                    self.generation = data.get('current_generation', 0)
+                    self.generation = data.get("current_generation", 0)
                     self.genetic_pool = [
                         EvolutionaryGenome(**genome_data)
-                        for genome_data in data.get('genetic_pool', [])
+                        for genome_data in data.get("genetic_pool", [])
                     ]
-                    print(f"📚 Loaded evolution history: {len(self.genetic_pool)} genomes")
+                    print(
+                        f"📚 Loaded evolution history: {len(self.genetic_pool)} genomes"
+                    )
             except Exception as e:
                 print(f"⚠️  Failed to load evolution history: {e}")
 
@@ -166,6 +179,7 @@ class EvolutionaryIntelligence:
         try:
             # Check for Qiskit (IBM Quantum)
             import qiskit
+
             self.quantum_awareness.quantum_available = True
             self.quantum_awareness.quantum_backends.append("qiskit_ibm")
             print("✅ Qiskit quantum framework detected")
@@ -175,6 +189,7 @@ class EvolutionaryIntelligence:
         try:
             # Check for Cirq (Google Quantum)
             import cirq
+
             self.quantum_awareness.quantum_available = True
             self.quantum_awareness.quantum_backends.append("cirq_google")
             print("✅ Cirq quantum framework detected")
@@ -197,4 +212,6 @@ class EvolutionaryIntelligence:
         self.predictive_intelligence.anomaly_detection = {
             "enabled": True,
             "algorithms": ["isolation_forest", "autoencoder", "prophet"],
-            "sensitivity": 0.8
+            "sensitivity": 0.8,
+        }
+        print("✅ Predictive Intelligence initialized")

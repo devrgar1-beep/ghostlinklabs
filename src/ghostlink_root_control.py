@@ -14,6 +14,7 @@ import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Optional
+import shlex
 
 import click
 import httpx
@@ -322,7 +323,7 @@ class GhostLinkRootControl:
             ]
 
             result = subprocess.run(
-                cmd, check=False, capture_output=True, text=True, shell=True, timeout=10
+                cmd, check=False, capture_output=True, text=True, timeout=10
             )
 
             if result.returncode == 0:
@@ -347,7 +348,6 @@ class GhostLinkRootControl:
                 check=False,
                 capture_output=True,
                 text=True,
-                shell=True,
                 timeout=10,
             )
 
@@ -383,7 +383,6 @@ class GhostLinkRootControl:
                 check=False,
                 capture_output=True,
                 text=True,
-                shell=True,
             )
 
             if result.returncode == 0:
@@ -448,7 +447,6 @@ class GhostLinkRootControl:
                 check=False,
                 capture_output=True,
                 text=True,
-                shell=True,
             )
 
             if result.returncode == 0:
@@ -943,7 +941,6 @@ class GhostLinkRootControl:
                 check=False,
                 capture_output=True,
                 text=True,
-                shell=True,
                 timeout=10,
             )
 
@@ -970,7 +967,6 @@ class GhostLinkRootControl:
                 check=False,
                 capture_output=True,
                 text=True,
-                shell=True,
                 timeout=10,
             )
 
@@ -1024,7 +1020,6 @@ class GhostLinkRootControl:
                 check=False,
                 capture_output=True,
                 text=True,
-                shell=True,
                 timeout=10,
             )
 
@@ -1052,7 +1047,6 @@ class GhostLinkRootControl:
                 check=False,
                 capture_output=True,
                 text=True,
-                shell=True,
                 timeout=10,
             )
 
@@ -1115,7 +1109,6 @@ class GhostLinkRootControl:
                 check=False,
                 capture_output=True,
                 text=True,
-                shell=True,
                 timeout=10,
             )
 
@@ -1141,7 +1134,6 @@ class GhostLinkRootControl:
                 check=False,
                 capture_output=True,
                 text=True,
-                shell=True,
                 timeout=10,
             )
 
@@ -1202,7 +1194,6 @@ class GhostLinkRootControl:
                 check=False,
                 capture_output=True,
                 text=True,
-                shell=True,
                 timeout=10,
             )
 
@@ -1234,7 +1225,6 @@ class GhostLinkRootControl:
                     check=False,
                     capture_output=True,
                     text=True,
-                    shell=True,
                     timeout=10,
                 )
 
@@ -1279,7 +1269,6 @@ class GhostLinkRootControl:
                 check=False,
                 capture_output=True,
                 text=True,
-                shell=True,
                 timeout=10,
             )
 
@@ -1304,7 +1293,6 @@ class GhostLinkRootControl:
                     check=False,
                     capture_output=True,
                     text=True,
-                    shell=True,
                     timeout=5,
                 )
                 bios_info["uefi_mode"] = "UEFI" in result.stdout
@@ -1339,7 +1327,6 @@ class GhostLinkRootControl:
                 check=False,
                 capture_output=True,
                 text=True,
-                shell=True,
                 timeout=10,
             )
 
@@ -1355,7 +1342,6 @@ class GhostLinkRootControl:
                 check=False,
                 capture_output=True,
                 text=True,
-                shell=True,
                 timeout=15,
             )
 
@@ -1496,8 +1482,13 @@ class GhostLinkRootControl:
                 command = f'"{docker_path}" {command.split(" ", 1)[1]}'
 
         try:
+            # Use shlex.split to avoid executing via the shell
+            if isinstance(command, str):
+                args = shlex.split(command)
+            else:
+                args = command
             result = subprocess.run(
-                command, check=False, shell=True, capture_output=True, text=True, timeout=5
+                args, check=False, capture_output=True, text=True, timeout=5
             )
             return result.returncode == 0
         except Exception:

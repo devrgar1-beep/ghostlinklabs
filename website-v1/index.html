@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GhostLink — Computational Proteins for Distributed Intelligence</title>
+  <meta name="description" content="GhostLink treats AI models as computational amino acids that fold into task-specific configurations.">
+  <link rel="icon" href="assets/og_card.png" type="image/png">
+  <!-- Open Graph -->
+  <meta property="og:title" content="GhostLink — Computational Proteins for Distributed Intelligence">
+  <meta property="og:description" content="Multi-agent folding: motifs, energy minimization, and measurable gains over single-model baselines.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/og_card.png">
+  <meta property="og:site_name" content="GhostLink">
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="GhostLink — Computational Proteins for Distributed Intelligence">
+  <meta name="twitter:description" content="AI as computational proteins: folding, motifs, and measurable performance.">
+  <meta name="twitter:image" content="assets/og_card.png">
+  <style>
+    :root { --fg:#111; --muted:#555; --bg:#fff; --accent:#222; }
+    * { box-sizing:border-box; }
+    html,body { margin:0; padding:0; background:var(--bg); color:var(--fg); font:16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+    header { padding:48px 20px 24px; text-align:center; }
+    header h1 { margin:0; font-size:2.2rem; letter-spacing:0.3px; }
+    header p { margin:6px 0 0; color:var(--muted); }
+    .cta { margin:20px auto 0; display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+    .btn { padding:10px 14px; border:1px solid var(--accent); border-radius:8px; text-decoration:none; color:var(--accent); }
+    .btn.primary { background:var(--accent); color:#fff; }
+    main { max-width:1000px; margin:24px auto 60px; padding:0 20px; }
+    section { margin:32px 0; }
+    h2 { font-size:1.4rem; margin:0 0 12px; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; }
+    .card { border:1px solid #ddd; border-radius:10px; padding:16px; }
+    .card h3 { margin:0 0 8px; font-size:1.1rem; }
+    figure { margin:0; }
+    figure img { width:100%; height:auto; display:block; border-radius:10px; border:1px solid #eee; }
+    footer { padding:32px 20px; text-align:center; color:var(--muted); border-top:1px solid #eee; }
+    code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  </style>
+  <script>
+    // Swap in dist PDFs when present
+    document.addEventListener('DOMContentLoaded', () => {
+      const distFiles = ["ghostlink_whitepaper_v1_figs.pdf", "ghostlink_methods_supplement_v1.pdf", "ghostlink_conference_two_column.pdf", "ghostlink_executive_summary_onepager.pdf", "ghostlink_executive_summary_onepager_csv.pdf", "reviewer_pack.pdf", "ghostlink_pitch_deck_v1.pdf"];
+      fetch('dist/').then(r => {
+        if (r.ok) {
+          document.querySelectorAll('[data-dist]').forEach(a => {
+            const f = a.getAttribute('data-dist');
+            if (distFiles.includes(f)) a.setAttribute('href', 'dist/' + f);
+          });
+        }
+      }).catch(()=>{});
+    });
+  </script>
+</head>
+<body>
+  <header>
+    <h1>GhostLink</h1>
+    <p>Computational Proteins for Distributed Intelligence — v1.0 · November 2025</p>
+    <div class="cta">
+      <a class="btn primary" data-dist="ghostlink_whitepaper_v1_figs.pdf" href="../ghostlink_release_v1_fullsuite.zip">Download Paper</a>
+      <a class="btn" data-dist="ghostlink_pitch_deck_v1.pdf" href="../ghostlink_pitch_deck_v1.pdf">Pitch Deck</a>
+      <a class="btn" href="../ghostlink_release_v1_fullsuite.zip">Full Suite (.zip)</a>
+      <a class="btn" href="../ghostlink_release_v1_src_v3.zip">Source Bundle</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="grid">
+      <div class="card">
+        <h3>Metrics at a Glance</h3>
+        <figure><img src="assets/fig_metrics_glance.png" alt="Metrics at a glance"></figure>
+        <p class="mono">metrics: <a href="../ghostlink_metrics_v1.csv">ghostlink_metrics_v1.csv</a></p>
+      </div>
+      <div class="card">
+        <h3>Folding Funnel</h3>
+        <figure><img src="assets/fig_funnel.png" alt="Folding funnel"></figure>
+      </div>
+      <div class="card">
+        <h3>Motif Library</h3>
+        <figure><img src="assets/fig_motifs.png" alt="Motif library"></figure>
+      </div>
+    </section>
+
+    <section>
+      <h2>Artifacts</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Camera-ready LaTeX</h3>
+          <ul>
+            <li><a href="../ghostlink_whitepaper_v1_figs.tex">Main paper (TeX)</a></li>
+            <li><a href="../ghostlink_methods_supplement_v1.tex">Methods supplement (TeX)</a></li>
+            <li><a href="../ghostlink_conference_two_column.tex">Conference two-column (TeX)</a></li>
+            <li><a href="../ghostlink_executive_summary_onepager.tex">One-pager (TeX)</a></li>
+            <li><a href="../ghostlink_executive_summary_onepager_csv.tex">One-pager CSV (TeX)</a></li>
+            <li><a href="../ghostlink_arxiv.tex">arXiv minimal (TeX)</a></li>
+            <li><a href="../ghostlink_refs.bib">BibTeX</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>CI & Packaging</h3>
+          <ul>
+            <li><a href="../Makefile">Makefile</a></li>
+            <li><a href="../compile_all.sh">compile_all.sh</a></li>
+            <li><a href="../.github/workflows/latex.yml">GitHub Actions workflow</a></li>
+            <li><a href="../prep_arxiv_source.sh">arXiv pack script</a></li>
+            <li><a href="../ghostlink_artifacts_manifest_v1.json">Artifacts manifest</a></li>
+            <li><a href="../ghostlink_artifacts_checklist_v1.md">Artifacts checklist</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>License & Citation</h3>
+          <ul>
+            <li><a href="../LICENSE">MIT License</a></li>
+            <li><a href="../CITATION.cff">Citation (CFF)</a></li>
+            <li><a href="../README.md">Project README</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Ghost · Public Distribution · 2025-11-10 · This page is static and ships without trackers.
+  </footer>
+</body>
+</html>

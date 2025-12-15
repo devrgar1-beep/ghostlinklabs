@@ -4,12 +4,12 @@ GhostLink Comprehensive System Audit
 Security, Performance, Integrity, Compliance, Architecture Review
 """
 
-import hashlib
-import json
-import time
 from collections import defaultdict
 from dataclasses import dataclass
+import hashlib
+import json
 from pathlib import Path
+import time
 from typing import Dict, List, Optional
 
 
@@ -47,7 +47,9 @@ class SystemAuditor:
         self.findings: List[AuditFinding] = []
         self.metrics = AuditMetrics()
         self.audit_timestamp = time.time()
-        self.audit_id = hashlib.sha256(str(self.audit_timestamp).encode()).hexdigest()[:8]
+        self.audit_id = hashlib.sha256(str(self.audit_timestamp).encode()).hexdigest()[
+            :8
+        ]
 
     def execute_full_audit(self) -> Dict:
         """Execute comprehensive system audit"""
@@ -100,19 +102,29 @@ class SystemAuditor:
 
         # Calculate security score
         critical_findings = len(
-            [f for f in self.findings if f.severity == "critical" and f.category == "security"]
+            [
+                f
+                for f in self.findings
+                if f.severity == "critical" and f.category == "security"
+            ]
         )
         high_findings = len(
-            [f for f in self.findings if f.severity == "high" and f.category == "security"]
+            [
+                f
+                for f in self.findings
+                if f.severity == "high" and f.category == "security"
+            ]
         )
 
-        self.metrics.security_score = max(0, 100 - (critical_findings * 20) - (high_findings * 10))
+        self.metrics.security_score = max(
+            0, 100 - (critical_findings * 20) - (high_findings * 10)
+        )
         print(f"  Security Score: {self.metrics.security_score}/100")
 
     def _check_authentication(self) -> Optional[AuditFinding]:
         """Check authentication mechanisms"""
         # Check for auth implementation
-        auth_files = list(Path(".").rglob("*auth*.py"))
+        auth_files = list(Path().rglob("*auth*.py"))
 
         if not auth_files:
             return AuditFinding(
@@ -168,7 +180,7 @@ class SystemAuditor:
         encryption_indicators = ["encrypt", "decrypt", "hash", "sha", "aes", "rsa"]
         encryption_found = False
 
-        for py_file in Path(".").rglob("*.py"):
+        for py_file in Path().rglob("*.py"):
             try:
                 with open(py_file) as f:
                     content = f.read().lower()
@@ -197,11 +209,13 @@ class SystemAuditor:
         validation_patterns = ["validate", "sanitize", "escape", "schema"]
         validation_count = 0
 
-        for py_file in Path(".").rglob("*.py"):
+        for py_file in Path().rglob("*.py"):
             try:
                 with open(py_file) as f:
                     content = f.read().lower()
-                    validation_count += sum(1 for p in validation_patterns if p in content)
+                    validation_count += sum(
+                        1 for p in validation_patterns if p in content
+                    )
             except:
                 pass
 
@@ -230,7 +244,9 @@ class SystemAuditor:
                 severity="medium",
                 component="dependencies",
                 description="No dependency manifest found",
-                evidence=["requirements.txt, pyproject.toml, setup.py, or Pipfile missing"],
+                evidence=[
+                    "requirements.txt, pyproject.toml, setup.py, or Pipfile missing"
+                ],
                 recommendation="Create dependency manifest and scan for vulnerabilities",
                 risk_score=5.0,
             )
@@ -246,7 +262,7 @@ class SystemAuditor:
         # Directories to exclude from scanning
         exclude_dirs = {".venv", ".trunk", "__pycache__", ".git", "node_modules"}
 
-        for py_file in Path(".").rglob("*.py"):
+        for py_file in Path().rglob("*.py"):
             # Skip excluded directories
             if any(excl_dir in py_file.parts for excl_dir in exclude_dirs):
                 continue
@@ -279,16 +295,25 @@ class SystemAuditor:
                                 if ":" in line and "int(" in line:
                                     continue
                                 # Skip system messages and prompts
-                                if "you are" in line.lower() or "keep answers" in line.lower():
+                                if (
+                                    "you are" in line.lower()
+                                    or "keep answers" in line.lower()
+                                ):
                                     continue
                                 # Skip audit/security code itself
-                                if "recommendation" in line.lower() or "audit" in line.lower():
+                                if (
+                                    "recommendation" in line.lower()
+                                    or "audit" in line.lower()
+                                ):
                                     continue
 
                                 value_part = line.split("=", 1)[1].strip()
                                 # Check for quoted values (not f-strings)
                                 if (
-                                    (value_part.startswith('"') or value_part.startswith("'"))
+                                    (
+                                        value_part.startswith('"')
+                                        or value_part.startswith("'")
+                                    )
                                     and not value_part.startswith('f"')
                                     and not value_part.startswith("f'")
                                 ):
@@ -302,7 +327,9 @@ class SystemAuditor:
                                         and has_chars
                                         and not value_content.isdigit()
                                     ):
-                                        exposed_secrets.append(f"{py_file.name}:{line_num}")
+                                        exposed_secrets.append(
+                                            f"{py_file.name}:{line_num}"
+                                        )
             except Exception:
                 pass
 
@@ -338,9 +365,15 @@ class SystemAuditor:
 
     def _check_memory_usage(self):
         """Check memory usage patterns"""
-        import psutil
+        import os
+        import sys
 
-        self.metrics.memory_usage_mb = psutil.Process().memory_info().rss / 1024 / 1024
+        # Add the ghostlink module to the path
+        sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+        from ghostlink.sovereign_deps import SystemMonitor
+
+        monitor = SystemMonitor()
+        self.metrics.memory_usage_mb = SystemMonitor.get_memory_usage() / 1024 / 1024
 
         if self.metrics.memory_usage_mb > 500:
             self.findings.append(
@@ -359,9 +392,15 @@ class SystemAuditor:
 
     def _check_cpu_efficiency(self):
         """Check CPU efficiency"""
-        import psutil
+        import os
+        import sys
 
-        cpu_percent = psutil.cpu_percent(interval=0.1)
+        # Add the ghostlink module to the path
+        sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+        from ghostlink.sovereign_deps import SystemMonitor
+
+        monitor = SystemMonitor()
+        cpu_percent = SystemMonitor.get_cpu_percent()
 
         if cpu_percent > 80:
             self.findings.append(
@@ -406,7 +445,7 @@ class SystemAuditor:
         opens = 0
         closes = 0
 
-        for py_file in Path(".").rglob("*.py"):
+        for py_file in Path().rglob("*.py"):
             try:
                 with open(py_file) as f:
                     content = f.read()
@@ -447,7 +486,7 @@ class SystemAuditor:
         """Check checksum usage"""
         checksum_found = False
 
-        for py_file in Path(".").rglob("*.py"):
+        for py_file in Path().rglob("*.py"):
             try:
                 with open(py_file) as f:
                     if "hashlib" in f.read() or "sha256" in f.read():
@@ -493,7 +532,7 @@ class SystemAuditor:
 
     def _check_data_validation(self):
         """Check data validation"""
-        schema_files = list(Path(".").rglob("*.json"))
+        schema_files = list(Path().rglob("*.json"))
 
         if len(schema_files) < 2:
             self.findings.append(
@@ -569,7 +608,7 @@ class SystemAuditor:
         """Check coupling between modules"""
         import_count = defaultdict(int)
 
-        for py_file in Path(".").rglob("*.py"):
+        for py_file in Path().rglob("*.py"):
             try:
                 with open(py_file) as f:
                     for line in f:
@@ -600,7 +639,7 @@ class SystemAuditor:
         total_lines = 0
         total_files = 0
 
-        for py_file in Path(".").rglob("*.py"):
+        for py_file in Path().rglob("*.py"):
             try:
                 with open(py_file) as f:
                     lines = len(f.readlines())
@@ -633,11 +672,13 @@ class SystemAuditor:
         scalability_patterns = ["queue", "async", "thread", "pool", "cache"]
         pattern_count = 0
 
-        for py_file in Path(".").rglob("*.py"):
+        for py_file in Path().rglob("*.py"):
             try:
                 with open(py_file) as f:
                     content = f.read().lower()
-                    pattern_count += sum(1 for p in scalability_patterns if p in content)
+                    pattern_count += sum(
+                        1 for p in scalability_patterns if p in content
+                    )
             except:
                 pass
 
@@ -671,7 +712,7 @@ class SystemAuditor:
 
     def _check_documentation(self):
         """Check documentation completeness"""
-        doc_files = list(Path(".").rglob("README.md")) + list(Path(".").rglob("*.md"))
+        doc_files = list(Path().rglob("README.md")) + list(Path().rglob("*.md"))
 
         if len(doc_files) < 3:
             self.findings.append(
@@ -710,7 +751,7 @@ class SystemAuditor:
         privacy_indicators = ["gdpr", "privacy", "pii", "personal"]
         privacy_found = False
 
-        for py_file in Path(".").rglob("*.py"):
+        for py_file in Path().rglob("*.py"):
             try:
                 with open(py_file) as f:
                     content = f.read().lower()
@@ -792,7 +833,7 @@ class SystemAuditor:
         alert_patterns = ["alert", "notify", "alarm", "warning"]
         alert_found = False
 
-        for py_file in Path(".").rglob("*.py"):
+        for py_file in Path().rglob("*.py"):
             try:
                 with open(py_file) as f:
                     content = f.read().lower()
@@ -822,7 +863,7 @@ class SystemAuditor:
         recovery_patterns = ["recover", "restore", "rollback", "backup"]
         recovery_count = 0
 
-        for py_file in Path(".").rglob("*.py"):
+        for py_file in Path().rglob("*.py"):
             try:
                 with open(py_file) as f:
                     content = f.read().lower()
@@ -847,7 +888,12 @@ class SystemAuditor:
 
     def _check_deployment(self):
         """Check deployment readiness"""
-        deployment_files = ["Dockerfile", "docker-compose.yml", ".env.example", "deploy.sh"]
+        deployment_files = [
+            "Dockerfile",
+            "docker-compose.yml",
+            ".env.example",
+            "deploy.sh",
+        ]
         deployment_count = sum(1 for f in deployment_files if Path(f).exists())
 
         if deployment_count < 2:
@@ -888,7 +934,7 @@ class SystemAuditor:
 
         # Calculate category scores based on findings
         category_scores = {}
-        for category in weights.keys():
+        for category in weights:
             category_findings = [f for f in self.findings if f.category == category]
             if category == "security":
                 # Security has a base score that gets reduced by findings
@@ -904,7 +950,7 @@ class SystemAuditor:
                 category_scores[category] = max(0, 100 - penalty)
 
         # Calculate weighted overall score
-        overall_score = sum(category_scores[cat] * weights[cat] for cat in weights.keys())
+        overall_score = sum(category_scores[cat] * weights[cat] for cat in weights)
 
         report = {
             "audit_id": self.audit_id,
@@ -925,7 +971,9 @@ class SystemAuditor:
                 "total_lines": self.metrics.total_lines,
                 "memory_usage_mb": self.metrics.memory_usage_mb,
             },
-            "top_risks": sorted(self.findings, key=lambda f: f.risk_score, reverse=True)[:5],
+            "top_risks": sorted(
+                self.findings, key=lambda f: f.risk_score, reverse=True
+            )[:5],
             "recommendations": self._generate_recommendations(),
         }
 
@@ -936,7 +984,9 @@ class SystemAuditor:
         recommendations = []
 
         # High priority
-        critical_findings = [f for f in self.findings if f.severity in ["critical", "high"]]
+        critical_findings = [
+            f for f in self.findings if f.severity in ["critical", "high"]
+        ]
         if critical_findings:
             recommendations.append(
                 f"ADDRESS IMMEDIATELY: {len(critical_findings)} critical/high severity issues"
@@ -960,7 +1010,9 @@ class SystemAuditor:
         # Operations
         ops_findings = [f for f in self.findings if f.category == "operations"]
         if ops_findings:
-            recommendations.append(f"Improve operations: {len(ops_findings)} operational gaps")
+            recommendations.append(
+                f"Improve operations: {len(ops_findings)} operational gaps"
+            )
 
         return recommendations[:5]  # Top 5 recommendations
 
@@ -970,7 +1022,9 @@ class SystemAuditor:
         audit_dir.mkdir(exist_ok=True)
 
         # Save full report
-        report_file = audit_dir / f"audit_{self.audit_id}_{int(self.audit_timestamp)}.json"
+        report_file = (
+            audit_dir / f"audit_{self.audit_id}_{int(self.audit_timestamp)}.json"
+        )
         with open(report_file, "w") as f:
             # Convert findings to serializable format
             serializable_report = report.copy()

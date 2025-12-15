@@ -1,0 +1,63 @@
+{
+  "audit_id": "dd93decc",
+  "timestamp": 1765684363.860696,
+  "overall_score": 0,
+  "summary": {
+    "total_findings": 3722,
+    "critical": 1,
+    "high": 2,
+    "medium": 4,
+    "low": 3715,
+    "info": 0
+  },
+  "metrics": {
+    "security_score": 70,
+    "performance_score": 85.0,
+    "total_files": 16900,
+    "total_lines": 6859725,
+    "memory_usage_mb": 0.0
+  },
+  "top_risks": [
+    {
+      "category": "security",
+      "severity": "critical",
+      "component": "secrets",
+      "description": "Potential hardcoded secrets detected",
+      "risk_score": 10.0
+    },
+    {
+      "category": "integrity",
+      "severity": "high",
+      "component": "backups",
+      "description": "No backup mechanism detected",
+      "risk_score": 8.0
+    },
+    {
+      "category": "security",
+      "severity": "high",
+      "component": "authorization",
+      "description": "No capability configuration found",
+      "risk_score": 7.0
+    },
+    {
+      "category": "security",
+      "severity": "medium",
+      "component": "dependencies",
+      "description": "No dependency manifest found",
+      "risk_score": 5.0
+    },
+    {
+      "category": "architecture",
+      "severity": "medium",
+      "component": "coupling",
+      "description": "High coupling detected",
+      "risk_score": 5.0
+    }
+  ],
+  "recommendations": [
+    "ADDRESS IMMEDIATELY: 3 critical/high severity issues",
+    "Enhance security: 3 security issues found",
+    "Refactor: Codebase size exceeds recommended limits",
+    "Improve operations: 1 operational gaps"
+  ]
+}

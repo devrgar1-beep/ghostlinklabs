@@ -14,6 +14,7 @@ from datetime import datetime, timedelta
 from enum import Enum
 import json
 import logging
+import os
 from pathlib import Path
 import platform
 import subprocess
@@ -24,14 +25,17 @@ import traceback
 from typing import Any, Callable, Dict, List, Optional
 import uuid
 
-import psutil
 import schedule
 
-from evolutionary_intelligence import EvolutionaryIntelligence
+from .evolutionary_intelligence import EvolutionaryIntelligence
 
 # Import GhostLink core systems
-from multi_agent_engine import ModelSize, MultiAgentExpansionCompressionEngine
-from unified_consciousness import UnifiedConsciousnessFramework
+from .multi_agent_engine import ModelSize, MultiAgentExpansionCompressionEngine
+from .unified_consciousness import UnifiedConsciousnessFramework
+
+# Add the ghostlink module to the path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+from ghostlink.sovereign_deps import SystemMonitor
 
 
 class ErrorSeverity(Enum):
@@ -161,13 +165,34 @@ class ProcessErrorCorrection:
         # Recovery mechanisms
         self.recovery_strategies: Dict[ErrorCategory, List[RecoveryStrategy]] = {
             ErrorCategory.SYSTEM: [RecoveryStrategy.RESTART, RecoveryStrategy.ESCALATE],
-            ErrorCategory.NETWORK: [RecoveryStrategy.RECONNECT, RecoveryStrategy.ISOLATE],
-            ErrorCategory.PROCESS: [RecoveryStrategy.RESTART, RecoveryStrategy.REBALANCE],
-            ErrorCategory.RESOURCE: [RecoveryStrategy.REBALANCE, RecoveryStrategy.MITIGATE],
-            ErrorCategory.CONFIGURATION: [RecoveryStrategy.ROLLBACK, RecoveryStrategy.RESTART],
-            ErrorCategory.PROTOCOL: [RecoveryStrategy.RECONNECT, RecoveryStrategy.ESCALATE],
-            ErrorCategory.APPLICATION: [RecoveryStrategy.RESTART, RecoveryStrategy.ISOLATE],
-            ErrorCategory.HARDWARE: [RecoveryStrategy.ISOLATE, RecoveryStrategy.ESCALATE],
+            ErrorCategory.NETWORK: [
+                RecoveryStrategy.RECONNECT,
+                RecoveryStrategy.ISOLATE,
+            ],
+            ErrorCategory.PROCESS: [
+                RecoveryStrategy.RESTART,
+                RecoveryStrategy.REBALANCE,
+            ],
+            ErrorCategory.RESOURCE: [
+                RecoveryStrategy.REBALANCE,
+                RecoveryStrategy.MITIGATE,
+            ],
+            ErrorCategory.CONFIGURATION: [
+                RecoveryStrategy.ROLLBACK,
+                RecoveryStrategy.RESTART,
+            ],
+            ErrorCategory.PROTOCOL: [
+                RecoveryStrategy.RECONNECT,
+                RecoveryStrategy.ESCALATE,
+            ],
+            ErrorCategory.APPLICATION: [
+                RecoveryStrategy.RESTART,
+                RecoveryStrategy.ISOLATE,
+            ],
+            ErrorCategory.HARDWARE: [
+                RecoveryStrategy.ISOLATE,
+                RecoveryStrategy.ESCALATE,
+            ],
         }
 
         # Monitoring
@@ -183,13 +208,17 @@ class ProcessErrorCorrection:
             # Setup logging
             error_handler = logging.FileHandler(self.error_log_path)
             error_handler.setFormatter(
-                logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+                logging.Formatter(
+                    "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+                )
             )
             self.logger.addHandler(error_handler)
             self.logger.setLevel(logging.INFO)
 
             # Start monitoring thread
-            self.monitoring_thread = threading.Thread(target=self._monitoring_loop, daemon=True)
+            self.monitoring_thread = threading.Thread(
+                target=self._monitoring_loop, daemon=True
+            )
             self.monitoring_thread.start()
             self.monitoring_active = True
 
@@ -270,7 +299,9 @@ class ProcessErrorCorrection:
             return False
 
         except Exception as e:
-            self.logger.error(f"Recovery attempt failed for error {error_event.error_id}: {e}")
+            self.logger.error(
+                f"Recovery attempt failed for error {error_event.error_id}: {e}"
+            )
             return False
 
     async def _execute_recovery_strategy(
@@ -342,7 +373,9 @@ class ProcessErrorCorrection:
     def register_process(self, process_id: str, process_name: str):
         """Register a process for health monitoring"""
         self.process_health[process_id] = ProcessHealth(
-            process_id=process_id, process_name=process_name, last_heartbeat=datetime.now()
+            process_id=process_id,
+            process_name=process_name,
+            last_heartbeat=datetime.now(),
         )
 
     def update_process_heartbeat(self, process_id: str):
@@ -381,7 +414,9 @@ class ProcessErrorCorrection:
                 health.error_count += 1
 
                 if health.restart_count < self.max_restart_attempts:
-                    self.logger.warning(f"Process {process_id} unresponsive, attempting restart")
+                    self.logger.warning(
+                        f"Process {process_id} unresponsive, attempting restart"
+                    )
                     asyncio.create_task(self._restart_process(process_id))
                 else:
                     self.logger.error(
@@ -403,7 +438,9 @@ class ProcessErrorCorrection:
         """Analyze error patterns for predictive correction"""
         # Look for recurring errors
         for pattern_key, errors in self.error_patterns.items():
-            recent_errors = [e for e in errors if datetime.now() - e.timestamp < timedelta(hours=1)]
+            recent_errors = [
+                e for e in errors if datetime.now() - e.timestamp < timedelta(hours=1)
+            ]
 
             if len(recent_errors) >= 3:
                 self.logger.warning(
@@ -420,7 +457,8 @@ class ProcessErrorCorrection:
         self.error_events = [
             e
             for e in self.error_events
-            if not e.resolved or (now - (e.resolution_time or e.timestamp) < retention_period)
+            if not e.resolved
+            or (now - (e.resolution_time or e.timestamp) < retention_period)
         ]
 
         # Clean up active errors
@@ -440,11 +478,15 @@ class ProcessErrorCorrection:
             "active_errors": len(self.active_errors),
             "recent_errors_24h": len(recent_errors),
             "error_severity_breakdown": {
-                severity.value: len([e for e in recent_errors if e.severity == severity])
+                severity.value: len(
+                    [e for e in recent_errors if e.severity == severity]
+                )
                 for severity in ErrorSeverity
             },
             "error_category_breakdown": {
-                category.value: len([e for e in recent_errors if e.category == category])
+                category.value: len(
+                    [e for e in recent_errors if e.category == category]
+                )
                 for category in ErrorCategory
             },
             "process_health_status": {
@@ -543,7 +585,9 @@ class SystemCommunicationBridge:
             )
 
             # Create message queue
-            self.message_queues[config.bridge_id] = asyncio.Queue(maxsize=config.message_queue_size)
+            self.message_queues[config.bridge_id] = asyncio.Queue(
+                maxsize=config.message_queue_size
+            )
 
             # Store configuration and bridge
             self.bridge_configs[config.bridge_id] = config
@@ -620,11 +664,15 @@ class SystemCommunicationBridge:
             self.logger.error(f"Failed to stop bridge {bridge_id}: {e}")
             return False
 
-    async def route_message(self, source: str, target: str, message: Dict[str, Any]) -> bool:
+    async def route_message(
+        self, source: str, target: str, message: Dict[str, Any]
+    ) -> bool:
         """Route a message through available bridges"""
         try:
             # Find available routes
-            routes = self.routing_table.get(source, []) + self.routing_table.get(target, [])
+            routes = self.routing_table.get(source, []) + self.routing_table.get(
+                target, []
+            )
 
             for bridge_id in routes:
                 if bridge_id in self.bridges and self.bridges[bridge_id].active:
@@ -670,12 +718,16 @@ class SystemCommunicationBridge:
                 # Send through bridge connection
                 connection = self.active_connections.get(bridge_id)
                 if connection:
-                    await self._send_message_through_bridge(connection, message_data, bridge_id)
+                    await self._send_message_through_bridge(
+                        connection, message_data, bridge_id
+                    )
 
                 queue.task_done()
 
             except Exception as e:
-                self.logger.error(f"Bridge message processing error for {bridge_id}: {e}")
+                self.logger.error(
+                    f"Bridge message processing error for {bridge_id}: {e}"
+                )
                 await asyncio.sleep(1)
 
     async def _send_message_through_bridge(
@@ -779,7 +831,9 @@ class SystemCommunicationBridge:
                 "protocol": bridge.protocol,
                 "message_count": bridge.message_count,
                 "error_count": bridge.error_count,
-                "last_message": bridge.last_message.isoformat() if bridge.last_message else None,
+                "last_message": (
+                    bridge.last_message.isoformat() if bridge.last_message else None
+                ),
             }
             for bridge_id, bridge in self.bridges.items()
         }
@@ -856,7 +910,9 @@ class DesignClarityOS:
     - Protocol-based orchestration, not takeover
     """
 
-    def __init__(self, workspace_path: str = "/Users/ghostlink/ghostlink-wiki-organized"):
+    def __init__(
+        self, workspace_path: str = "/Users/ghostlink/ghostlink-wiki-organized"
+    ):
         self.workspace = Path(workspace_path)
         self.system_id = str(uuid.uuid4())[:8]
         self.protocol_version = "2.0.0"
@@ -915,12 +971,14 @@ class DesignClarityOS:
 
         try:
             # Initialize consciousness framework
-            consciousness_success = await self.consciousness.initialize_unified_consciousness()
+            consciousness_success = (
+                await self.consciousness.initialize_unified_consciousness()
+            )
             if consciousness_success:
                 print("✅ Consciousness framework integrated")
             else:
                 print("⚠️  Consciousness framework partial integration")
-                success = False
+                # Don't fail overall initialization for consciousness issues
 
             # Initialize multi-agent engine
             print("🤖 Initializing multi-agent optimization engine...")
@@ -990,12 +1048,19 @@ class DesignClarityOS:
         machine = platform.machine()
 
         # CPU information
-        cpu_count = psutil.cpu_count(logical=True)
-        cpu_physical = psutil.cpu_count(logical=False)
+        monitor = SystemMonitor()
+        cpu_count = monitor.get_cpu_count()
+        cpu_physical = (
+            monitor.get_cpu_count()
+        )  # Simplified, no logical vs physical distinction
 
         # Memory information
-        memory = psutil.virtual_memory()
-        memory_gb = memory.total / (1024**3)
+        memory = SystemMonitor.get_memory_info()
+        memory_gb = (
+            memory["total"] / (1024**3)
+            if isinstance(memory.get("total"), (int, float))
+            else 16.0
+        )
 
         # GPU detection (simplified)
         gpu_available = False
@@ -1016,20 +1081,30 @@ class DesignClarityOS:
             pass
 
         # Network interfaces
-        network_interfaces = list(psutil.net_if_addrs().keys())
+        network_interfaces = list(SystemMonitor.get_network_interfaces().keys())
 
         # Storage devices
         storage_devices = []
-        for partition in psutil.disk_partitions():
+        for part in SystemMonitor.get_disk_partitions():
             try:
-                usage = psutil.disk_usage(partition.mountpoint)
+                usage = SystemMonitor.get_disk_usage(part["mountpoint"])
+                total_gb = (
+                    usage.get("total", 0) / (1024**3)
+                    if isinstance(usage.get("total"), (int, float))
+                    else 512.0
+                )
+                free_gb = (
+                    usage.get("free", 0) / (1024**3)
+                    if isinstance(usage.get("free"), (int, float))
+                    else 256.0
+                )
                 storage_devices.append(
                     {
-                        "device": partition.device,
-                        "mountpoint": partition.mountpoint,
-                        "total_gb": usage.total / (1024**3),
-                        "free_gb": usage.free / (1024**3),
-                        "filesystem": partition.fstype,
+                        "device": part["device"],
+                        "mountpoint": part["mountpoint"],
+                        "total_gb": total_gb,
+                        "free_gb": free_gb,
+                        "filesystem": part["fstype"],
                     }
                 )
             except:
@@ -1059,7 +1134,11 @@ class DesignClarityOS:
         )
 
     def _calculate_performance_score(
-        self, cpu_cores: int, memory_gb: float, gpu_available: bool, specialized_hw: List[str]
+        self,
+        cpu_cores: int,
+        memory_gb: float,
+        gpu_available: bool,
+        specialized_hw: List[str],
     ) -> float:
         """Calculate hardware performance score"""
         score = cpu_cores * 10 + memory_gb * 5
@@ -1095,7 +1174,11 @@ class DesignClarityOS:
                 name="triad_synergy",
                 type="infrastructure",
                 resource_requirements={"cpu": 0.2, "memory": 0.5, "storage": 0.2},
-                capabilities=["symbolic_computation", "container_orchestration", "hybrid_ai"],
+                capabilities=[
+                    "symbolic_computation",
+                    "container_orchestration",
+                    "hybrid_ai",
+                ],
                 integration_points=["mathematica_bridge", "docker_integration"],
             ),
             ApplicationProfile(
@@ -1171,7 +1254,9 @@ class DesignClarityOS:
                             agent_type=agent_type,
                             hardware_profile=hw_profile,
                             application_profile=None,  # Hardware-only assignment
-                            priority=self._calculate_assignment_priority(hw_profile, None),
+                            priority=self._calculate_assignment_priority(
+                                hw_profile, None
+                            ),
                             resource_allocation=self._calculate_resource_allocation(
                                 hw_profile, agent_type
                             ),
@@ -1184,15 +1269,24 @@ class DesignClarityOS:
         # Assign agents to applications
         for app_id, app_profile in self.application_profiles.items():
             # Find suitable hardware for this application
-            suitable_hardware = self._find_suitable_hardware_for_application(app_profile)
+            suitable_hardware = self._find_suitable_hardware_for_application(
+                app_profile
+            )
 
             if suitable_hardware:
                 # Determine optimal agent for this application
-                optimal_agent_type = self._determine_optimal_agent_for_application(app_profile)
+                optimal_agent_type = self._determine_optimal_agent_for_application(
+                    app_profile
+                )
 
                 if optimal_agent_type in [a.split("_")[0] for a in available_agents]:
                     available_agent = next(
-                        (a for a in available_agents if a.startswith(optimal_agent_type)), None
+                        (
+                            a
+                            for a in available_agents
+                            if a.startswith(optimal_agent_type)
+                        ),
+                        None,
                     )
                     if available_agent:
                         assignment = AgentAssignment(
@@ -1215,7 +1309,9 @@ class DesignClarityOS:
 
         print(f"✅ Assigned {assignments_made} agents to systems")
 
-    def _determine_optimal_agents_for_hardware(self, hw_profile: HardwareProfile) -> List[str]:
+    def _determine_optimal_agents_for_hardware(
+        self, hw_profile: HardwareProfile
+    ) -> List[str]:
         """Determine optimal agent types for hardware profile"""
         agents = []
 
@@ -1232,7 +1328,9 @@ class DesignClarityOS:
 
         return agents
 
-    def _determine_optimal_agent_for_application(self, app_profile: ApplicationProfile) -> str:
+    def _determine_optimal_agent_for_application(
+        self, app_profile: ApplicationProfile
+    ) -> str:
         """Determine optimal agent type for application"""
         if app_profile.type == "ai_model":
             return "compression"  # Most AI models benefit from compression
@@ -1250,7 +1348,9 @@ class DesignClarityOS:
         best_score = 0
 
         for hw_profile in self.hardware_profiles.values():
-            score = self._calculate_hardware_application_compatibility(hw_profile, app_profile)
+            score = self._calculate_hardware_application_compatibility(
+                hw_profile, app_profile
+            )
             if score > best_score:
                 best_score = score
                 best_match = hw_profile
@@ -1308,10 +1408,17 @@ class DesignClarityOS:
         return min(priority, 10)
 
     def _calculate_resource_allocation(
-        self, hw: HardwareProfile, agent_type: str, app: Optional[ApplicationProfile] = None
+        self,
+        hw: HardwareProfile,
+        agent_type: str,
+        app: Optional[ApplicationProfile] = None,
     ) -> Dict[str, float]:
         """Calculate resource allocation for agent"""
-        base_allocation = {"cpu_percent": 10.0, "memory_percent": 5.0, "storage_percent": 1.0}
+        base_allocation = {
+            "cpu_percent": 10.0,
+            "memory_percent": 5.0,
+            "storage_percent": 1.0,
+        }
 
         # Adjust based on agent type
         if agent_type == "compression":
@@ -1329,7 +1436,9 @@ class DesignClarityOS:
         memory_limit = hw.memory_gb * 0.05  # Max 5% of total memory
 
         base_allocation["cpu_percent"] = min(base_allocation["cpu_percent"], cpu_limit)
-        base_allocation["memory_percent"] = min(base_allocation["memory_percent"], memory_limit)
+        base_allocation["memory_percent"] = min(
+            base_allocation["memory_percent"], memory_limit
+        )
 
         return base_allocation
 
@@ -1353,7 +1462,9 @@ class DesignClarityOS:
         await self.consciousness.start_unified_monitoring()
 
         # Start hardware monitoring thread
-        hardware_monitor = threading.Thread(target=self._hardware_monitoring_loop, daemon=True)
+        hardware_monitor = threading.Thread(
+            target=self._hardware_monitoring_loop, daemon=True
+        )
         hardware_monitor.start()
         self.monitoring_threads.append(hardware_monitor)
 
@@ -1380,7 +1491,9 @@ class DesignClarityOS:
         """Initialize scheduled evolution with heartbeat and tick events"""
         print("🕐 Initializing scheduled evolution system...")
 
-        success = await self.scheduled_evolution_manager.initialize_scheduled_evolution()
+        success = (
+            await self.scheduled_evolution_manager.initialize_scheduled_evolution()
+        )
 
         if success:
             print("✅ Scheduled evolution system initialized")
@@ -1433,23 +1546,26 @@ class DesignClarityOS:
         """Update real-time hardware metrics"""
         for hw_id, hw_profile in self.hardware_profiles.items():
             try:
+                monitor = SystemMonitor()
                 # Update CPU usage
-                cpu_percent = psutil.cpu_percent(interval=1)
+                cpu_percent = monitor.get_cpu_percent()
 
                 # Update memory usage
-                memory = psutil.virtual_memory()
+                memory = monitor.get_memory_info()
 
                 # Update storage usage
                 for storage in hw_profile.storage_devices:
                     try:
-                        usage = psutil.disk_usage(storage["mountpoint"])
-                        storage["free_gb"] = usage.free / (1024**3)
+                        usage = monitor.get_disk_usage(storage["mountpoint"])
+                        storage["free_gb"] = usage["free"] / (1024**3)
                     except:
                         pass
 
                 # Update performance score based on current load
                 load_factor = 1.0 - (cpu_percent / 100.0)
-                hw_profile.performance_score = hw_profile.performance_score * load_factor
+                hw_profile.performance_score = (
+                    hw_profile.performance_score * load_factor
+                )
 
             except Exception as e:
                 print(f"Error updating {hw_id} metrics: {e}")
@@ -1487,7 +1603,9 @@ class DesignClarityOS:
         try:
             # Get current consciousness state
             awareness = self.consciousness.get_unified_awareness_snapshot()
-            consciousness_level = awareness.get("consciousness_level", "basic_unified_awareness")
+            consciousness_level = awareness.get(
+                "consciousness_level", "basic_unified_awareness"
+            )
 
             # Adjust optimization strategy based on consciousness
             if consciousness_level in ["enhanced_awareness", "unified_consciousness"]:
@@ -1523,7 +1641,9 @@ class DesignClarityOS:
             return
 
         # Start evolution monitoring thread
-        evolution_thread = threading.Thread(target=self._evolution_monitoring_loop, daemon=True)
+        evolution_thread = threading.Thread(
+            target=self._evolution_monitoring_loop, daemon=True
+        )
         evolution_thread.start()
         self.monitoring_threads.append(evolution_thread)
 
@@ -1563,10 +1683,11 @@ class DesignClarityOS:
     def _get_hardware_utilization(self) -> Dict[str, float]:
         """Get current hardware utilization"""
         try:
+            monitor = SystemMonitor()
             return {
-                "cpu_percent": psutil.cpu_percent(interval=1),
-                "memory_percent": psutil.virtual_memory().percent,
-                "disk_usage": psutil.disk_usage("/").percent,
+                "cpu_percent": monitor.get_cpu_percent(),
+                "memory_percent": monitor.get_memory_info()["percent"],
+                "disk_usage": monitor.get_disk_usage("/")["percent"],
             }
         except:
             return {"cpu_percent": 0.0, "memory_percent": 0.0, "disk_usage": 0.0}
@@ -1597,8 +1718,9 @@ class DesignClarityOS:
     def _assess_system_health(self) -> str:
         """Assess overall system health"""
         try:
-            cpu_usage = psutil.cpu_percent()
-            memory_usage = psutil.virtual_memory().percent
+            monitor = SystemMonitor()
+            cpu_usage = monitor.get_cpu_percent()
+            memory_usage = monitor.get_memory_info()["percent"]
 
             if cpu_usage > 90 or memory_usage > 90:
                 return "critical"
@@ -1636,14 +1758,20 @@ class DesignClarityOS:
             # Prepare evolution context
             evolution_context = {
                 "system_state": system_state,
-                "hardware_profiles": {k: v.__dict__ for k, v in self.hardware_profiles.items()},
-                "agent_assignments": {k: v.__dict__ for k, v in self.agent_assignments.items()},
+                "hardware_profiles": {
+                    k: v.__dict__ for k, v in self.hardware_profiles.items()
+                },
+                "agent_assignments": {
+                    k: v.__dict__ for k, v in self.agent_assignments.items()
+                },
                 "consciousness_snapshot": self.consciousness.get_unified_awareness_snapshot(),
                 "protocol_metrics": self.get_protocol_status(),
             }
 
             # Execute evolution
-            evolution_result = await self.evolutionary_intelligence.evolve_system(evolution_context)
+            evolution_result = await self.evolutionary_intelligence.evolve_system(
+                evolution_context
+            )
 
             if evolution_result.get("success", False):
                 # Apply evolution results
@@ -1757,9 +1885,13 @@ class DesignClarityOS:
         """Get current evolution status (application control interface)"""
         return self.scheduled_evolution_manager.get_evolution_status()
 
-    async def configure_evolution_schedule(self, config_updates: Dict[str, Any]) -> Dict[str, Any]:
+    async def configure_evolution_schedule(
+        self, config_updates: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Configure evolution schedule parameters (application control interface)"""
-        return await self.scheduled_evolution_manager.configure_evolution_schedule(config_updates)
+        return await self.scheduled_evolution_manager.configure_evolution_schedule(
+            config_updates
+        )
 
     async def trigger_manual_evolution(self) -> Dict[str, Any]:
         """Trigger a manual evolution cycle (application control interface)"""
@@ -1786,7 +1918,9 @@ class DesignClarityOS:
         except Exception as e:
             return {"error": f"Protocol task execution failed: {e!s}"}
 
-    async def _execute_hardware_discovery_task(self, task: Dict[str, Any]) -> Dict[str, Any]:
+    async def _execute_hardware_discovery_task(
+        self, task: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Execute hardware discovery task"""
         await self._discover_hardware_profiles()
         return {
@@ -1794,12 +1928,16 @@ class DesignClarityOS:
             "profiles": {k: v.__dict__ for k, v in self.hardware_profiles.items()},
         }
 
-    async def _execute_agent_assignment_task(self, task: Dict[str, Any]) -> Dict[str, Any]:
+    async def _execute_agent_assignment_task(
+        self, task: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Execute agent assignment task"""
         await self._assign_agents_to_systems()
         return {
             "assignments": len(self.agent_assignments),
-            "assignments_detail": {k: v.__dict__ for k, v in self.agent_assignments.items()},
+            "assignments_detail": {
+                k: v.__dict__ for k, v in self.agent_assignments.items()
+            },
         }
 
     async def _execute_consciousness_optimization_task(
@@ -1810,7 +1948,9 @@ class DesignClarityOS:
         awareness = self.consciousness.get_unified_awareness_snapshot()
 
         # Determine optimal size based on consciousness
-        consciousness_level = awareness.get("consciousness_level", "basic_unified_awareness")
+        consciousness_level = awareness.get(
+            "consciousness_level", "basic_unified_awareness"
+        )
 
         if consciousness_level in ["enhanced_awareness", "unified_consciousness"]:
             target_size = ModelSize.LARGE
@@ -1820,9 +1960,14 @@ class DesignClarityOS:
             target_size = ModelSize.SMALL
 
         result = await self.multi_agent_engine.optimize_model(model_name, target_size)
-        return {"optimization_result": result, "consciousness_level": consciousness_level}
+        return {
+            "optimization_result": result,
+            "consciousness_level": consciousness_level,
+        }
 
-    async def _execute_evolution_control_task(self, task: Dict[str, Any]) -> Dict[str, Any]:
+    async def _execute_evolution_control_task(
+        self, task: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Execute evolution control task"""
         control_action = task.get("action", "unknown")
 
@@ -1847,7 +1992,10 @@ class DesignClarityOS:
                 "message": f"Unknown evolution control action: {control_action}",
             }
         except Exception as e:
-            return {"success": False, "message": f"Evolution control task failed: {e!s}"}
+            return {
+                "success": False,
+                "message": f"Evolution control task failed: {e!s}",
+            }
 
     def get_protocol_status(self) -> Dict[str, Any]:
         """Get comprehensive protocol status"""
@@ -1945,7 +2093,10 @@ class DarwinIntegrationProtocol:
 
             # Get memory info
             mem_info = subprocess.run(
-                ["sysctl", "-n", "hw.memsize"], check=False, capture_output=True, text=True
+                ["sysctl", "-n", "hw.memsize"],
+                check=False,
+                capture_output=True,
+                text=True,
             )
             memory_bytes = int(mem_info.stdout.strip())
             memory_gb = memory_bytes / (1024**3)
@@ -1953,7 +2104,10 @@ class DarwinIntegrationProtocol:
             # Get CPU core info
             cpu_cores = int(
                 subprocess.run(
-                    ["sysctl", "-n", "hw.ncpu"], check=False, capture_output=True, text=True
+                    ["sysctl", "-n", "hw.ncpu"],
+                    check=False,
+                    capture_output=True,
+                    text=True,
                 ).stdout.strip()
             )
 
@@ -1962,7 +2116,9 @@ class DarwinIntegrationProtocol:
 
             specialized_hw = []
             if apple_silicon:
-                specialized_hw.extend(["neural_engine", "secure_enclave", "apple_silicon"])
+                specialized_hw.extend(
+                    ["neural_engine", "secure_enclave", "apple_silicon"]
+                )
 
             return HardwareProfile(
                 platform="Darwin",
@@ -1985,8 +2141,8 @@ class DarwinIntegrationProtocol:
             return HardwareProfile(
                 platform="Darwin",
                 architecture="unknown",
-                cpu_cores=psutil.cpu_count(),
-                memory_gb=psutil.virtual_memory().total / (1024**3),
+                cpu_cores=SystemMonitor().get_cpu_count(),
+                memory_gb=SystemMonitor().get_memory_info()["total"] / (1024**3),
                 gpu_available=True,
                 gpu_memory_gb=None,
                 network_interfaces=[],
@@ -2058,7 +2214,9 @@ class DarwinIntegrationProtocol:
         """Get Darwin system information"""
         try:
             # Get system version
-            version_info = subprocess.run(["sw_vers"], check=False, capture_output=True, text=True)
+            version_info = subprocess.run(
+                ["sw_vers"], check=False, capture_output=True, text=True
+            )
             return {"system_info": version_info.stdout, "platform": "Darwin"}
         except Exception as e:
             return {"error": str(e)}
@@ -2174,7 +2332,9 @@ class ScheduledEvolutionManager:
     """
 
     def __init__(
-        self, design_clarity_os: "DesignClarityOS", config: EvolutionScheduleConfig = None
+        self,
+        design_clarity_os: "DesignClarityOS",
+        config: EvolutionScheduleConfig = None,
     ):
         self.design_clarity_os = design_clarity_os
         self.config = config or EvolutionScheduleConfig()
@@ -2203,7 +2363,8 @@ class ScheduledEvolutionManager:
 
             # Setup logging
             logging.basicConfig(
-                level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+                level=logging.INFO,
+                format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
             )
 
             # Register application control interfaces
@@ -2219,7 +2380,9 @@ class ScheduledEvolutionManager:
             self._schedule_tick_events()
 
             # Start monitoring thread
-            self.monitoring_thread = threading.Thread(target=self._monitoring_loop, daemon=True)
+            self.monitoring_thread = threading.Thread(
+                target=self._monitoring_loop, daemon=True
+            )
             self.monitoring_thread.start()
             self.monitoring_active = True
 
@@ -2248,18 +2411,18 @@ class ScheduledEvolutionManager:
 
     def _schedule_evolution_cycles(self):
         """Schedule automated evolution cycles"""
-        self.evolution_scheduler.every(self.config.evolution_interval_minutes).minutes.do(
-            self._trigger_scheduled_evolution
-        )
+        self.evolution_scheduler.every(
+            self.config.evolution_interval_minutes
+        ).minutes.do(self._trigger_scheduled_evolution)
         self.logger.info(
             f"📅 Evolution cycles scheduled every {self.config.evolution_interval_minutes} minutes"
         )
 
     def _schedule_heartbeat_monitoring(self):
         """Schedule heartbeat monitoring"""
-        self.heartbeat_scheduler.every(self.config.heartbeat_interval_seconds).seconds.do(
-            self._perform_heartbeat_check
-        )
+        self.heartbeat_scheduler.every(
+            self.config.heartbeat_interval_seconds
+        ).seconds.do(self._perform_heartbeat_check)
         self.logger.info(
             f"💓 Heartbeat monitoring scheduled every {self.config.heartbeat_interval_seconds} seconds"
         )
@@ -2294,10 +2457,16 @@ class ScheduledEvolutionManager:
 
     def _trigger_scheduled_evolution(self):
         """Trigger a scheduled evolution cycle"""
-        if not self.control_state.evolution_active or self.control_state.evolution_paused:
+        if (
+            not self.control_state.evolution_active
+            or self.control_state.evolution_paused
+        ):
             return
 
-        if self.control_state.active_evolution_cycles >= self.config.max_concurrent_evolutions:
+        if (
+            self.control_state.active_evolution_cycles
+            >= self.config.max_concurrent_evolutions
+        ):
             self.logger.warning(
                 "Maximum concurrent evolutions reached, skipping scheduled evolution"
             )
@@ -2317,7 +2486,9 @@ class ScheduledEvolutionManager:
             system_state = self.design_clarity_os._get_evolution_system_state()
 
             # Execute evolution
-            evolution_result = await self.design_clarity_os._execute_evolution_cycle(system_state)
+            evolution_result = await self.design_clarity_os._execute_evolution_cycle(
+                system_state
+            )
 
             # Update control state
             self.control_state.last_evolution_time = datetime.now()
@@ -2360,7 +2531,9 @@ class ScheduledEvolutionManager:
 
             # Emergency actions if system is critical
             if health_status == "critical":
-                self.logger.warning("🚨 Critical system health detected, pausing evolution")
+                self.logger.warning(
+                    "🚨 Critical system health detected, pausing evolution"
+                )
                 asyncio.create_task(self.pause_evolution_cycles())
 
         except Exception as e:
@@ -2373,7 +2546,9 @@ class ScheduledEvolutionManager:
             self.control_state.tick_last_time = datetime.now()
 
             # Get current metrics
-            protocol_efficiency = self.design_clarity_os._calculate_protocol_efficiency()
+            protocol_efficiency = (
+                self.design_clarity_os._calculate_protocol_efficiency()
+            )
             agent_performance = self.design_clarity_os._get_agent_performance_metrics()
 
             # Log tick event
@@ -2389,7 +2564,9 @@ class ScheduledEvolutionManager:
                 and not self.control_state.evolution_paused
             ):
 
-                self.logger.info("📈 Low efficiency detected, triggering evolution optimization")
+                self.logger.info(
+                    "📈 Low efficiency detected, triggering evolution optimization"
+                )
                 self._trigger_scheduled_evolution()
 
         except Exception as e:
@@ -2512,7 +2689,9 @@ class ScheduledEvolutionManager:
             },
         }
 
-    async def configure_evolution_schedule(self, config_updates: Dict[str, Any]) -> Dict[str, Any]:
+    async def configure_evolution_schedule(
+        self, config_updates: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Configure evolution schedule parameters"""
         try:
             # Update configuration
@@ -2549,8 +2728,14 @@ class ScheduledEvolutionManager:
     async def trigger_manual_evolution(self) -> Dict[str, Any]:
         """Trigger a manual evolution cycle"""
         try:
-            if self.control_state.active_evolution_cycles >= self.config.max_concurrent_evolutions:
-                return {"success": False, "message": "Maximum concurrent evolutions reached"}
+            if (
+                self.control_state.active_evolution_cycles
+                >= self.config.max_concurrent_evolutions
+            ):
+                return {
+                    "success": False,
+                    "message": "Maximum concurrent evolutions reached",
+                }
 
             # Trigger evolution
             self._trigger_scheduled_evolution()
@@ -2590,21 +2775,39 @@ async def main():
     """Main protocol execution"""
     import argparse
 
-    parser = argparse.ArgumentParser(description="GhostLink Design Clarity OS - Root Protocol")
+    parser = argparse.ArgumentParser(
+        description="GhostLink Design Clarity OS - Root Protocol"
+    )
     parser.add_argument(
         "--initialize-protocol", action="store_true", help="Initialize root protocol"
     )
-    parser.add_argument("--protocol-status", action="store_true", help="Get protocol status")
-    parser.add_argument("--execute-task", help="Execute protocol task (JSON string)")
-    parser.add_argument("--darwin-task", help="Execute Darwin-specific task (JSON string)")
-    parser.add_argument("--shutdown", action="store_true", help="Shutdown protocol")
-    parser.add_argument("--evolution-status", action="store_true", help="Get evolution status")
-    parser.add_argument("--start-evolution", action="store_true", help="Start evolution cycles")
-    parser.add_argument("--stop-evolution", action="store_true", help="Stop evolution cycles")
-    parser.add_argument("--pause-evolution", action="store_true", help="Pause evolution cycles")
-    parser.add_argument("--resume-evolution", action="store_true", help="Resume evolution cycles")
     parser.add_argument(
-        "--trigger-evolution", action="store_true", help="Trigger manual evolution cycle"
+        "--protocol-status", action="store_true", help="Get protocol status"
+    )
+    parser.add_argument("--execute-task", help="Execute protocol task (JSON string)")
+    parser.add_argument(
+        "--darwin-task", help="Execute Darwin-specific task (JSON string)"
+    )
+    parser.add_argument("--shutdown", action="store_true", help="Shutdown protocol")
+    parser.add_argument(
+        "--evolution-status", action="store_true", help="Get evolution status"
+    )
+    parser.add_argument(
+        "--start-evolution", action="store_true", help="Start evolution cycles"
+    )
+    parser.add_argument(
+        "--stop-evolution", action="store_true", help="Stop evolution cycles"
+    )
+    parser.add_argument(
+        "--pause-evolution", action="store_true", help="Pause evolution cycles"
+    )
+    parser.add_argument(
+        "--resume-evolution", action="store_true", help="Resume evolution cycles"
+    )
+    parser.add_argument(
+        "--trigger-evolution",
+        action="store_true",
+        help="Trigger manual evolution cycle",
     )
 
     args = parser.parse_args()
@@ -2648,7 +2851,9 @@ async def main():
             sys.exit(1)
 
         task = json.loads(args.darwin_task)
-        result = await protocol.execute_protocol_task({"type": "darwin_integration", **task})
+        result = await protocol.execute_protocol_task(
+            {"type": "darwin_integration", **task}
+        )
         print(json.dumps(result, indent=2, default=str))
 
     elif args.shutdown:

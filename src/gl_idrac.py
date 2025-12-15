@@ -19,19 +19,23 @@ Environment:
   IDRAC_TIMEOUT       Request timeout in seconds (default: 10)
 """
 from __future__ import annotations
+
 import json
 import os
-import time
 from typing import Any
 from urllib.parse import urljoin
 
 try:
-    import requests
-    from requests.auth import HTTPBasicAuth
-    import urllib3
-    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+    import os
+    import sys
+
+    # Add the ghostlink module to the path
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+    from ghostlink.sovereign_deps import SovereignSession
+
+    SOVEREIGN_AVAILABLE = True
 except ImportError:
-    print("Error: requests library required. Install: pip install requests urllib3")
+    print("Error: Sovereign dependencies required.")
     raise
 
 VERIFY_SSL = os.getenv("IDRAC_VERIFY_SSL", "0") == "1"
@@ -43,7 +47,7 @@ class IDRACClient:
 
     def __init__(self, host: str, username: str, password: str):
         """Initialize iDRAC client.
-        
+
         Args:
             host: iDRAC IP or hostname
             username: iDRAC username (typically 'root')
@@ -51,31 +55,35 @@ class IDRACClient:
         """
         self.host = host
         self.base_url = f"https://{host}"
-        self.auth = HTTPBasicAuth(username, password)
-        self.session = requests.Session()
-        self.session.auth = self.auth
-        self.session.verify = VERIFY_SSL
+        self.username = username
+        self.password = password
+        self.session = SovereignSession()
 
     def _get(self, path: str) -> dict[str, Any]:
         """GET request to Redfish endpoint."""
         url = urljoin(self.base_url, path)
-        r = self.session.get(url, timeout=TIMEOUT)
-        r.raise_for_status()
-        return r.json()
+        auth = (self.username, self.password)
+        response = self.session.get(url, auth=auth, verify=VERIFY_SSL, timeout=TIMEOUT)
+        response.raise_for_status()
+        return response.json()
 
     def _post(self, path: str, data: dict[str, Any] | None = None) -> dict[str, Any]:
         """POST request to Redfish endpoint."""
         url = urljoin(self.base_url, path)
-        r = self.session.post(url, json=data or {}, timeout=TIMEOUT)
-        r.raise_for_status()
-        return r.json()
+        auth = (self.username, self.password)
+        response = self.session.post(
+            url, json=data or {}, auth=auth, verify=VERIFY_SSL, timeout=TIMEOUT
+        )
+        response.raise_for_status()
+        return response.json()
 
     def _patch(self, path: str, data: dict[str, Any]) -> dict[str, Any]:
         """PATCH request to Redfish endpoint."""
         url = urljoin(self.base_url, path)
-        r = self.session.patch(url, json=data, timeout=TIMEOUT)
-        r.raise_for_status()
-        return r.json()
+        auth = (self.username, self.password)
+        response = self.session.patch(url, json=data, auth=auth, verify=VERIFY_SSL, timeout=TIMEOUT)
+        response.raise_for_status()
+        return response.json()
 
     # === System Info ===
 
@@ -98,38 +106,38 @@ class IDRACClient:
         """Power on the system."""
         return self._post(
             "/redfish/v1/Systems/System.Embedded.1/Actions/ComputerSystem.Reset",
-            {"ResetType": "On"}
+            {"ResetType": "On"},
         )
 
     def power_off(self, graceful: bool = True) -> dict[str, Any]:
         """Power off the system.
-        
+
         Args:
             graceful: If True, use GracefulShutdown; else ForceOff
         """
         reset_type = "GracefulShutdown" if graceful else "ForceOff"
         return self._post(
             "/redfish/v1/Systems/System.Embedded.1/Actions/ComputerSystem.Reset",
-            {"ResetType": reset_type}
+            {"ResetType": reset_type},
         )
 
     def power_cycle(self) -> dict[str, Any]:
         """Power cycle (hard reset) the system."""
         return self._post(
             "/redfish/v1/Systems/System.Embedded.1/Actions/ComputerSystem.Reset",
-            {"ResetType": "ForceRestart"}
+            {"ResetType": "ForceRestart"},
         )
 
     def power_reset(self, graceful: bool = True) -> dict[str, Any]:
         """Reset the system (reboot).
-        
+
         Args:
             graceful: If True, use GracefulRestart; else ForceRestart
         """
         reset_type = "GracefulRestart" if graceful else "ForceRestart"
         return self._post(
             "/redfish/v1/Systems/System.Embedded.1/Actions/ComputerSystem.Reset",
-            {"ResetType": reset_type}
+            {"ResetType": reset_type},
         )
 
     # === Thermal Sensors ===
@@ -147,12 +155,14 @@ class IDRACClient:
         thermal = self.get_thermal()
         temps = []
         for t in thermal.get("Temperatures", []):
-            temps.append({
-                "name": t.get("Name", "Unknown"),
-                "reading_c": t.get("ReadingCelsius"),
-                "status": t.get("Status", {}).get("Health", "Unknown"),
-                "upper_threshold": t.get("UpperThresholdCritical"),
-            })
+            temps.append(
+                {
+                    "name": t.get("Name", "Unknown"),
+                    "reading_c": t.get("ReadingCelsius"),
+                    "status": t.get("Status", {}).get("Health", "Unknown"),
+                    "upper_threshold": t.get("UpperThresholdCritical"),
+                }
+            )
         return temps
 
     def get_fans(self) -> list[dict[str, Any]]:
@@ -160,11 +170,13 @@ class IDRACClient:
         thermal = self.get_thermal()
         fans = []
         for f in thermal.get("Fans", []):
-            fans.append({
-                "name": f.get("Name", "Unknown"),
-                "reading_rpm": f.get("Reading"),
-                "status": f.get("Status", {}).get("Health", "Unknown"),
-            })
+            fans.append(
+                {
+                    "name": f.get("Name", "Unknown"),
+                    "reading_rpm": f.get("Reading"),
+                    "status": f.get("Status", {}).get("Health", "Unknown"),
+                }
+            )
         return fans
 
     # === Health and SEL ===
@@ -188,12 +200,14 @@ class IDRACClient:
         logs = []
         for e in entries.get("Members", [])[:max_entries]:
             # Fetch each entry detail if needed, or use summary
-            logs.append({
-                "id": e.get("Id"),
-                "message": e.get("Message", ""),
-                "severity": e.get("Severity", "OK"),
-                "created": e.get("Created", ""),
-            })
+            logs.append(
+                {
+                    "id": e.get("Id"),
+                    "message": e.get("Message", ""),
+                    "severity": e.get("Severity", "OK"),
+                    "created": e.get("Created", ""),
+                }
+            )
         return logs
 
     def clear_sel(self) -> dict[str, Any]:
@@ -213,14 +227,16 @@ class IDRACClient:
         power = self._get(power_url)
         psus = []
         for p in power.get("PowerSupplies", []):
-            psus.append({
-                "name": p.get("Name", "Unknown"),
-                "status": p.get("Status", {}).get("Health", "Unknown"),
-                "power_capacity_watts": p.get("PowerCapacityWatts"),
-                "power_output_watts": p.get("PowerOutputWatts"),
-                "model": p.get("Model", ""),
-                "serial": p.get("SerialNumber", ""),
-            })
+            psus.append(
+                {
+                    "name": p.get("Name", "Unknown"),
+                    "status": p.get("Status", {}).get("Health", "Unknown"),
+                    "power_capacity_watts": p.get("PowerCapacityWatts"),
+                    "power_output_watts": p.get("PowerOutputWatts"),
+                    "model": p.get("Model", ""),
+                    "serial": p.get("SerialNumber", ""),
+                }
+            )
         return psus
 
     # === Firmware ===
@@ -237,11 +253,13 @@ class IDRACClient:
             detail_url = item.get("@odata.id")
             if detail_url:
                 detail = self._get(detail_url)
-                fw.append({
-                    "name": detail.get("Name", "Unknown"),
-                    "version": detail.get("Version", ""),
-                    "updateable": detail.get("Updateable", False),
-                })
+                fw.append(
+                    {
+                        "name": detail.get("Name", "Unknown"),
+                        "version": detail.get("Version", ""),
+                        "updateable": detail.get("Updateable", False),
+                    }
+                )
         return fw
 
     # === Network Config ===
@@ -258,11 +276,13 @@ class IDRACClient:
             iface_url = iface.get("@odata.id")
             if iface_url:
                 detail = self._get(iface_url)
-                ifaces.append({
-                    "id": detail.get("Id", ""),
-                    "name": detail.get("Name", "Unknown"),
-                    "status": detail.get("Status", {}).get("Health", "Unknown"),
-                })
+                ifaces.append(
+                    {
+                        "id": detail.get("Id", ""),
+                        "name": detail.get("Name", "Unknown"),
+                        "status": detail.get("Status", {}).get("Health", "Unknown"),
+                    }
+                )
         return ifaces
 
     # === Boot Control ===
@@ -282,12 +302,7 @@ class IDRACClient:
         """Set next boot to PXE (one-time)."""
         return self._patch(
             "/redfish/v1/Systems/System.Embedded.1",
-            {
-                "Boot": {
-                    "BootSourceOverrideEnabled": "Once",
-                    "BootSourceOverrideTarget": "Pxe"
-                }
-            }
+            {"Boot": {"BootSourceOverrideEnabled": "Once", "BootSourceOverrideTarget": "Pxe"}},
         )
 
     def set_boot_hdd(self) -> dict[str, Any]:
@@ -297,9 +312,9 @@ class IDRACClient:
             {
                 "Boot": {
                     "BootSourceOverrideEnabled": "Continuous",
-                    "BootSourceOverrideTarget": "Hdd"
+                    "BootSourceOverrideTarget": "Hdd",
                 }
-            }
+            },
         )
 
     # === Virtual Media ===
@@ -316,24 +331,26 @@ class IDRACClient:
             detail_url = item.get("@odata.id")
             if detail_url:
                 detail = self._get(detail_url)
-                media.append({
-                    "id": detail.get("Id", ""),
-                    "name": detail.get("Name", "Unknown"),
-                    "inserted": detail.get("Inserted", False),
-                    "image": detail.get("Image", ""),
-                })
+                media.append(
+                    {
+                        "id": detail.get("Id", ""),
+                        "name": detail.get("Name", "Unknown"),
+                        "inserted": detail.get("Inserted", False),
+                        "image": detail.get("Image", ""),
+                    }
+                )
         return media
 
     def mount_virtual_media(self, media_id: str, image_url: str) -> dict[str, Any]:
         """Mount ISO/IMG to virtual media.
-        
+
         Args:
             media_id: Virtual media device ID (e.g., "CD", "RemovableDisk")
             image_url: HTTP/HTTPS/NFS/CIFS URL to ISO or image file
         """
         return self._post(
             f"/redfish/v1/Managers/iDRAC.Embedded.1/VirtualMedia/{media_id}/Actions/VirtualMedia.InsertMedia",
-            {"Image": image_url, "Inserted": True}
+            {"Image": image_url, "Inserted": True},
         )
 
     def unmount_virtual_media(self, media_id: str) -> dict[str, Any]:
@@ -345,13 +362,13 @@ class IDRACClient:
 
 def load_credentials(creds_file: str = "creds/idrac_creds.json") -> dict[str, dict[str, str]]:
     """Load iDRAC credentials from JSON file.
-    
+
     Returns:
         Dict mapping host -> {username, password}
     """
     if not os.path.exists(creds_file):
         return {}
-    with open(creds_file, "r") as f:
+    with open(creds_file) as f:
         data = json.load(f)
     creds = {}
     for entry in data.get("hosts", []):
@@ -375,36 +392,38 @@ def get_client(host: str, creds_file: str = "creds/idrac_creds.json") -> IDRACCl
 
 # === CLI Helpers ===
 
+
 def main():
     """Quick CLI test."""
     import sys
+
     if len(sys.argv) < 2:
         print(__doc__)
         print("\nQuick test:")
         print("  python gl_idrac.py <idrac_ip>")
-        return
-    
+        return None
+
     host = sys.argv[1]
     print(f"[idrac] Testing connection to {host}...")
-    
+
     try:
         client = get_client(host)
         info = client.get_system_info()
         print(f"[idrac] Model: {info.get('Model', 'Unknown')}")
         print(f"[idrac] BIOS: {info.get('BiosVersion', 'Unknown')}")
         print(f"[idrac] Serial: {info.get('SerialNumber', 'Unknown')}")
-        
+
         power = client.get_power_state()
         print(f"[idrac] Power: {power}")
-        
+
         health = client.get_health_status()
         print(f"[idrac] Health: {health['health']} / State: {health['state']}")
-        
+
         temps = client.get_temperatures()
-        print(f"[idrac] Temperatures:")
+        print("[idrac] Temperatures:")
         for t in temps[:5]:
             print(f"  {t['name']}: {t['reading_c']}°C ({t['status']})")
-        
+
         print("[idrac] Connection OK")
     except Exception as e:
         print(f"[idrac] Error: {e}")
@@ -415,4 +434,5 @@ def main():
 
 if __name__ == "__main__":
     import sys
+
     sys.exit(main())

@@ -111,6 +111,20 @@ ci-up:
 ci-down:
 	docker compose -f docker-compose.ci.yml down
 
+# New: docker-compose for this project's dev infra
+compose-build:
+	docker compose -f docker/docker-compose.yml build
+
+compose-up:
+	docker compose -f docker/docker-compose.yml up -d --remove-orphans
+
+compose-down:
+	docker compose -f docker/docker-compose.yml down
+
+compose-logs:
+	docker compose -f docker/docker-compose.yml logs -f
+
+
 env:
 \t@echo "HOST=$${HOST:-10.7.0.1} PORT=$${PORT:-7420} PROM=$${PROMETHEUS_BIND:-127.0.0.1:9108}"
 

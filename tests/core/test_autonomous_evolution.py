@@ -10,7 +10,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from autonomous_evolution import AutonomousEvolution, Gene
+from src.autonomous_evolution import AutonomousEvolution, Gene
 
 
 class TestGene(unittest.TestCase):
@@ -178,7 +178,9 @@ class TestAutonomousEvolution(unittest.TestCase):
         """Test evolution state saving"""
         # Create some test data
         self.evolution.current_generation = 5
-        self.evolution.genome = [Gene("test_gene", "test_trait", {"param": "value"}, fitness=10.0)]
+        self.evolution.genome = [
+            Gene("test_gene", "test_trait", {"param": "value"}, fitness=10.0)
+        ]
         self.evolution.emergent_patterns = [
             {"type": "synergy", "pattern": "test×pattern", "strength": 3}
         ]
@@ -200,7 +202,7 @@ class TestAutonomousEvolution(unittest.TestCase):
         self.assertEqual(len(checkpoint["genome"]), 1)
         self.assertIn("emergent_patterns", checkpoint)
 
-    @patch("autonomous_evolution.time.sleep")
+    @patch("src.autonomous_evolution.time.sleep")
     def test_evolution_loop_basic(self, mock_sleep):
         """Test basic evolution loop functionality"""
         # Mock sleep to speed up test
@@ -258,8 +260,8 @@ class TestEvolutionIntegration(unittest.TestCase):
         if evolution_dir.exists():
             shutil.rmtree(evolution_dir)
 
-    @patch("autonomous_evolution.time.sleep")
-    @patch("autonomous_evolution.input", return_value="q")
+    @patch("src.autonomous_evolution.time.sleep")
+    @patch("src.autonomous_evolution.input", return_value="q")
     def test_full_evolution_cycle(self, mock_input, mock_sleep):
         """Test complete evolution cycle"""
         mock_sleep.return_value = None
@@ -278,7 +280,9 @@ class TestEvolutionIntegration(unittest.TestCase):
         """Test that evolution state persists across sessions"""
         # Run initial evolution
         self.evolution.current_generation = 3
-        self.evolution.genome = [Gene("persistent", "test_trait", {"value": 42}, fitness=15.0)]
+        self.evolution.genome = [
+            Gene("persistent", "test_trait", {"value": 42}, fitness=15.0)
+        ]
         self.evolution._save_checkpoint()
 
         # Verify checkpoint exists

@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
 import glob
 import json
+import os
 import socket
+import sys
 import time
+
+# Add the ghostlink module to the path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+from ghostlink.sovereign_deps import SystemMonitor
 
 HOST = os.getenv("HOST", "127.0.0.1")
 PORT = int(os.getenv("PORT", "7420"))
@@ -10,12 +16,10 @@ PORT = int(os.getenv("PORT", "7420"))
 
 def read_temp_c():
     try:
-        import psutil
-
-        temps = getattr(psutil, "sensors_temperatures", lambda **k: None)(fahrenheit=False) or {}
-        for arr in temps.values():
-            vals = [getattr(t, "current", None) for t in arr]
-            vals = [v for v in vals if v is not None]
+        monitor = SystemMonitor()
+        temps = monitor.get_temperatures(fahrenheit=False)
+        if temps:
+            vals = [t["current"] for t in temps.values() if t.get("current") is not None]
             if vals:
                 return float(sum(vals) / len(vals))
     except Exception:
